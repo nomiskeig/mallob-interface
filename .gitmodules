@@ -1,0 +1,3 @@
+[submodule "mallob-interface-pflichtenheft"]
+	path = mallob-interface-pflichtenheft
+	url = https://github.com/nomiskeig/mallob-interface-pflichtenheft.git
