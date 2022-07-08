@@ -16,7 +16,7 @@ jobs:
   test:
     defaults:
       run:
-       working-directory: ./frontend
+       working-directory: frontend
     runs-on: ubuntu-latest
 
     strategy:
