@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+  
+defaults:
+  run:
+    working-directory: ./frontend
 
 jobs:
   build:
@@ -27,6 +31,4 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: frontend
-    - run: cd frontend
     - run: npm test
