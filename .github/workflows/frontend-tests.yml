@@ -14,11 +14,7 @@ on:
 
 jobs:
   test:
-    defaults:
-      run:
-       working-directory: frontend
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
@@ -31,4 +27,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm test
+        cache-dependency-path: ./frontend
+    - name: run tests 
+      working-directory: ./frontend
+      run: npm test
