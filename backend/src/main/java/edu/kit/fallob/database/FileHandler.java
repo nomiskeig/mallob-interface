@@ -1,4 +1,4 @@
-package edu.kit.fallob.backend.database;
+package edu.kit.fallob.database;
 
 import java.io.File;
 
