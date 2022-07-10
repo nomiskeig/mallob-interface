@@ -1,5 +1,7 @@
 package edu.kit.fallob.api.request.controller;
 
+import java.util.List;
+
 public class JobInformationResponse {
 
     private List<JobInformationProxy> jobInformation;
