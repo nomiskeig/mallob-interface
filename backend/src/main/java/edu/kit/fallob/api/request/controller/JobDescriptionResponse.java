@@ -1,14 +1,16 @@
 package edu.kit.fallob.api.request.controller;
 
+import java.util.List;
+
 public class JobDescriptionResponse {
 
-    private int descriptionId;
+    private List<String> jobDescription;
 
-    public JobDescriptionResponse(int descriptionId) {
-        this.descriptionId = descriptionId;
+    public JobDescriptionResponse(List<String> jobDescription) {
+        this.jobDescription = jobDescription;
     }
 
-    public int getDescriptionId() {
-        return descriptionId;
+    public List<String> getJobDescription() {
+        return jobDescription;
     }
 }

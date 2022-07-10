@@ -29,7 +29,7 @@ public class AbortJobController {
         return null;
     }
     @RequestMapping()
-    public ResponseEntity<Object> abortInkrementalJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> abortIncrementalJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
         return null;
     }
 }

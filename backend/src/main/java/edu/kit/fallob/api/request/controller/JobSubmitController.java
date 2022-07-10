@@ -14,23 +14,23 @@ public class JobSubmitController {
     private JobSubmitCommands jobSubmitCommand;
 
     @RequestMapping()
-    public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest jobRequest, HttpServletRequest request) {
+    public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         return null;
     }
     @RequestMapping()
-    public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest jobRequest, HttpServletRequest request) {
+    public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         return null;
     }
     @RequestMapping()
-    public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest jobRequest, HttpServletRequest request) {
+    public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         return null;
     }
     @RequestMapping()
-    public ResponseEntity<Object> restartJob(@RequestParam int JobId, HttpServletRequest request) {
+    public ResponseEntity<Object> restartJob(@RequestParam int JobId, HttpServletRequest httpRequest) {
         return null;
     }
     @RequestMapping()
-    public ResponseEntity<Object> saveDescription(MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<Object> saveDescription(MultipartFile file, HttpServletRequest httpRequest) {
         return null;
     }
 }
