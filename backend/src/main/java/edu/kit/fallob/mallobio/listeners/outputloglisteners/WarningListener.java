@@ -1,5 +1,8 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
+import edu.kit.fallob.database.WarningDao;
+import edu.kit.fallob.mallobio.outputupdates.Warning;
+
 /**
  * 
  * @author Simon Wilhelm Schübel
@@ -8,13 +11,17 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
  */
 public class WarningListener implements OutputLogLineListener {
 	
-	public WarningListener() {
-		
+	private WarningDao warningDao;
+	
+	public WarningListener(WarningDao dao) {
+		warningDao = dao;
 	}
 
 	@Override
 	public void processLine(String line) {
-		
+		if (Warning.isWarning(line)) {
+			warningDao.save(new Warning(line));
+		}
 	}
 
 }

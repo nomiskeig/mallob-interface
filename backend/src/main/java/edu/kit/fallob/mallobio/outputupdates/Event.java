@@ -1,5 +1,8 @@
 package edu.kit.fallob.mallobio.outputupdates;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 
  * @author Simon Wilhelm Schübel
@@ -9,8 +12,13 @@ package edu.kit.fallob.mallobio.outputupdates;
 public class Event extends OutputUpdate {
 	
 
-	//TODO
-	public static final String EVENT_REGEX = "";
+	public static final String EVENT_REGEX = ""; //TODO
+	private static final Pattern PATTERN = Pattern.compile(EVENT_REGEX);
+	
+	public static boolean isEvent(String logLine) {
+		Matcher matcher = PATTERN.matcher(logLine);
+		return matcher.find();
+	}
 	
 	//event-attributes 
 	private int processID;
