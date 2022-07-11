@@ -7,14 +7,8 @@ import { JobContext } from './JobContextProvider';
 import axios from 'axios';
 
 jest.mock('axios');
-const customRender = (ui, { providerProps, ...renderOptions }) => {
-	return render(
-		<JobContextProvider {...providerProps}>{ui}</JobContextProvider>,
-		renderOptions
-	);
-};
 
-export function DummyDisplay(props) {
+function DummyDisplay(props) {
 	return (
 		<JobContextProvider>
 			<JobContext.Consumer>
