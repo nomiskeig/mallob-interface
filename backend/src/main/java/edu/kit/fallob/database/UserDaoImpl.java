@@ -1,5 +1,7 @@
 package edu.kit.fallob.database;
 
+import edu.kit.fallob.dataobjects.User;
+
 public class UserDaoImpl implements UserDao{
     @Override
     public void save(User user) {

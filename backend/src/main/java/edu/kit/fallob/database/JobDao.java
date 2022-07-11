@@ -1,5 +1,13 @@
 package edu.kit.fallob.database;
 
+import edu.kit.fallob.dataobjects.JobConfiguration;
+import edu.kit.fallob.dataobjects.JobDescription;
+import edu.kit.fallob.dataobjects.JobInformation;
+import edu.kit.fallob.dataobjects.JobResult;
+import edu.kit.fallob.dataobjects.JobStatus;
+import edu.kit.fallob.dataobjects.ResultMetaData;
+import edu.kit.fallob.dataobjects.SubmitType;
+
 import java.time.LocalDateTime;
 
 public interface JobDao {

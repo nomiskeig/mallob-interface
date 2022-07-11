@@ -1,5 +1,7 @@
 package edu.kit.fallob.database;
 
+import edu.kit.fallob.dataobjects.User;
+
 public interface UserDao {
 
     public void save(User user);

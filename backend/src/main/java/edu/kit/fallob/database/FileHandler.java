@@ -17,7 +17,7 @@ public final class FileHandler {
     }
 
     public static long getSizeOfDirectory(String path) {
-
+        return 0;
     }
 
 }
