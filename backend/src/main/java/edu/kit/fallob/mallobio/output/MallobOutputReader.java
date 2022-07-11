@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @version 1.0
  *
  */
-public class MallobOutputReader {
+public class MallobOutputReader implements MallobOutputActionChecker {
 
 	
 	private String pathToMallobOutputLog;
@@ -62,5 +62,11 @@ public class MallobOutputReader {
 	
 	public void addProcessor(OutputProcessor p) {
 		processors.add(p);
+	}
+
+
+	@Override
+	public void checkForAction() {
+		readNextLine();
 	}
 }

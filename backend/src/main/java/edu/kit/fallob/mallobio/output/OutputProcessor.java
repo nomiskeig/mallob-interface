@@ -7,8 +7,7 @@ package edu.kit.fallob.mallobio.output;
  *
  */
 public interface OutputProcessor {
-
-
+	
 	/**
 	 * Process a line, given 
 	 * 

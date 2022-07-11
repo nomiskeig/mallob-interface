@@ -2,6 +2,7 @@ package edu.kit.fallob.mallobio;
 
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
 import edu.kit.fallob.mallobio.output.MallobOutputReaderRunner;
+import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.output.distributors.OutputLogLineDistributor;
 import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
@@ -23,7 +24,8 @@ public class MallobReaderStarter {
 	
 	
 	private Thread[] readerThreadPool;
-	private MallobOutputReaderRunner[] readerRunners;
+	private MallobOutputRunnerThread[] readerRunners;
+	private MallobOutputRunnerThread[] directoryWatcherRunners;
 	private MallobOutputReader[] readers;
 	
 	private MallobOutput mallobOutput;
@@ -101,7 +103,7 @@ public class MallobReaderStarter {
 			readers[i].addProcessor(logDistributor);
 			
 			//add outputreader-to readerRunner
-			readerRunners[roundRobinCounter].addMallobOutputReader(readers[i]);
+			readerRunners [roundRobinCounter].addActionChecker(readers[i]);
 			roundRobinCounter++;
 			if (roundRobinCounter >= readerRunners.length) {
 				roundRobinCounter = 0;
@@ -143,11 +145,17 @@ public class MallobReaderStarter {
 	private void initializeRunnerThreadPool(int amountReaderThreads, 
 			int readingIntervalPerReadingThread) {
 		readerThreadPool = new Thread[amountReaderThreads];
-		readerRunners = new MallobOutputReaderRunner[amountReaderThreads];
+		readerRunners = new MallobOutputRunnerThread[amountReaderThreads];
 		for (int i = 0; i < amountReaderThreads; i++) {
-			readerRunners[i] = new MallobOutputReaderRunner(readingIntervalPerReadingThread);
+			readerRunners[i] = new MallobOutputRunnerThread(readingIntervalPerReadingThread);
 			readerThreadPool[i] = new Thread(readerRunners[i]);
 		}
+	}
+	
+	private void initializeWatcherThreadPool(int amountWatcherThreads, 
+			int watchingIntervalPerWatchingThread) 
+	{
+		
 	}
 	
 	

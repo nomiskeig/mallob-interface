@@ -13,14 +13,24 @@ public class ResultAvailableObject extends OutputUpdate {
 	
 	private String filePathToResult;
 	private File result;
+	
 
 	public ResultAvailableObject(String filePathToResult) {
 		super(null);		//has no log line
 		this.filePathToResult = filePathToResult;
 	}
+	
+	public ResultAvailableObject(File result) {
+		super(null);		//has no log line
+		this.result = result;
+	}
 
 	public String getFilePathToResult() {
 		return filePathToResult;
+	}
+
+	public File getResult() {
+		return result;
 	}
 	
 	
