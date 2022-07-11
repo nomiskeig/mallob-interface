@@ -1,4 +1,4 @@
-package dataobjects;
+package edu.kit.fallob.dataobjects;
 
 public class ResultMetaData {
 	

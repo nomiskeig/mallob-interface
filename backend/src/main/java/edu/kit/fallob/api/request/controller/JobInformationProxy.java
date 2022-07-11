@@ -1,5 +1,10 @@
 package edu.kit.fallob.api.request.controller;
 
+
+import edu.kit.fallob.dataobjects.JobConfiguration;
+import edu.kit.fallob.dataobjects.JobInformation;
+import edu.kit.fallob.dataobjects.ResultMetaData;
+
 public class JobInformationProxy {
 
     private JobInformation jobInformation;

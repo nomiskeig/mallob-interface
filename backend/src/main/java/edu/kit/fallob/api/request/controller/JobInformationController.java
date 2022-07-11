@@ -1,5 +1,8 @@
 package edu.kit.fallob.api.request.controller;
 
+import edu.kit.fallob.commands.JobDescriptionCommands;
+import edu.kit.fallob.commands.JobInformationCommands;
+import edu.kit.fallob.commands.JobResultCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +15,7 @@ public class JobInformationController {
     @Autowired
     private JobInformationCommands jobInformationCommand;
     @Autowired
-    private JobResultCommands jobResultCommand;
+    private JobResultCommand jobResultCommand;
     @Autowired
     private JobDescriptionCommands jobDescriptionCommand;
     @RequestMapping

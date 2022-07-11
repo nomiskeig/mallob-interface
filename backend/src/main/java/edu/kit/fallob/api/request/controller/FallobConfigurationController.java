@@ -1,5 +1,6 @@
 package edu.kit.fallob.api.request.controller;
 
+import edu.kit.fallob.commands.FallobCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin
 public class FallobConfigurationController {
     @Autowired
-    private FallobConfigurationCommand fallobConfigCommand;
+    private FallobCommands fallobConfigCommand;
 
     @RequestMapping
     public ResponseEntity<Object> getFallobConfiguration(HttpServletRequest httpRequest) {

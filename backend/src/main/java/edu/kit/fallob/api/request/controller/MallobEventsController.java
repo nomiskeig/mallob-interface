@@ -1,5 +1,6 @@
 package edu.kit.fallob.api.request.controller;
 
+import edu.kit.fallob.commands.MallobCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin
 public class MallobEventsController {
     @Autowired
-    private EventCommand jobInformationCommand;
-    @Autowired
-    private SystemStateCommand jobResultCommand;
+    private MallobCommands mallobCommands;
 
     @RequestMapping
     public ResponseEntity<Object> getMallobUpdates(@RequestBody MallobEventsRequest request, HttpServletRequest httpRequest) {

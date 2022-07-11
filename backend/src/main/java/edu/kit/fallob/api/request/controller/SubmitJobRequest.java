@@ -1,5 +1,7 @@
 package edu.kit.fallob.api.request.controller;
 
+import edu.kit.fallob.dataobjects.JobConfiguration;
+
 import java.util.List;
 
 public class SubmitJobRequest {

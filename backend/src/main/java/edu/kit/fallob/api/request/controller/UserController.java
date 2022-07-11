@@ -1,6 +1,6 @@
 package edu.kit.fallob.api.request.controller;
 
-import edu.kit.fallob.api.commands.FallobCommands;
+import edu.kit.fallob.commands.FallobCommands;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

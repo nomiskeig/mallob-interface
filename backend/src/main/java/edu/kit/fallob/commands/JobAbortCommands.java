@@ -1,4 +1,4 @@
-package commands;
+package edu.kit.fallob.commands;
 
 import java.util.List;
 

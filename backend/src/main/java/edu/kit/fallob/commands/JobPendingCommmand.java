@@ -1,4 +1,4 @@
-package commands;
+package edu.kit.fallob.commands;
 
 public class JobPendingCommmand {
 	

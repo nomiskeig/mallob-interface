@@ -1,4 +1,4 @@
-package dataobjects;
+package edu.kit.fallob.dataobjects;
 
 import java.util.ArrayList;
 import java.util.List;

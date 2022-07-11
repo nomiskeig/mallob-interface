@@ -1,8 +1,9 @@
-package commands;
+package edu.kit.fallob.commands;
+
+import edu.kit.fallob.dataobjects.JobInformation;
 
 import java.util.List;
 
-import dataobjects.JobInformation;
 
 public class JobInformationCommands {
 	

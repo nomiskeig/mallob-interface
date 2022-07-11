@@ -1,8 +1,10 @@
-package commands;
+package edu.kit.fallob.commands;
 
 import java.util.List;
 
-import dataobjects.SystemState;
+import edu.kit.fallob.dataobjects.SystemState;
+import edu.kit.fallob.mallobio.outputupdates.Event;
+import edu.kit.fallob.mallobio.outputupdates.Warning;
 
 public class MallobCommands {
 	

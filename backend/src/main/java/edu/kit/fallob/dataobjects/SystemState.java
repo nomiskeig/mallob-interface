@@ -1,4 +1,6 @@
-package dataobjects;
+package edu.kit.fallob.dataobjects;
+
+import edu.kit.fallob.mallobio.outputupdates.Event;
 
 import java.util.List;
 

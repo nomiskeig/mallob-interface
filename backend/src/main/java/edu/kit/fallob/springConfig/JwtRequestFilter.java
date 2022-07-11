@@ -1,6 +1,6 @@
 package edu.kit.fallob.springConfig;
 
-import edu.kit.fallob.api.commands.FallobCommands;
+import edu.kit.fallob.commands.FallobCommands;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,8 +1,8 @@
-package commands;
+package edu.kit.fallob.commands;
+
+import edu.kit.fallob.dataobjects.JobResult;
 
 import java.util.List;
-
-import dataobjects.JobResult;
 
 public class JobResultCommand {
 	

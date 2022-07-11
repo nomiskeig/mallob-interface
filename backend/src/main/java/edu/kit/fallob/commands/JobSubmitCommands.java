@@ -1,7 +1,8 @@
-package commands;
+package edu.kit.fallob.commands;
 
-import dataobjects.JobConfiguration;
-import dataobjects.JobDescription;
+
+import edu.kit.fallob.dataobjects.JobConfiguration;
+import edu.kit.fallob.dataobjects.JobDescription;
 
 public class JobSubmitCommands {
 	

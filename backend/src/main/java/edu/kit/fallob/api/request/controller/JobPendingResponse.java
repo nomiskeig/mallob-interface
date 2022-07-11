@@ -1,5 +1,7 @@
 package edu.kit.fallob.api.request.controller;
 
+import edu.kit.fallob.dataobjects.ResultMetaData;
+
 public class JobPendingResponse {
 
     private boolean done;
