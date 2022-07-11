@@ -36,6 +36,16 @@ public class MallobOutputRunnerThread implements Runnable {
 	}
 	
 	
+	
+	public void stopRunning() {
+		this.runCheckers = false;
+	}
+	
+	public void restartRunning() {
+		this.runCheckers = true;
+	}
+	
+	
 	public void addActionChecker(MallobOutputActionChecker checker) {
 		this.checkers.add(checker);
 	}

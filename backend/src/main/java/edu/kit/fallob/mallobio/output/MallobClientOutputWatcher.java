@@ -32,8 +32,9 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	
 	
 	
-	public MallobClientOutputWatcher(String pathToMallobDirectory) {
+	public MallobClientOutputWatcher(String pathToMallobDirectory, int clientProcessID) {
 		this.pathToMallobDirectory = pathToMallobDirectory;
+		this.clientProcessRank = clientProcessID;
 		this.processedResults = new ArrayList<>();
 	}
 	
