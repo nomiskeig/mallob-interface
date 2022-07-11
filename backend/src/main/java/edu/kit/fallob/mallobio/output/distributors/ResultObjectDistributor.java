@@ -6,7 +6,6 @@ import edu.kit.fallob.mallobio.outputupdates.ResultAvailableObject;
 public class ResultObjectDistributor {
 	
 	
-	
 
 	public void distributeResultObject(ResultAvailableObject rao) {
 		// TODO Auto-generated method stub
