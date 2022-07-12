@@ -10,4 +10,13 @@ public class ApiError {
         this.status = status;
         this.message = message;
     }
+
+    // Not sure if Spring needs getters in order to parse the errors in json here
+//    public HttpStatus getStatus() {
+//        return status;
+//    }
+//
+//    public String getMessage() {
+//        return message;
+//    }
 }
