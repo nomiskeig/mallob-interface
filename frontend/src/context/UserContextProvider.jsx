@@ -22,7 +22,7 @@ export function UserContextProvider({ children }) {
 			}
 		}
 		tryToLoginUser();
-	}, [user]);
+	}, []);
 	async function logout() {
 		localStorage.removeItem(LOCAL_STORAGE_TOKEN);
 		setUser({ token: NO_TOKEN_AVAILABLE, role: '', username: '' });
