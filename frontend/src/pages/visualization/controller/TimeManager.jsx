@@ -27,7 +27,9 @@ export class TimeManager {
 	}
 
 	updateTime() {
-		this.#lastTime = this.#nextTime;
+        if (this.#nextTime) {
+            this.#lastTime = this.#nextTime;
+        }
 		this.#jump = false;
 		this.#nextTime= null;
 	}
@@ -55,7 +57,7 @@ export class TimeManager {
 				this.#lastTime
 			);
 			let millisToAdd = differenceInMillis * this.#multiplier;
-			let nextTime = addMilliseconds(currentTime, millisToAdd);
+			let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
 
             this.#nextTime = nextTime;
 		}
