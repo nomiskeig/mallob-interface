@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 public class MallobOutputReaderTests {
 	
 	/**
@@ -20,12 +19,16 @@ public class MallobOutputReaderTests {
 	 */
 	public static final int TEST_FILE_LINES = 100;
 	
+	//for test on windows 
+	public static final String FILE_PATH = "C:\\Users\\siwis\\git\\mallob-interface\\backend\\src\\test\\java\\edu\\kit\\fallob\\mallobio\\output\\testFile.txt";
 	
-	public static final String FILE_PATH = "/testFile.txt";
+	//for test on linux
+	//public static final String FILE_PATH = "/testFile.txt";
+
 	
 	private static File testFile;
 	
-
+	
 	/**
 	 * 
 	 */
@@ -68,11 +71,9 @@ public class MallobOutputReaderTests {
 		}
 		
 		//write to file
-		FileWriter writer = new FileWriter(FILE_PATH);
+		FileWriter writer = new FileWriter(testFile.getAbsolutePath());
 		writer.write(fileContent);
 		writer.close();
-	
-		
 	}
 	
 	

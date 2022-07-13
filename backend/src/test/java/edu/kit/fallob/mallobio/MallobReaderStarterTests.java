@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
-@SpringBootTest
 public class MallobReaderStarterTests {
 	
 	
@@ -21,8 +20,14 @@ public class MallobReaderStarterTests {
 	public static final int[] TEST_CLIENT_PROCESSES = {0, 10, 14};
 	
 	public static final int TEST_AMOUNT_READERTHREADS = 10;
+	public static final int TEST_AMOUNT_WATCHERTHREADS = 1;
+
 	
 	public static final int TEST_READINGINTERVAL = 100;
+	public static final int TEST_WATCHINGINTERVAL = 100;
+
+	
+	
 	
 
 
@@ -36,10 +41,11 @@ public class MallobReaderStarterTests {
 		starter.initParsingModule(TEST_MALLOB_API_PATH, 
 				TEST_CLIENT_PROCESSES, 
 				TEST_AMOUNT_PROCESSES, 
-				TEST_AMOUNT_PROCESSES, 
-				TEST_AMOUNT_PROCESSES, 
+				TEST_AMOUNT_WATCHERTHREADS, 
+				TEST_WATCHINGINTERVAL, 
 				TEST_AMOUNT_READERTHREADS, 
 				TEST_READINGINTERVAL);
+
 		
 		assertTrue(starter.getMallobOutput() != null);
 	}

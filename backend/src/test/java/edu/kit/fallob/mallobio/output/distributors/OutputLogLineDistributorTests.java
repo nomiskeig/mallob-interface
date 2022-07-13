@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import edu.kit.fallob.mallobio.output.distributors.OutputLogLineDistributor;
 
-@SpringBootTest
 public class OutputLogLineDistributorTests {
 	
 	
