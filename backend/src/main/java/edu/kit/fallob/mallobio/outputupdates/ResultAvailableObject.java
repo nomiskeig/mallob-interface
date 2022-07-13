@@ -23,6 +23,7 @@ public class ResultAvailableObject extends OutputUpdate {
 	public ResultAvailableObject(File result) {
 		super(null);		//has no log line
 		this.result = result;
+		this.filePathToResult = result.getAbsolutePath();
 	}
 
 	public String getFilePathToResult() {

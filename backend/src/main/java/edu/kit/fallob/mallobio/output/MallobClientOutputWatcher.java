@@ -36,6 +36,29 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 		this.pathToMallobDirectory = pathToMallobDirectory;
 		this.clientProcessRank = clientProcessID;
 		this.processedResults = new ArrayList<>();
+		scanInitialFiles();
+	}
+	
+	public MallobClientOutputWatcher(String pathToMallobDirectory) {
+		this.pathToMallobDirectory = pathToMallobDirectory;
+		this.processedResults = new ArrayList<>();
+		scanInitialFiles();
+	}
+	
+	
+
+	
+	
+	/**
+	 * This method scans the given directory for initial files,
+	 * such that these files can be distinguished from results
+	 */
+	private void scanInitialFiles() {
+		File directrory = new File(pathToMallobDirectory);
+		List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
+		for (File f : files) {
+			processedResults.add(f.getAbsolutePath());
+		}
 	}
 	
 	/**
@@ -43,31 +66,30 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	 */
 	public void watchDirectory() {
 		File directrory = new File(pathToMallobDirectory);
-		List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
-		
+		//List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
+		List<File> files = List.of(directrory.listFiles());
+
 		//filter the files that have already been processed
 		
-		List<File> processedFiles = new ArrayList<>();
-		//check if they have been processed
+		List<String> processedFiles = new ArrayList<>();
+		
+		//check if they have been processed: if yes, add them to the processedFiles list
 		for (File f : files) {
-			for (String path : processedResults) {
-				if (path.equals(f.getAbsolutePath())) {
-					//file has already been processed
-					processedFiles.add(f);
-				}
+			if (processedResults.contains(f.getAbsolutePath())) {
+				processedFiles.add(f.getAbsolutePath());
 			}
 		}
 		
-		for (File f : processedFiles) {
-			files.remove(f);
-		}
 		
 		//now, files only contain files that have not yet been processed
 		for (File f : files) {
-			processedResults.add(f.getAbsolutePath());
-			pushResultObject(new ResultAvailableObject(f));
+			if (!processedFiles.contains(f.getAbsolutePath())) {
+				processedResults.add(f.getAbsolutePath());
+				pushResultObject(new ResultAvailableObject(f));
+			}
 		}
 	}
+	
 	
 	private void pushResultObject(ResultAvailableObject rao) {
 		this.distributor.distributeResultObject(rao);
@@ -76,5 +98,9 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	@Override
 	public void checkForAction() {
 		watchDirectory();
+	}
+	
+	public void setDistributor(ResultObjectDistributor distributor) {
+		this.distributor = distributor;
 	}
 }

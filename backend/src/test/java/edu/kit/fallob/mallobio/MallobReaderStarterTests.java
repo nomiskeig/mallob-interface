@@ -24,20 +24,19 @@ public class MallobReaderStarterTests {
 
 	
 	public static final int TEST_READINGINTERVAL = 100;
-	public static final int TEST_WATCHINGINTERVAL = 100;
+	public static final int TEST_WATCHINGINTERVAL = 500;
 
-	
-	
-	
-
-
-	
-	
-	
+		
 	private static MallobReaderStarter starter;
 	
 	@Test
 	public void testInitializationMallobOutput() {
+		assertTrue(starter.getMallobOutput() != null);
+	}
+
+	@BeforeEach
+	public void setupBeforeEach() {
+		starter = new MallobReaderStarter();
 		starter.initParsingModule(TEST_MALLOB_API_PATH, 
 				TEST_CLIENT_PROCESSES, 
 				TEST_AMOUNT_PROCESSES, 
@@ -45,15 +44,6 @@ public class MallobReaderStarterTests {
 				TEST_WATCHINGINTERVAL, 
 				TEST_AMOUNT_READERTHREADS, 
 				TEST_READINGINTERVAL);
-
-		
-		assertTrue(starter.getMallobOutput() != null);
-	}
-	
-	
-	@BeforeEach
-	public void setupBeforeEach() {
-		starter = new MallobReaderStarter();
 	}
 
 	@BeforeAll

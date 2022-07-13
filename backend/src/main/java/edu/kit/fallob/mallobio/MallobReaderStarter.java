@@ -71,7 +71,7 @@ public class MallobReaderStarter {
 	{
 		
 		
-		if (amountWatcherThreads > clientProcessIDs.length) {
+		if (amountWatcherThreads > clientProcessIDs.length || amountReaderThreads > amountProcesses) {
 			throw new IllegalArgumentException("Cant have more threads than watchers/readers");
 		}
 		
@@ -200,7 +200,7 @@ public class MallobReaderStarter {
 	
 	
 	
-	//----------------------------------start mallobio--------------------
+	//----------------------------------start/stop mallobio--------------------
 	
 	
 	/**
