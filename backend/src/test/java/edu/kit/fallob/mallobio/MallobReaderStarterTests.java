@@ -36,6 +36,8 @@ public class MallobReaderStarterTests {
 		starter.initParsingModule(TEST_MALLOB_API_PATH, 
 				TEST_CLIENT_PROCESSES, 
 				TEST_AMOUNT_PROCESSES, 
+				TEST_AMOUNT_PROCESSES, 
+				TEST_AMOUNT_PROCESSES, 
 				TEST_AMOUNT_READERTHREADS, 
 				TEST_READINGINTERVAL);
 		
@@ -44,7 +46,7 @@ public class MallobReaderStarterTests {
 	
 	
 	@BeforeEach
-	public static void setupBeforeEach() {
+	public void setupBeforeEach() {
 		starter = new MallobReaderStarter();
 	}
 

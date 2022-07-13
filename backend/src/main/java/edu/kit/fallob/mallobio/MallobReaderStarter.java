@@ -36,6 +36,8 @@ public class MallobReaderStarter {
 	private OutputLogLineDistributor logDistributor;
 	private ResultObjectDistributor resultDistributor;
 	
+	
+	
 	/**
 	 * 
 	 * 0. Initialize MallobOuptut and all required distributor-classe

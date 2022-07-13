@@ -28,7 +28,7 @@ public class OutputLogLineDistributorTests {
 	 * add the listener to the distributor
 	 */
 	@BeforeEach
-	public static void setupBeforeEach() {
+	public void setupBeforeEach() {
 		dist = new OutputLogLineDistributor();
 		listener = new TestListener();
 		dist.addListener(listener);
