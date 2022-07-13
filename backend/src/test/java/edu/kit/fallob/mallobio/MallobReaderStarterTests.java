@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MallobReaderStarterTests {
 	
 	
-	public static final String TEST_MALLOB_API_PATH = null;
+	public static final String TEST_MALLOB_API_PATH = "C:\\Users\\siwis\\git\\mallob-interface\\backend\\src\\test\\java\\edu\\kit\\fallob\\mallobio\\output";
 	
 	public static final int TEST_AMOUNT_PROCESSES = 100;
 	
@@ -46,13 +46,5 @@ public class MallobReaderStarterTests {
 				TEST_READINGINTERVAL);
 	}
 
-	@BeforeAll
-	public static void setup() {
-		
-	}
-	
-	@AfterAll
-	public static void teardown() {
-	}
 	
 }

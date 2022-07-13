@@ -77,6 +77,7 @@ public class MallobReaderStarter {
 		
 		initializeMallobOuptut();
 		
+		
 		initializeReaders(mallbLogDirectory, 
 				 amountProcesses,
 				 amountReaderThreads,
@@ -86,8 +87,9 @@ public class MallobReaderStarter {
 				clientProcessIDs,
 				amountWatcherThreads,
 				watchingIntervalPerWatcherThread);
-		
 		//after this mallobio can be started 
+	
+
 				
 		
 		
