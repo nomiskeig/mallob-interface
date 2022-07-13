@@ -17,7 +17,7 @@ public class MallobClientOutputWatcherTests {
 	/**
 	 * Path to a testing directory being created
 	 */
-	public static final String TEST_DIRECTORY_PATH = "C:\\Users\\siwis\\git\\mallob-interface\\backend\\src\\test\\java\\edu\\kit\\fallob\\mallobio\\output\\testDirectory";
+	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\testDirectory";
 	public static final String TEST_FILE_NAME = "result";
 	public static final String TEST_FILE_EXTENSION = ".txt";
 	private static final int AMOUNT_TEST_RESULTS = 10;

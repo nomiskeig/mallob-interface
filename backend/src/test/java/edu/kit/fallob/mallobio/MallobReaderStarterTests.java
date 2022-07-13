@@ -12,8 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 public class MallobReaderStarterTests {
 	
-	
-	public static final String TEST_MALLOB_API_PATH = "C:\\Users\\siwis\\git\\mallob-interface\\backend\\src\\test\\java\\edu\\kit\\fallob\\mallobio\\output";
+	public static final String TEST_MALLOB_API_PATH = System.getProperty("user.dir");
 	
 	public static final int TEST_AMOUNT_PROCESSES = 100;
 	
