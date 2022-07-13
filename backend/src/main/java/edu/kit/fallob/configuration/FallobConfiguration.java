@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class FallobConfiguration {
 	
-	private FallobConfiguration instance = null;
+	private static FallobConfiguration instance = null;
 	
 	private int amountProcesses;
 	private int maxJobsTotal;
 	private int maxJobsUser;
-	private List<Integer> clientProcesses;
+	private int[] clientProcesses;
 	private int garbageCollectorInterval;
 	private int jobStorageTime;
 	private int eventStorageTime;
@@ -44,7 +44,7 @@ public class FallobConfiguration {
 	 * 
 	 * @return an instance of {@link FallobConfiguration}.
 	 */
-	public FallobConfiguration getInstance() {
+	public static FallobConfiguration getInstance() {
 		if (instance == null) {
 			instance = new FallobConfiguration();
 		}
@@ -77,10 +77,10 @@ public class FallobConfiguration {
 	}
 	
 	
-	public List<Integer> getClientProcesses() {
+	public int[] getClientProcesses() {
 		return clientProcesses;
 	}
-	void setClientProcesses(List<Integer> clientProcesses) {
+	void setClientProcesses(int[] clientProcesses) {
 		this.clientProcesses = clientProcesses;
 	}
 	
