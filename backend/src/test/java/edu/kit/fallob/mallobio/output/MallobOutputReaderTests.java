@@ -82,7 +82,7 @@ public class MallobOutputReaderTests {
 	
 	
 	@AfterAll
-	public void deleteFile() {
+	public static void deleteFile() {
 		testFile.delete();
 	}
 	

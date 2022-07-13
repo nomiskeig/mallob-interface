@@ -1,4 +1,4 @@
-package edu.kit.fallob.mallobio.distributors;
+package edu.kit.fallob.mallobio.output.distributors;
 
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
 
