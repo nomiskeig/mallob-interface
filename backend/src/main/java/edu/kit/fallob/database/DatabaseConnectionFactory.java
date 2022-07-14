@@ -30,13 +30,16 @@ public final class DatabaseConnectionFactory {
     /**
      * establishes the connection to the database and returns the Connection object
      * @return the new Connection object
-     * @throws SQLException if the connection to the database couldn't be established
      */
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() {
         FallobConfiguration configuration = FallobConfiguration.getInstance();
 
         String path = String.format(DATABASE_PATH_FORMAT, configuration.getDatabaseBasePath());
 
-        return DriverManager.getConnection(path, DATABASE_USER, DATABASE_PASSWORD);
+        try {
+            return DriverManager.getConnection(path, DATABASE_USER, DATABASE_PASSWORD);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
