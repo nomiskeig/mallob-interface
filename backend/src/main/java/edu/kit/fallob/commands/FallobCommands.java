@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service @RequiredArgsConstructor @Slf4j
@@ -22,14 +23,10 @@ public class FallobCommands implements UserDetailsService {
 
 //        User user = userRepo.findByUsername(username);
 //        if(user == null) {
-//            log.error("User not found in the database");
 //            throw new UsernameNotFoundException("User not found in the database");
 //        } else {
-//            log.info("User found in the database: {}", username);
-//            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//            user.getRoles().forEach(role -> {
-//                authorities.add(new SimpleGrantedAuthority(role.getName()));
-//            });
+//            List <SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getUserType));
+//
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
         return null;

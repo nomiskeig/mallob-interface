@@ -42,9 +42,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         // dont authenticate this particular request
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**", "/authenticate", "/api/login").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers("/api/v1/users/login", "/api/v1/users/register").permitAll();
+        http.authorizeRequests().antMatchers(POST, "/api/v1/jobs/cancel/global", "/api/v1/system/mallob/start",
+                "/api/v1/system/mallob/stop", "/api/v1/system/mallob/restart").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/api/v1/jobs/info/global", "/api/v1/system/mallobInfo").
+                hasAnyAuthority("ADMIN");
         // all other requests need to be authenticated
         http.authorizeRequests().anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
