@@ -1,5 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react';
 import axios from 'axios';
+import {devSettings} from './devDefaults'
 
 export const SettingsContext = createContext({});
 export function SettingsContextProvider({ children }) {
@@ -13,7 +14,14 @@ export function SettingsContextProvider({ children }) {
 				)
 				.catch((err) => console.log(err.message));
 		}
-		fetchSettings();
+        if (process.env.NODE_ENV === 'development') {
+            setSettings(devSettings)
+        }
+        else {
+            fetchSettings();
+        } 
+		
+        
 	}, []);
 
 	return (
