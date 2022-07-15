@@ -1,5 +1,9 @@
 package edu.kit.fallob.mallobio.input;
 
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.dataobjects.JobConfiguration;
+import edu.kit.fallob.dataobjects.JobDescription;
+
 public class MallobInputImplementation implements MallobInput {
 	
 	
@@ -18,14 +22,21 @@ public class MallobInputImplementation implements MallobInput {
 	 * @param pathToMallobDirectory base-directory of mallob-input-directory
 	 * @param clientProcessIDs all process-id's of those processes of mallob, that are client-processes
 	 */
-	public MallobInputImplementation(String pathToMallobDirectory, int[] clientProcessIDs) {
-		this.pathToMallobDirectory = pathToMallobDirectory;
-		this.clientProcessIDs = clientProcessIDs;
+	public MallobInputImplementation() {
+		FallobConfiguration config = FallobConfiguration.getInstance();
+		this.pathToMallobDirectory = config.getMallobBasePath();
+		this.clientProcessIDs = config.getClientProcesses();
 	}
 
 	@Override
 	public boolean abortJob(int runningJobID) {
 		return false;
+	}
+
+	@Override
+	public void submitJobToMallob(String userName, JobConfiguration jobConfiguration, JobDescription jobDescription) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

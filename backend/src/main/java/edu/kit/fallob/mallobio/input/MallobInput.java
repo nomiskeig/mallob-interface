@@ -1,5 +1,8 @@
 package edu.kit.fallob.mallobio.input;
 
+import edu.kit.fallob.dataobjects.JobConfiguration;
+import edu.kit.fallob.dataobjects.JobDescription;
+
 /**
  * 
  * @author Simon Wilhelm Schübel
@@ -15,7 +18,7 @@ public interface MallobInput {
 	 * @param jobConfiguration
 	 * @param jobDescription
 	 */
-	//void submitJobToMallob(Sting userName, JobConfiguration jobConfiguration, JobDescription jobDescription);
+	void submitJobToMallob(String userName, JobConfiguration jobConfiguration, JobDescription jobDescription);
 	
 	/**
 	 * Abort a running job from Mallob
