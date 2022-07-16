@@ -5,14 +5,15 @@ import java.util.List;
 import edu.kit.fallob.dataobjects.SystemState;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.mallobio.outputupdates.Warning;
+import edu.kit.fallob.springConfig.FallobException;
 
 public class MallobCommands {
 	
-	public SystemState getSystemState(String time) {
+	public SystemState getSystemState(String time) throws FallobException {
 		return null;
 	}
 	
-	public List<Event> getEvents(String lowerBound, String upperBound){
+	public List<Event> getEvents(String lowerBound, String upperBound) throws FallobException {
 		return null;
 	}
 	

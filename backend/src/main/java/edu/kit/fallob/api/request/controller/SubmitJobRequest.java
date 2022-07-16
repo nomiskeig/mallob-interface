@@ -11,7 +11,7 @@ public class SubmitJobRequest {
 
     public SubmitJobRequest(){};
     public SubmitJobRequest(List<String> jobDescription) {
-        this.jobDescription =jobDescription;
+        this.jobDescription = jobDescription;
     }
     public SubmitJobRequest(JobConfiguration jobConfig) {
         this.jobConfiguration = jobConfig;

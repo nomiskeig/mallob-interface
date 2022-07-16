@@ -25,7 +25,7 @@ public class AbortJobController {
 
     @RequestMapping()
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortMultipleJobs(username, request.getJobIds());
@@ -43,7 +43,7 @@ public class AbortJobController {
 
     @RequestMapping()
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortAllJobs(username);
@@ -83,7 +83,7 @@ public class AbortJobController {
     }
 
     private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         boolean successful;
         try {
             successful = jobAbortCommand.abortSingleJob(username, jobId);

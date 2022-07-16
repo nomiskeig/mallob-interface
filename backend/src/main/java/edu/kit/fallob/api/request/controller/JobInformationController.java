@@ -28,7 +28,7 @@ public class JobInformationController {
     private JobDescriptionCommands jobDescriptionCommand;
     @RequestMapping
     public ResponseEntity<Object> getSingleJobInformation(@RequestParam int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         JobInformation jobInformation;
         try {
             jobInformation = jobInformationCommand.getSingleJobInformation(username, jobId);
@@ -41,7 +41,7 @@ public class JobInformationController {
     }
     @RequestMapping
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobIds());
@@ -57,7 +57,7 @@ public class JobInformationController {
     }
     @RequestMapping
     public ResponseEntity<Object> getAllJobInformation(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getAllJobInformation(username);
@@ -73,7 +73,7 @@ public class JobInformationController {
     }
     @RequestMapping
     public ResponseEntity<Object> getAllGlobalJobInformation(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getAllGlobalJobInformation(username);

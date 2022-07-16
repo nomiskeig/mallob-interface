@@ -27,7 +27,7 @@ public class JobSubmitController {
 
     @RequestMapping()
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("authorities");
+        String username = (String) httpRequest.getAttribute("username");
         int jobId;
         URL url;
         File file;
@@ -47,22 +47,73 @@ public class JobSubmitController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        return ResponseEntity.ok(jobId);
+        return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
     @RequestMapping()
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
-        return null;
+        String username = (String) httpRequest.getAttribute("username");
+        int jobNewId;
+        try {
+            jobNewId = jobSubmitCommand.submitJobWithDescriptionID(username, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration());
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
     }
     @RequestMapping()
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
-        return null;
+        String username = (String) httpRequest.getAttribute("username");
+
+        int jobNewId;
+        try {
+            jobNewId = jobSubmitCommand.submitJobWithDescription(username, request.getJobDescription(), request.getJobConfiguration());
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
     }
     @RequestMapping()
-    public ResponseEntity<Object> restartJob(@RequestParam int JobId, HttpServletRequest httpRequest) {
-        return null;
+    public ResponseEntity<Object> restartJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+        int jobNewId;
+        try {
+            jobNewId = jobSubmitCommand.restartCanceledJob(username, jobId);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
+
     }
     @RequestMapping()
     public ResponseEntity<Object> saveDescription(MultipartFile file, HttpServletRequest httpRequest) {
-        return null;
+        String username = (String) httpRequest.getAttribute("username");
+        if (file.isEmpty()) {
+            String message = "Job description can not be empty";
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, message);
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        int descriptionId;
+        File file1 = new File(file.getName());
+        try {
+            file.transferTo(file1);
+        } catch (IOException ioException) {
+        FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
+        return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file1), SubmitType.EXCLUSIVE);
+        try {
+            descriptionId = jobSubmitCommand.saveJobDescription(username, jobDescription);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        return ResponseEntity.ok(new SubmitDescriptionResponse(descriptionId));
     }
 }
