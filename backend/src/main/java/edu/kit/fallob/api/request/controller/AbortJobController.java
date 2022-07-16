@@ -1,11 +1,16 @@
 package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.JobAbortCommands;
+import edu.kit.fallob.springConfig.FallobException;
+import edu.kit.fallob.springConfig.FallobWarning;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -15,22 +20,82 @@ public class AbortJobController {
 
     @RequestMapping()
     public ResponseEntity<Object> abortSingleJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
-        return null;
+        return abortJob(jobId, httpRequest);
     }
+
     @RequestMapping()
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
-        return null;
+        String username = (String) httpRequest.getAttribute("authorities");
+        List<Integer> successfullyAborted;
+        try {
+            successfullyAborted = jobAbortCommand.abortMultipleJobs(username, request.getJobIds());
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        if (!successfullyAborted.isEmpty()) {
+            return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+        }
     }
+
     @RequestMapping()
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
-        return null;
+        String username = (String) httpRequest.getAttribute("authorities");
+        List<Integer> successfullyAborted;
+        try {
+            successfullyAborted = jobAbortCommand.abortAllJobs(username);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        if (!successfullyAborted.isEmpty()) {
+            return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+        }
     }
+
     @RequestMapping()
     public ResponseEntity<Object> abortAllGlobalJobs(HttpServletRequest httpRequest) {
-        return null;
+        String username = (String) httpRequest.getAttribute("username");
+        List<Integer> successfullyAborted;
+        try {
+            successfullyAborted = jobAbortCommand.abortAlGlobalJob(username);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        if (!successfullyAborted.isEmpty()) {
+            return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+        }
     }
+
     @RequestMapping()
     public ResponseEntity<Object> abortIncrementalJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
-        return null;
+        return abortJob(jobId, httpRequest);
+    }
+
+    private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("authorities");
+        boolean successful;
+        try {
+            successful = jobAbortCommand.abortSingleJob(username, jobId);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        if (successful) {
+            return ResponseEntity.ok(HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+        }
     }
 }

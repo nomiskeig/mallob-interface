@@ -1,5 +1,6 @@
 package edu.kit.fallob.commands;
 
+import edu.kit.fallob.configuration.FallobConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +17,10 @@ import java.util.List;
 
 @Service @RequiredArgsConstructor @Slf4j
 public class FallobCommands implements UserDetailsService {
+
+    public boolean register(String email, String username, String password) {
+        return false;
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -29,6 +34,10 @@ public class FallobCommands implements UserDetailsService {
 //
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
+        return null;
+    }
+
+    public FallobConfiguration getFallobConfiguration() {
         return null;
     }
 }

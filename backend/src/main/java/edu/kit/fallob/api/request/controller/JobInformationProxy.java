@@ -3,6 +3,7 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobInformation;
+import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.dataobjects.ResultMetaData;
 
 public class JobInformationProxy {
@@ -14,24 +15,24 @@ public class JobInformationProxy {
     }
 
     public JobConfiguration getJobConfig() {
-        return null;
+        return jobInformation.getJobConfiguration();
     }
     public int getJobId() {
-        return 0;
+        return jobInformation.getJobID();
     }
     public String getUserEmail() {
-        return null;
+        return jobInformation.getUser().getEmail();
     }
     public String getUserName() {
-        return null;
+        return jobInformation.getUser().getUsername();
     }
     public String getUserSubmitTime() {
-        return null;
+        return jobInformation.getSubmitTime();
     }
-    public String getUserJobStatus() {
-        return null;
+    public JobStatus getUserJobStatus() {
+        return jobInformation.getJobStatus();
     }
     public ResultMetaData getResultMetaData() {
-        return null;
+        return jobInformation.getResultMetaData();
     }
 }

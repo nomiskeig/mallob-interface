@@ -31,8 +31,8 @@ public class FallobConfiguration {
 	private String databaseBasePath;
 	private String mallobBasePath;
 	private String resultBasePath;
-	
-	
+
+	private String startTime;
 	
 	private FallobConfiguration() {
 		
@@ -179,8 +179,15 @@ public class FallobConfiguration {
 	void setResultBasePath(String resultBasePath) {
 		this.resultBasePath = resultBasePath;
 	}
-	
-	
-	
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+
 
 }

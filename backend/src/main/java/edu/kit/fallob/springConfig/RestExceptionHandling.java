@@ -35,7 +35,7 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         }
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message.toString());
-        return handleExceptionInternal(ex, apiError, headers, HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         String message = ex.getLocalizedMessage();
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message + "\n" + error);
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
@@ -58,7 +58,7 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         }
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message.toString());
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
@@ -66,7 +66,7 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         String message = ex.getLocalizedMessage();
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message + "\n" + error);
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         String message = ex.getLocalizedMessage();
 
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, message + "\n" + error);
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         Objects.requireNonNull(ex.getSupportedHttpMethods()).forEach(t -> message.append(t).append(" "));
 
         ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED, message.toString());
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
     @Override
@@ -97,12 +97,12 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         ex.getSupportedMediaTypes().forEach(t -> message.append(t).append(", "));
 
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, message.substring(0, message.length() - 2));
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
-        return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 }
