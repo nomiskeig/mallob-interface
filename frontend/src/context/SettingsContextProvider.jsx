@@ -24,6 +24,7 @@ export function SettingsContextProvider({ children }) {
         
 	}, []);
 
+
 	return (
 		<SettingsContext.Provider value={{settings}}>
 			{children}
