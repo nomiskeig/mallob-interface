@@ -8,7 +8,7 @@ export function SettingsContextProvider({ children }) {
 	useEffect(() => {
 		async function fetchSettings() {
 			await axios
-				.get(process.env.API_BASE_PATH + '/api/v1/system/config')
+				.get(process.env.REACT_APP_API_BASE_PATH + '/api/v1/system/config')
 				.then((res) => (
 					setSettings(res.data))
 				)
@@ -20,8 +20,6 @@ export function SettingsContextProvider({ children }) {
         else {
             fetchSettings();
         } 
-		
-        
 	}, []);
 
 
