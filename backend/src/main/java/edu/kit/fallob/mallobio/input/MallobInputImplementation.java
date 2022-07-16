@@ -1,6 +1,8 @@
 package edu.kit.fallob.mallobio.input;
 
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.json.JSONObject;
 
@@ -11,15 +13,8 @@ import edu.kit.fallob.dataobjects.MallobAttributeNames;
 public class MallobInputImplementation implements MallobInput {
 	
 	
-
-
-
-
-
 	private String pathToMallobDirectory;
 	
-	private String pathToMallobSubmitDirectory;
-	private String pathToMallobAbortDirectory;
 
 	
 	private int[] clientProcessIDs;
@@ -47,26 +42,57 @@ public class MallobInputImplementation implements MallobInput {
 	private String generatePathToMallobSubmitDirectory(int clientProcessID) {
 		return pathToMallobDirectory += ".api/jobs." + clientProcessID + "/in/";
 	}
-
-	@Override
-	public boolean abortJob(int runningJobID) {
-		return false;
+	
+	/**
+	 * Generates the path to a certain client process' in-directory
+	 * @param clientProcessID
+	 * @return
+	 */
+	private String generatePathToMallobAbortDirectory(int clientProcessID) {
+		return pathToMallobDirectory += ".api/jobs." + clientProcessID + "/in/";
 	}
 
 	@Override
+	public void abortJob(int runningJobID) throws IOException {
+		
+		this.writeJsonInDirectory(createAbortJSON(runningJobID),
+				this.generatePathToMallobAbortDirectory(clientProcessIDs[lastUsedClientProcessAbort]));
+		updateAbortCounter();
+	}
+
+	
+	@Override
 	public void submitJobToMallob(String userName, 
+			JobConfiguration jobConfiguration, 
+			JobDescription jobDescription) throws IOException 
+	{
+		this.writeJsonInDirectory(createSubmitJSON(userName, jobConfiguration, jobDescription), 
+				generatePathToMallobSubmitDirectory(clientProcessIDs[lastUsedClientProcesSubmit]));
+		updateSubmitCounter();
+	}
+	
+	private void writeJsonInDirectory(JSONObject json, String path) throws IOException {
+		File jsonFile = new File(path);
+		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
+		writer.write(json.toString());
+		writer.close();
+	}
+	
+
+
+
+	private JSONObject createSubmitJSON(String userName, 
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) 
 	{
-		// TODO Auto-generated method stub
-		
-		//Create JSON
 		JSONObject jobJSON = new JSONObject();
 		jobJSON.put(MallobAttributeNames.MALLOB_USER, userName);
 		jobJSON.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
 		
 		//add description-paths
 		//jobJSON.put("files", )
+		
+		addJobDescription(jobJSON, jobDescription);
 		
 		//add additional parameters
 		if (jobConfiguration.getWallClockLimit() != JobConfiguration.NOT_SET) {
@@ -82,9 +108,36 @@ public class MallobInputImplementation implements MallobInput {
 		}
 		
 		if (jobConfiguration.getMaxDemand() != JobConfiguration.NOT_SET) {
-			
+			jobJSON.put(MallobAttributeNames.MALLOB_MAX_DEMAND, jobConfiguration.getMaxDemand());
 		}
 		
+		return jobJSON;
+	}
+
+
+	private void addJobDescription(JSONObject jobJSON, JobDescription jobDescription) {
+		
+	}
+	
+	
+	private JSONObject createAbortJSON(int runningJobID) {
+		return null;
+	}
+	
+	
+	
+	private void updateSubmitCounter() {
+		lastUsedClientProcesSubmit++;
+		if (lastUsedClientProcesSubmit >= clientProcessIDs.length) {
+			lastUsedClientProcesSubmit = 0;
+		}
+	}
+	
+	private void updateAbortCounter() {
+		lastUsedClientProcessAbort++;
+		if (lastUsedClientProcessAbort >= clientProcessIDs.length) {
+			lastUsedClientProcessAbort = 0;
+		}
 	}
 
 }

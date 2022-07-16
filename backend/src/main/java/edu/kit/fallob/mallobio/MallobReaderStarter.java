@@ -88,12 +88,7 @@ public class MallobReaderStarter {
 				amountWatcherThreads,
 				watchingIntervalPerWatcherThread);
 		//after this mallobio can be started 
-	
-
-				
-		
-		
-		
+			
 	}
 	
 	private void initializeWatchers(String mallobBaseDirectory, 

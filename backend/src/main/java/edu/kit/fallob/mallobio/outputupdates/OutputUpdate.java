@@ -7,6 +7,11 @@ package edu.kit.fallob.mallobio.outputupdates;
  *
  */
 public class OutputUpdate {
+	
+	public static final String TIME_REGEX = "";
+	public static final String RANK_REGEX = "";
+	
+	public static final String REGEX_SEPARATOR = " ";
 
 	protected String logLine;
 	

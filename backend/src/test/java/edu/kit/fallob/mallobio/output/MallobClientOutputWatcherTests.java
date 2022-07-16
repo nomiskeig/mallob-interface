@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class MallobClientOutputWatcherTests {
 	
 	/**
-	 * Path to a testing directory being created
+	 * Path to a testing directory being created	//Paths.get("").toAbsolutePath().toString();
 	 */
 	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\testDirectory";
 	public static final String TEST_FILE_NAME = "result";
