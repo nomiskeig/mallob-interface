@@ -1,5 +1,4 @@
-import React, { useState, createContext, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, createContext } from 'react';
 
 const jwt = require('jsonwebtoken');
 export const NO_TOKEN_AVAILABLE = 'noTokenAvailable';
@@ -8,30 +7,37 @@ export const UserContext = createContext(
 	'user context is not correctly connected'
 );
 export function UserContextProvider({ children }) {
+    let token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
+    const payload = extractPayload(token);
+    
+
+
 	const [user, setUser] = useState({
-		token: 'noTokenAvailable',
-		role: '',
-		username: '',
+        token: token ? token : NO_TOKEN_AVAILABLE,
+		role: token ? payload.role : '',
+		username: token ? payload.username : '',
+		isLoaded: token ? true : false,
 	});
 
-	useEffect(() => {
-		function tryToLoginUser() {
-			let token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
-			if (token && user.token === NO_TOKEN_AVAILABLE) {
-				login(token);
-			}
-		}
-		tryToLoginUser();
-	}, []);
 	async function logout() {
 		localStorage.removeItem(LOCAL_STORAGE_TOKEN);
-		setUser({ token: NO_TOKEN_AVAILABLE, role: '', username: '' });
+		setUser({
+			token: NO_TOKEN_AVAILABLE,
+			role: '',
+			username: '',
+			isLoaded: false,
+		});
 	}
 
 	function login(token) {
 		localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
 		let payload = extractPayload(token);
-		setUser({ token: token, role: payload.role, username: payload.username });
+		setUser({
+			token: token,
+			role: payload.role,
+			username: payload.username,
+			isLoaded: true,
+		});
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);
