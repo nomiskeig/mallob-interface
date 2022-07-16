@@ -1,8 +1,12 @@
 package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.FallobCommands;
+import edu.kit.fallob.springConfig.FallobException;
+import edu.kit.fallob.springConfig.FallobWarning;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,8 +30,21 @@ public class UserController {
 
     @RequestMapping
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {
-        return null;
+        boolean successful;
+        try {
+            successful = fallobCommand.register(request.getEmail(), request.getUsername(), request.getPassword());
+        } catch (NullPointerException exception) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        if (!successful) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
+    @RequestMapping
     public ResponseEntity<?> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) throws Exception {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());

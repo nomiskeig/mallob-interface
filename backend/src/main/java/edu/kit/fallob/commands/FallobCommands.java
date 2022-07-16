@@ -1,6 +1,7 @@
 package edu.kit.fallob.commands;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.springConfig.FallobException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +19,7 @@ import java.util.List;
 @Service @RequiredArgsConstructor @Slf4j
 public class FallobCommands implements UserDetailsService {
 
-    public boolean register(String email, String username, String password) {
+    public boolean register(String email, String username, String password) throws FallobException {
         return false;
     }
     @Override

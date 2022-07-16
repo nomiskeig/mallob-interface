@@ -22,7 +22,7 @@ public class WarningController {
     private MallobCommands warningCommand;
 
     @RequestMapping
-    public ResponseEntity<Object> getMallobWarnings(HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> getMallobWarnings() {
         List<Warning> warnings = warningCommand.getWarnings();
         return ResponseEntity.ok(new WarningResponse(warnings));
     }
