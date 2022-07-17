@@ -5,7 +5,6 @@ import java.util.List;
 
 /**
  * 
- *
  * @author Simon Wilhelm Schübel
  * @version 1.0
  *

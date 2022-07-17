@@ -32,6 +32,16 @@ public class MallobReaderStarterTests {
 	public void testInitializationMallobOutput() {
 		assertTrue(starter.getMallobOutput() != null);
 	}
+	
+	@Test
+	public void threadCreationAndStoppage() throws InterruptedException {
+		int amountThreadsBeforeCreation = Thread.activeCount();
+		starter.startMallobio();
+		assertTrue(Thread.activeCount() == amountThreadsBeforeCreation + TEST_AMOUNT_READERTHREADS + TEST_AMOUNT_WATCHERTHREADS);
+		
+		starter.stopMallobio();
+		assertTrue(Thread.activeCount() == amountThreadsBeforeCreation);
+	}
 
 	@BeforeEach
 	public void setupBeforeEach() {
@@ -44,6 +54,4 @@ public class MallobReaderStarterTests {
 				TEST_AMOUNT_READERTHREADS, 
 				TEST_READINGINTERVAL);
 	}
-
-	
 }

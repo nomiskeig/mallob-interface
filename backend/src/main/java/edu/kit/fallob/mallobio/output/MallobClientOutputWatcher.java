@@ -90,7 +90,7 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 		}
 	}
 	
-	
+
 	private void pushResultObject(ResultAvailableObject rao) {
 		this.distributor.distributeResultObject(rao);
 	}

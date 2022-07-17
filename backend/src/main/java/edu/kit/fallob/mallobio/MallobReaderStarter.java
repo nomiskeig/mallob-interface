@@ -213,7 +213,8 @@ public class MallobReaderStarter {
 			t.start();
 		}
 	}
-	
+
+
 	/**
 	 * Stops all created Threads (joins them) After that no output of mallob is being read.
 	 * 

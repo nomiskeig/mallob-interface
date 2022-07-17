@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.context.SpringBootTest;
 
 public class MallobOutputReaderTests {
 	
@@ -58,6 +57,8 @@ public class MallobOutputReaderTests {
 			assertTrue(lineProcessor.lines.get(i).equals(getFileLine(i)));
 		}
 	}
+	
+
 	
 	@BeforeAll
 	public static void setupFile() throws IOException {
