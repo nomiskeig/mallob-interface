@@ -42,7 +42,7 @@ public class JobSubmitController {
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.URL);
         try {
-            jobId = jobSubmitCommand.submitJobWithDescription(username, jobDescription, request.getJobConfiguration());
+            jobId = jobSubmitCommand.submitJobWithDescriptionFile(username, jobDescription, request.getJobConfiguration());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -65,10 +65,10 @@ public class JobSubmitController {
     @RequestMapping()
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
-
         int jobNewId;
+
         try {
-            jobNewId = jobSubmitCommand.submitJobWithDescription(username, request.getJobDescription(), request.getJobConfiguration());
+            jobNewId = jobSubmitCommand.submitJobWithDescriptionString(username, request.getJobDescription(), request.getJobConfiguration());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());

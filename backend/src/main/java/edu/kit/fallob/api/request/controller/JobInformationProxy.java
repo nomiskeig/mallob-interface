@@ -8,7 +8,7 @@ import edu.kit.fallob.dataobjects.ResultMetaData;
 
 public class JobInformationProxy {
 
-    private JobInformation jobInformation;
+    private final JobInformation jobInformation;
 
     public JobInformationProxy(JobInformation jobInformation) {
         this.jobInformation = jobInformation;

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class JobDescriptionResponse {
 
-    private List<String> jobDescription;
+    private final List<String> jobDescription;
 
     public JobDescriptionResponse(List<String> jobDescription) {
         this.jobDescription = jobDescription;

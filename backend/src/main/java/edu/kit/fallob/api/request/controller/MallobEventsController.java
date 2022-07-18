@@ -1,7 +1,6 @@
 package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.MallobCommands;
-import edu.kit.fallob.dataobjects.JobInformation;
 import edu.kit.fallob.dataobjects.SystemState;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.springConfig.FallobException;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class AbortJobResponse {
 
-    private List<Integer> jobIds;
+    private final List<Integer> jobIds;
 
     public List<Integer> getJobIds() {
         return jobIds;

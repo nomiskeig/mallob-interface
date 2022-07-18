@@ -2,14 +2,16 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.JobDescriptionCommands;
 import edu.kit.fallob.commands.JobInformationCommands;
+import edu.kit.fallob.commands.JobPendingCommmand;
 import edu.kit.fallob.commands.JobResultCommand;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.JobInformation;
+import edu.kit.fallob.dataobjects.JobResult;
+import edu.kit.fallob.dataobjects.ResultMetaData;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -35,6 +37,9 @@ public class JobInformationController {
     private JobResultCommand jobResultCommand;
     @Autowired
     private JobDescriptionCommands jobDescriptionCommand;
+    @Autowired
+    private JobPendingCommmand jobPendingCommmand;
+
     @RequestMapping
     public ResponseEntity<Object> getSingleJobInformation(@RequestParam int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
@@ -97,8 +102,22 @@ public class JobInformationController {
         return ResponseEntity.ok(new JobInformationResponse(proxies));
     }
     @RequestMapping
-    public ResponseEntity<Object> getSingleJobDescription(@RequestParam int jobId, HttpServletRequest httpRequest) {
-        return null;
+    public ResponseEntity<Object> getSingleJobDescription(@RequestParam int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
+        String username = (String) httpRequest.getAttribute("username");
+        Object jobDescriptions;
+        try {
+            jobDescriptions = jobDescriptionCommand.getSingleJobDescription(username, jobId);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        if (jobDescriptions instanceof JobDescription description) {
+            return getDescriptionsZip(response, Collections.singletonList(description));
+        }
+        else {
+            return ResponseEntity.ok(new JobDescriptionResponse((List<String>) jobDescriptions));
+        }
     }
     @RequestMapping
     public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
@@ -110,7 +129,7 @@ public class JobInformationController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        return getResponseEntityWithZipFile(response, jobDescriptions);
+        return getDescriptionsZip(response, jobDescriptions);
     }
     @RequestMapping
     public ResponseEntity<Object> getAllJobDescriptions(HttpServletRequest httpRequest, HttpServletResponse response) {
@@ -122,10 +141,60 @@ public class JobInformationController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        return getResponseEntityWithZipFile(response, jobDescriptions);
+        return getDescriptionsZip(response, jobDescriptions);
     }
 
-    private ResponseEntity<Object> getResponseEntityWithZipFile(HttpServletResponse response, List<JobDescription> jobDescriptions) {
+    @RequestMapping
+    public ResponseEntity<Object> getSingleJobResult(@RequestParam int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
+        String username = (String) httpRequest.getAttribute("username");
+        JobResult jobResult;
+        try {
+            jobResult = jobResultCommand.getSingleJobResult(username, jobId);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        return getResultsZip(response, Collections.singletonList(jobResult));
+    }
+
+    @RequestMapping
+    public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
+        String username = (String) httpRequest.getAttribute("username");
+        List<JobResult> jobResults;
+        try {
+            jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobIds());
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        return getResultsZip(response, jobResults);
+    }
+    @RequestMapping
+    public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest, HttpServletResponse response) {
+        String username = (String) httpRequest.getAttribute("username");
+        List<JobResult> jobResults;
+        try {
+            jobResults = jobResultCommand.getAllJobResult(username);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        return getResultsZip(response, jobResults);
+    }
+    @RequestMapping
+    public ResponseEntity<Object> waitForJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute("username");
+        ResultMetaData jobResult;
+        try {
+            jobResult = jobPendingCommmand.waitForJob(username, jobId);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        return ResponseEntity.ok(new JobPendingResponse(jobResult));
+    }
+
+    private ResponseEntity<Object> getDescriptionsZip(HttpServletResponse response, List<JobDescription> jobDescriptions) {
         int BUFFER_SIZE = 1024;
 
         StreamingResponseBody streamResponseBody = out -> {
@@ -145,7 +214,6 @@ public class JobInformationController {
                         while ((length = inputStream.read(bytes)) >= 0) {
                             zipOutputStream.write(bytes, 0, length);
                         }
-
                     }
                 }
                 // set zip size in response
@@ -160,9 +228,7 @@ public class JobInformationController {
                     zipOutputStream.close();
                 }
             }
-
         };
-
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=example.zip");
         response.addHeader("Pragma", "no-cache");
@@ -171,20 +237,45 @@ public class JobInformationController {
         return ResponseEntity.ok(streamResponseBody);
     }
 
-    @RequestMapping
-    public ResponseEntity<Object> getSingleJobResult(@RequestParam int jobId, HttpServletRequest httpRequest) {
-        return null;
-    }
-    @RequestMapping
-    public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
-        return null;
-    }
-    @RequestMapping
-    public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest) {
-        return null;
-    }
-    @RequestMapping
-    public ResponseEntity<Object> waitForJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
-        return null;
+    private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) {
+        int BUFFER_SIZE = 1024;
+
+        StreamingResponseBody streamResponseBody = out -> {
+            final ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
+            ZipEntry zipEntry = null;
+            InputStream inputStream = null;
+            try {
+                    for (JobResult result : jobResults) {
+                        zipEntry = new ZipEntry(result.getResult().getName());
+
+                        inputStream = new FileInputStream(result.getResult());
+
+                        zipOutputStream.putNextEntry(zipEntry);
+                        byte[] bytes = new byte[BUFFER_SIZE];
+                        int length;
+                        while ((length = inputStream.read(bytes)) >= 0) {
+                            zipOutputStream.write(bytes, 0, length);
+                        }
+                    }
+                // set zip size in response
+                response.setContentLength((int) (zipEntry != null ? zipEntry.getSize() : 0));
+            } catch (IOException e) {
+//                logger.error("Exception while reading and streaming data {} ", e);
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (zipOutputStream != null) {
+                    zipOutputStream.close();
+                }
+            }
+        };
+
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=example.zip");
+        response.addHeader("Pragma", "no-cache");
+        response.addHeader("Expires", "0");
+
+        return ResponseEntity.ok(streamResponseBody);
     }
 }

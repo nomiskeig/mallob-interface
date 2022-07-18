@@ -5,10 +5,16 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.springConfig.FallobException;
 
+import java.util.List;
+
 public class JobSubmitCommands {
 	
 	
-	public int submitJobWithDescription(String username, JobDescription jobdescription, JobConfiguration jobConfiguration) throws FallobException {
+	public int submitJobWithDescriptionFile(String username, JobDescription jobdescription, JobConfiguration jobConfiguration) throws FallobException {
+		return 0;
+	}
+
+	public int submitJobWithDescriptionString(String username, List<String> jobdescription, JobConfiguration jobConfiguration) throws FallobException {
 		return 0;
 	}
 	

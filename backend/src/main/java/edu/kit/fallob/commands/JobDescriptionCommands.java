@@ -8,7 +8,7 @@ import java.util.List;
 public class JobDescriptionCommands {
 	
 	
-	public JobDescription getSingleJobDescription(String username, int jobID) throws FallobException {
+	public Object getSingleJobDescription(String username, int jobID) throws FallobException {
 		return null;
 	}
 	
