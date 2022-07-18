@@ -1,6 +1,8 @@
 package edu.kit.fallob.database;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class that is responsible for storing and retrieving files on the local filesystem
@@ -31,7 +33,33 @@ public final class FileHandler {
         if (file.exists()) {
             return file;
         } else {
-            return null;
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * returns all files in the given directory whose names contain the given name string
+     * @param directoryPath the directory where the files are saved
+     * @param name the string that all filenames have to contain
+     * @return a list of all files that contain name as a substring of the filename
+     */
+    public List<File> getFilesIfNameContains(String directoryPath, String name) {
+        File directory = new File(directoryPath);
+
+        if (directory.isDirectory()) {
+            List<File> files = new ArrayList<>();
+            File[] allFiles = directory.listFiles();
+
+            for (File file : allFiles) {
+                String fileName = file.getName();
+
+                if (fileName.contains(name)) {
+                    files.add(file);
+                }
+            }
+            return files;
+        } else {
+            throw new RuntimeException();
         }
     }
 
@@ -48,7 +76,7 @@ public final class FileHandler {
     /**
      * returns the combined size of all files in the given directory
      * @param path the path that points to the directory
-     * @return the size of the files in megabytes or -1 if the path couldn't be found
+     * @return the size of the files in megabytes
      */
     public static long getSizeOfDirectory(String path) {
         File directory = new File(path);
@@ -65,7 +93,7 @@ public final class FileHandler {
 
             return (long) (size / BIT_TO_MB_RATIO);
         } else {
-            return -1;
+            throw new RuntimeException();
         }
 
     }
