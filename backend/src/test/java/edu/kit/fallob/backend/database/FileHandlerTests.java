@@ -15,8 +15,8 @@ import java.nio.file.StandardCopyOption;
 
 public class FileHandlerTests {
 
-    private static final String INITIAL_FILE_PATH = "src\\test\\resources\\database\\";
-    private static final String SAVE_FILE_PATH = "src\\test\\resources\\";
+    private static final String INITIAL_FILE_PATH = "./src/test/resources/database/";
+    private static final String SAVE_FILE_PATH = "./src/test/resources/";
 
     private static final String FILE_NAME = "test.txt";
     private static final String FILE_COPY_NAME = "testCopy.txt";
@@ -68,7 +68,7 @@ public class FileHandlerTests {
 
         Assertions.assertFalse(file.isFile());
     }
-    
+
 
     @AfterEach
     public void removeFile() throws IOException {
