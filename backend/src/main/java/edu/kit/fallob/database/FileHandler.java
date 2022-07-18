@@ -43,7 +43,7 @@ public final class FileHandler {
      * @param name the string that all filenames have to contain
      * @return a list of all files that contain name as a substring of the filename
      */
-    public List<File> getFilesIfNameContains(String directoryPath, String name) {
+    public static List<File> getFilesIfNameContains(String directoryPath, String name) {
         File directory = new File(directoryPath);
 
         if (directory.isDirectory()) {
