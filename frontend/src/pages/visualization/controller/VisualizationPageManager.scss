@@ -1,0 +1,23 @@
+.container-fluid {
+	height: 100vh;
+}
+.row {
+	height: 100%;
+}
+
+.visualizationHalf {
+	background-color: #555564;
+    height: 100%
+}
+
+.binaryTreeHalf {
+	background-color: green;
+}
+
+.visCanvasContainer {
+	height: 100%;
+    overflow: scroll;
+}
+.visualizationCanvas {
+	height: 2200px;
+}
