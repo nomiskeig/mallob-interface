@@ -4,20 +4,18 @@ import edu.kit.fallob.commands.MallobCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1/system/mallob")
 public class MallobStartStopController {
 
     @Autowired
     private MallobCommands mallobCommands;
 
-    @RequestMapping
+    @PostMapping("/start")
     public ResponseEntity<Object> startMallob(@RequestParam String params) {
         boolean successful = mallobCommands.startMallob(params);
         if (!successful) {
@@ -25,7 +23,7 @@ public class MallobStartStopController {
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
-    @RequestMapping
+    @PostMapping("/stop")
     public ResponseEntity<Object> stopMallob(){
         boolean successful = mallobCommands.stopMallob();
         if (!successful) {
@@ -33,7 +31,7 @@ public class MallobStartStopController {
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
-    @RequestMapping
+    @PostMapping("/restart")
     public ResponseEntity<Object> restartMallob(@RequestParam String params){
         boolean successful = mallobCommands.startMallob(params);
         if (!successful) {

@@ -5,6 +5,7 @@ import edu.kit.fallob.mallobio.outputupdates.Warning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,7 @@ public class WarningController {
     @Autowired
     private MallobCommands warningCommand;
 
-    @RequestMapping
+    @GetMapping("/api/v1/system/mallobInfo")
     public ResponseEntity<Object> getMallobWarnings() {
         List<Warning> warnings = warningCommand.getWarnings();
         return ResponseEntity.ok(new WarningResponse(warnings));

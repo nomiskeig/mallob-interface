@@ -30,6 +30,7 @@ import java.util.zip.ZipOutputStream;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1/jobs")
 public class JobInformationController {
     @Autowired
     private JobInformationCommands jobInformationCommand;
@@ -40,8 +41,8 @@ public class JobInformationController {
     @Autowired
     private JobPendingCommmand jobPendingCommmand;
 
-    @RequestMapping
-    public ResponseEntity<Object> getSingleJobInformation(@RequestParam int jobId, HttpServletRequest httpRequest) {
+    @GetMapping("/info/single/{jobId}")
+    public ResponseEntity<Object> getSingleJobInformation(@PathVariable int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         JobInformation jobInformation;
         try {
@@ -53,7 +54,7 @@ public class JobInformationController {
         JobInformationProxy proxy = new JobInformationProxy(jobInformation);
         return ResponseEntity.ok(new JobInformationResponse(Collections.singletonList(proxy)));
     }
-    @RequestMapping
+    @GetMapping("/info")
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobInformation> jobInformations;
@@ -69,7 +70,7 @@ public class JobInformationController {
         }
         return ResponseEntity.ok(new JobInformationResponse(proxies));
     }
-    @RequestMapping
+    @GetMapping("/info/all")
     public ResponseEntity<Object> getAllJobInformation(HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobInformation> jobInformations;
@@ -85,7 +86,7 @@ public class JobInformationController {
         }
         return ResponseEntity.ok(new JobInformationResponse(proxies));
     }
-    @RequestMapping
+    @GetMapping("/info/global")
     public ResponseEntity<Object> getAllGlobalJobInformation(HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobInformation> jobInformations;
@@ -101,8 +102,8 @@ public class JobInformationController {
         }
         return ResponseEntity.ok(new JobInformationResponse(proxies));
     }
-    @RequestMapping
-    public ResponseEntity<Object> getSingleJobDescription(@RequestParam int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping("/description/single/{jobId}")
+    public ResponseEntity<Object> getSingleJobDescription(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
         Object jobDescriptions;
         try {
@@ -119,7 +120,7 @@ public class JobInformationController {
             return ResponseEntity.ok(new JobDescriptionResponse((List<String>) jobDescriptions));
         }
     }
-    @RequestMapping
+    @GetMapping("/description")
     public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobDescription> jobDescriptions;
@@ -131,7 +132,7 @@ public class JobInformationController {
         }
         return getDescriptionsZip(response, jobDescriptions);
     }
-    @RequestMapping
+    @GetMapping("/description/all")
     public ResponseEntity<Object> getAllJobDescriptions(HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobDescription> jobDescriptions;
@@ -144,8 +145,8 @@ public class JobInformationController {
         return getDescriptionsZip(response, jobDescriptions);
     }
 
-    @RequestMapping
-    public ResponseEntity<Object> getSingleJobResult(@RequestParam int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping("/solution/single/{jobId}")
+    public ResponseEntity<Object> getSingleJobResult(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
         JobResult jobResult;
         try {
@@ -157,7 +158,7 @@ public class JobInformationController {
         return getResultsZip(response, Collections.singletonList(jobResult));
     }
 
-    @RequestMapping
+    @GetMapping("/solution")
     public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobResult> jobResults;
@@ -169,7 +170,7 @@ public class JobInformationController {
         }
         return getResultsZip(response, jobResults);
     }
-    @RequestMapping
+    @GetMapping("/solution/all")
     public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
         List<JobResult> jobResults;
@@ -181,8 +182,8 @@ public class JobInformationController {
         }
         return getResultsZip(response, jobResults);
     }
-    @RequestMapping
-    public ResponseEntity<Object> waitForJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+    @GetMapping("/waitFor/{jobId}")
+    public ResponseEntity<Object> waitForJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         ResultMetaData jobResult;
         try {

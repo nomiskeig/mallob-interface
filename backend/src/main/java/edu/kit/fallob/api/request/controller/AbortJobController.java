@@ -14,16 +14,17 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1/jobs/cancel")
 public class AbortJobController {
     @Autowired
     private JobAbortCommands jobAbortCommand;
 
-    @RequestMapping()
-    public ResponseEntity<Object> abortSingleJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+    @PostMapping("/single/{jobId}")
+    public ResponseEntity<Object> abortSingleJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
     }
 
-    @RequestMapping()
+    @PostMapping("")
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
@@ -41,7 +42,7 @@ public class AbortJobController {
         }
     }
 
-    @RequestMapping()
+    @PostMapping("/all")
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
@@ -59,7 +60,7 @@ public class AbortJobController {
         }
     }
 
-    @RequestMapping()
+    @PostMapping("/global")
     public ResponseEntity<Object> abortAllGlobalJobs(HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
@@ -77,8 +78,8 @@ public class AbortJobController {
         }
     }
 
-    @RequestMapping()
-    public ResponseEntity<Object> abortIncrementalJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+    @PostMapping("incremental/{jobId}")
+    public ResponseEntity<Object> abortIncrementalJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
     }
 

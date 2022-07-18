@@ -15,11 +15,12 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1/events")
 public class MallobEventsController {
     @Autowired
     private MallobCommands mallobCommands;
 
-    @RequestMapping
+    @GetMapping("/events?startTime={startTime}&endTime={endTime}")
     public ResponseEntity<Object> getMallobUpdates(@RequestBody MallobEventsRequest request) {
         List<Event> events;
         try {
@@ -30,8 +31,8 @@ public class MallobEventsController {
         }
         return ResponseEntity.ok(new MallobEventsResponse(events));
     }
-    @RequestMapping
-    public ResponseEntity<Object> getSystemState(@RequestParam String time) {
+    @GetMapping("/state?time={time}")
+    public ResponseEntity<Object> getSystemState(@PathVariable String time) {
         SystemState state;
         try {
             state = mallobCommands.getSystemState(time);

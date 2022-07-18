@@ -5,6 +5,7 @@ import edu.kit.fallob.configuration.FallobConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +15,7 @@ public class FallobConfigurationController {
     @Autowired
     private FallobCommands fallobConfigCommand;
 
-    @RequestMapping
+    @GetMapping("/api/v1/system/config")
     public ResponseEntity<Object> getFallobConfiguration() {
             FallobConfiguration fallobConfig  = fallobConfigCommand.getFallobConfiguration();
             Defaults defaults = new Defaults(fallobConfig.getDefaultJobPriority(), fallobConfig.getDefaultWallClockLimit(), fallobConfig.getDefaultContentMode());

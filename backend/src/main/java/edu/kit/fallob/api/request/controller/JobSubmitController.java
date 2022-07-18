@@ -21,11 +21,12 @@ import java.util.Collections;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1/jobs/submit")
 public class JobSubmitController {
     @Autowired
     private JobSubmitCommands jobSubmitCommand;
 
-    @RequestMapping()
+    @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobId;
@@ -49,7 +50,7 @@ public class JobSubmitController {
         }
         return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
-    @RequestMapping()
+    @PostMapping("/exclusive/description")
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobNewId;
@@ -62,7 +63,7 @@ public class JobSubmitController {
 
         return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
     }
-    @RequestMapping()
+    @PostMapping("/inclusive")
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobNewId;
@@ -76,8 +77,8 @@ public class JobSubmitController {
 
         return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
     }
-    @RequestMapping()
-    public ResponseEntity<Object> restartJob(@RequestParam int jobId, HttpServletRequest httpRequest) {
+    @PostMapping("/restart/{jobId}")
+    public ResponseEntity<Object> restartJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobNewId;
         try {
@@ -90,7 +91,7 @@ public class JobSubmitController {
         return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
 
     }
-    @RequestMapping()
+    @PostMapping("/exclusive/description")
     public ResponseEntity<Object> saveDescription(MultipartFile file, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         if (file.isEmpty()) {

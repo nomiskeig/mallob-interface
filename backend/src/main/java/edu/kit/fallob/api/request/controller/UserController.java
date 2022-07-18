@@ -13,13 +13,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1/users")
 public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -28,7 +26,7 @@ public class UserController {
     @Autowired
     private FallobCommands fallobCommand;
 
-    @RequestMapping
+    @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {
         boolean successful;
         try {
@@ -44,7 +42,7 @@ public class UserController {
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
-    @RequestMapping
+    @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) throws Exception {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
