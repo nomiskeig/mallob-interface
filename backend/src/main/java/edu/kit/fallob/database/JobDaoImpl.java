@@ -28,6 +28,8 @@ public class JobDaoImpl implements JobDao{
     private final Connection conn;
     private final FallobConfiguration configuration;
 
+    private static final String SINGLE_FILE_REGEX = "%o\\..*";
+    private static final String DESCRIPTION_FILES_REGEX = "%o\\d+\\..*";
     private static final String FILE_EXTENSION_REGEX = "\\.";
     private static final String DIRECTORY_SEPARATOR = "/";
     private static final String FILE_SEPARATOR = ".";
@@ -170,8 +172,9 @@ public class JobDaoImpl implements JobDao{
                 deleteJob.executeUpdate();
 
                 //delete the result file from the filesystem
-                String resultPath = this.configuration.getResultBasePath() + DIRECTORY_SEPARATOR + jobId + JSON_EXTENSION;
-                FileHandler.deleteFileAtPath(resultPath);
+                String resultDirectoryPath = this.configuration.getResultBasePath();
+                String regex = String.format(SINGLE_FILE_REGEX, jobId);
+                FileHandler.deleteFilesByRegex(resultDirectoryPath, regex);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -203,7 +206,8 @@ public class JobDaoImpl implements JobDao{
     public JobDescription getJobDescription(int descriptionId) {
         //get the description files from the filesystem
         String filesPath = this.configuration.getDescriptionsbasePath();
-        List<File> descriptionFiles = FileHandler.getFilesIfNameContains(filesPath, String.valueOf(descriptionId));
+        String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId);
+        List<File> descriptionFiles = FileHandler.getFilesByRegex(filesPath, regex);
 
         //get the submit-type from the database
         try {
@@ -330,7 +334,8 @@ public class JobDaoImpl implements JobDao{
     @Override
     public JobResult getJobResult(int jobId) {
         String path = this.configuration.getResultBasePath();
-        List<File> resultFile = FileHandler.getFilesIfNameContains(path, String.valueOf(jobId));
+        String regex = String.format(SINGLE_FILE_REGEX, jobId);
+        List<File> resultFile = FileHandler.getFilesByRegex(path, regex);
 
         if (resultFile.size() == 1) {
             return new JobResult(resultFile.get(0));
