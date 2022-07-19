@@ -17,15 +17,16 @@ export class Visualization {
 		this.#canvas = canvas;
 		this.#processes = processes;
 		this.#jobStorage = jobStorage;
-		console.log(processes);
-		console.log(this.#processes);
 		let connectionGroup = this.#two.makeGroup();
 		let nodeGroup = this.#two.makeGroup();
+		let textGroup = this.#two.makeGroup();
 		for (let i = 0; i < processes; i++) {
 			let coords = this.#getCoords(i);
 			let newNode = this.#two.makeCircle(coords.getX(), coords.getY(), 6);
 			nodeGroup.add(newNode);
-			this.#nodes[i] = new VisualizationNode(newNode);
+			let newText = this.#two.makeText(i, coords.getX(), coords.getY() - 14);
+            textGroup.add(newText)
+			this.#nodes[i] = new VisualizationNode(newNode, newText);
 			this.#nodes[i].reset();
 			let newConnection = this.#two.makeLine(
 				coords.getX(),
@@ -44,18 +45,22 @@ export class Visualization {
 				this.onHoverLeave.bind(this)
 			);
 		}
+		// this is ugly but at least it works
+		let desiredHeight = this.#getCoords(this.#processes).getY() + 40 + 'px';
+		canvas.style.height = desiredHeight;
+		this.#two.height = desiredHeight;
+		this.#two.bind('update', () => update());
 		this.#two.play();
 	}
 
 	#getCoords(rank) {
-		let margin = 100;
-		let amountPerRow = 24;
-		let distance = (this.#canvas.clientWidth - margin) / amountPerRow;
-		let row = Math.floor(rank / amountPerRow) + 1;
-		let column = rank % amountPerRow;
-		let xpos = column * distance + margin / 2;
-		let ypos = row * distance;
-		return new CoordPair(xpos, ypos);
+		let margin = 30;
+		let distance = 40;
+		let perRow = Math.floor((this.#canvas.clientWidth - 2 * margin) / distance);
+		let restPerRow = this.#canvas.clientWidth - distance * (perRow - 1);
+		let xPos = restPerRow / 2 + distance * (rank % perRow);
+		let yPos = margin + distance * Math.floor(rank / perRow);
+		return new CoordPair(xPos, yPos);
 	}
 	onHoverEnter(jobID, treeIndex) {
 		// TODO: update connections
@@ -68,20 +73,29 @@ export class Visualization {
 		}
 		let job = this.#jobStorage.getJob(jobID);
 		let hoveredVertex = job.getVertex(treeIndex);
-		// TODO: only show connections of subtree on hover
+		console.log(
+			'hovered: treeIndex: ' + treeIndex + ' rank: ' + hoveredVertex.getRank()
+		);
 		job.getVertices().forEach((vertex) => {
 			let rank = vertex.getRank();
 			this.#nodes[rank].resetHover();
 			this.#nodes[rank].showTreeIndexForHover();
-
-			if (job.getParent(vertex.getTreeIndex())) {
-				this.#connections[rank].updateOpacityForHover(hoveredVertex.getDepth());
-				this.#connections[rank].setWidthBasedOnDepth();
-			}
 		});
+		// TODO: only show connections of subtree on hover
+		job
+			.getSubtree(treeIndex)
+			.getVertices()
+			.forEach((vertex) => {
+				let rank = vertex.getRank();
+				if (job.getParent(vertex.getTreeIndex())) {
+					this.#connections[rank].updateOpacityForHover(
+						hoveredVertex.getDepth()
+					);
+					this.#connections[rank].setWidthBasedOnDepth();
+				}
+			});
 	}
 	onHoverLeave() {
-		console.log(this.#processes);
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].resetHover();
 			this.#connections[i].resetHover();
@@ -135,7 +149,7 @@ export class Visualization {
 			if (rightChild) {
 				this.#connections[rightChild.getRank()].reset();
 			}
-            this.#connections[rank].reset();
+			this.#connections[rank].reset();
 		}
 	}
 
@@ -150,7 +164,7 @@ export class Visualization {
 				let parent = job.getParent(vertex.getTreeIndex());
 				if (parent) {
 					console.log(parent);
-					console.log('found a parent');
+					console.log('found a parent with index: ' + parent.getRank());
 					let parentCoords = this.#getCoords(parent.getRank());
 					console.log('parentcoords');
 					console.log(parentCoords);

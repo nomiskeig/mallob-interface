@@ -4,7 +4,7 @@ export class VisualizationNode {
 	#jobID;
 	#treeIndex;
     #defaultRadius = 6;
-	constructor(circle, text, onHover) {
+	constructor(circle, text) {
 		this.#circle = circle;
 		this.#text = text;
         this.#jobID = null;
@@ -19,6 +19,7 @@ export class VisualizationNode {
 		this.#jobID = null;
 		this.#treeIndex = null;
         this.#circle.radius = this.#defaultRadius;
+        this.#text.opacity = 0;
 	}
 
     registerHoverCallbacks(onHoverEnter, onHoverLeave) {
@@ -52,9 +53,11 @@ export class VisualizationNode {
 
     resetHover() {
         this.#circle.opacity = 1
+        this.#text.opacity = 0;
+
     }
 
     showTreeIndexForHover() {
-
+        this.#text.opacity = 1;
     }
 }
