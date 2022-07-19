@@ -12,19 +12,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 public class FileHandlerTests {
 
+    private static final String FILE_REGEX = "%s\\..*";
     private static final String INITIAL_FILE_PATH = "./src/test/resources/database/";
     private static final String SAVE_FILE_PATH = "./src/test/resources/";
 
-    private static final String FILE_NAME = "test.txt";
-    private static final String FILE_COPY_NAME = "testCopy.txt";
+    private static final String FILE_NAME = "test";
+    private static final String FILE_COPY_NAME = "testCopy";
+    private static final String FILE_EXTENSION = ".txt";
 
     @BeforeEach
     public void setup() throws IOException {
-        Path originalPath = Paths.get(INITIAL_FILE_PATH + FILE_NAME);
-        Path copyPath = Paths.get(INITIAL_FILE_PATH + FILE_COPY_NAME);
+        Path originalPath = Paths.get(INITIAL_FILE_PATH + FILE_NAME + FILE_EXTENSION);
+        Path copyPath = Paths.get(INITIAL_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
         Files.copy(originalPath, copyPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -33,12 +36,12 @@ public class FileHandlerTests {
      */
     @Test
     public void testSave() {
-        File initialFile = new File(INITIAL_FILE_PATH + FILE_COPY_NAME);
+        File initialFile = new File(INITIAL_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
         Assertions.assertTrue(initialFile.isFile());
 
-        FileHandler.saveFileAtPath(initialFile, SAVE_FILE_PATH + FILE_COPY_NAME);
+        FileHandler.saveFileAtPath(initialFile, SAVE_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
 
-        File newFile = new File(SAVE_FILE_PATH + FILE_COPY_NAME);
+        File newFile = new File(SAVE_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
         Assertions.assertTrue(newFile.isFile());
 
         Assertions.assertFalse(initialFile.isFile());
@@ -49,11 +52,14 @@ public class FileHandlerTests {
      */
     @Test
     public void testGetFile() {
-        File file = new File(INITIAL_FILE_PATH + FILE_COPY_NAME);
+        File file = new File(INITIAL_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
 
-        File testFile = FileHandler.getFileFromPath(INITIAL_FILE_PATH + FILE_COPY_NAME);
+        String regex = String.format(FILE_REGEX, FILE_COPY_NAME);
 
-        Assertions.assertEquals(file, testFile);
+        List<File> testFiles = FileHandler.getFilesByRegex(INITIAL_FILE_PATH, regex);
+
+        Assertions.assertEquals(testFiles.size(), 1);
+        Assertions.assertEquals(file, testFiles.get(0));
     }
 
     /**
@@ -61,10 +67,12 @@ public class FileHandlerTests {
      */
     @Test
     public void testRemove() {
-        File file = new File(INITIAL_FILE_PATH + FILE_COPY_NAME);
+        File file = new File(INITIAL_FILE_PATH + FILE_COPY_NAME +FILE_EXTENSION);
         Assertions.assertTrue(file.isFile());
 
-        FileHandler.deleteFileAtPath(INITIAL_FILE_PATH + FILE_COPY_NAME);
+        String regex = String.format(FILE_REGEX, FILE_COPY_NAME);
+
+        FileHandler.deleteFilesByRegex(INITIAL_FILE_PATH, regex);
 
         Assertions.assertFalse(file.isFile());
     }
@@ -72,7 +80,7 @@ public class FileHandlerTests {
 
     @AfterEach
     public void removeFile() throws IOException {
-       Files.deleteIfExists(Paths.get(INITIAL_FILE_PATH + FILE_COPY_NAME));
-       Files.deleteIfExists(Paths.get(SAVE_FILE_PATH + FILE_COPY_NAME));
+       Files.deleteIfExists(Paths.get(INITIAL_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION));
+       Files.deleteIfExists(Paths.get(SAVE_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION));
     }
 }
