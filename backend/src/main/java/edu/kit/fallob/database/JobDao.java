@@ -9,12 +9,13 @@ import edu.kit.fallob.dataobjects.ResultMetaData;
 import edu.kit.fallob.dataobjects.SubmitType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface JobDao {
 
     public int saveJobConfiguration(JobConfiguration configuration, String username, int mallobId);
 
-    public int saveJobDescription(JobDescription description, String username, SubmitType type);
+    public int saveJobDescription(JobDescription description, String username);
 
     public void removeAllJobsBeforeTime(LocalDateTime time);
 
@@ -36,7 +37,7 @@ public interface JobDao {
 
     public int getJobIdByMallobId(int mallobId);
 
-    public SubmitType getSubmitType(int descriptionId);
-
     public long getSizeOfAllJobDescriptions();
+
+    public List<Integer> getAllRunningJobs();
 }
