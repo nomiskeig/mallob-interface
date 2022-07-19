@@ -4,11 +4,13 @@ export class VisualizationNode {
 	#jobID;
 	#treeIndex;
     #defaultRadius = 6;
-	constructor(circle, text) {
+    #rank;
+	constructor(circle, text, rank) {
 		this.#circle = circle;
 		this.#text = text;
         this.#jobID = null;
         this.#treeIndex = null;
+        this.#rank = rank;
         
         
 	}
@@ -25,12 +27,7 @@ export class VisualizationNode {
     registerHoverCallbacks(onHoverEnter, onHoverLeave) {
 
         this.#circle._renderer.elem.addEventListener('mouseover', () => {
-            onHoverEnter(this.#jobID, this.#treeIndex);
-                 
-            if (!this.#jobID) {
-                this.#circle.opacity = 1;
-
-            }
+            onHoverEnter(this.#rank);
         })
         this.#circle._renderer.elem.addEventListener('mouseout', () => {
             onHoverLeave();
@@ -40,7 +37,6 @@ export class VisualizationNode {
 
      setToJobTreeVertex(jtv, job) {
         this.#circle.fill = job.getColor();
-        //this.#circle.radius = 10 * 1/( 1+ jtv.getDepth())
         this.#circle.radius = Math.max(10 - 2 * jtv.getDepth(), 4)
         this.#jobID = job.getJobID();
         this.#treeIndex = jtv.getTreeIndex();
@@ -48,6 +44,7 @@ export class VisualizationNode {
 
     updateOpacityForHover() {
         this.#circle.opacity = 0.2
+        this.#text.opacity = 0;
 
     }
 
@@ -59,5 +56,11 @@ export class VisualizationNode {
 
     showTreeIndexForHover() {
         this.#text.opacity = 1;
+    }
+    getJobID() {
+        return this.#jobID;
+    }
+    getTreeIndex() {
+        return this.#treeIndex;
     }
 }

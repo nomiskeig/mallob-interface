@@ -9,6 +9,7 @@ export class Visualization {
 	#nodes;
 	#connections;
 	#canvas;
+	#hoveredRank;
 	constructor(canvas, update, processes, jobStorage) {
 		this.#two = new Two({ fitted: true });
 		this.#two.appendTo(canvas);
@@ -25,8 +26,8 @@ export class Visualization {
 			let newNode = this.#two.makeCircle(coords.getX(), coords.getY(), 6);
 			nodeGroup.add(newNode);
 			let newText = this.#two.makeText(i, coords.getX(), coords.getY() - 14);
-            textGroup.add(newText)
-			this.#nodes[i] = new VisualizationNode(newNode, newText);
+			textGroup.add(newText);
+			this.#nodes[i] = new VisualizationNode(newNode, newText, i);
 			this.#nodes[i].reset();
 			let newConnection = this.#two.makeLine(
 				coords.getX(),
@@ -62,13 +63,24 @@ export class Visualization {
 		let yPos = margin + distance * Math.floor(rank / perRow);
 		return new CoordPair(xPos, yPos);
 	}
-	onHoverEnter(jobID, treeIndex) {
-		// TODO: update connections
+	onHoverEnter(rank) {
+		let jobID = this.#nodes[rank].getJobID();
+		let treeIndex = this.#nodes[rank].getTreeIndex();
+		this.#hoveredRank = rank;
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].updateOpacityForHover();
 			this.#connections[i].hideForHover();
 		}
 		if (!jobID) {
+			for (let i = 0; i < this.#processes; i++) {
+				this.#nodes[i].resetHover();
+			}
+			this.#nodes[this.#hoveredRank].showTreeIndexForHover();
+			this.#jobStorage.getAllJobs().forEach((job) => {
+				job.getVertices().forEach((vertex) => {
+					this.#nodes[vertex.getRank()].updateOpacityForHover();
+				});
+			});
 			return;
 		}
 		let job = this.#jobStorage.getJob(jobID);
@@ -81,7 +93,6 @@ export class Visualization {
 			this.#nodes[rank].resetHover();
 			this.#nodes[rank].showTreeIndexForHover();
 		});
-		// TODO: only show connections of subtree on hover
 		job
 			.getSubtree(treeIndex)
 			.getVertices()
@@ -100,6 +111,7 @@ export class Visualization {
 			this.#nodes[i].resetHover();
 			this.#connections[i].resetHover();
 		}
+		this.#hoveredRank = null;
 	}
 
 	update(job, updatedTreeIndex, add) {
@@ -110,11 +122,12 @@ export class Visualization {
 		let rank = vertex.getRank();
 		let vertexCoords = this.#getCoords(rank);
 		if (add) {
-			// display node
+            // show node
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
-			// update connection from left child to vertex itself
+            // update connection from left child to vertex itself
 			if (leftChild) {
-				this.#connections[leftChild.getRank()].useConnection(
+				let connection = this.#connections[leftChild.getRank()];
+				connection.useConnection(
 					vertex,
 					vertexCoords.getX(),
 					vertexCoords.getY(),
@@ -123,7 +136,8 @@ export class Visualization {
 			}
 			// update connection from right child to vertex itself
 			if (rightChild) {
-				this.#connections[rightChild.getRank()].useConnection(
+				let connection = this.#connections[rightChild.getRank()];
+				connection.useConnection(
 					vertex,
 					vertexCoords.getX(),
 					vertexCoords.getY(),
@@ -133,7 +147,8 @@ export class Visualization {
 			// update connection from vertex to parent
 			if (parentVertex) {
 				let parentCoords = this.#getCoords(parentVertex.getRank());
-				this.#connections[rank].useConnection(
+				let connection = this.#connections[rank];
+				connection.useConnection(
 					parentVertex,
 					parentCoords.getX(),
 					parentCoords.getY(),
@@ -141,7 +156,6 @@ export class Visualization {
 				);
 			}
 		} else {
-			// reset vertex and connections going in and out
 			this.#nodes[rank].reset();
 			if (leftChild) {
 				this.#connections[leftChild.getRank()].reset();
@@ -150,6 +164,9 @@ export class Visualization {
 				this.#connections[rightChild.getRank()].reset();
 			}
 			this.#connections[rank].reset();
+		}
+		if (this.#hoveredRank) {
+			this.onHoverEnter(this.#hoveredRank);
 		}
 	}
 
