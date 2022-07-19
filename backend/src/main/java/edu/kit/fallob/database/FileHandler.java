@@ -3,6 +3,8 @@ package edu.kit.fallob.database;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utility class that is responsible for storing and retrieving files on the local filesystem
@@ -23,28 +25,16 @@ public final class FileHandler {
     }
 
     /**
-     * returns the file that is stored at the given path on the local filesystem
-     * @param path the path from where the file should be retrieved
-     * @return the file that was requested or null if the file couldn't be found
-     */
-    public static File getFileFromPath(String path) {
-        File file = new File(path);
-
-        if (file.exists()) {
-            return file;
-        } else {
-            throw new RuntimeException();
-        }
-    }
-
-    /**
-     * returns all files in the given directory whose names contain the given name string
+     * returns all files in the given directory whose names match the given regex pattern
      * @param directoryPath the directory where the files are saved
-     * @param name the string that all filenames have to contain
-     * @return a list of all files that contain name as a substring of the filename
+     * @param regex a string that contains the regex pattern that is used to find the wanted files
+     * @return a list of all files whose filename matches the regex pattern
      */
-    public static List<File> getFilesIfNameContains(String directoryPath, String name) {
+
+    public static List<File> getFilesByRegex(String directoryPath, String regex) {
         File directory = new File(directoryPath);
+
+        Pattern pattern = Pattern.compile(regex);
 
         if (directory.isDirectory()) {
             List<File> files = new ArrayList<>();
@@ -53,7 +43,10 @@ public final class FileHandler {
             for (File file : allFiles) {
                 String fileName = file.getName();
 
-                if (fileName.contains(name)) {
+                //check if the filename matches the regex pattern
+                Matcher matcher = pattern.matcher(fileName);
+
+                if (matcher.find()) {
                     files.add(file);
                 }
             }
@@ -64,13 +57,31 @@ public final class FileHandler {
     }
 
     /**
-     * deletes the file that is stored at the given path from the local filesystem
-     * @param path the path that points to the file
-     * @return true if the process was successful and false if it wasn't
+     * deletes the files from the filesystem whose names match the given regex pattern
+     * @param path the path that points to the directory where the files are stored
+     * @param regex a string that contains the regex pattern that is used to determine the files that should be removed
      */
-    public static boolean deleteFileAtPath(String path) {
-        File file = new File(path);
-        return file.delete();
+    public static void deleteFilesByRegex(String path, String regex) {
+        File directory = new File(path);
+
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+
+            Pattern pattern = Pattern.compile(regex);
+
+            for (File file: files) {
+                String fileName = file.getName();
+
+                //check if the filename matches the regex pattern
+                Matcher matcher = pattern.matcher(fileName);
+
+                if (matcher.find()) {
+                    file.delete();
+                }
+            }
+        } else {
+            throw new RuntimeException();
+        }
     }
 
     /**
