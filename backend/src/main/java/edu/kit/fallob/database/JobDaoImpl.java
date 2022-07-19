@@ -29,17 +29,19 @@ public class JobDaoImpl implements JobDao{
     private final FallobConfiguration configuration;
 
     private static final String SINGLE_FILE_REGEX = "%o\\..*";
-    private static final String DESCRIPTION_FILES_REGEX = "%o\\d+\\..*";
+    private static final String DESCRIPTION_FILES_REGEX = "%s\\d+\\..*";
     private static final String FILE_EXTENSION_REGEX = "\\.";
     private static final String DIRECTORY_SEPARATOR = "/";
     private static final String FILE_SEPARATOR = ".";
-    private static final String JSON_EXTENSION = ".json";
+    private static final String NAME_SEPARATOR = "_";
     private static final String ARRAY_TYPE = "INT";
 
     private static final String JOB_INSERT = "INSERT INTO job (username, submissionTime, jobStatus, mallobId) VALUES (?, ?, ?, ?)";
     private static final String CONFIGURATION_INSERT = "INSERT INTO jobConfiguration (jobId, name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, contentMode, additionalConfig) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_JOB_ID = "UPDATE jobDescription SET jobId=? WHERE descriptionId=?";
-    private static final String DESCRIPTION_INSERT = "INSERT INTO jobDescription (username, submitType) VALUES (?, ?)";
+    private static final String DESCRIPTION_INSERT = "INSERT INTO jobDescription (username, submitType, uploadTime) VALUES (?, ?, ?)";
+    private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription WHERE MIN(uploadTime)";
+    private static final String DELETE_JOB_DESCRIPTION = "DELETE FROM jobDescription WHERE descriptionId=?";
     private static final String GET_JOBS_BEFORE_TIME = "SELECT jobId FROM job WHERE submissionTime < ?";
     private static final String DELETE_FROM_JOB = "DELETE FROM job WHERE jobID=?";
     private static final String DELETE_FROM_JOB_CONFIGURATION = "DELETE FROM jobConfiguration WHERE jobId=?";
@@ -118,6 +120,7 @@ public class JobDaoImpl implements JobDao{
             PreparedStatement statement = this.conn.prepareStatement(DESCRIPTION_INSERT);
             statement.setString(1, username);
             statement.setString(2, description.getSubmitType().name());
+            statement.setObject(3, LocalDateTime.now());
 
             statement.executeUpdate();
 
@@ -130,13 +133,41 @@ public class JobDaoImpl implements JobDao{
                 File file = files.get(i);
                 String fileExtension = this.getFileExtension(file);
 
-                String newPath = configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + description + i + FILE_SEPARATOR + fileExtension;
+                String newPath = configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + descriptionId + NAME_SEPARATOR + i + FILE_SEPARATOR + fileExtension;
                 FileHandler.saveFileAtPath(file, newPath);
             }
             return descriptionId;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void removeOldestJobDescription() {
+        int descriptionId = 0;
+
+        try {
+            //get descriptionId of the oldest job description
+            PreparedStatement getDescriptionId = this.conn.prepareStatement(GET_OLDEST_JOB_DESCRIPTION);
+            ResultSet result = getDescriptionId.executeQuery();
+
+            if(result.next()) {
+                descriptionId = result.getInt(1);
+            }
+
+            PreparedStatement statement = this.conn.prepareStatement(DELETE_FROM_JOB_CONFIGURATION);
+            statement.setInt(1, descriptionId);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        //remove the descriptionFiles from the filesystem
+        String path = this.configuration.getDescriptionsbasePath();
+        String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId);
+
+        FileHandler.deleteFilesByRegex(path, regex);
     }
 
     @Override
@@ -206,7 +237,7 @@ public class JobDaoImpl implements JobDao{
     public JobDescription getJobDescription(int descriptionId) {
         //get the description files from the filesystem
         String filesPath = this.configuration.getDescriptionsbasePath();
-        String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId);
+        String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId + NAME_SEPARATOR);
         List<File> descriptionFiles = FileHandler.getFilesByRegex(filesPath, regex);
 
         //get the submit-type from the database

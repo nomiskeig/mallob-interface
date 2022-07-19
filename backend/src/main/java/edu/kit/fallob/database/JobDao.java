@@ -17,6 +17,8 @@ public interface JobDao {
 
     public int saveJobDescription(JobDescription description, String username);
 
+    public void removeOldestJobDescription();
+
     public void removeAllJobsBeforeTime(LocalDateTime time);
 
     public int[] getAllJobIds(String username);
