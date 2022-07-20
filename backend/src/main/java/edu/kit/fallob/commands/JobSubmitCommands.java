@@ -24,7 +24,7 @@ public class JobSubmitCommands {
 	
 	
 	
-	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws InvalidJobException { 
+	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException { 
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID = submitter.submitJobToMallob(jobConfiguration, jobDescription);
@@ -33,7 +33,7 @@ public class JobSubmitCommands {
 	}
 	
 	
-	public int submitJobWithDescription(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws InvalidJobException {
+	public int submitJobWithDescription(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		JobDao jobDao = daoFactory.getJobDao();
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username, jobDescription.getSubmitType());
@@ -42,7 +42,7 @@ public class JobSubmitCommands {
 		
 	}
 	
-	public int submitJobWithDescriptionID(String username, int jobdescriptionID, JobConfiguration jobConfiguration) throws InvalidJobException {
+	public int submitJobWithDescriptionID(String username, int jobdescriptionID, JobConfiguration jobConfiguration) throws FallobException {
 		if (!uaa.hasDescriptionAccessViaDescriptionID(username, jobdescriptionID)) {
 			//throw exception if job
 		}
@@ -53,7 +53,7 @@ public class JobSubmitCommands {
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 	}
 	
-	public int restartCanceledJob(String username, int jobID) throws InvalidJobException {
+	public int restartCanceledJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
 			//throw Exception
 		}
