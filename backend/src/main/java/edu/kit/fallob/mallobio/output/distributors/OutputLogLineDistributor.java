@@ -1,17 +1,34 @@
 package edu.kit.fallob.mallobio.output.distributors;
 
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
+import java.util.List;
+import java.util.ArrayList;
 
-public class OutputLogLineDistributor {
+
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
+import edu.kit.fallob.mallobio.output.OutputProcessor;
+
+public class OutputLogLineDistributor implements OutputProcessor {
+	
+	
+	private List<OutputLogLineListener> listeners;
+	
+	public OutputLogLineDistributor() {
+		this.listeners = new ArrayList<>();
+	}
 
 	public void addListener(OutputLogLineListener listener) {
-		// TODO Auto-generated method stub
-		
+		listeners.add(listener);
 	}
 
 	public void removeListener(OutputLogLineListener listener) {
-		// TODO Auto-generated method stub
-		
+		listeners.remove(listener);
+	}
+
+	@Override
+	public void processLogLine(String logLine) {
+		for (OutputLogLineListener l : listeners) {
+			l.processLine(logLine);
+		}
 	}
 
 }

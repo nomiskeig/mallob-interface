@@ -1,5 +1,6 @@
 package edu.kit.fallob.mallobio.listeners.resultlisteners;
 
+import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.outputupdates.ResultAvailableObject;
 
 
@@ -13,11 +14,10 @@ import edu.kit.fallob.mallobio.outputupdates.ResultAvailableObject;
  */
 public class JobResultListener implements ResultObjectListener {
 	
-	
+	private JobDao dao;
 
 	@Override
 	public void processResultObject(ResultAvailableObject rao) {
-		
-	}
 
+	}
 }
