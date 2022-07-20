@@ -8,22 +8,31 @@ public class JobConfiguration {
 	private double priority;
 	private String application;
 	private int maxDemand;
-	private double wallClockLimit;
-	private double cpuLimit;
-	private double arrival;
-	private List<Integer> dependencies;
+	private String wallClockLimit;
+	private String cpuLimit;
+	private String arrival;
+	private int[] dependencies;
+	private String[] dependenciesStrings;
+	private String contentMode;
+	private boolean interrupt;
 	private boolean incremental;
+	private int[] literals;
 	private int precursor;
+	private String precursorString;
+	private String assumptions;
+	private boolean done;
 	private int descriptionID;
 	private String additionalParameter;
 	
 	
 	public JobConfiguration(String name, double priority, 
 			String application, int maxDemand, 
-			double wallClockLimit, double cpuLimit, 
-			double arrival, List<Integer> dependencies, 
-			boolean incremental, int precursor, 
-			int decriptionID, String additionalParameter) {
+			String wallClockLimit, String cpuLimit, 
+			String arrival, int[] dependencies,
+			String contentMode, boolean interrupt, 
+			boolean incremental, int[] literals, 
+			int precursor, String assumptions, 
+			boolean done, int decriptionID, String additionalParameter) {
 		this.setName(name);
 		this.setPriority(priority);
 		this.setApplication(application);
@@ -62,28 +71,28 @@ public class JobConfiguration {
 	public void setMaxDemand(int maxDemand) {
 		this.maxDemand = maxDemand;
 	}
-	public double getWallClockLimit() {
+	public String getWallClockLimit() {
 		return wallClockLimit;
 	}
-	public void setWallClockLimit(double wallClockLimit) {
+	public void setWallClockLimit(String wallClockLimit) {
 		this.wallClockLimit = wallClockLimit;
 	}
-	public double getCpuLimit() {
+	public String getCpuLimit() {
 		return cpuLimit;
 	}
-	public void setCpuLimit(double cpuLimit) {
+	public void setCpuLimit(String cpuLimit) {
 		this.cpuLimit = cpuLimit;
 	}
-	public double getArrival() {
+	public String getArrival() {
 		return arrival;
 	}
-	public void setArrival(double arrival) {
+	public void setArrival(String arrival) {
 		this.arrival = arrival;
 	}
-	public List<Integer> getDependencies() {
+	public int[] getDependencies() {
 		return dependencies;
 	}
-	public void setDependencies(List<Integer> dependencies) {
+	public void setDependencies(int[] dependencies) {
 		this.dependencies = dependencies;
 	}
 	public boolean isIncremental() {
@@ -109,6 +118,62 @@ public class JobConfiguration {
 	}
 	public void setAdditionalParameter(String additionalParameter) {
 		this.additionalParameter = additionalParameter;
+	}
+
+	public boolean isInterrupt() {
+		return interrupt;
+	}
+
+	public void setInterrupt(boolean interrupt) {
+		this.interrupt = interrupt;
+	}
+
+	public String getContentMode() {
+		return contentMode;
+	}
+
+	public void setContentMode(String contentMode) {
+		this.contentMode = contentMode;
+	}
+
+	public String getPrecursorString() {
+		return precursorString;
+	}
+
+	public void setPrecursorString(String precursorString) {
+		this.precursorString = precursorString;
+	}
+
+	public String getAssumptions() {
+		return assumptions;
+	}
+
+	public void setAssumptions(String assumptions) {
+		this.assumptions = assumptions;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public int[] getLiterals() {
+		return literals;
+	}
+
+	public void setLiterals(int[] literals) {
+		this.literals = literals;
+	}
+
+	public String[] getDependenciesStrings() {
+		return dependenciesStrings;
+	}
+
+	public void setDependenciesStrings(String[] dependenciesStrings) {
+		this.dependenciesStrings = dependenciesStrings;
 	}
 	
 }	
