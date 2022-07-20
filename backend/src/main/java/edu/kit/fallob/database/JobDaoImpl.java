@@ -352,7 +352,7 @@ public class JobDaoImpl implements JobDao{
                 User user = userDao.getUserByUsername(username);
 
                 //TODO: change submissionTime to LocalDateTime
-                return new JobInformation(configuration, metaData, user, submissionTime, status, jobId);
+                return new JobInformation(configuration, metaData, user, submissionTime.toString(), status, jobId);
             } else {
                 throw new RuntimeException();
             }
