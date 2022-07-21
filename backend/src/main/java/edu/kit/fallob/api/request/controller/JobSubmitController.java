@@ -15,9 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -43,14 +46,14 @@ public class JobSubmitController {
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.URL);
         try {
-            jobId = jobSubmitCommand.submitJobWithDescriptionFile(username, jobDescription, request.getJobConfiguration());
+            jobId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
-    @PostMapping("/exclusive/description")
+    @PostMapping("/exclusive/configuration")
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobNewId;
@@ -67,14 +70,33 @@ public class JobSubmitController {
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobNewId;
-
+        List<File> files = new ArrayList<>();
+        File file = new File("jobDescription.cnf");
         try {
-            jobNewId = jobSubmitCommand.submitJobWithDescriptionString(username, request.getJobDescription(), request.getJobConfiguration());
+            FileWriter myWriter = new FileWriter(file);
+            List<String> lines = request.getJobDescription();
+            int counter = 0;
+            for (String line : lines) {
+                myWriter.write(line);
+                if (file.getTotalSpace() > Math.pow(10, 8)) {
+                    files.add(file);
+                    file = new File("jobDescription" + counter + ".cnf");
+                    counter++;
+                }
+            }
+            files.add(file);
+            myWriter.close();
+        } catch (IOException e) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, "An error occurred while creating a file with the job description.");
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
+        try {
+            jobNewId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-
         return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
     }
     @PostMapping("/restart/{jobId}")

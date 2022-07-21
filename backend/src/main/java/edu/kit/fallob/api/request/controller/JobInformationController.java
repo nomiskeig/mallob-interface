@@ -4,27 +4,23 @@ import edu.kit.fallob.commands.JobDescriptionCommands;
 import edu.kit.fallob.commands.JobInformationCommands;
 import edu.kit.fallob.commands.JobPendingCommmand;
 import edu.kit.fallob.commands.JobResultCommand;
-import edu.kit.fallob.dataobjects.JobDescription;
-import edu.kit.fallob.dataobjects.JobInformation;
-import edu.kit.fallob.dataobjects.JobResult;
-import edu.kit.fallob.dataobjects.ResultMetaData;
+import edu.kit.fallob.dataobjects.*;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -105,7 +101,7 @@ public class JobInformationController {
     @GetMapping("/description/single/{jobId}")
     public ResponseEntity<Object> getSingleJobDescription(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
         String username = (String) httpRequest.getAttribute("username");
-        Object jobDescriptions;
+        JobDescription jobDescriptions;
         try {
             jobDescriptions = jobDescriptionCommand.getSingleJobDescription(username, jobId);
         } catch (FallobException exception) {
@@ -113,11 +109,25 @@ public class JobInformationController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
 
-        if (jobDescriptions instanceof JobDescription description) {
-            return getDescriptionsZip(response, Collections.singletonList(description));
+        if (jobDescriptions.getSubmitType().equals(SubmitType.INCLUSIVE)) {
+            List<File> files = jobDescriptions.getDescriptionFiles();
+            List<String> description = new ArrayList<>();
+            for (File file : files) {
+                try {
+                    Scanner myReader = new Scanner(file);
+                    while (myReader.hasNextLine()) {
+                        description.add(myReader.nextLine());
+                    }
+                    myReader.close();
+                } catch (FileNotFoundException e) {
+                    FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, "File does not exist or is corrupt");
+                    return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+                }
+            }
+            return ResponseEntity.ok(new JobDescriptionResponse(description));
         }
         else {
-            return ResponseEntity.ok(new JobDescriptionResponse((List<String>) jobDescriptions));
+           return getDescriptionsZip(response, Collections.singletonList(jobDescriptions));
         }
     }
     @GetMapping("/description")

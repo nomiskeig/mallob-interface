@@ -6,7 +6,13 @@ import edu.kit.fallob.dataobjects.SystemState;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.mallobio.outputupdates.Warning;
 import edu.kit.fallob.springConfig.FallobException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
+@Slf4j
 public class MallobCommands {
 	
 	public SystemState getSystemState(String time) throws FallobException {

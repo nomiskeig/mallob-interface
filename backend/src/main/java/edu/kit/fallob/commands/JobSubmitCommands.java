@@ -4,17 +4,17 @@ package edu.kit.fallob.commands;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.springConfig.FallobException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+@Service
+@RequiredArgsConstructor
+@Slf4j
 public class JobSubmitCommands {
 	
 	
-	public int submitJobWithDescriptionFile(String username, JobDescription jobdescription, JobConfiguration jobConfiguration) throws FallobException {
-		return 0;
-	}
-
-	public int submitJobWithDescriptionString(String username, List<String> jobdescription, JobConfiguration jobConfiguration) throws FallobException {
+	public int submitJobWithDescriptionInclusive(String username, JobDescription jobdescription, JobConfiguration jobConfiguration) throws FallobException {
 		return 0;
 	}
 	
