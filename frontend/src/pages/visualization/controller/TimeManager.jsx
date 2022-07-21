@@ -1,5 +1,5 @@
-import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
-import addMilliseconds from 'date-fns/addMilliseconds'
+import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
+import addMilliseconds from 'date-fns/addMilliseconds';
 export const TIME_FORWARD = 1;
 export const TIME_BACKWARD = 0;
 export class TimeManager {
@@ -9,6 +9,7 @@ export class TimeManager {
 	#multiplier;
 	#nextTime;
 	#paused;
+	#lastTimeMeasured;
 	constructor() {
 		this.#lastTime = new Date();
 		this.#live = true;
@@ -16,6 +17,7 @@ export class TimeManager {
 		this.#multiplier = 1;
 		this.#nextTime = null;
 		this.#paused = false;
+		this.#lastTimeMeasured = new Date();
 	}
 
 	getDirection() {
@@ -27,11 +29,11 @@ export class TimeManager {
 	}
 
 	updateTime() {
-        if (this.#nextTime) {
-            this.#lastTime = this.#nextTime;
-        }
+		if (this.#nextTime) {
+			this.#lastTime = this.#nextTime;
+		}
 		this.#jump = false;
-		this.#nextTime= null;
+		this.#nextTime = null;
 	}
 
 	isPaused() {
@@ -50,33 +52,37 @@ export class TimeManager {
 
 	getNextTime() {
 		if (!this.#nextTime) {
-			// calculate next time based on old time and multiplier
 			let currentTime = new Date();
 			let differenceInMillis = differenceInMilliseconds(
 				currentTime,
-				this.#lastTime
+				this.#lastTimeMeasured
 			);
+            this.#lastTimeMeasured = currentTime;
 			let millisToAdd = differenceInMillis * this.#multiplier;
 			let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
 
-            this.#nextTime = nextTime;
+			this.#nextTime = nextTime;
 		}
 		return this.#nextTime;
 	}
 
 	setNextTime(time) {
 		this.#nextTime = time;
-		this.#live = false;
+		if (Math.abs(differenceInMilliseconds(time, new Date())) < 100) {
+			this.#live = true;
+		} else {
+			this.#live = false;
+		}
 	}
 
 	isLive() {
 		return this.#live;
 	}
 
-    setLive() {
-        this.#live = true;
-    }
-    getLastTime() {
-        return this.#lastTime;
-    }
+	setLive() {
+		this.#live = true;
+	}
+	getLastTime() {
+		return this.#lastTime;
+	}
 }

@@ -6,56 +6,54 @@ import addMilliseconds from 'date-fns/addMilliseconds';
 import parseISO from 'date-fns/parseISO';
 export class TimelineComponent extends React.Component {
 	#timeManager;
+	#position;
+	#changing = false;
 	constructor(props) {
 		super(props);
+
 		this.#timeManager = props.timeManager;
 	}
 	update() {
 		this.forceUpdate();
-		//this.#slider += 1;
 	}
+
 	render() {
+        console.log('updated')
 		function valueText(number) {
-			//console.log('gettings label '+ number)
 			let text = format(
 				addMilliseconds(startTime, number),
-				"yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+				"yyyy-MM-dd', 'HH:mm:ss.SSSxxx"
 			);
-			//console.log(text);
 			return text;
 		}
-		let steps = 20;
 		let startTime = parseISO(this.props.startTime);
 		let currentTime = this.#timeManager.isLive()
-			? this.#timeManager.getLastTime()
+			? this.#timeManager.getNextTime()
 			: new Date();
-		console.log(currentTime);
 		let timeDif = differenceInMilliseconds(currentTime, startTime);
-		//console.log(timeDif);
-		let distance = timeDif / steps;
-		const marks = [];
-		for (let i = 0; i < steps; i++) {
-			let time = addMilliseconds(startTime, distance * (i + 1));
-			//	console.log(distance);
-			//	console.log(startTime);
-			//	console.log(time);
-			marks.push({
-				value: i * 5,
-				//label: format(time, j"yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
-				label: '',
-			});
-		}
+		if (!this.#changing) {
+            this.#position = differenceInMilliseconds(this.#timeManager.getNextTime(), startTime);
+		} 
 
 		return (
 			<div className='container'>
 				<Slider
-                    //update={this.#slider}
-					step={1}
+					step={0.001}
+					value={this.#position}
 					min={0}
 					max={timeDif}
 					track={false}
 					valueLabelFormat={valueText}
 					valueLabelDisplay='auto'
+					onChange={(event, newValue) => {
+						this.#position = newValue; 
+						this.#changing = true;
+					}}
+					onChangeCommitted={(event, newValue) => {
+						this.#changing = false;
+						this.#timeManager.setNextTime(addMilliseconds(startTime, newValue));
+                        console.log('set next time')
+					}}
 				></Slider>
 				<div className='speedContainer'>
 					<input type='text' placeholder='1'></input>
