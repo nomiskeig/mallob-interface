@@ -1,4 +1,5 @@
 import React from 'react';
+import './GlobalStatsComponent.scss'
 
 export class GlobalStatsComponent extends React.Component {
 	#globalStats;
@@ -16,7 +17,7 @@ export class GlobalStatsComponent extends React.Component {
 		let total = this.#globalStats.getProcesses();
 		let percentage = used / total * 100;
 		return (
-			<div className='globalStatsContainer'>
+			<div className='globalStatsContainer d-flex flex-row justify-content-around flex-wrap'>
 				<div className='activeJobs'>
 					Active Jobs: {this.#globalStats.getActiveJobs()}
 				</div>

@@ -10,7 +10,7 @@ export class Visualization {
 	#connections;
 	#canvas;
 	#hoveredRank;
-	constructor(canvas, update, processes, jobStorage) {
+	constructor(canvas, update, processes, jobStorage, onClick) {
 		this.#two = new Two({ fitted: true });
 		this.#two.appendTo(canvas);
 		this.#nodes = new Array();
@@ -41,13 +41,14 @@ export class Visualization {
 		}
 		this.#two.update();
 		for (let i = 0; i < processes; i++) {
-			this.#nodes[i].registerHoverCallbacks(
+			this.#nodes[i].registerCallbacks(
 				this.onHoverEnter.bind(this),
-				this.onHoverLeave.bind(this)
+				this.onHoverLeave.bind(this),
+                onClick 
 			);
 		}
 		// this is ugly but at least it works
-		let desiredHeight = this.#getCoords(this.#processes).getY() + 40 + 'px';
+		let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
 		canvas.style.height = desiredHeight;
 		this.#two.height = desiredHeight;
 		this.#two.bind('update', () => update());
@@ -55,12 +56,12 @@ export class Visualization {
 	}
 
 	#getCoords(rank) {
-		let margin = 30;
+		let margin = 10;
 		let distance = 40;
 		let perRow = Math.floor((this.#canvas.clientWidth - 2 * margin) / distance);
 		let restPerRow = this.#canvas.clientWidth - distance * (perRow - 1);
 		let xPos = restPerRow / 2 + distance * (rank % perRow);
-		let yPos = margin + distance * Math.floor(rank / perRow);
+		let yPos = 20 + distance * Math.floor(rank / perRow);
 		return new CoordPair(xPos, yPos);
 	}
 	onHoverEnter(rank) {
@@ -174,17 +175,11 @@ export class Visualization {
 		jobs.forEach((job) => {
 			let vertices = job.getVertices();
 			vertices.forEach((vertex) => {
-				console.log('iterating over vertex:');
-				console.log(vertex);
 				let rank = vertex.getRank();
 				this.#nodes[rank].setToJobTreeVertex(vertex, job);
 				let parent = job.getParent(vertex.getTreeIndex());
 				if (parent) {
-					console.log(parent);
-					console.log('found a parent with index: ' + parent.getRank());
 					let parentCoords = this.#getCoords(parent.getRank());
-					console.log('parentcoords');
-					console.log(parentCoords);
 					this.#connections[rank].useConnection(
 						vertex,
 						parentCoords.getX(),
