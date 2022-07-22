@@ -30,18 +30,24 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	
 	private List<String> processedResults;
 	
+	private boolean retreivedResult;
+	
 	
 	
 	public MallobClientOutputWatcher(String pathToMallobDirectory, int clientProcessID) {
-		this.pathToMallobDirectory = pathToMallobDirectory;
 		this.clientProcessRank = clientProcessID;
-		this.processedResults = new ArrayList<>();
-		scanInitialFiles();
+		setupClientOutputWatcher(pathToMallobDirectory);
 	}
 	
 	public MallobClientOutputWatcher(String pathToMallobDirectory) {
+		setupClientOutputWatcher(pathToMallobDirectory);
+	}
+	
+	
+	private void setupClientOutputWatcher(String pathToMallobDirectory) {
 		this.pathToMallobDirectory = pathToMallobDirectory;
 		this.processedResults = new ArrayList<>();
+		retreivedResult = false;
 		scanInitialFiles();
 	}
 	
@@ -65,6 +71,10 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	 * Check for changes in the directory, given in the creation of the file
 	 */
 	public void watchDirectory() {
+		if (retreivedResult) {
+			return;
+		}
+		
 		File directrory = new File(pathToMallobDirectory);
 		//List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
 		List<File> files = List.of(directrory.listFiles());
@@ -93,6 +103,11 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 
 	private void pushResultObject(ResultAvailableObject rao) {
 		this.distributor.distributeResultObject(rao);
+		this.retreivedResult = true;
+	}
+	
+	public boolean isDone() {
+		return retreivedResult;
 	}
 
 	@Override
