@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './DetailsComponent.scss'
 export class DetailsComponent extends React.Component {
 	#jobStorage;
 	#clickedTreeIndex;
@@ -13,7 +13,6 @@ export class DetailsComponent extends React.Component {
 	setClicked(jobID, clickedTreeIndex) {
 		this.#jobID = jobID;
 		this.#clickedTreeIndex = clickedTreeIndex;
-		console.log('clicked');
 	}
 	update() {
 		this.forceUpdate();
@@ -21,34 +20,39 @@ export class DetailsComponent extends React.Component {
 
 	render() {
 		let job = this.#jobStorage.getJob(this.#jobID);
-		if (!job) {
-			return null;
+		let clickedVertex = job ? job.getVertex(this.#clickedTreeIndex) : null;
+		function getTitle() {
+			if (!clickedVertex) {
+				return 'idle rank';
+			}
+			if (job.getJobName()) {
+				return job.getJobName();
+			}
+			return 'anonymous job';
 		}
-		let clickedVertex = job.getVertex(this.#clickedTreeIndex);
-		if (!clickedVertex) {
-			return null;
-		}
+         
+		let title = getTitle();
 		return (
-			<div className='detailsContainer'>
-				<div className='headerContainer'>
-					<div className='jobName'></div>
+			<div className='detailsContainer d-flex align-items-start flex-column'>
+				<div className='headerContainer d-flex flex-row'>
+					<div className='jobName'>{title}</div>
 					<div className='buttons'></div>
 				</div>
-				<div className='body'>
-					<div className='details'>
-						<p>
-							Rank: {clickedVertex.getRank()}:{' '}
-							<b>
-								Job {job.getJobID()}#{clickedVertex.getTreeIndex()}
-							</b>
-						</p>
-						<p>Volume: {job.getSize()}</p>
-						<p>
-							Subtree Volume: {job.getSubtree(this.#clickedTreeIndex).getSize()}
-						</p>
+				{job && clickedVertex && (
+					<div className='body d-flex flex-row align-items-start justify-content-center'>
+						<div className='details d-flex justify-content-start align-items-start flex-column'>
+							<p>
+								Rank: {clickedVertex.getRank()}:{' '}
+							</p>
+							<p>Volume: {job.getSize()}</p>
+							<p>
+								Subtree Volume:{' '}
+								{job.getSubtree(this.#clickedTreeIndex).getSize()}
+							</p>
+						</div>
+						<div className='userInfos}'></div>
 					</div>
-					<div className='userInfos'></div>
-				</div>
+				)}
 			</div>
 		);
 	}

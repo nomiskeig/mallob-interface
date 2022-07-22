@@ -53,15 +53,20 @@ export class TimeManager {
 	getNextTime() {
 		if (!this.#nextTime) {
 			let currentTime = new Date();
-			let differenceInMillis = differenceInMilliseconds(
-				currentTime,
-				this.#lastTimeMeasured
-			);
-            this.#lastTimeMeasured = currentTime;
-			let millisToAdd = differenceInMillis * this.#multiplier;
-			let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
+			if (this.#paused) {
+				this.#lastTimeMeasured = currentTime;
+				this.#nextTime = this.#lastTime;
+			} else {
+				let differenceInMillis = differenceInMilliseconds(
+					currentTime,
+					this.#lastTimeMeasured
+				);
+				this.#lastTimeMeasured = currentTime;
+				let millisToAdd = differenceInMillis * this.#multiplier;
+				let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
 
-			this.#nextTime = nextTime;
+				this.#nextTime = nextTime;
+			}
 		}
 		return this.#nextTime;
 	}
@@ -85,4 +90,7 @@ export class TimeManager {
 	getLastTime() {
 		return this.#lastTime;
 	}
+    getMultiplier() {
+        return this.#multiplier;
+    }
 }

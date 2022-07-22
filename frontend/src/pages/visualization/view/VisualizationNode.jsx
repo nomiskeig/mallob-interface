@@ -24,13 +24,16 @@ export class VisualizationNode {
         this.#text.opacity = 0;
 	}
 
-    registerHoverCallbacks(onHoverEnter, onHoverLeave) {
+    registerCallbacks(onHoverEnter, onHoverLeave, onClick) {
 
         this.#circle._renderer.elem.addEventListener('mouseover', () => {
             onHoverEnter(this.#rank);
         })
         this.#circle._renderer.elem.addEventListener('mouseout', () => {
             onHoverLeave();
+        })
+        this.#circle._renderer.elem.addEventListener('mousedown', () =>{ 
+            onClick(this.#jobID, this.#treeIndex)
         })
     }
 

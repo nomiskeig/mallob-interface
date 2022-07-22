@@ -48,7 +48,6 @@ test('calculates the next time with default multiplier', async () => {
 	let newTime = new Date();
 	let difference = differenceInMilliseconds(newTime, tm.getNextTime());
 	expect(Math.abs(difference)).toBeLessThanOrEqual(MAX_DIFFERENCE);
-	expect(newTime).toEqual(tm.getNextTime());
 });
 
 test('calculates the next time with other positive multiplier', async () => {

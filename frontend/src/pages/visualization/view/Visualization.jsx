@@ -10,6 +10,8 @@ export class Visualization {
 	#connections;
 	#canvas;
 	#hoveredRank;
+    #clickedRank;
+    #onClick
 	constructor(canvas, update, processes, jobStorage, onClick) {
 		this.#two = new Two({ fitted: true });
 		this.#two.appendTo(canvas);
@@ -18,6 +20,7 @@ export class Visualization {
 		this.#canvas = canvas;
 		this.#processes = processes;
 		this.#jobStorage = jobStorage;
+        this.#onClick = onClick;
 		let connectionGroup = this.#two.makeGroup();
 		let nodeGroup = this.#two.makeGroup();
 		let textGroup = this.#two.makeGroup();
@@ -44,10 +47,13 @@ export class Visualization {
 			this.#nodes[i].registerCallbacks(
 				this.onHoverEnter.bind(this),
 				this.onHoverLeave.bind(this),
-                onClick 
+                (jobID, treeIndex) => {
+                    onClick(jobID, treeIndex);
+                    this.#clickedRank = i;
+                }
 			);
 		}
-		// this is ugly but at least it works
+        // set the correct height of the canvas
 		let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
 		canvas.style.height = desiredHeight;
 		this.#two.height = desiredHeight;
@@ -125,6 +131,12 @@ export class Visualization {
 		if (add) {
             // show node
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
+            // call the onClick function if ranks match so correct info is shown
+
+            if (rank == this.#clickedRank) {
+                this.#onClick(job.getJobID(), vertex.getTreeIndex(), rank);
+            }
+            
             // update connection from left child to vertex itself
 			if (leftChild) {
 				let connection = this.#connections[leftChild.getRank()];
