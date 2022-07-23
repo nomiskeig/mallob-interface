@@ -21,10 +21,6 @@ public final class DatabaseConnectionFactory {
 
     //string that is used to get the database path into the right format for jdbc
     private static final String DATABASE_PATH_FORMAT = "jdbc:h2:%s;IFEXISTS=TRUE";
-    //the username for the database
-    private static final String DATABASE_USER = "fallob";
-    //the password for the database
-    private static final String DATABASE_PASSWORD = "";
 
 
     /**
@@ -35,9 +31,11 @@ public final class DatabaseConnectionFactory {
         FallobConfiguration configuration = FallobConfiguration.getInstance();
 
         String path = String.format(DATABASE_PATH_FORMAT, configuration.getDatabaseBasePath());
+        String username = configuration.getDataBaseUsername();
+        String password = configuration.getDatabasePassword();
 
         try {
-            return DriverManager.getConnection(path, DATABASE_USER, DATABASE_PASSWORD);
+            return DriverManager.getConnection(path, username, password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
