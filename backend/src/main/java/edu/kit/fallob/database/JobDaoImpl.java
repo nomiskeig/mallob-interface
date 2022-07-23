@@ -56,6 +56,7 @@ public class JobDaoImpl implements JobDao{
     private static final String UPDATE_JOB_STATUS = "UPDATE job SET jobStatus=? WHERE jobId=?";
     private static final String INSERT_RESULT_META_DATA = "INSERT INTO resultMetaData (jobId, usedWallclockSeconds, usedCpuSeconds, timeParsing, timeProcessing, timeScheduling, timeTotal) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String JOB_ID_BY_MALLOB_ID = "SELECT jobId FROM job WHERE mallobId=?";
+    private static final String MALLOB_ID_BY_JOB_ID = "SELECT mallobId FROM job WHERE jobId=?";
     private static final String GET_JOBS_WITH_STATUS = "SELECT jobId FROM job WHERE jobStatus=?";
 
     public JobDaoImpl() {
@@ -422,6 +423,24 @@ public class JobDaoImpl implements JobDao{
         try {
             PreparedStatement statement = this.conn.prepareStatement(JOB_ID_BY_MALLOB_ID);
             statement.setInt(1, mallobId);
+
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return result.getInt(1);
+            } else {
+                throw new RuntimeException();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public int getMallobIdByJobId(int jobId) {
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(MALLOB_ID_BY_JOB_ID);
+            statement.setInt(1, jobId);
 
             ResultSet result = statement.executeQuery();
 

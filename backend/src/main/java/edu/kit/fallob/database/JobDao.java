@@ -39,6 +39,8 @@ public interface JobDao {
 
     public int getJobIdByMallobId(int mallobId);
 
+    public int getMallobIdByJobId(int jobId);
+
     public long getSizeOfAllJobDescriptions();
 
     public List<Integer> getAllRunningJobs();
