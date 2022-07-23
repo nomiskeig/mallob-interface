@@ -11,6 +11,8 @@ import org.mockito.Mockito;
 
 public class DatabaseConnectionTests {
     private static final String DB_PATH = "./src/test/resources/database/testDB";
+    private static final String DB_USERNAME = "fallob";
+    private static final String DB_PASSWORD = "";
 
     FallobConfiguration config = Mockito.spy(FallobConfiguration.getInstance());
 
@@ -21,6 +23,8 @@ public class DatabaseConnectionTests {
     @Test
     public void testSuccessfulConnection() {
         Mockito.when(config.getDatabaseBasePath()).thenReturn(DB_PATH);
+        Mockito.when(config.getDataBaseUsername()).thenReturn(DB_USERNAME);
+        Mockito.when(config.getDatabasePassword()).thenReturn(DB_PASSWORD);
         try (MockedStatic<FallobConfiguration> mockedConfig = Mockito.mockStatic(FallobConfiguration.class)) {
             mockedConfig.when(FallobConfiguration::getInstance).thenReturn(config);
 
@@ -32,6 +36,8 @@ public class DatabaseConnectionTests {
     @Test
     public void testFailedConnection() {
         Mockito.when(config.getDatabaseBasePath()).thenReturn("");
+        Mockito.when(config.getDataBaseUsername()).thenReturn(DB_USERNAME);
+        Mockito.when(config.getDatabasePassword()).thenReturn(DB_PASSWORD);
         try (MockedStatic<FallobConfiguration> mockedConfig = Mockito.mockStatic(FallobConfiguration.class)) {
             mockedConfig.when(FallobConfiguration::getInstance).thenReturn(config);
 
