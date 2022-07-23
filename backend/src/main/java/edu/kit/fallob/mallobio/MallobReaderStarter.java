@@ -1,7 +1,6 @@
 package edu.kit.fallob.mallobio;
 
 import edu.kit.fallob.mallobio.output.MallobClientOutputWatcher;
-import edu.kit.fallob.mallobio.output.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
 import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;

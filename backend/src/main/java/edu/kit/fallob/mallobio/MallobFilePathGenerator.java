@@ -1,4 +1,4 @@
-package edu.kit.fallob.mallobio.output;
+package edu.kit.fallob.mallobio;
 
 public class MallobFilePathGenerator {
 	
@@ -37,5 +37,26 @@ public class MallobFilePathGenerator {
 	 */
 	public static String generateLogName(int processID) {
 		return Integer.toString(processID);
+	}
+	
+	
+	/**
+	 * Generates the path to a certain client process' in-directory
+	 * @param clientProcessID
+	 * @param basePath
+	 * @return
+	 */
+	public static String generatePathToMallobSubmitDirectory(String basePath, int clientProcessID) {
+		return basePath += ".api/jobs." + clientProcessID + "/in/";
+	}
+	
+	/**
+	 * Generates the path to a certain client process' in-directory
+	 * @param clientProcessID
+	 * @param basePath 
+	 * @return
+	 */
+	public static String generatePathToMallobAbortDirectory(String basePath, int clientProcessID) {
+		return basePath += ".api/jobs." + clientProcessID + "/in/";
 	}
 }

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.MallobAttributeNames;
+import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 
 public class MallobInputImplementation implements MallobInput {
 	
@@ -34,41 +35,35 @@ public class MallobInputImplementation implements MallobInput {
 		this.clientProcessIDs = clientProcessIDs;
 	}
 	
-	/**
-	 * Generates the path to a certain client process' in-directory
-	 * @param clientProcessID
-	 * @return
-	 */
-	private String generatePathToMallobSubmitDirectory(int clientProcessID) {
-		return pathToMallobDirectory += ".api/jobs." + clientProcessID + "/in/";
-	}
 	
-	/**
-	 * Generates the path to a certain client process' in-directory
-	 * @param clientProcessID
-	 * @return
-	 */
-	private String generatePathToMallobAbortDirectory(int clientProcessID) {
-		return pathToMallobDirectory += ".api/jobs." + clientProcessID + "/in/";
-	}
 
 	@Override
-	public void abortJob(int runningJobID) throws IOException {
+	public int abortJob(int runningJobID) throws IOException {
 		
 		this.writeJsonInDirectory(createAbortJSON(runningJobID),
-				this.generatePathToMallobAbortDirectory(clientProcessIDs[lastUsedClientProcessAbort]));
+				MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, 
+						clientProcessIDs[lastUsedClientProcessAbort]));
+		
+		
+		int processID = lastUsedClientProcessAbort;
 		updateAbortCounter();
+		return processID;
 	}
 
 	
 	@Override
-	public void submitJobToMallob(String userName, 
+	public int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) throws IOException 
 	{
 		this.writeJsonInDirectory(createSubmitJSON(userName, jobConfiguration, jobDescription), 
-				generatePathToMallobSubmitDirectory(clientProcessIDs[lastUsedClientProcesSubmit]));
+				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, 
+						clientProcessIDs[lastUsedClientProcesSubmit]));
+		
+		int processID = lastUsedClientProcesSubmit;
 		updateSubmitCounter();
+		return processID;
+		
 	}
 	
 	private void writeJsonInDirectory(JSONObject json, String path) throws IOException {

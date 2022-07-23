@@ -12,13 +12,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import edu.kit.fallob.mallobio.output.MallobFilePathGenerator;
-
 
 
 public class MallobReaderStarterTests {
 	
-	public static final String TEST_MALLOB_API_PATH = System.getProperty("user.dir") + "/mallobTestAPI";
+	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\src\\main\\resources\\clientTests";
 	public static final String FILE_PATH = System.getProperty("user.dir");
 
 	
@@ -57,7 +55,7 @@ public class MallobReaderStarterTests {
 	@BeforeEach
 	public void setupBeforeEach() {
 		starter = new MallobReaderStarter();
-		starter.initParsingModule(TEST_MALLOB_API_PATH, 
+		starter.initParsingModule(TEST_DIRECTORY_PATH, 
 				TEST_AMOUNT_PROCESSES, 
 				TEST_AMOUNT_WATCHERTHREADS, 
 				TEST_WATCHINGINTERVAL, 

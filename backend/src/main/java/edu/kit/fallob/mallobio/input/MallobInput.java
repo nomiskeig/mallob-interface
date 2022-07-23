@@ -26,9 +26,10 @@ public interface MallobInput {
 	 * @param userName of the user submitting this job
 	 * @param jobConfiguration
 	 * @param jobDescription
+	 * @return ID of the process (mallob) it was committed to
 	 * @throws IOException if writing the file was not successful 
 	 */
-	void submitJobToMallob(String userName, 
+	int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) throws IOException;
 	
@@ -36,8 +37,9 @@ public interface MallobInput {
 	 * Abort a running job from Mallob, using the mallob API : 
 	 * create a .json with the necessary parameters and place it in a client-input directory.
 	 * 
-	 * @param runningJobID which has been assigned by mallob. This job will be aborted 
+	 * @param runningJobID which has been assigned by mallob. This job will be aborted
+	 * @return ID of the process (mallob) that handled the abortion
 	 * @throws IOException if writing the file was not successful 
 	 */
-	void abortJob(int runningJobID) throws IOException;
+	int abortJob(int runningJobID) throws IOException;
 }
