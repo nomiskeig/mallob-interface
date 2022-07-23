@@ -20,13 +20,8 @@ public class MallobOutputWatcherManager {
 	
 	
 	private MallobOutputWatcherManager() {}
-	
-	public MallobOutputWatcherManager(String mallobBaseDirectory, int amountWatcherThreads,
-			int watchingIntervalPerWatcherThread) 
-	{
-		
-		
-	}
+
+
 
 	
 	

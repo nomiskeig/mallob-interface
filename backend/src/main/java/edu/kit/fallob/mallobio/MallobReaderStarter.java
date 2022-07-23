@@ -74,6 +74,9 @@ public class MallobReaderStarter {
 			throw new IllegalArgumentException("Cant have more threads than watchers/readers");
 		}
 		
+		watcherManager = MallobOutputWatcherManager.getInstance();
+		watcherManager.setup(mallbLogDirectory, amountWatcherThreads, watchingIntervalPerWatcherThread);
+		
 		initializeMallobOuptut();
 		
 		
@@ -82,22 +85,12 @@ public class MallobReaderStarter {
 				 amountReaderThreads,
 				 readingIntervalPerReadingThread);
 		
-		initializeWatchers(mallbLogDirectory,
-				amountWatcherThreads,
-				watchingIntervalPerWatcherThread);
+
 		//after this mallobio can be started 
 			
 	}
 	
 	
-	private void initializeWatchers(String mallobBaseDirectory, 
-			int amountWatcherThreads,
-			int watchingIntervalPerWatcherThread) 
-	{
-		
-		watcherManager = MallobOutputWatcherManager.getInstance();
-		watcherManager.setup(mallobBaseDirectory, amountWatcherThreads, watchingIntervalPerWatcherThread);
-	}
 
 	/**
 	 * See Description of initParsingMdule, This Method does step 1-2.5
@@ -145,6 +138,7 @@ public class MallobReaderStarter {
 	private void initializeMallobOuptut() {
 		this.logDistributor = new OutputLogLineDistributor();
 		this.resultDistributor = new ResultObjectDistributor();
+		
 		this.watcherManager.setResultDistributor(resultDistributor);
 		this.mallobOutput = new MallobOutput(resultDistributor, logDistributor);
 	}

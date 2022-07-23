@@ -17,10 +17,10 @@ public class MallobClientOutputWatcherTests {
 	/**
 	 * Path to a testing directory being created	//Paths.get("").toAbsolutePath().toString();
 	 */
-	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\testDirectory";
+	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\src\\main\\resources\\clientTests";
 	public static final String TEST_FILE_NAME = "result";
 	public static final String TEST_FILE_EXTENSION = ".txt";
-	private static final int AMOUNT_TEST_RESULTS = 10;
+	//private static final int AMOUNT_TEST_RESULTS = 10;
 
 	private static int fileCounter = 0;
 	
@@ -39,6 +39,7 @@ public class MallobClientOutputWatcherTests {
 	}
 	
 	
+	
 	@Test
 	public void testFileCreationRecognition() throws IOException {
 		createMockResultFile(fileCounter);
@@ -54,26 +55,12 @@ public class MallobClientOutputWatcherTests {
 		assertTrue(testDistributor.resultPaths.size() == 1);
 		//check if file-path is equal to name
 		assertTrue(testDistributor.resultPaths.get(0).equals(createFilePath(fileCounter)));
+		assertTrue(watcher.isDone());
 	}
 	
-	@Test
-	public void testFileCreationWithOtherFilesinDirectory() throws IOException {
-		//first we want to create a file and let the watcher see it 
-		createMockResultFile(fileCounter);
-		watcher.checkForAction();
-		
-		//now, reset the testDistributor
-		testDistributor.resetResultPaths();
-		
-		//now, create another file and let the watcher check for it
-		fileCounter++;
-		createMockResultFile(fileCounter);
-		watcher.checkForAction();
-		//distributor should only have one file : because the watcher only pushed one (new file), although 2 are in the directory
-		assertTrue(testDistributor.resultPaths.size() == 1);
-		assertTrue(testDistributor.resultPaths.get(0).equals(createFilePath(fileCounter)));	
-	}
-	
+	/*
+	 * Only ONE result is possible. So the first file the mallobclientoutputwatcher sees, is identified as the 
+	 * wanted result-file. After that the reader shuts itself down
 	@Test
 	public void testMultipleFileCreations() throws IOException {
 		for (int i = 0; i < AMOUNT_TEST_RESULTS; i++) {
@@ -85,6 +72,9 @@ public class MallobClientOutputWatcherTests {
 		}
 	}
 	
+	
+	
+	//Tests, if the reader recognizes other files, which HAVE been in the directory. Once again, a functionality not needed
 	@Test
 	public void testDirectoryWithFilesInside() throws IOException {
 		new File(TEST_DIRECTORY_PATH).mkdirs();
@@ -105,6 +95,7 @@ public class MallobClientOutputWatcherTests {
 		assertTrue(testDistributor.resultPaths.get(0).equals(createFilePath(fileCounter)));	
 
 	}
+	*/
 	
 	
 	@BeforeEach

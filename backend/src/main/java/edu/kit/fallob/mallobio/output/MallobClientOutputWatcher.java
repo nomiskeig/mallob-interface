@@ -23,9 +23,7 @@ import java.util.Arrays;
 public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	
 	private String pathToMallobDirectory;
-	
-	private int clientProcessRank;
-	
+		
 	private ResultObjectDistributor distributor;
 	
 	private List<String> processedResults;
@@ -34,10 +32,6 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	
 	
 	
-	public MallobClientOutputWatcher(String pathToMallobDirectory, int clientProcessID) {
-		this.clientProcessRank = clientProcessID;
-		setupClientOutputWatcher(pathToMallobDirectory);
-	}
 	
 	public MallobClientOutputWatcher(String pathToMallobDirectory) {
 		setupClientOutputWatcher(pathToMallobDirectory);
@@ -48,7 +42,7 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 		this.pathToMallobDirectory = pathToMallobDirectory;
 		this.processedResults = new ArrayList<>();
 		retreivedResult = false;
-		scanInitialFiles();
+		//scanInitialFiles();
 	}
 	
 	
@@ -58,7 +52,11 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	/**
 	 * This method scans the given directory for initial files,
 	 * such that these files can be distinguished from results
-	 */
+	 * 
+	 * The idea of this method is to scan files that have been in the directory beforehand, 
+	 * such that the Output-Watcher only pushes newly created/moved files to the distributor 
+	 * 
+	 
 	private void scanInitialFiles() {
 		File directrory = new File(pathToMallobDirectory);
 		List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
@@ -66,6 +64,8 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 			processedResults.add(f.getAbsolutePath());
 		}
 	}
+	
+	*/
 	
 	/**
 	 * Check for changes in the directory, given in the creation of the file

@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 public class MallobOutputRunnerThreadTests {
 	
-	
-	
+
+
 	private static MallobOutputRunnerThread testThread;
 	
 	private static final int TEST_ACTION_CHECK_INTERVAL = 1000;

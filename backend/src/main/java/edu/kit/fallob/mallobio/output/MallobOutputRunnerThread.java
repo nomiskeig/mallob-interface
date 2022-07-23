@@ -27,13 +27,26 @@ public class MallobOutputRunnerThread implements Runnable {
 		return threadPool;
 	}
 	
-	
+	/**
+	 * Given an array of Threads, it starts every thread in the array
+	 * @param threadpool
+	 */
 	public static void startThreadPoolExecution(Thread[] threadpool) {
 		for (Thread t : threadpool) {
 			t.start();
 		}
 	}
 	
+	/**
+	 * Given an array of threads and MallobOutputRunnerThreads - which *have!* to be same length
+	 * It first calls stopRunning() on every MallobOUtputRunnerThread
+	 * and after that tries to join to threads
+	 * 
+	 * @param threadpool
+	 * @param runnerThreads
+	 * @throws IllegalArgumentException if threadpool and runnerthreads are not the same length
+	 * @throws InterruptedException if joining of thread fails
+	 */
 	public static void stopThreadPoolExecution(Thread[] threadpool, MallobOutputRunnerThread[] runnerThreads) 
 			throws IllegalArgumentException, InterruptedException 
 	{
@@ -46,9 +59,14 @@ public class MallobOutputRunnerThread implements Runnable {
 		}
 	}
 	
+	
+	
+	
+	
+	
 	private List<MallobOutputActionChecker> checkers;
 	private int checkActionInterval;
-	private boolean runCheckers = true;
+	private boolean runCheckers = false;
 	
 	public MallobOutputRunnerThread(int checkActionInterval) {
 		this.checkActionInterval = checkActionInterval;
@@ -57,7 +75,8 @@ public class MallobOutputRunnerThread implements Runnable {
 	
 	@Override
 	public void run() {
-			
+		this.runCheckers = true;
+		
 		while(runCheckers) {
 			while(this.checkers.size() == 0) {
 				try {
@@ -92,11 +111,12 @@ public class MallobOutputRunnerThread implements Runnable {
 	}
 	
 	
-	
+	/*Stops execution of the run-method */
 	public void stopRunning() {
 		this.runCheckers = false;
 	}
 	
+	/*Possibly restarts execution of the run-method- method has to be called again */
 	public void restartRunning() {
 		this.runCheckers = true;
 	}
@@ -110,13 +130,19 @@ public class MallobOutputRunnerThread implements Runnable {
 		return this.checkers.size();
 	}
 	
-	
+	/**
+	 * Adds an action checker to this threads checkers.
+	 * If the thread has been started and did not hold any action checkers, this method would also call notify() - 
+	 * this is because the thread sets itself to wait, if not checkers are to execute .
+	 * 
+	 * If the thread hasn't been started, it wouldn't call notfiy().
+	 * @param checker
+	 */
 	public void addActionChecker(MallobOutputActionChecker checker) {
 		this.checkers.add(checker);
 		
-		//if the thread had zero checkers to execute - was effectively doing nothing but waiting,
-		//the thread has to be notiyfied, so that it can continue runnig 
-		if (this.checkers.size() == 1) {
+		
+		if (this.runCheckers && this.checkers.size() == 1) {
 			this.notify();
 		}
 	}
