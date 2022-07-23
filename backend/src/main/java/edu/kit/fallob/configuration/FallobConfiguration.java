@@ -31,6 +31,8 @@ public class FallobConfiguration {
 	private String databaseBasePath;
 	private String mallobBasePath;
 	private String resultBasePath;
+	private String dataBaseUsername;
+	private String databasePassword;
 	
 	
 	
@@ -178,6 +180,26 @@ public class FallobConfiguration {
 	}
 	void setResultBasePath(String resultBasePath) {
 		this.resultBasePath = resultBasePath;
+	}
+
+
+	public String getDataBaseUsername() {
+		return dataBaseUsername;
+	}
+
+
+	public void setDataBaseUsername(String dataBaseUsername) {
+		this.dataBaseUsername = dataBaseUsername;
+	}
+
+
+	public String getDatabasePassword() {
+		return databasePassword;
+	}
+
+
+	public void setDatabasePassword(String databasePassword) {
+		this.databasePassword = databasePassword;
 	}
 	
 	
