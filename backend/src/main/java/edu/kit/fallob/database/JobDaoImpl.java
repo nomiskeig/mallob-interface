@@ -34,14 +34,14 @@ public class JobDaoImpl implements JobDao{
     private static final String DIRECTORY_SEPARATOR = "/";
     private static final String FILE_SEPARATOR = ".";
     private static final String NAME_SEPARATOR = "_";
-    private static final String ARRAY_TYPE = "INT";
+    private static final String ARRAY_TYPE_INT = "INT";
+    private static final String ARRAY_TYPE_STRING = "VARCHAR(255)";
 
     private static final String JOB_INSERT = "INSERT INTO job (username, submissionTime, jobStatus, mallobId) VALUES (?, ?, ?, ?)";
-    private static final String CONFIGURATION_INSERT = "INSERT INTO jobConfiguration (jobId, name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, contentMode, additionalConfig) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String CONFIGURATION_INSERT = "INSERT INTO jobConfiguration (jobId, name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, contentMode, additionalConfig, dependenciesStrings, precursorString) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_JOB_ID = "UPDATE jobDescription SET jobId=? WHERE descriptionId=?";
     private static final String DESCRIPTION_INSERT = "INSERT INTO jobDescription (username, submitType, uploadTime) VALUES (?, ?, ?)";
     private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription WHERE MIN(uploadTime)";
-    private static final String DELETE_JOB_DESCRIPTION = "DELETE FROM jobDescription WHERE descriptionId=?";
     private static final String GET_JOBS_BEFORE_TIME = "SELECT jobId FROM job WHERE submissionTime < ?";
     private static final String DELETE_FROM_JOB = "DELETE FROM job WHERE jobID=?";
     private static final String DELETE_FROM_JOB_CONFIGURATION = "DELETE FROM jobConfiguration WHERE jobId=?";
@@ -88,15 +88,17 @@ public class JobDaoImpl implements JobDao{
             configStatement.setString(6, configuration.getWallClockLimit());
             configStatement.setString(7, configuration.getCpuLimit());
             configStatement.setString(8, configuration.getArrival());
-            //convert the dependencies list into an Array object
-            Array dependencies = this.conn.createArrayOf(ARRAY_TYPE, configuration.getDependencies().toArray());
+            //convert the dependencies int array into an Array object
+            Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, new int[][]{configuration.getDependencies()});
             configStatement.setArray(9, dependencies);
             configStatement.setBoolean(10, configuration.isIncremental());
-            configStatement.setString(11, configuration.getPrecursor());
-            //TODO: contentMode attribut fehlt
-            //configStatement.setString(12, configuration.);
-
+            configStatement.setInt(11, configuration.getPrecursor());
+            configStatement.setString(12, configuration.getContentMode());
             configStatement.setString(13, configuration.getAdditionalParameter());
+            //convert the dependencies string array into an Array object
+            Array dependenciesStrings = this.conn.createArrayOf(ARRAY_TYPE_STRING, configuration.getDependenciesStrings());
+            configStatement.setArray(14, dependenciesStrings);
+            configStatement.setString(15, configuration.getPrecursorString());
 
             configStatement.executeUpdate();
 
@@ -292,15 +294,16 @@ public class JobDaoImpl implements JobDao{
                 String wallclockLimit = result.getString(6);
                 String cpuLimit = result.getString(7);
                 String arrival = result.getString(8);
-                Integer[] dependenciesArray = (Integer[]) result.getArray(9).getArray();
-                //convert array back into list of integers
-                List<Integer> dependencies = new ArrayList<>(Arrays.asList(dependenciesArray));
+                Integer[] dependencies = (Integer[]) result.getArray(9).getArray();
                 boolean incremental = result.getBoolean(10);
                 String precursor = result.getString(11);
                 String contentMode = result.getString(12);
                 String additionalConfig = result.getString(13);
+                String[] dependenciesString = (String[]) result.getArray(14).getArray();
+                String precursorString = result.getString(15);
 
-                //TODO: contentMode is missing
+
+                //TODO: remove interrupt, literals, assumptions and done from jobConfiguration class and make constructor with dependenciesString and precursorString parameter
                 return new JobConfiguration(name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, descriptionId, additionalConfig, contentMode);
             } else {
                 throw new RuntimeException();
