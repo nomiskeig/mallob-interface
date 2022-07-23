@@ -34,6 +34,7 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	
 	
 	public MallobClientOutputWatcher(String pathToMallobDirectory) {
+		System.out.println(pathToMallobDirectory);
 		setupClientOutputWatcher(pathToMallobDirectory);
 	}
 	

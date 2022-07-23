@@ -17,7 +17,10 @@ public class MallobClientOutputWatcherTests {
 	/**
 	 * Path to a testing directory being created	//Paths.get("").toAbsolutePath().toString();
 	 */
-	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\src\\main\\resources\\clientTests";
+	public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + File.separator + 
+			"src" + File.separator + "main" + File.separator + "resources" + File.separator + "clientTests";
+	//public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\src\\main\\resources\\clientTests";
+
 	public static final String TEST_FILE_NAME = "result";
 	public static final String TEST_FILE_EXTENSION = ".txt";
 	//private static final int AMOUNT_TEST_RESULTS = 10;
@@ -29,7 +32,7 @@ public class MallobClientOutputWatcherTests {
 	
 	
 	private static String createFilePath(int counter) {
-		return TEST_DIRECTORY_PATH + "\\" + TEST_FILE_NAME + Integer.toString(counter) + TEST_FILE_EXTENSION;
+		return TEST_DIRECTORY_PATH + File.separator + TEST_FILE_NAME + Integer.toString(counter) + TEST_FILE_EXTENSION;
 	}
 	
 	
