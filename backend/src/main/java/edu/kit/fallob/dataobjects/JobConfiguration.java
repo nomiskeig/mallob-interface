@@ -4,7 +4,6 @@ import java.util.List;
 
 public class JobConfiguration {
 	
-	public static final int NOT_SET = -1;
 
 	private String name;
 	private double priority;
@@ -30,14 +29,6 @@ public class JobConfiguration {
 		this.setPriority(priority);
 		this.setApplication(application);
 		this.setMaxDemand(maxDemand);
-		this.setWallClockLimit(NOT_SET);
-		this.setCpuLimit(NOT_SET);
-		this.setArrival(NOT_SET);
-		this.setDependencies(null);
-		this.setIncremental(false);
-		this.setPrecursor(NOT_SET);
-		this.setDescriptionID(decriptionID);
-		this.setAdditionalParameter(additionalParameter);
 	}
 	
 	/*
@@ -134,8 +125,4 @@ public class JobConfiguration {
 	public void setAdditionalParameter(List<String> additionalParameter) {
 		this.additionalParameter = additionalParameter;
 	}
-	
-	 
-	
-	
 }	
