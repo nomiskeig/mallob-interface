@@ -78,7 +78,7 @@ export class Visualization {
 			this.#nodes[i].updateOpacityForHover();
 			this.#connections[i].hideForHover();
 		}
-		if (!jobID) {
+		if (jobID === null) {
 			for (let i = 0; i < this.#processes; i++) {
 				this.#nodes[i].resetHover();
 			}
