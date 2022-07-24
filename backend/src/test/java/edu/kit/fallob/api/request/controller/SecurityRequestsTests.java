@@ -1,10 +1,12 @@
 package edu.kit.fallob.api.request.controller;
 
+import edu.kit.fallob.commands.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,11 +24,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -41,6 +48,30 @@ public class SecurityRequestsTests {
     private UserDetailsService userDetailsService;
 
     private MockMvc mvc;
+
+    @MockBean
+    private FallobCommands fallobCommands;
+
+    @MockBean
+    private MallobCommands mallobCommands;
+
+    @MockBean
+    private JobAbortCommands jobAbortCommands;
+
+    @MockBean
+    private JobResultCommand jobResultCommand;
+
+    @MockBean
+    private JobPendingCommmand jobPendingCommmand;
+
+    @MockBean
+    private JobDescriptionCommands jobDescriptionCommands;
+
+    @MockBean
+    private JobInformationCommands jobInformationCommands;
+
+    @MockBean
+    private JobSubmitCommands jobSubmitCommands;
 
     @BeforeEach
     public void setup() {
@@ -84,6 +115,18 @@ public class SecurityRequestsTests {
                 // Ensure it appears we are authenticated with user
                 .andExpect(authenticated().withAuthentication(authentication));
     }
+
+//    @Test
+//    public void requestAbortJob() throws Exception {
+//        when(jobAbortCommands.abortSingleJob("", 1)).thenReturn(true);
+//
+//        this.mvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1).with(user("admin").roles("ADMIN")))
+//
+//                // Ensure it appears we are authenticated with user
+//                .andExpect(authenticated().withUsername("admin"))
+//                .andDo(print()).andExpect(status().isForbidden())
+//                .andExpect(content().string(containsString("1")));
+//    }
 
     @EnableWebSecurity
     @EnableWebMvc

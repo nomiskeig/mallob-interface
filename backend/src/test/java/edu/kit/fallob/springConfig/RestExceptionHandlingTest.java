@@ -17,7 +17,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RestExceptionHandlingTest {
-//    private static final String URL_PREFIX = "http://localhost:8080/spring-security-rest";
+//    private static final String URL_PREFIX = "http://localhost:8080";
 //    // private FormAuthConfig formConfig = new FormAuthConfig(URL_PREFIX + "/login", "temporary", "temporary");
 //
 //    private String cookie;

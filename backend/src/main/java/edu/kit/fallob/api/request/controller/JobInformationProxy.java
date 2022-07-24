@@ -1,38 +1,47 @@
 package edu.kit.fallob.api.request.controller;
 
 
-import edu.kit.fallob.dataobjects.JobConfiguration;
-import edu.kit.fallob.dataobjects.JobInformation;
-import edu.kit.fallob.dataobjects.JobStatus;
-import edu.kit.fallob.dataobjects.ResultMetaData;
+import edu.kit.fallob.dataobjects.*;
 
 public class JobInformationProxy {
 
-    private final JobInformation jobInformation;
+    private final JobConfiguration configuration;
+    private final ResultMetaData rmd;
+    private final String email;
+    private final String username;
+    private final String submitTime;
+    private final JobStatus jobStatus;
+    private final int jobID;
 
     public JobInformationProxy(JobInformation jobInformation) {
-        this.jobInformation = jobInformation;
+        this.configuration = jobInformation.getJobConfiguration();
+        this.jobID = jobInformation.getJobID();
+        this.jobStatus = jobInformation.getJobStatus();
+        this.submitTime = jobInformation.getSubmitTime();
+        this.rmd = jobInformation.getResultMetaData();
+        this.email = jobInformation.getUser().getEmail();
+        this.username = jobInformation.getUser().getUsername();
     }
 
-    public JobConfiguration getJobConfig() {
-        return jobInformation.getJobConfiguration();
+    public JobConfiguration getConfiguration() {
+        return configuration;
     }
-    public int getJobId() {
-        return jobInformation.getJobID();
+    public int getId() {
+        return jobID;
     }
-    public String getUserEmail() {
-        return jobInformation.getUser().getEmail();
+    public String getEmail() {
+        return email;
     }
-    public String getUserName() {
-        return jobInformation.getUser().getUsername();
+    public String getUsername() {
+        return username;
     }
-    public String getUserSubmitTime() {
-        return jobInformation.getSubmitTime();
+    public String getSubmitTime() {
+        return submitTime;
     }
-    public JobStatus getUserJobStatus() {
-        return jobInformation.getJobStatus();
+    public JobStatus getJobStatus() {
+        return jobStatus;
     }
     public ResultMetaData getResultMetaData() {
-        return jobInformation.getResultMetaData();
+        return rmd;
     }
 }

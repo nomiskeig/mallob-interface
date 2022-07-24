@@ -24,7 +24,7 @@ public class AbortJobController {
         return abortJob(jobId, httpRequest);
     }
 
-    @PostMapping("")
+    @PostMapping("/multiple")
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
@@ -38,7 +38,7 @@ public class AbortJobController {
         if (!successfullyAborted.isEmpty()) {
             return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("No jobs are active");
         }
     }
 
@@ -53,11 +53,7 @@ public class AbortJobController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
 
-        if (!successfullyAborted.isEmpty()) {
-            return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
-        }
+        return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
     }
 
     @PostMapping("/global")
@@ -71,14 +67,10 @@ public class AbortJobController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
 
-        if (!successfullyAborted.isEmpty()) {
-            return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
-        }
+        return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
     }
 
-    @PostMapping("incremental/{jobId}")
+    @PostMapping("/incremental/{jobId}")
     public ResponseEntity<Object> abortIncrementalJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
     }
@@ -96,7 +88,7 @@ public class AbortJobController {
         if (successful) {
             return ResponseEntity.ok(HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Job is not active");
         }
     }
 }
