@@ -131,8 +131,8 @@ export class Visualization {
 		if (add) {
             // show node
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
+            
             // call the onClick function if ranks match so correct info is shown
-
             if (rank == this.#clickedRank) {
                 this.#onClick(job.getJobID(), vertex.getTreeIndex(), rank);
             }
@@ -184,6 +184,11 @@ export class Visualization {
 	}
 
 	totalUpdate(jobs) {
+        for (let i = 0; i < this.#processes; i++) {
+            this.#nodes[i].reset();
+            this.#connections[i].reset();
+        }
+        this.#onClick(null, null);
 		jobs.forEach((job) => {
 			let vertices = job.getVertices();
 			vertices.forEach((vertex) => {

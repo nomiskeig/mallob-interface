@@ -42,7 +42,7 @@ export class TimelineComponent extends React.Component {
 			<div className='timelineContainer d-flex flex-column align-items-center'>
 				<div className='sliderContainer'>
 					<Slider
-						step={0.001}
+						step={1}
 						value={this.#position}
 						min={0}
 						max={timeDif}
@@ -50,16 +50,23 @@ export class TimelineComponent extends React.Component {
 						valueLabelFormat={valueText}
 						valueLabelDisplay='auto'
 						onChange={(event, newValue) => {
+                            console.log(newValue)
 							this.#position = newValue;
 							this.#changing = true;
 						}}
 						onChangeCommitted={(event, newValue) => {
 							this.#changing = false;
+                            console.log(newValue)
 							this.#timeManager.setNextTime(
 								addMilliseconds(startTime, newValue)
-							);
+                            );
 							this.#timeManager.setJump();
 						}}
+                        sx={{
+                            '& .MuiSlider-thumb': {
+                                transition: 'none'
+                            }
+                        }}
 					></Slider>
 				</div>
 				<div className='speedContainer d-flex flex-row flex-wrap justify-items-center'>

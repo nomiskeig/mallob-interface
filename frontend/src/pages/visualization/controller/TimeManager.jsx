@@ -1,5 +1,6 @@
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
 import addMilliseconds from 'date-fns/addMilliseconds';
+import isAfter from 'date-fns/isAfter';
 export const TIME_FORWARD = 1;
 export const TIME_BACKWARD = 0;
 export class TimeManager {
@@ -41,6 +42,8 @@ export class TimeManager {
 	}
 	setPaused(paused) {
 		this.#paused = paused;
+        this.#jump = true;
+        this.#live = false;
 	}
 
 	setJump() {
@@ -56,6 +59,10 @@ export class TimeManager {
 			if (this.#paused) {
 				this.#lastTimeMeasured = currentTime;
 				this.#nextTime = this.#lastTime;
+                if (this.#live) {
+                    this.#live = false;
+                    this.#jump = true;
+                }
 			} else {
 				let differenceInMillis = differenceInMilliseconds(
 					currentTime,
@@ -63,9 +70,18 @@ export class TimeManager {
 				);
 				this.#lastTimeMeasured = currentTime;
 				let millisToAdd = differenceInMillis * this.#multiplier;
+                // TODO: this can at most be the current time or at least the startTime
 				let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
-
+                if (isAfter(nextTime, new Date())) {
+                    nextTime = new Date();
+                }
 				this.#nextTime = nextTime;
+                // set to live so that the stream is used again when replay speed is too fast
+				if (!this.#live && Math.abs(differenceInMilliseconds(this.#nextTime, new Date())) < 100) {
+					this.#live = true;
+                    this.#jump = true;
+                    this.#multiplier = 1;
+                }
 			}
 		}
 		return this.#nextTime;
@@ -90,7 +106,7 @@ export class TimeManager {
 	getLastTime() {
 		return this.#lastTime;
 	}
-    getMultiplier() {
-        return this.#multiplier;
-    }
+	getMultiplier() {
+		return this.#multiplier;
+	}
 }

@@ -4,6 +4,7 @@ import { SettingsContext } from '../../../context/SettingsContextProvider';
 import { UserContext } from '../../../context/UserContextProvider';
 import { AppError } from '../../../global/errorHandler/AppError';
 import { StreamEventManager } from './StreamEventManager';
+import {PastEventManager} from './PastEventManager';
 import { JobStorage } from '../model/JobStorage';
 import { TimeManager } from './TimeManager';
 import { Event } from './Event';
@@ -66,13 +67,31 @@ export class VisualizationPageManager extends React.Component {
 		//this.#jobStorage.addEvents(initialEvents);
 	}
 	update() {
+		this.#timeManager.getNextTime();
+        // jump is required => reload the system state etc.
+        if (this.#timeManager.getJump()) {
+            
+            this.#stateLoaded = false;
+            this.#eventManager.closeStream();
+            this.#jobStorage.reset();
+            if (this.#timeManager.isLive()) {
+                this.#eventManager = new StreamEventManager(this.#timeManager);
+            } else {
+                this.#eventManager = new PastEventManager(this.#timeManager);
+            }
+            
+            this.#eventManager.getSystemState(this.#context.userContext).then((res) => {
+                this.#jobStorage.addEvents(res);
+                this.#stateLoaded = true;
+            })
+            //this.#timeManager.setJump();
+        }
 		if (this.#stateLoaded) {
 			let newEvents = this.#eventManager.getNewEvents(
 				this.#context.userContext
 			);
 			this.#jobStorage.addEvents(newEvents);
 		}
-		this.#timeManager.getNextTime();
 		this.#timeLineComponent.update();
 		this.#globalStatsComponent.update();
 		this.#detailsComponent.update();

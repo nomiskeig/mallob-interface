@@ -14,5 +14,8 @@ export class EventManager {
     getSystemState(userContext) {
         console.log('not implemented')
     }
+    closeStream() {
+
+    }
 
 }

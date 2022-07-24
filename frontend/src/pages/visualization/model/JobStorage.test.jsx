@@ -33,7 +33,7 @@ test('calls the update method after adding a job and is not reset before', () =>
     jobStorage.addJobUpdateListener(listener);
 	jobStorage.addEvents([event2]);
     expect(listener.update).toHaveBeenCalledTimes(1);
-    expect(listener.update).toHaveBeenCalledWith(jobStorage.getJob(event2.getJobID()), event2.getTreeIndex())
+    expect(listener.update).toHaveBeenCalledWith(jobStorage.getJob(event2.getJobID()), event2.getTreeIndex(), true)
 
 });
 
