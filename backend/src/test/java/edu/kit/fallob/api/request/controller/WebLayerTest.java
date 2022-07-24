@@ -1,41 +1,46 @@
 package edu.kit.fallob.api.request.controller;
 
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.kit.fallob.commands.*;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.dataobjects.*;
+import edu.kit.fallob.mallobio.outputupdates.Event;
+import edu.kit.fallob.mallobio.outputupdates.Warning;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.JwtAuthenticationEntryPoint;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
+import lombok.With;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest
 public class WebLayerTest {
+    //TODO Divide in one test class for each controller
+    //TODO JavaDoc
+    //
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -72,6 +77,94 @@ public class WebLayerTest {
 
     @MockBean
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    private static final String DESCRIPTION_CONTENT = "Here would usually be the Literals in cnf format";
+
+    private static final String SOLUTION_CONTENT = "Here would usually be the solution in text format";
+
+    private static final String NOT_FOUND = "Job not found";
+
+    private static final String NOT_FOUND_MULTIPLE = "Jobs not found";
+
+    private static final String NOT_FOUND_EXCEPTION = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND + "\"}";
+    private static final String NOT_FOUND_EXCEPTION_MULTIPLE = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND_MULTIPLE + "\"}";
+
+    private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":" +
+            "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":1.0," +
+            "\"cpuLimit\":1.0,\"arrival\":1.0,\"dependencies\":[1,2],\"incremental\":false,\"precursor\":1," +
+            "\"descriptionID\":1,\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":" +
+            "\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\"" +
+            ":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
+
+    @Test
+    @WithMockUser
+    public void saveDescriptionSuccessfully() throws Exception {
+        File file = new File("description.cnf");
+        FileWriter myWriter = new FileWriter(file);
+        myWriter.write(DESCRIPTION_CONTENT);
+        myWriter.close();
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "description.cnf",
+                MediaType.TEXT_PLAIN_VALUE, DESCRIPTION_CONTENT.getBytes());
+
+        when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
+
+        this.mockMvc.perform(multipart("/api/v1/jobs/submit/exclusive/description").file(multipartFile)).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":0}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void saveEmptyDescriptionFile() throws Exception {
+        File file = new File("description.cnf");
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "description.cnf",
+                MediaType.TEXT_PLAIN_VALUE, "".getBytes());
+
+        when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
+
+        this.mockMvc.perform(multipart("/api/v1/jobs/submit/exclusive/description").file(multipartFile)).andDo(print())
+                .andExpect(status().isBadRequest()).andExpect(content().string("{\"status\":\"BAD_REQUEST\"" +
+                        ",\"message\":\"Job description can not be empty\"}"));
+    }
+
+//    @Test
+//    @WithMockUser
+//    public void saveDescriptionUnverifiedUser() throws Exception {
+//        File file = new File("description.cnf");
+//        FileWriter myWriter = new FileWriter(file);
+//        myWriter.write(DESCRIPTION_CONTENT);
+//        myWriter.close();
+//        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
+//        MockMultipartFile multipartFile = new MockMultipartFile("file", "description.cnf",
+//                MediaType.TEXT_PLAIN_VALUE, DESCRIPTION_CONTENT.getBytes());
+//
+//        when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
+//
+//        this.mockMvc.perform(multipart("/api/v1/jobs/submit/exclusive/description").file(multipartFile)).andDo(print())
+//                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":0}"));
+//
+//    }
+
+    @Test
+    @WithMockUser
+    public void submitJobInclusiveSuccessfully() throws Exception {
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
+        List<Integer> jobIds = new ArrayList<>();
+        jobIds.add(1);
+        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
+        ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        when(jobInformationCommands.getSingleJobInformation(null, 1)).thenReturn(jobInformation);
+
+        this.mockMvc.perform(get("/api/v1/jobs/info/single/{jobId}", 1)).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
+    }
+
+
 
     @Test
     @WithMockUser
@@ -120,12 +213,12 @@ public class WebLayerTest {
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         jobIds.add(2);
-        when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Jobs not found"));
+        when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
         this.mockMvc.perform(post("/api/v1/jobs/cancel/multiple").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
-                .andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\",\"message\":\"Jobs not found\"}"));
+                .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
 
     @Test
@@ -199,49 +292,42 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getSingleJobInformationSuccessfully() throws Exception {
-        List<Integer> dependencies = new ArrayList<>();
-        dependencies.add(1);
-        dependencies.add(2);
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1, 1,
-                1, dependencies, false, 1, 1,  "param");
-        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         when(jobInformationCommands.getSingleJobInformation(null, 1)).thenReturn(jobInformation);
 
         this.mockMvc.perform(get("/api/v1/jobs/info/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"jobInformation\":[{\"configuration\":" +
-                        "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":1.0," +
-                        "\"cpuLimit\":1.0,\"arrival\":1.0,\"dependencies\":[1,2],\"incremental\":false,\"precursor\":1," +
-                        "\"descriptionID\":1,\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":" +
-                        "\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\"" +
-                        ":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}"));
+                .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
     }
 
     @Test
     @WithMockUser
     public void getSingleJobInformationException() throws Exception {
-        when(jobInformationCommands.getSingleJobInformation(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Job not found"));
+        when(jobInformationCommands.getSingleJobInformation(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND));
 
         this.mockMvc.perform(get("/api/v1/jobs/info/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\",\"message\":\"Job not found\"}"));
+                .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION));
     }
 
     @Test
     @WithMockUser
     public void getMultipleJobInformationSuccessfully() throws Exception {
-        List<Integer> dependencies = new ArrayList<>();
-        dependencies.add(1);
-        dependencies.add(2);
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1, 1,
-                1, dependencies, false, 1, 1,  "param");
-        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenReturn(jobInformationList);
@@ -249,12 +335,7 @@ public class WebLayerTest {
         JobInformationRequest abortJobRequest = new JobInformationRequest(jobIds);
         this.mockMvc.perform(get("/api/v1/jobs/info").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"jobInformation\":[{\"configuration\":" +
-                        "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":1.0," +
-                        "\"cpuLimit\":1.0,\"arrival\":1.0,\"dependencies\":[1,2],\"incremental\":false,\"precursor\":1," +
-                        "\"descriptionID\":1,\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":" +
-                        "\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\"" +
-                        ":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}"));
+                .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
     }
 
     @Test
@@ -263,79 +344,67 @@ public class WebLayerTest {
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         jobIds.add(2);
-        when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Jobs not found"));
+        when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         JobInformationRequest abortJobRequest = new JobInformationRequest(jobIds);
         this.mockMvc.perform(get("/api/v1/jobs/info").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
-                .andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\",\"message\":\"Jobs not found\"}"));
+                .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
 
     @Test
     @WithMockUser
     public void getAllJobInformationSuccessfully() throws Exception {
-        List<Integer> dependencies = new ArrayList<>();
-        dependencies.add(1);
-        dependencies.add(2);
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1, 1,
-                1, dependencies, false, 1, 1,  "param");
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getAllJobInformation(null)).thenReturn(jobInformationList);
 
         this.mockMvc.perform(get("/api/v1/jobs/info/all")).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"jobInformation\":[{\"configuration\":" +
-                        "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":1.0," +
-                        "\"cpuLimit\":1.0,\"arrival\":1.0,\"dependencies\":[1,2],\"incremental\":false,\"precursor\":1," +
-                        "\"descriptionID\":1,\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":" +
-                        "\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\"" +
-                        ":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}"));
+                .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
     public void getGlobalJobInformationSuccessfully() throws Exception {
-        List<Integer> dependencies = new ArrayList<>();
-        dependencies.add(1);
-        dependencies.add(2);
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1, 1,
-                1, dependencies, false, 1, 1,  "param");
-        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getAllGlobalJobInformation(null)).thenReturn(jobInformationList);
 
         this.mockMvc.perform(get("/api/v1/jobs/info/global")).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"jobInformation\":[{\"configuration\":" +
-                        "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":1.0," +
-                        "\"cpuLimit\":1.0,\"arrival\":1.0,\"dependencies\":[1,2],\"incremental\":false,\"precursor\":1," +
-                        "\"descriptionID\":1,\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":" +
-                        "\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\"" +
-                        ":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}"));
+                .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
     }
 
     @Test
     @WithMockUser(authorities = "NORMAL_USER")
     public void getGlobalJobInformationForbidden() throws Exception {
-        List<Integer> dependencies = new ArrayList<>();
-        dependencies.add(1);
-        dependencies.add(2);
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1, 1,
-                1, dependencies, false, 1, 1,  "param");
-        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getAllGlobalJobInformation(null)).thenReturn(jobInformationList);
@@ -349,13 +418,13 @@ public class WebLayerTest {
     public void getSingleJobDescriptionString() throws Exception {
         File file = new File("description.cnf");
         FileWriter myWriter = new FileWriter(file);
-        myWriter.write("Here would usually be the Literals in cnf format");
+        myWriter.write(DESCRIPTION_CONTENT);
         myWriter.close();
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
         when(jobDescriptionCommands.getSingleJobDescription(null, 1)).thenReturn(jobDescription);
 
         this.mockMvc.perform(get("/api/v1/jobs/description/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"jobDescription\":[\"Here would usually be the Literals in cnf format\"]}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"jobDescription\":[\"" + DESCRIPTION_CONTENT + "\"]}"));
     }
 
     @Test
@@ -363,25 +432,383 @@ public class WebLayerTest {
     public void getSingleJobDescriptionFile() throws Exception {
         File file = new File("description.cnf");
         FileWriter myWriter = new FileWriter(file);
-        myWriter.write("Here would usually be the Literals in cnf format");
+        myWriter.write(DESCRIPTION_CONTENT);
         myWriter.close();
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
         when(jobDescriptionCommands.getSingleJobDescription(null, 1)).thenReturn(jobDescription);
 
-        this.mockMvc.perform(get("/api/v1/jobs/description/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"status\":\"NOT_FOUND\",\"message\":\"Job not found\"}"));
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/description/single/{jobId}", 1)
+                .contentType("application/zip")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertEquals(194, result.getResponse().getContentAsByteArray().length);
+        Assertions.assertEquals("application/zip", result.getResponse().getContentType());
+
     }
 
     @Test
     @WithMockUser
     public void getSingleJobDescriptionException() throws Exception {
-        when(jobDescriptionCommands.getSingleJobDescription(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Job not found"));
+        when(jobDescriptionCommands.getSingleJobDescription(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND));
 
         this.mockMvc.perform(get("/api/v1/jobs/description/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\",\"message\":\"Job not found\"}"));
+                .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION));
     }
 
+    @Test
+    @WithMockUser
+    public void getMultipleJobDescriptionFile() throws Exception {
+        File file = new File("description.cnf");
+        File file2 = new File("description2.cnf");
+        FileWriter myWriter = new FileWriter(file);
+        myWriter.write(DESCRIPTION_CONTENT);
+        myWriter.close();
+        FileWriter myWriter2 = new FileWriter(file2);
+        myWriter2.write(DESCRIPTION_CONTENT);
+        myWriter2.close();
+        List<Integer> jobIds = new ArrayList<>();
+        jobIds.add(1);
+        jobIds.add(2);
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
+        JobDescription jobDescription2 = new JobDescription(Collections.singletonList(file2), SubmitType.EXCLUSIVE);
+        List<JobDescription> jobDescriptionList = new ArrayList<>();
+        jobDescriptionList.add(jobDescription);
+        jobDescriptionList.add(jobDescription2);
 
+        when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenReturn(jobDescriptionList);
+        JobInformationRequest jobDescriptionRequest = new JobInformationRequest(jobIds);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/description", jobIds).content(objectMapper.writeValueAsString(jobDescriptionRequest))
+                .contentType("application/json")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertEquals(368, result.getResponse().getContentAsByteArray().length);
+        Assertions.assertEquals("application/zip", result.getResponse().getContentType());
+    }
+
+    @Test
+    @WithMockUser
+    public void getMultipleJobDescriptionException() throws Exception {
+        List<Integer> jobIds = new ArrayList<>();
+        jobIds.add(1);
+        jobIds.add(2);
+        JobInformationRequest jobDescriptionRequest = new JobInformationRequest(jobIds);
+        when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
+
+        this.mockMvc.perform(get("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
+                        .contentType("application/json")).andDo(print()).andExpect(status().isNotFound()).andExpect(content()
+                .string(NOT_FOUND_EXCEPTION_MULTIPLE));
+    }
+
+    @Test
+    @WithMockUser
+    public void getAllJobDescriptions() throws Exception {
+        File file = new File("description.cnf");
+        File file2 = new File("description2.cnf");
+        FileWriter myWriter = new FileWriter(file);
+
+        myWriter.write(DESCRIPTION_CONTENT);
+        myWriter.close();
+        FileWriter myWriter2 = new FileWriter(file2);
+        myWriter2.write(DESCRIPTION_CONTENT);
+        myWriter2.close();
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
+        JobDescription jobDescription2 = new JobDescription(Collections.singletonList(file2), SubmitType.EXCLUSIVE);
+        List<JobDescription> jobDescriptionList = new ArrayList<>();
+        jobDescriptionList.add(jobDescription);
+        jobDescriptionList.add(jobDescription2);
+
+        when(jobDescriptionCommands.getAllJobDescription(null)).thenReturn(jobDescriptionList);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/description/all"))
+                .andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertEquals(368, result.getResponse().getContentAsByteArray().length);
+        Assertions.assertEquals("application/zip", result.getResponse().getContentType());
+    }
+
+    @Test
+    @WithMockUser
+    public void getSingleJobResultFile() throws Exception {
+        File file = new File("solution.txt");
+        FileWriter myWriter = new FileWriter(file);
+        myWriter.write(SOLUTION_CONTENT);
+        myWriter.close();
+        JobResult jobResult = new JobResult(file);
+        when(jobResultCommand.getSingleJobResult(null, 1)).thenReturn(jobResult);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/solution/single/{jobId}", 1)
+                .contentType("application/zip")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertEquals(188, result.getResponse().getContentAsByteArray().length);
+        Assertions.assertEquals("application/zip", result.getResponse().getContentType());
+
+    }
+
+    @Test
+    @WithMockUser
+    public void getSingleJobResultException() throws Exception {
+        when(jobResultCommand.getSingleJobResult(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND));
+
+        this.mockMvc.perform(get("/api/v1/jobs/solution/single/{jobId}", 1)).andDo(print())
+                .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION));
+    }
+
+    @Test
+    @WithMockUser
+    public void getMultipleJobResultFile() throws Exception {
+        File file = new File("solution.txt");
+        File file2 = new File("solution2.txt");
+        FileWriter myWriter = new FileWriter(file);
+        myWriter.write(SOLUTION_CONTENT);
+        myWriter.close();
+        FileWriter myWriter2 = new FileWriter(file2);
+        myWriter2.write(SOLUTION_CONTENT);
+        myWriter2.close();
+        List<Integer> jobIds = new ArrayList<>();
+        jobIds.add(1);
+        jobIds.add(2);
+        JobResult jobResult = new JobResult(file);
+        JobResult jobResult2 = new JobResult(file2);
+        List<JobResult> jobResultList = new ArrayList<>();
+        jobResultList.add(jobResult);
+        jobResultList.add(jobResult2);
+
+        when(jobResultCommand.getMultipleJobResult(null, jobIds)).thenReturn(jobResultList);
+        JobInformationRequest jobResultRequest = new JobInformationRequest(jobIds);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/solution", jobIds).content(objectMapper.writeValueAsString(jobResultRequest))
+                .contentType("application/json")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertEquals(356, result.getResponse().getContentAsByteArray().length);
+        Assertions.assertEquals("application/zip", result.getResponse().getContentType());
+    }
+
+    @Test
+    @WithMockUser
+    public void getMultipleJobResultException() throws Exception {
+        List<Integer> jobIds = new ArrayList<>();
+        jobIds.add(1);
+        jobIds.add(2);
+        JobInformationRequest jobResultRequest = new JobInformationRequest(jobIds);
+        when(jobResultCommand.getMultipleJobResult(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
+
+        this.mockMvc.perform(get("/api/v1/jobs/solution").content(objectMapper.writeValueAsString(jobResultRequest))
+                .contentType("application/json")).andDo(print()).andExpect(status().isNotFound()).andExpect(content()
+                .string(NOT_FOUND_EXCEPTION_MULTIPLE));
+    }
+
+    @Test
+    @WithMockUser
+    public void getAllJobResults() throws Exception {
+        File file = new File("solution.txt");
+        File file2 = new File("solution2.txt");
+        FileWriter myWriter = new FileWriter(file);
+        myWriter.write(SOLUTION_CONTENT);
+        myWriter.close();
+        FileWriter myWriter2 = new FileWriter(file2);
+        myWriter2.write(SOLUTION_CONTENT);
+        myWriter2.close();
+        JobResult jobResult = new JobResult(file);
+        JobResult jobResult2 = new JobResult(file2);
+        List<JobResult> jobResultList = new ArrayList<>();
+        jobResultList.add(jobResult);
+        jobResultList.add(jobResult2);
+
+        when(jobResultCommand.getAllJobResult(null)).thenReturn(jobResultList);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/solution/all"))
+                .andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertEquals(356, result.getResponse().getContentAsByteArray().length);
+        Assertions.assertEquals("application/zip", result.getResponse().getContentType());
+    }
+
+    @Test
+    @WithMockUser
+    public void waitForJobSuccessfully() throws Exception {
+        ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
+        when(jobPendingCommmand.waitForJob(null, 1)).thenReturn(result);
+
+        this.mockMvc.perform(get("/api/v1/jobs/waitFor/{jobId}", 1)).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"resultMetaData\":{\"parsingTime\":1.0," +
+                        "\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void waitForJobException() throws Exception {
+        when(jobPendingCommmand.waitForJob(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND));
+
+        this.mockMvc.perform(get("/api/v1/jobs/waitFor/{jobId}", 1)).andDo(print())
+                .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void getWarnings() throws Exception {
+        Warning warning = new Warning("Here would be a log line");
+        when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
+
+        this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"logLine\":\"Here would be a log line\"}]}"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "NORMAL_USER")
+    public void getWarningsForbidden() throws Exception {
+        Warning warning = new Warning("Here would be a log line");
+        when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
+
+        this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
+                .andExpect(status().isForbidden()).andExpect(content().string(""));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void startMallobSuccessfully() throws Exception {
+        String params = "Here would be parameters";
+        when(mallobCommands.startMallob(params)).thenReturn(true);
+        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
+                        .contentType("application/json")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("\"OK\""));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void startMallobUnsuccessfully() throws Exception {
+        String params = "Here would be parameters";
+        when(mallobCommands.startMallob(params)).thenReturn(false);
+        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
+                        .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is already running"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "NORMAL_USER")
+    public void startMallobForbidden() throws Exception {
+        String params = "Here would be parameters";
+        when(mallobCommands.startMallob(params)).thenReturn(true);
+        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
+                        .contentType("application/json")).andDo(print()).andExpect(status().isForbidden()).andExpect(content().string(""));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void stopMallobSuccessfully() throws Exception {
+        when(mallobCommands.stopMallob()).thenReturn(true);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/stop")).andDo(print()).andExpect(status().isOk())
+                .andExpect(content().string("\"OK\""));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void stopMallobUnsuccessfully() throws Exception {
+        when(mallobCommands.stopMallob()).thenReturn(false);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/stop")).andDo(print()).andExpect(status().isConflict())
+                .andExpect(content().string("The system is not running"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "NORMAL_USER")
+    public void stopMallobForbidden() throws Exception {
+        when(mallobCommands.stopMallob()).thenReturn(true);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/stop")).andDo(print()).andExpect(status().isForbidden())
+                .andExpect(content().string(""));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void restartMallobSuccessfully() throws Exception {
+        String params = "Here would be parameters";
+        when(mallobCommands.stopMallob()).thenReturn(true);
+        when(mallobCommands.startMallob(params)).thenReturn(true);
+        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/restart").content(objectMapper.writeValueAsString(mallobStartStopRequest))
+                .contentType("application/json")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("\"OK\""));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void restartMallobUnsuccessfully() throws Exception {
+        String params = "Here would be parameters";
+        when(mallobCommands.stopMallob()).thenReturn(false);
+        when(mallobCommands.startMallob(params)).thenReturn(true);
+        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/restart").content(objectMapper.writeValueAsString(mallobStartStopRequest))
+                .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is not running"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "NORMAL_USER")
+    public void restartMallobForbidden() throws Exception {
+        String params = "Here would be parameters";
+        when(mallobCommands.stopMallob()).thenReturn(true);
+        when(mallobCommands.startMallob(params)).thenReturn(true);
+        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
+
+        this.mockMvc.perform(post("/api/v1/system/mallob/restart").content(objectMapper.writeValueAsString(mallobStartStopRequest))
+                .contentType("application/json")).andDo(print()).andExpect(status().isForbidden()).andExpect(content().string(""));
+    }
+
+    @Test
+    @WithMockUser
+    public void getMallobEventsSuccessfully() throws Exception {
+        // TODO To be changed when Event is implemented
+        List<Event> eventsList = new ArrayList<>();
+        Event event = new Event("LogLine would be given here");
+        eventsList.add(event);
+
+        when(mallobCommands.getEvents("2020-02-13T18:51:09.840Z", "2020-02-13T18:54:09.234Z")).thenReturn(eventsList);
+
+        this.mockMvc.perform(get("/api/v1/events/events?startTime=2020-02-13T18:51:09.840Z&endTime=2020-02-13T18:54:09.234Z"))
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\"" +
+                        ":\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false}]}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void getMallobEventsException() throws Exception {
+        when(mallobCommands.getEvents("1", "2")).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Time point not valid"));
+
+        this.mockMvc.perform(get("/api/v1/events/events?startTime=1&endTime=2"))
+                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\"" +
+                        ",\"message\":\"Time point not valid\"}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void getSystemStateSuccessfully() throws Exception {
+        // TODO To be changed when Event is implemented
+        List<Event> eventsList = new ArrayList<>();
+        Event event = new Event("LogLine would be given here");
+        eventsList.add(event);
+        SystemState systemState = new SystemState();
+        systemState.setSystemState(eventsList);
+
+        when(mallobCommands.getSystemState("2020-02-13T18:51:09.840Z")).thenReturn(systemState);
+
+        this.mockMvc.perform(get("/api/v1/events/state?time=2020-02-13T18:51:09.840Z"))
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\"" +
+                        ":\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false}]}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void getSystemStateException() throws Exception {
+        when(mallobCommands.getSystemState("1")).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Time point not valid"));
+
+        this.mockMvc.perform(get("/api/v1/events/state?time=1"))
+                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\"" +
+                        ",\"message\":\"Time point not valid\"}"));
+    }
 
 
 //    @Test

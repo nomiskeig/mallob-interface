@@ -32,7 +32,6 @@ public class JobSubmitController {
     @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
-        int jobId;
         URL url;
         File file;
         try {
@@ -45,6 +44,11 @@ public class JobSubmitController {
         }
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.URL);
+        return getInclusiveCommandResponse(request, username, jobDescription);
+    }
+
+    private ResponseEntity<Object> getInclusiveCommandResponse(@RequestBody SubmitJobRequest request, String username, JobDescription jobDescription) {
+        int jobId;
         try {
             jobId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
         } catch (FallobException exception) {
@@ -53,6 +57,7 @@ public class JobSubmitController {
         }
         return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
+
     @PostMapping("/exclusive/configuration")
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
@@ -69,7 +74,6 @@ public class JobSubmitController {
     @PostMapping("/inclusive")
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
-        int jobNewId;
         List<File> files = new ArrayList<>();
         File file = new File("jobDescription.cnf");
         try {
@@ -91,14 +95,9 @@ public class JobSubmitController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
-        try {
-            jobNewId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
-        } catch (FallobException exception) {
-            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        }
-        return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
+        return getInclusiveCommandResponse(request, username, jobDescription);
     }
+
     @PostMapping("/restart/{jobId}")
     public ResponseEntity<Object> restartJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");

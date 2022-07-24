@@ -16,10 +16,10 @@ public class MallobStartStopController {
     private MallobCommands mallobCommands;
 
     @PostMapping("/start")
-    public ResponseEntity<Object> startMallob(@RequestParam String params) {
-        boolean successful = mallobCommands.startMallob(params);
+    public ResponseEntity<Object> startMallob(@RequestBody MallobStartStopRequest request) {
+        boolean successful = mallobCommands.startMallob(request.getParams());
         if (!successful) {
-            return ResponseEntity.ok(HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is already running");
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -27,19 +27,19 @@ public class MallobStartStopController {
     public ResponseEntity<Object> stopMallob(){
         boolean successful = mallobCommands.stopMallob();
         if (!successful) {
-            return ResponseEntity.ok(HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is not running");
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
     @PostMapping("/restart")
-    public ResponseEntity<Object> restartMallob(@RequestParam String params){
-        boolean successful = mallobCommands.startMallob(params);
+    public ResponseEntity<Object> restartMallob(@RequestBody MallobStartStopRequest request){
+        boolean successful = mallobCommands.stopMallob();
         if (!successful) {
-            return ResponseEntity.ok(HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is not running");
         }
-        successful = mallobCommands.stopMallob();
+        successful = mallobCommands.startMallob(request.getParams());
         if (!successful) {
-            return ResponseEntity.ok(HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is already running");
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }

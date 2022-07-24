@@ -20,19 +20,19 @@ public class MallobEventsController {
     @Autowired
     private MallobCommands mallobCommands;
 
-    @GetMapping("/events?startTime={startTime}&endTime={endTime}")
-    public ResponseEntity<Object> getMallobUpdates(@RequestBody MallobEventsRequest request) {
+    @GetMapping("/events")
+    public ResponseEntity<Object> getMallobUpdates(@RequestParam String startTime, @RequestParam String endTime) {
         List<Event> events;
         try {
-            events = mallobCommands.getEvents(request.getStartTime(), request.getEndTime());
-        } catch (FallobException | NullPointerException exception) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            events = mallobCommands.getEvents(startTime, endTime);
+        } catch (FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         return ResponseEntity.ok(new MallobEventsResponse(events));
     }
-    @GetMapping("/state?time={time}")
-    public ResponseEntity<Object> getSystemState(@PathVariable String time) {
+    @GetMapping("/state")
+    public ResponseEntity<Object> getSystemState(@RequestParam String time) {
         SystemState state;
         try {
             state = mallobCommands.getSystemState(time);

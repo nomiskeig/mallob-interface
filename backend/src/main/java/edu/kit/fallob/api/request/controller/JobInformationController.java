@@ -7,6 +7,7 @@ import edu.kit.fallob.commands.JobResultCommand;
 import edu.kit.fallob.dataobjects.*;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -98,8 +99,8 @@ public class JobInformationController {
         }
         return ResponseEntity.ok(new JobInformationResponse(proxies));
     }
-    @GetMapping("/description/single/{jobId}")
-    public ResponseEntity<Object> getSingleJobDescription(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping(value = "/description/single/{jobId}")
+    public ResponseEntity<Object> getSingleJobDescription(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute("username");
         JobDescription jobDescriptions;
         try {
@@ -130,8 +131,8 @@ public class JobInformationController {
            return getDescriptionsZip(response, Collections.singletonList(jobDescriptions));
         }
     }
-    @GetMapping("/description")
-    public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping(value = "/description")
+    public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute("username");
         List<JobDescription> jobDescriptions;
         try {
@@ -142,8 +143,8 @@ public class JobInformationController {
         }
         return getDescriptionsZip(response, jobDescriptions);
     }
-    @GetMapping("/description/all")
-    public ResponseEntity<Object> getAllJobDescriptions(HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping(value = "/description/all")
+    public ResponseEntity<Object> getAllJobDescriptions(HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute("username");
         List<JobDescription> jobDescriptions;
         try {
@@ -155,8 +156,8 @@ public class JobInformationController {
         return getDescriptionsZip(response, jobDescriptions);
     }
 
-    @GetMapping("/solution/single/{jobId}")
-    public ResponseEntity<Object> getSingleJobResult(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping(value ="/solution/single/{jobId}")
+    public ResponseEntity<Object> getSingleJobResult(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute("username");
         JobResult jobResult;
         try {
@@ -169,7 +170,7 @@ public class JobInformationController {
     }
 
     @GetMapping("/solution")
-    public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
+    public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute("username");
         List<JobResult> jobResults;
         try {
@@ -180,8 +181,8 @@ public class JobInformationController {
         }
         return getResultsZip(response, jobResults);
     }
-    @GetMapping("/solution/all")
-    public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest, HttpServletResponse response) {
+    @GetMapping(value = "/solution/all")
+    public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute("username");
         List<JobResult> jobResults;
         try {
@@ -205,88 +206,72 @@ public class JobInformationController {
         return ResponseEntity.ok(new JobPendingResponse(jobResult));
     }
 
-    private ResponseEntity<Object> getDescriptionsZip(HttpServletResponse response, List<JobDescription> jobDescriptions) {
-        int BUFFER_SIZE = 1024;
-
-        StreamingResponseBody streamResponseBody = out -> {
-            final ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
-            ZipEntry zipEntry = null;
-            InputStream inputStream = null;
-            try {
-                for (JobDescription jobDescription : jobDescriptions) {
-                    for (File file : jobDescription.getDescriptionFiles()) {
-                        zipEntry = new ZipEntry(file.getName());
-
-                        inputStream = new FileInputStream(file);
-
-                        zipOutputStream.putNextEntry(zipEntry);
-                        byte[] bytes = new byte[BUFFER_SIZE];
-                        int length;
-                        while ((length = inputStream.read(bytes)) >= 0) {
-                            zipOutputStream.write(bytes, 0, length);
-                        }
-                    }
-                }
-                // set zip size in response
-                response.setContentLength((int) (zipEntry != null ? zipEntry.getSize() : 0));
-            } catch (IOException e) {
-//                logger.error("Exception while reading and streaming data {} ", e);
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-                if (zipOutputStream != null) {
-                    zipOutputStream.close();
-                }
-            }
-        };
+    private ResponseEntity<Object> getDescriptionsZip(HttpServletResponse response, List<JobDescription> jobDescriptions) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=example.zip");
-        response.addHeader("Pragma", "no-cache");
-        response.addHeader("Expires", "0");
 
-        return ResponseEntity.ok(streamResponseBody);
+        // Creating byteArray stream, make it bufferable and passing this buffer to ZipOutputStream
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
+
+
+        // Packing files
+        for (JobDescription jobDescription : jobDescriptions) {
+            for (File file : jobDescription.getDescriptionFiles()) {
+                // New zip entry and copying InputStream with file to ZipOutputStream, after all closing streams
+                zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+                FileInputStream fileInputStream = new FileInputStream(file);
+
+                IOUtils.copy(fileInputStream, zipOutputStream);
+
+                fileInputStream.close();
+                zipOutputStream.closeEntry();
+            }
+        }
+
+        if (zipOutputStream != null) {
+            zipOutputStream.finish();
+            zipOutputStream.flush();
+            IOUtils.closeQuietly(zipOutputStream);
+        }
+        IOUtils.closeQuietly(bufferedOutputStream);
+        IOUtils.closeQuietly(byteArrayOutputStream);
+
+        return ResponseEntity.ok(byteArrayOutputStream.toByteArray());
     }
 
-    private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) {
-        int BUFFER_SIZE = 1024;
-
-        StreamingResponseBody streamResponseBody = out -> {
-            final ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
-            ZipEntry zipEntry = null;
-            InputStream inputStream = null;
-            try {
-                    for (JobResult result : jobResults) {
-                        zipEntry = new ZipEntry(result.getResult().getName());
-
-                        inputStream = new FileInputStream(result.getResult());
-
-                        zipOutputStream.putNextEntry(zipEntry);
-                        byte[] bytes = new byte[BUFFER_SIZE];
-                        int length;
-                        while ((length = inputStream.read(bytes)) >= 0) {
-                            zipOutputStream.write(bytes, 0, length);
-                        }
-                    }
-                // set zip size in response
-                response.setContentLength((int) (zipEntry != null ? zipEntry.getSize() : 0));
-            } catch (IOException e) {
-//                logger.error("Exception while reading and streaming data {} ", e);
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-                if (zipOutputStream != null) {
-                    zipOutputStream.close();
-                }
-            }
-        };
-
+    private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=example.zip");
-        response.addHeader("Pragma", "no-cache");
-        response.addHeader("Expires", "0");
 
-        return ResponseEntity.ok(streamResponseBody);
+        // Creating byteArray stream, making it bufferable and passing this buffer to ZipOutputStream
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
+
+
+        // Packing files
+        for (JobResult jobResult : jobResults) {
+                File file = jobResult.getResult();
+                // New zip entry and copy InputStream with file to ZipOutputStream, close streams
+                zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+                FileInputStream fileInputStream = new FileInputStream(file);
+
+                IOUtils.copy(fileInputStream, zipOutputStream);
+
+                fileInputStream.close();
+                zipOutputStream.closeEntry();
+            }
+
+        if (zipOutputStream != null) {
+            zipOutputStream.finish();
+            zipOutputStream.flush();
+            IOUtils.closeQuietly(zipOutputStream);
+        }
+        IOUtils.closeQuietly(bufferedOutputStream);
+        IOUtils.closeQuietly(byteArrayOutputStream);
+
+        return ResponseEntity.ok(byteArrayOutputStream.toByteArray());
     }
 }
