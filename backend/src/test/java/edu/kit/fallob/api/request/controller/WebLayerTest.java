@@ -9,9 +9,9 @@ import edu.kit.fallob.mallobio.outputupdates.Warning;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.JwtAuthenticationEntryPoint;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
-import lombok.With;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,10 +26,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -89,12 +88,13 @@ public class WebLayerTest {
     private static final String NOT_FOUND_EXCEPTION = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND + "\"}";
     private static final String NOT_FOUND_EXCEPTION_MULTIPLE = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND_MULTIPLE + "\"}";
 
-    private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":" +
-            "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":1.0," +
-            "\"cpuLimit\":1.0,\"arrival\":1.0,\"dependencies\":[1,2],\"incremental\":false,\"precursor\":1," +
-            "\"descriptionID\":1,\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":" +
-            "\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\"" +
-            ":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
+    private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":{\"name\":\"Job1\",\"priority\"" +
+            ":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":\"1\",\"cpuLimit\":\"1\",\"arrival\":\"1\"," +
+            "\"dependencies\":[2,3],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":true," +
+            "\"literals\":null,\"precursor\":1,\"precursorString\":null,\"assumptions\":null,\"done\":false,\"descriptionID\":1," +
+            "\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":\"kalo\",\"submitTime\":\"12:34:32\"," +
+            "\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0," +
+            "\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
 
     @Test
     @WithMockUser
@@ -128,9 +128,105 @@ public class WebLayerTest {
                         ",\"message\":\"Job description can not be empty\"}"));
     }
 
+
+    @Test
+    @WithMockUser
+    public void submitJobInclusiveSuccessfully() throws Exception {
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1,
+                "assumptions", false, -1, "param");
+        List<String> descriptionsList = new ArrayList<>();
+        descriptionsList.add(DESCRIPTION_CONTENT);
+        descriptionsList.add(DESCRIPTION_CONTENT);
+        File file = new File("jobDescription.cnf");
+            FileWriter myWriter = new FileWriter(file);
+            for (String description : descriptionsList) {
+                myWriter.write(description);
+            }
+            myWriter.close();
+            List<File> filesList = new ArrayList<>();
+            filesList.add(file);
+            JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
+
+            // Using InvocationOnMock as mockito does not use the equals method of jobDescription
+        when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), (any(JobDescription.class)), any(JobConfiguration.class)))
+                .thenAnswer((Answer<Integer>) invocationOnMock -> {
+                        JobDescription usedDescription = invocationOnMock.getArgument(1);
+                        JobConfiguration usedConfig = invocationOnMock.getArgument(2);
+                        boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
+                                && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
+                                == jobConfig.isInterrupt() && Objects.equals((usedConfig.getAdditionalParameter()), jobConfig.getAdditionalParameter())
+                                && usedConfig.getApplication().equals(jobConfig.getApplication()) && usedConfig.getArrival().equals(jobConfig.getArrival())
+                                && usedConfig.getCpuLimit().equals(jobConfig.getCpuLimit())
+                                && Arrays.equals((usedConfig.getDependencies()), dependencies) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
+                                && usedConfig.getPriority() == jobConfig.getPriority() && usedConfig.getDescriptionID() == jobConfig.getDescriptionID()
+                                && usedConfig.getName().equals(jobConfig.getName()) && Arrays.equals((usedConfig.getLiterals()), jobConfig.getLiterals())
+                                && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit()) && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
+
+                                if (jobDescription.equals(usedDescription) && jobConfigEqualsUsedConfig) {
+                            return 1;
+                        }
+                        else {
+                            return -1;
+                        }
+                });
+                        SubmitJobRequest submitJobRequest = new SubmitJobRequest(descriptionsList, jobConfig);
+
+        this.mockMvc.perform(post("/api/v1/jobs/submit/inclusive").content(objectMapper.writeValueAsString(submitJobRequest))
+                        .contentType("application/json")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"jobId\":1}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void submitJobConfigurationSuccessfully() throws Exception {
+        int[] dependencies = new int[2];
+        dependencies[0] = 2;
+        dependencies[1] = 3;
+        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1,
+                "assumptions", false, 1, "param");
+
+        // Using InvocationOnMock as mockito does not use the equals method of jobDescription
+        when(jobSubmitCommands.submitJobWithDescriptionID(isNull(), anyInt(), any(JobConfiguration.class)))
+                .thenAnswer((Answer<Integer>) invocationOnMock -> {
+                    int descriptionId = invocationOnMock.getArgument(1);
+                    JobConfiguration usedConfig = invocationOnMock.getArgument(2);
+                    boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
+                            && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
+                            == jobConfig.isInterrupt() && Objects.equals((usedConfig.getAdditionalParameter()), jobConfig.getAdditionalParameter())
+                            && usedConfig.getApplication().equals(jobConfig.getApplication()) && usedConfig.getArrival().equals(jobConfig.getArrival())
+                            && usedConfig.getCpuLimit().equals(jobConfig.getCpuLimit())
+                            && Arrays.equals((usedConfig.getDependencies()), dependencies) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
+                            && usedConfig.getPriority() == jobConfig.getPriority() && usedConfig.getDescriptionID() == jobConfig.getDescriptionID()
+                            && usedConfig.getName().equals(jobConfig.getName()) && Arrays.equals((usedConfig.getLiterals()), jobConfig.getLiterals())
+                            && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit()) && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
+
+                    if (descriptionId == 1 && jobConfigEqualsUsedConfig) {
+                        return 1;
+                    }
+                    else {
+                        return -1;
+                    }
+                });
+        SubmitJobRequest submitJobRequest = new SubmitJobRequest(jobConfig);
+
+        this.mockMvc.perform(post("/api/v1/jobs/submit/exclusive/config").content(objectMapper.writeValueAsString(submitJobRequest))
+                        .contentType("application/json")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"jobId\":1}"));
+    }
+
+    //TODO Test submit Job with url Description
+    //TODO Test endpoints with user not verified
 //    @Test
 //    @WithMockUser
-//    public void saveDescriptionUnverifiedUser() throws Exception {
+//    public void submitJobWithUrl() throws Exception {
+//        try (InputStream in = url.openStream()) {
+//            Files.copy(in, Paths.get(fileName));
+//        }
 //        File file = new File("description.cnf");
 //        FileWriter myWriter = new FileWriter(file);
 //        myWriter.write(DESCRIPTION_CONTENT);
@@ -146,24 +242,57 @@ public class WebLayerTest {
 //
 //    }
 
-    @Test
-    @WithMockUser
-    public void submitJobInclusiveSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
-        ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
-        when(jobInformationCommands.getSingleJobInformation(null, 1)).thenReturn(jobInformation);
 
-        this.mockMvc.perform(get("/api/v1/jobs/info/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
+    @Test
+    public void registerSuccessfully() throws Exception {
+        String email = "kalo@student.kit.edu";
+        String username = "kalo";
+        String password = "1234";
+        when(fallobCommands.register(email, username, password)).thenReturn(true);
+        UserRequest userRequest = new UserRequest(email, username, password);
+
+        this.mockMvc.perform(post("/api/v1/users/register").content(objectMapper.writeValueAsString(userRequest))
+                        .contentType("application/json")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("\"OK\""));
     }
 
+    @Test
+    public void registerException() throws Exception {
+        String email = "kalo@student.kit.edu";
+        String username = "kalo";
+        String password = "1234";
+        when(fallobCommands.register(email, username, password)).thenThrow(new FallobException(HttpStatus.CONFLICT, "Username already registered"));
+        UserRequest userRequest = new UserRequest(email, username, password);
+
+        this.mockMvc.perform(post("/api/v1/users/register").content(objectMapper.writeValueAsString(userRequest))
+                        .contentType("application/json")).andDo(print()).andExpect(status().isConflict())
+                .andExpect(content().string("{\"status\":\"CONFLICT\",\"message\":" + "\"Username already registered\"}"));
+    }
+
+    //TODO The tests below are not executed correctly - find fix
+//    @Test
+//    public void loginSuccessfully() throws Exception {
+//        String username = "kalo";
+//        String password = "1234";
+//        when(fallobCommands.loadUserByUsername(username)).thenReturn(new org.springframework.security.core.userdetails.User(username, password, Collections.singleton(UserType.NORMAL_USER)));
+//        UserRequest userRequest = new UserRequest(username, password);
+//
+//        this.mockMvc.perform(post("/api/v1/users/login").content(objectMapper.writeValueAsString(userRequest))
+//                        .contentType("application/json")).andDo(print())
+//                .andExpect(status().isOk()).andExpect(content().string("\"OK\""));
+//    }
+//
+//    @Test
+//    public void loginException() throws Exception {
+//        String username = "kalo";
+//        String password = "1234";
+//        when(fallobCommands.loadUserByUsername(username)).thenThrow(new UsernameNotFoundException("Username already registered"));
+//        UserRequest userRequest = new UserRequest(username, password);
+//
+//        this.mockMvc.perform(post("/api/v1/users/login").content(objectMapper.writeValueAsString(userRequest))
+//                        .contentType("application/json")).andDo(print()).andExpect(status().isNotFound())
+//                .andExpect(content().string("{\"status\":\"CONFLICT\",\"message\":" + "\"Username already registered\"}"));
+//    }
 
 
     @Test
@@ -300,7 +429,8 @@ public class WebLayerTest {
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
+        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         when(jobInformationCommands.getSingleJobInformation(null, 1)).thenReturn(jobInformation);
 
         this.mockMvc.perform(get("/api/v1/jobs/info/single/{jobId}", 1)).andDo(print())
@@ -327,7 +457,8 @@ public class WebLayerTest {
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
+        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenReturn(jobInformationList);
@@ -384,7 +515,8 @@ public class WebLayerTest {
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
+        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getAllGlobalJobInformation(null)).thenReturn(jobInformationList);
@@ -404,7 +536,8 @@ public class WebLayerTest {
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
+        JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
         when(jobInformationCommands.getAllGlobalJobInformation(null)).thenReturn(jobInformationList);
@@ -810,16 +943,46 @@ public class WebLayerTest {
                         ",\"message\":\"Time point not valid\"}"));
     }
 
+    //FROM HERE EXCEPTION HANDLING TESTS
+
+    @Test
+    @WithMockUser
+    public void whenHttpRequestMethodNotSupported_thenMethodNotAllowed() throws Exception {
+        when(mallobCommands.getSystemState("1")).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Time point not valid"));
+
+        this.mockMvc.perform(post("/api/v1/events/state?time=1"))
+                .andDo(print()).andExpect(status().isMethodNotAllowed()).andExpect(content().string("{\"status\":" +
+                        "\"METHOD_NOT_ALLOWED\",\"message\":\"Request method 'POST' not supported\\nPOST method is not supported for this request. " +
+                        "Supported methods are GET \"}"));
+    }
 
 //    @Test
-//    public void testWithSecurityMockMvcRequestPostProcessors() throws Exception {
-//        this.mockMvc
-//                .perform(
-//                        post("/api/v1/users/login")
-//                                .with(jwt())
-//                                .with(csrf())
-//                )
-//                .andExpect(status().isOk());
+//    @WithMockUser
+//    public void whenSendInvalidHttpMediaType_thenUnsupportedMediaType() throws Exception {
+//        when(mallobCommands.getSystemState("1")).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Time point not valid"));
 //
+//        this.mockMvc.perform(get("/api/v1/events/state?time=1/1"))
+//                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\"" +
+//                        ",\"message\":\"Time point not valid\"}"));
 //    }
+//
+//    @Test
+//    @WithMockUser
+//    public void whenNoHandlerForHttpRequest_thenNotFound() throws Exception {
+//        when(mallobCommands.getSystemState("1")).thenThrow(new FallobException(HttpStatus.NOT_FOUND, "Time point not valid"));
+//
+//        this.mockMvc.perform(get("/api/v1/events/state/1"))
+//                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\"" +
+//                        ",\"message\":\"Time point not valid\"}"));
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    public void whenMethodArgumentMismatch_thenBadRequest() throws Exception {
+//        this.mockMvc.perform(post("/api/v1/jobs/cancel/multiple"))
+//                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\"" +
+//                        ",\"message\":\"Time point not valid\"}"));
+//    }
+
+
 }

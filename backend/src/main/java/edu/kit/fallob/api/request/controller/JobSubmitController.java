@@ -58,7 +58,7 @@ public class JobSubmitController {
         return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
 
-    @PostMapping("/exclusive/configuration")
+    @PostMapping("/exclusive/config")
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute("username");
         int jobNewId;
@@ -79,14 +79,14 @@ public class JobSubmitController {
         try {
             FileWriter myWriter = new FileWriter(file);
             List<String> lines = request.getJobDescription();
-            int counter = 0;
+//            int counter = 0;
             for (String line : lines) {
                 myWriter.write(line);
-                if (file.getTotalSpace() > Math.pow(10, 8)) {
-                    files.add(file);
-                    file = new File("jobDescription" + counter + ".cnf");
-                    counter++;
-                }
+//                if (file.getTotalSpace() > Math.pow(10, 8)) {
+//                    files.add(file);
+//                    file = new File("jobDescription" + counter + ".cnf");
+//                    counter++;
+//                }
             }
             files.add(file);
             myWriter.close();

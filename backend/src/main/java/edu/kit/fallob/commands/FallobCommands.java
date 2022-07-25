@@ -1,9 +1,11 @@
 package edu.kit.fallob.commands;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,8 +30,9 @@ public class FallobCommands implements UserDetailsService {
         // JPA Beispiel fur die Implementation
 
 //        User user = userRepo.findByUsername(username);
-//        if(user == null) {
-//            throw new UsernameNotFoundException("User not found in the database");
+
+//        if(user == null || !user.isVerified()) {
+//            throw new UsernameNotFoundException("User not found in the database or is not verified");
 //        } else {
 //            List <SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getUserType));
 //

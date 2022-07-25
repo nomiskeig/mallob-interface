@@ -5,7 +5,6 @@ import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,24 +32,31 @@ public class UserController {
         boolean successful;
         try {
             successful = fallobCommand.register(request.getEmail(), request.getUsername(), request.getPassword());
-        } catch (NullPointerException exception) {
-            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         if (!successful) {
-            return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registering was unsuccessful");
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
-        final UserDetails userDetails = fallobCommand
-                .loadUserByUsername(authenticationRequest.getUsername());
+        try {
+            authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        } catch(Exception exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+        final UserDetails userDetails;
+        try {
+             userDetails = fallobCommand.loadUserByUsername(authenticationRequest.getUsername());
+        } catch (UsernameNotFoundException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.NOT_FOUND, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 

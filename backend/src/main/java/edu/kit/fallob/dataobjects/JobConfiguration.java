@@ -1,6 +1,8 @@
 package edu.kit.fallob.dataobjects;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class JobConfiguration {
 
@@ -175,5 +177,6 @@ public class JobConfiguration {
 	public void setDependenciesStrings(String[] dependenciesStrings) {
 		this.dependenciesStrings = dependenciesStrings;
 	}
-	
-}	
+
+
+}
