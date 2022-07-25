@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * class that is responsible for storing the waring from Mallob in the database
+ * class that is responsible for storing the warnings from Mallob in the database
  * @author Valentin Schenk
  * @version 1.0
  */
