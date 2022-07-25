@@ -17,10 +17,14 @@ public interface MallobInput {
 	
 	/**
 	 * Creates a JSON in the correct format for the Mallob-API, :
-	 * 	@see href="https://github.com/domschrei/mallob#introducing-a-job">Link to Mallob API</a>
 	 * 
 	 * The creates a .json file, which contains said json and places it in a client-input directory
 	 * (or it creates the file in the directory directly, respectively).
+	 * 
+	 * This directory is generated for each client-process individually by MallobFilePathGenerator
+	 * 
+	 * 
+	 * @see href="https://github.com/domschrei/mallob#introducing-a-job">Link to Mallob API</a>
 	 * 
 	 * 
 	 * @param userName of the user submitting this job

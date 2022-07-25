@@ -1,11 +1,14 @@
 package edu.kit.fallob.mallobio;
 
+import java.io.File;
+
 public class MallobFilePathGenerator {
 	
 	
-	public static final String LOG_FILE_PATH_BEFROE_ID = "/jobs.";
+	public static final String LOG_FILE_PATH_BEFROE_ID = File.separator + "jobs.";
 	
 	public static final String LOG_FILE_EXTENSION = ".txt";
+	
 	
 	
 
@@ -19,8 +22,9 @@ public class MallobFilePathGenerator {
 	 * @return The generated path as described above
 	 */
 	public static String generateLogFilePath(int processID, String basePath) {
-		return generateLogDirectoryPath(processID, basePath) + "/" + generateLogName(processID) + "/"+ LOG_FILE_EXTENSION;
+		return generateLogDirectoryPath(processID, basePath) + File.separator + generateLogName(processID) + File.separator + LOG_FILE_EXTENSION;
 	}
+	
 	
 	/**
 	 * Create the path to the out-directory (the directory in which the log-file lies) of the process with processID
@@ -47,7 +51,7 @@ public class MallobFilePathGenerator {
 	 * @return
 	 */
 	public static String generatePathToMallobSubmitDirectory(String basePath, int clientProcessID) {
-		return basePath += ".api/jobs." + clientProcessID + "/in/";
+		return basePath += ".api"+File.separator+"jobs." + clientProcessID + File.separator + "in" + File.separator;
 	}
 	
 	/**
@@ -57,6 +61,6 @@ public class MallobFilePathGenerator {
 	 * @return
 	 */
 	public static String generatePathToMallobAbortDirectory(String basePath, int clientProcessID) {
-		return basePath += ".api/jobs." + clientProcessID + "/in/";
+		return basePath += ".api"+File.separator+"jobs." + clientProcessID + File.separator + "in" + File.separator;
 	}
 }

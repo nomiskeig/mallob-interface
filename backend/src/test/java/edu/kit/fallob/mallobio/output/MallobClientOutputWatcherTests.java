@@ -27,6 +27,7 @@ public class MallobClientOutputWatcherTests {
 
 	private static int fileCounter = 0;
 	
+	
 	private static MallobClientOutputWatcher watcher;
 	private static TestDistributor testDistributor;
 	

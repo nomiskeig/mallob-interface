@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.kit.fallob.dataobjects.JobConfiguration;
@@ -40,7 +41,7 @@ public class MallobInputImplementation implements MallobInput {
 	@Override
 	public int abortJob(int runningJobID) throws IOException {
 		
-		this.writeJsonInDirectory(createAbortJSON(runningJobID),
+		this.writeJsonInDirectory(createAbortJSON(runningJobID).toString(),
 				MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, 
 						clientProcessIDs[lastUsedClientProcessAbort]));
 		
@@ -49,6 +50,7 @@ public class MallobInputImplementation implements MallobInput {
 		updateAbortCounter();
 		return processID;
 	}
+	
 
 	
 	@Override
@@ -56,9 +58,12 @@ public class MallobInputImplementation implements MallobInput {
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) throws IOException 
 	{
-		this.writeJsonInDirectory(createSubmitJSON(userName, jobConfiguration, jobDescription), 
-				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, 
-						clientProcessIDs[lastUsedClientProcesSubmit]));
+		String json = createSubmitJSON(userName, jobConfiguration, jobDescription).toString();
+		String absoluteFilePath = MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, 
+				clientProcessIDs[lastUsedClientProcesSubmit]) + File.separator + "newjob.json";
+		
+		
+		this.writeJsonInDirectory(json, absoluteFilePath);
 		
 		int processID = lastUsedClientProcesSubmit;
 		updateSubmitCounter();
@@ -66,10 +71,17 @@ public class MallobInputImplementation implements MallobInput {
 		
 	}
 	
-	private void writeJsonInDirectory(JSONObject json, String path) throws IOException {
+	/**
+	 * Write the string json into a file specified by path.
+	 * Path has to be the absolute file-path 
+	 * @param json
+	 * @param path
+	 * @throws IOException if writing could not be done 
+	 */
+	private void writeJsonInDirectory(String json, String path) throws IOException {
 		File jsonFile = new File(path);
 		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
-		writer.write(json.toString());
+		writer.write(json);
 		writer.close();
 	}
 	
@@ -80,23 +92,75 @@ public class MallobInputImplementation implements MallobInput {
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) 
 	{
-		JSONObject jobJSON = new JSONObject();
-		jobJSON.put(MallobAttributeNames.MALLOB_USER, userName);
-		jobJSON.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
+		JSONObject json = new JSONObject();
+		json.put(MallobAttributeNames.MALLOB_USER, userName);
+		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
+		addJobDescription(json, jobDescription);
+		json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
+		json.put(MallobAttributeNames.MALLOB_APPLICATION, jobConfiguration.getApplication());		
 		
-		//add description-paths
-		//jobJSON.put("files", )
 		
-		addJobDescription(jobJSON, jobDescription);
+		if (jobConfiguration.getWallClockLimit() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_WALLCLOCK_LIMIT, jobConfiguration.getWallClockLimit());
+		}
 		
+		if (jobConfiguration.getCpuLimit() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_CPU_LIMIT, jobConfiguration.getCpuLimit());
+		}
+		
+		
+		if (jobConfiguration.getArrival() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_ARRIVAL, jobConfiguration.getArrival());
+		}
+		
+		
+		if (jobConfiguration.getMaxDemand() != JobConfiguration.INT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_MAX_DEMAND, jobConfiguration.getMaxDemand());
+		}
+	
+		if (jobConfiguration.getDependencies() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, jobConfiguration.getDependencies());
+		}
+		
+		
+		if (jobConfiguration.getContentMode() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_CONTENT_MODE, jobConfiguration.getContentMode());
+		}
+		
+		if (jobConfiguration.getDependencies() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, new JSONArray(jobConfiguration.getDependencies()));
+		}
+		
+		if (jobConfiguration.getLiterals() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_LITERALS, new JSONArray(jobConfiguration.getLiterals()));
+		}
+		
+		if (jobConfiguration.getPrecursor() != JobConfiguration.INT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_PRECURSOR, jobConfiguration.getPrecursor());
+		}
+	
+		if (jobConfiguration.getAssumptions() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_ASSUMPTIONS, new JSONArray(jobConfiguration.getAssumptions()));
+		}
+		
+		if (jobConfiguration.isDone() != JobConfiguration.BOOL_DEFAULT){
+			json.put(MallobAttributeNames.MALLOB_DONE, jobConfiguration.isDone());
+		}
+		
+
 		//add additional parameters
 		//TODO
-		return jobJSON;
+		return json;
 	}
 
 
+	
 	private void addJobDescription(JSONObject jobJSON, JobDescription jobDescription) {
-		
+		String[] descriptionPaths = new String[jobDescription.getDescriptionFiles().size()];
+		for (int i = 0; i < descriptionPaths.length; i++) {
+			descriptionPaths[i] = jobDescription.getDescriptionFiles().get(i).getAbsolutePath();
+		}
+		jobJSON.put(MallobAttributeNames.MALLOB_DESCRIPTION, new JSONArray(descriptionPaths));
 	}
 	
 	

@@ -4,6 +4,11 @@ import java.util.List;
 
 public class JobConfiguration {
 	
+	public static final Object OBJECT_NOT_SET = null;
+	
+	public static final int INT_NOT_SET = - Integer.MAX_VALUE;
+	
+	public static final boolean BOOL_DEFAULT = false;
 
 	private String name;
 	private double priority;
@@ -26,11 +31,7 @@ public class JobConfiguration {
 	private List<String> additionalParameter;
 	
 	public JobConfiguration(String name, double priority, 
-			String application, int maxDemand, 
-			double wallClockLimit, double cpuLimit, 
-			double arrival, List<Integer> dependencies, 
-			boolean incremental, int precursor, 
-			int decriptionID, List<String> additionalParameter) 
+			String application) 
 	{
 		this.setName(name);
 		this.setPriority(priority);
@@ -38,29 +39,7 @@ public class JobConfiguration {
 		this.setMaxDemand(maxDemand);
 	}
 	
-	/*
-	public JobConfiguration(String name, double priority, 
-			String application, int maxDemand, 
-			String wallClockLimit, String cpuLimit, 
-			String arrival, int[] dependencies,
-			String contentMode, boolean interrupt, 
-			boolean incremental, int[] literals, 
-			int precursor, String assumptions, 
-			boolean done, int decriptionID, String additionalParameter) {
-		this.setName(name);
-		this.setPriority(priority);
-		this.setApplication(application);
-		this.setMaxDemand(maxDemand);
-		this.setWallClockLimit(wallClockLimit);
-		this.setCpuLimit(cpuLimit);
-		this.setArrival(arrival);
-		this.setDependencies(dependencies);
-		this.setIncremental(incremental);
-		this.setPrecursor(precursor);
-		this.setDescriptionID(decriptionID);
-		this.setAdditionalParameter(additionalParameter);
-	}
-	*/
+
 	
 	public String getName() {
 		return name;
