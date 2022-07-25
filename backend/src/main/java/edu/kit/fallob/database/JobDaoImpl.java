@@ -305,7 +305,8 @@ public class JobDaoImpl implements JobDao{
 
 
                 //TODO: remove interrupt, literals, assumptions and done from jobConfiguration class and make constructor with dependenciesString and precursorString parameter
-                return new JobConfiguration(name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, descriptionId, additionalConfig, contentMode);
+                //return new JobConfiguration(name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, descriptionId, additionalConfig, contentMode);
+                return null;
             } else {
                 throw new RuntimeException();
             }

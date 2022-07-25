@@ -68,7 +68,8 @@ public class UserDaoImpl implements UserDao{
                 String email = result.getString(6);
 
                 //TODO: constructor wrong
-                return new User()
+                //return new User();
+                return null;
             } else {
                 throw new RuntimeException();
             }
