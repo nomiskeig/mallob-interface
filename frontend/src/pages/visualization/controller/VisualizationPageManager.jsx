@@ -1,18 +1,10 @@
 import React from 'react';
-import { JobContext } from '../../../context/JobContextProvider';
-import { SettingsContext } from '../../../context/SettingsContextProvider';
-import { UserContext } from '../../../context/UserContextProvider';
-import { AppError } from '../../../context/AppError';
 import { StreamEventManager } from './StreamEventManager';
 import { PastEventManager } from './PastEventManager';
 import { JobStorage } from '../model/JobStorage';
 import { TimeManager } from './TimeManager';
-import { Event } from './Event';
 import { Visualization } from '../view/Visualization';
 import './VisualizationPageManager.scss';
-import { JobTreeVertex } from '../model/JobTreeVertex';
-import { Job } from '../model/Job';
-import { VisTests } from '../view/VisTests';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailComponent';
@@ -23,7 +15,6 @@ export class VisualizationPageManager extends React.Component {
 	#context;
 	#visualizationRef;
 	#visualization;
-	#test;
 	#timeLineComponent;
 	#globalStatsComponent;
 	#detailsComponent;
@@ -38,7 +29,6 @@ export class VisualizationPageManager extends React.Component {
 		this.#visualizationRef = React.createRef();
 		this.#timeLineComponent = React.createRef();
 		this.#globalStatsComponent = React.createRef();
-		this.#test = new VisTests({ props: this.#jobStorage });
 		this.#detailsComponent = React.createRef();
 		this.#stateLoaded = false;
 		this.#shouldUpdate = true;
@@ -68,8 +58,6 @@ export class VisualizationPageManager extends React.Component {
 			this.#stateLoaded = true;
 		});
 		console.log('mounted');
-		//this.#context.infoContext.displayUnrecoverable('this is a warning')
-		//this.#jobStorage.addEvents(initialEvents);
 	}
 
 	componentWillUnmount() {
@@ -149,27 +137,6 @@ export class VisualizationPageManager extends React.Component {
 							<div className='binaryTreeCanvasContainer'>
 								<div className='binaryTreeCanvas'></div>
 							</div>
-							<VisTests jobStorage={this.#jobStorage}></VisTests>
-							<button
-								onClick={() =>
-									this.#context.infoContext.handleInformation(
-										'asdfasdf',
-										'warning'
-									)
-								}
-							>
-								Start events on update
-							</button>
-							<button
-								onClick={() =>
-									this.#context.infoContext.handleInformation(
-										'wtf',
-										'unrecoverable'
-									)
-								}
-							>
-								Stop events on update
-							</button>
 						</div>
 					</div>
 				</div>
