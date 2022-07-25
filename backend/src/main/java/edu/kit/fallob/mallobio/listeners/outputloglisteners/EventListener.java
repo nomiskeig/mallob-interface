@@ -1,5 +1,8 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
+import edu.kit.fallob.database.EventDao;
+import edu.kit.fallob.mallobio.outputupdates.Event;
+
 /**
  * 
  * @author Simon Wilhelm Schübel
@@ -12,16 +15,18 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 public class EventListener implements OutputLogLineListener {
 	
 	
-	/**
-	 * Constructor 
-	 */
-	public EventListener() {
-		
+	private EventDao eventDao;
+	
+	
+	public EventListener(EventDao eventDao) {
+		this.eventDao = eventDao;
 	}
 
 	@Override
 	public void processLine(String line) {
-		
+		if (Event.isEvent(line)) {
+			eventDao.save(new Event(line));
+		}
 	}
 
 }
