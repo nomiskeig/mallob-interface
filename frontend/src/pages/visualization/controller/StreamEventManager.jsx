@@ -1,5 +1,4 @@
 import { EventManager } from './EventManager';
-import { AppError } from '../../../global/errorHandler/AppError';
 import { Event } from './Event';
 import axios from 'axios';
 import isBefore from 'date-fns/isBefore';

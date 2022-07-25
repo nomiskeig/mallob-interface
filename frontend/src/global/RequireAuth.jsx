@@ -7,9 +7,7 @@ export function RequireAuth({ children }) {
 	let location = useLocation();
 
 	if (!userContext.user.isLoaded) {
-		console.log('redirecting to login page');
 		return <Navigate to='/login' state={{from: location}} replace />;
 	}
-    console.log('logged in ')
 	return children;
 }

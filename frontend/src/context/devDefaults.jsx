@@ -1,5 +1,5 @@
 export const devSettings = {
-    amountProcesses: 100,
+    amountProcesses: 1000,
     startTime:'2020-02-13T18:51:10.840Z',
     defaults: {
         priority: 1,

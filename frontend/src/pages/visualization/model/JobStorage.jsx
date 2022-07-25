@@ -1,4 +1,4 @@
-import { AppError } from '../../../global/errorHandler/AppError';
+import { AppError } from '../../../context/AppError';
 import { Job } from './Job';
 import { JobTreeVertex } from './JobTreeVertex';
 import { GlobalStats } from './GlobalStats';
@@ -96,6 +96,8 @@ export class JobStorage {
 				}
 			} else {
 				//load event
+
+
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() + 1
 				);
@@ -120,6 +122,11 @@ export class JobStorage {
                     
                 }
                 */
+                if (job.getVertex(treeIndex)) {
+                    console.log('trying to add a vertex which is already existent');
+                    console.log('rank: '+ rank);
+                    console.log('treeIndex '+ treeIndex);
+                }
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);
 

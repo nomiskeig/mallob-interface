@@ -2,7 +2,7 @@ import React from 'react';
 import { JobContext } from '../../../context/JobContextProvider';
 import { SettingsContext } from '../../../context/SettingsContextProvider';
 import { UserContext } from '../../../context/UserContextProvider';
-import { AppError } from '../../../global/errorHandler/AppError';
+import { AppError } from '../../../context/AppError';
 import { StreamEventManager } from './StreamEventManager';
 import {PastEventManager} from './PastEventManager';
 import { JobStorage } from '../model/JobStorage';
@@ -64,6 +64,7 @@ export class VisualizationPageManager extends React.Component {
 			this.#stateLoaded = true;
 		});
 		console.log('mounted');
+        this.#context.infoContext.displayWarning('this is a warning')
 		//this.#jobStorage.addEvents(initialEvents);
 	}
 	update() {

@@ -1,5 +1,5 @@
 
-import {AppError} from '../../../global/errorHandler/AppError';
+import {AppError} from '../../../context/AppError';
 
 export class JobTreeVertex {
 
