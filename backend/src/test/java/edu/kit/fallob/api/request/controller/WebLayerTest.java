@@ -10,6 +10,7 @@ import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.JwtAuthenticationEntryPoint;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class WebLayerTest {
     //TODO Divide in one test class for each controller
     //TODO JavaDoc
-    //
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -77,6 +77,8 @@ public class WebLayerTest {
     @MockBean
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
+    private static JobConfiguration jobConfig;
+
     private static final String DESCRIPTION_CONTENT = "Here would usually be the Literals in cnf format";
 
     private static final String SOLUTION_CONTENT = "Here would usually be the solution in text format";
@@ -88,13 +90,26 @@ public class WebLayerTest {
     private static final String NOT_FOUND_EXCEPTION = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND + "\"}";
     private static final String NOT_FOUND_EXCEPTION_MULTIPLE = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND_MULTIPLE + "\"}";
 
-    private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":{\"name\":\"Job1\",\"priority\"" +
-            ":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":\"1\",\"cpuLimit\":\"1\",\"arrival\":\"1\"," +
-            "\"dependencies\":[2,3],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":true," +
-            "\"literals\":null,\"precursor\":1,\"precursorString\":null,\"assumptions\":null,\"done\":false,\"descriptionID\":1," +
-            "\"additionalParameter\":\"param\"},\"email\":\"kalo@gmail.com\",\"username\":\"kalo\",\"submitTime\":\"12:34:32\"," +
-            "\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0," +
-            "\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
+    private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":{\"name\":\"Job1\"," +
+            "\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":null,\"cpuLimit\":null,\"arrival\":null," +
+            "\"dependencies\":null,\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":false,\"literals\":null," +
+            "\"precursor\":0,\"precursorString\":null,\"assumptions\":null,\"done\":false,\"descriptionID\":0,\"additionalParameter\":null}," +
+            "\"email\":\"kalo@gmail.com\",\"username\":\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1," +
+            "\"resultMetaData\":{\"parsingTime\":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0," +
+            "\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
+
+
+
+    @BeforeAll
+    public static void setup() {
+        List<Integer> dependencies = new ArrayList<>();
+        dependencies.add(2);
+        dependencies.add(3);
+        List<String> params = new ArrayList<>();
+        params.add("params");
+        jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1.0, 1.0,
+                1.0, dependencies, true, 2, 1, params);
+    }
 
     @Test
     @WithMockUser
@@ -132,48 +147,40 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void submitJobInclusiveSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1,
-                "assumptions", false, -1, "param");
         List<String> descriptionsList = new ArrayList<>();
         descriptionsList.add(DESCRIPTION_CONTENT);
         descriptionsList.add(DESCRIPTION_CONTENT);
         File file = new File("jobDescription.cnf");
-            FileWriter myWriter = new FileWriter(file);
-            for (String description : descriptionsList) {
-                myWriter.write(description);
-            }
-            myWriter.close();
-            List<File> filesList = new ArrayList<>();
-            filesList.add(file);
-            JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
+        FileWriter myWriter = new FileWriter(file);
+        for (String description : descriptionsList) {
+            myWriter.write(description);
+        }
+        myWriter.close();
+        List<File> filesList = new ArrayList<>();
+        filesList.add(file);
+        JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
 
-            // Using InvocationOnMock as mockito does not use the equals method of jobDescription
+        // Using InvocationOnMock as mockito does not use the equals method of jobDescription
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), (any(JobDescription.class)), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
-                        JobDescription usedDescription = invocationOnMock.getArgument(1);
-                        JobConfiguration usedConfig = invocationOnMock.getArgument(2);
-                        boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
-                                && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
-                                == jobConfig.isInterrupt() && Objects.equals((usedConfig.getAdditionalParameter()), jobConfig.getAdditionalParameter())
-                                && usedConfig.getApplication().equals(jobConfig.getApplication()) && usedConfig.getArrival().equals(jobConfig.getArrival())
-                                && usedConfig.getCpuLimit().equals(jobConfig.getCpuLimit())
-                                && Arrays.equals((usedConfig.getDependencies()), dependencies) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
-                                && usedConfig.getPriority() == jobConfig.getPriority() && usedConfig.getDescriptionID() == jobConfig.getDescriptionID()
-                                && usedConfig.getName().equals(jobConfig.getName()) && Arrays.equals((usedConfig.getLiterals()), jobConfig.getLiterals())
-                                && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit()) && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
+                    JobDescription usedDescription = invocationOnMock.getArgument(1);
+                    JobConfiguration usedConfig = invocationOnMock.getArgument(2);
+                    boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
+                            && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
+                            == jobConfig.isInterrupt() && Objects.equals((usedConfig.getAdditionalParameter()), jobConfig.getAdditionalParameter())
+                            && usedConfig.getApplication().equals(jobConfig.getApplication())
+                            && Arrays.equals((usedConfig.getDependencies()), jobConfig.getDependencies()) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
+                            && usedConfig.getPriority() == jobConfig.getPriority() && usedConfig.getDescriptionID() == jobConfig.getDescriptionID()
+                            && usedConfig.getName().equals(jobConfig.getName()) && Arrays.equals((usedConfig.getLiterals()), jobConfig.getLiterals())
+                            && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit()) && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
 
-                                if (jobDescription.equals(usedDescription) && jobConfigEqualsUsedConfig) {
-                            return 1;
-                        }
-                        else {
-                            return -1;
-                        }
+                    if (jobDescription.equals(usedDescription) && jobConfigEqualsUsedConfig) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 });
-                        SubmitJobRequest submitJobRequest = new SubmitJobRequest(descriptionsList, jobConfig);
+        SubmitJobRequest submitJobRequest = new SubmitJobRequest(descriptionsList, jobConfig);
 
         this.mockMvc.perform(post("/api/v1/jobs/submit/inclusive").content(objectMapper.writeValueAsString(submitJobRequest))
                         .contentType("application/json")).andDo(print())
@@ -183,12 +190,6 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void submitJobConfigurationSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1,
-                "assumptions", false, 1, "param");
 
         // Using InvocationOnMock as mockito does not use the equals method of jobDescription
         when(jobSubmitCommands.submitJobWithDescriptionID(isNull(), anyInt(), any(JobConfiguration.class)))
@@ -198,17 +199,15 @@ public class WebLayerTest {
                     boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
                             && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
                             == jobConfig.isInterrupt() && Objects.equals((usedConfig.getAdditionalParameter()), jobConfig.getAdditionalParameter())
-                            && usedConfig.getApplication().equals(jobConfig.getApplication()) && usedConfig.getArrival().equals(jobConfig.getArrival())
-                            && usedConfig.getCpuLimit().equals(jobConfig.getCpuLimit())
-                            && Arrays.equals((usedConfig.getDependencies()), dependencies) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
+                            && usedConfig.getApplication().equals(jobConfig.getApplication())
+                            && Arrays.equals((usedConfig.getDependencies()), jobConfig.getDependencies()) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
                             && usedConfig.getPriority() == jobConfig.getPriority() && usedConfig.getDescriptionID() == jobConfig.getDescriptionID()
                             && usedConfig.getName().equals(jobConfig.getName()) && Arrays.equals((usedConfig.getLiterals()), jobConfig.getLiterals())
                             && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit()) && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
 
-                    if (descriptionId == 1 && jobConfigEqualsUsedConfig) {
+                    if (descriptionId == jobConfig.getDescriptionID() && jobConfigEqualsUsedConfig) {
                         return 1;
-                    }
-                    else {
+                    } else {
                         return -1;
                     }
                 });
@@ -387,6 +386,7 @@ public class WebLayerTest {
         this.mockMvc.perform(post("/api/v1/jobs/cancel/global")).andDo(print())
                 .andExpect(status().isForbidden());
     }
+
     @Test
     @WithMockUser(authorities = "ADMIN")
     public void abortJobsGloballySuccessful() throws Exception {
@@ -421,15 +421,10 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getSingleJobInformationSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         when(jobInformationCommands.getSingleJobInformation(null, 1)).thenReturn(jobInformation);
 
@@ -449,15 +444,10 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getMultipleJobInformationSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
@@ -486,15 +476,10 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getAllJobInformationSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
@@ -507,15 +492,10 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = "ADMIN")
     public void getGlobalJobInformationSuccessfully() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
@@ -528,15 +508,10 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = "NORMAL_USER")
     public void getGlobalJobInformationForbidden() throws Exception {
-        int[] dependencies = new int[2];
-        dependencies[0] = 2;
-        dependencies[1] = 3;
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        JobConfiguration jobConfig = new JobConfiguration("Job1", 1, "app", 1, "1", "1",
-                "1", dependencies, "mode", false, true, new int[]{1, 2, 3}, 1, "assump", false, 1, "param");
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
         jobInformationList.add(jobInformation);
@@ -627,7 +602,7 @@ public class WebLayerTest {
         when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         this.mockMvc.perform(get("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
-                        .contentType("application/json")).andDo(print()).andExpect(status().isNotFound()).andExpect(content()
+                .contentType("application/json")).andDo(print()).andExpect(status().isNotFound()).andExpect(content()
                 .string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
 
@@ -803,7 +778,7 @@ public class WebLayerTest {
         MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
 
         this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                        .contentType("application/json")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("\"OK\""));
+                .contentType("application/json")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("\"OK\""));
     }
 
     @Test
@@ -814,7 +789,7 @@ public class WebLayerTest {
         MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
 
         this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                        .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is already running"));
+                .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is already running"));
     }
 
     @Test
@@ -825,7 +800,7 @@ public class WebLayerTest {
         MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(params);
 
         this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                        .contentType("application/json")).andDo(print()).andExpect(status().isForbidden()).andExpect(content().string(""));
+                .contentType("application/json")).andDo(print()).andExpect(status().isForbidden()).andExpect(content().string(""));
     }
 
     @Test
@@ -902,8 +877,8 @@ public class WebLayerTest {
         when(mallobCommands.getEvents("2020-02-13T18:51:09.840Z", "2020-02-13T18:54:09.234Z")).thenReturn(eventsList);
 
         this.mockMvc.perform(get("/api/v1/events/events?startTime=2020-02-13T18:51:09.840Z&endTime=2020-02-13T18:54:09.234Z"))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\"" +
-                        ":\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false}]}"));
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\":" +
+                        "\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false,\"time\":null}]}"));
     }
 
     @Test
@@ -930,7 +905,7 @@ public class WebLayerTest {
 
         this.mockMvc.perform(get("/api/v1/events/state?time=2020-02-13T18:51:09.840Z"))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\"" +
-                        ":\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false}]}"));
+                        ":\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false,\"time\":null}]}"));
     }
 
     @Test

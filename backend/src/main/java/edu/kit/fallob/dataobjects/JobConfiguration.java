@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class JobConfiguration {
+	
 
 	private String name;
 	private double priority;
@@ -24,9 +25,22 @@ public class JobConfiguration {
 	private String assumptions;
 	private boolean done;
 	private int descriptionID;
-	private String additionalParameter;
+	private List<String> additionalParameter;
 	
+	public JobConfiguration(String name, double priority, 
+			String application, int maxDemand, 
+			double wallClockLimit, double cpuLimit, 
+			double arrival, List<Integer> dependencies, 
+			boolean incremental, int precursor, 
+			int decriptionID, List<String> additionalParameter) 
+	{
+		this.setName(name);
+		this.setPriority(priority);
+		this.setApplication(application);
+		this.setMaxDemand(maxDemand);
+	}
 	
+	/*
 	public JobConfiguration(String name, double priority, 
 			String application, int maxDemand, 
 			String wallClockLimit, String cpuLimit, 
@@ -48,6 +62,7 @@ public class JobConfiguration {
 		this.setDescriptionID(decriptionID);
 		this.setAdditionalParameter(additionalParameter);
 	}
+	*/
 	
 	public String getName() {
 		return name;
@@ -115,10 +130,10 @@ public class JobConfiguration {
 	public void setDescriptionID(int decriptionID) {
 		this.descriptionID = decriptionID;
 	}
-	public String getAdditionalParameter() {
+	public List<String> getAdditionalParameter() {
 		return additionalParameter;
 	}
-	public void setAdditionalParameter(String additionalParameter) {
+	public void setAdditionalParameter(List<String> additionalParameter) {
 		this.additionalParameter = additionalParameter;
 	}
 
