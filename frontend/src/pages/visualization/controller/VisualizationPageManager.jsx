@@ -76,9 +76,6 @@ export class VisualizationPageManager extends React.Component {
 		this.#shouldUpdate = false;
 	}
 	update() {
-		if (this.#shouldUpdate) {
-			return;
-		}
 		try {
 			this.#timeManager.getNextTime();
 			// jump is required => reload the system state etc.

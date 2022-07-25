@@ -4,6 +4,8 @@ import axios from 'axios';
 import isBefore from 'date-fns/isBefore';
 import isAfter from 'date-fns/isAfter';
 import isEqual from 'date-fns/isEqual';
+import {AppError} from '../../../context/AppError'
+import {TYPE_WARNING} from '../../../context/InfoContextProvider'
 export class StreamEventManager extends EventManager {
 	#stream;
 	#lastTimeReceived;
@@ -39,6 +41,7 @@ export class StreamEventManager extends EventManager {
 		if (process.env.NODE_ENV === 'development') {
 			return null;
 		}
+        console.log('getting system state')
 		this.#stream = new XMLHttpRequest();
 		let initialTime = this.timeManager.getNextTime();
 		//TODO: stream authentification
@@ -134,9 +137,8 @@ export class StreamEventManager extends EventManager {
 				console.log(result);
 				return result;
 			})
-			.catch((e) => {
-				console.log(e.message);
-				throw e;
+			.catch(() => {
+                throw new AppError('Could not get the current system state',TYPE_WARNING )
 			});
 	}
 }

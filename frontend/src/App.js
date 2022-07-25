@@ -31,10 +31,10 @@ class App extends React.Component {
 	render() {
 		return (
 			<div className='App'>
-				<JobContextProvider>
-					<SettingsContextProvider>
-						<UserContextProvider>
-							<InfoContextProvider>
+				<InfoContextProvider>
+					<JobContextProvider>
+						<SettingsContextProvider>
+							<UserContextProvider>
 								<BrowserRouter>
 									<Routes>
 										<Route path='/login' element={<div>Login page</div>} />
@@ -45,11 +45,11 @@ class App extends React.Component {
 													<AllContext.Consumer>
 														{(context) => (
 															<RequireAuth>
-																{context.settingsContext.isLoaded  && (
+																{context.settingsContext.isLoaded && (
 																	<VisualizationPageManager
 																		vpmref={this.vpmref}
 																		ref={this.vpmref}
-																		context={ context }
+																		context={context}
 																	></VisualizationPageManager>
 																)}
 															</RequireAuth>
@@ -60,10 +60,10 @@ class App extends React.Component {
 										/>
 									</Routes>
 								</BrowserRouter>
-							</InfoContextProvider>
-						</UserContextProvider>
-					</SettingsContextProvider>
-				</JobContextProvider>
+							</UserContextProvider>
+						</SettingsContextProvider>
+					</JobContextProvider>
+				</InfoContextProvider>
 			</div>
 		);
 	}

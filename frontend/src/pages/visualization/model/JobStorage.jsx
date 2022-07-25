@@ -2,6 +2,7 @@ import { AppError } from '../../../context/AppError';
 import { Job } from './Job';
 import { JobTreeVertex } from './JobTreeVertex';
 import { GlobalStats } from './GlobalStats';
+import { TYPE_UNRECOVERABLE } from '../../../context/InfoContextProvider';
 export class JobStorage {
 	#jobUpdateListeners;
 	#jobs;
@@ -74,13 +75,16 @@ export class JobStorage {
 				);
 				if (job == undefined) {
 					throw new AppError('Can not stop working on a non-existent job');
-				
-                }
-                if (!job.getVertex(event.getTreeIndex())) {
-                    console.log('trying to remove a vertex which is not part of the job')
-                    console.log('rank: '+ event.getRank());
-                    console.log('treeIndex: '+ event.getTreeIndex());
-                }
+				}
+				if (!job.getVertex(event.getTreeIndex())) {
+					console.log('trying to remove a vertex which is not part of the job');
+					console.log('rank: ' + event.getRank());
+					console.log('treeIndex: ' + event.getTreeIndex());
+					throw new AppError(
+						'trying to remove a vertex which is not part of the job.',
+						TYPE_UNRECOVERABLE
+					);
+				}
 				if (!wasEmpty) {
 					this.#jobUpdateListeners.forEach((listener) =>
 						listener.update(job, treeIndex, false)
@@ -97,7 +101,6 @@ export class JobStorage {
 			} else {
 				//load event
 
-
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() + 1
 				);
@@ -110,23 +113,15 @@ export class JobStorage {
 						this.#globalStats.getActiveJobs() + 1
 					);
 				}
-				/*
-                // this is necessary to prevent "ghosts", it is not required if we can assume the structure of events given by mallob
-				let oldVertex = job.getVertex(treeIndex);
-                if (oldVertex) {
-                    if (!wasEmpty) {
-                        this.#jobUpdateListeners.forEach((listener)  => (
-							listener.update(job, treeIndex, false)
-                        ))
-                    }
-                    
-                }
-                */
-                if (job.getVertex(treeIndex)) {
-                    console.log('trying to add a vertex which is already existent');
-                    console.log('rank: '+ rank);
-                    console.log('treeIndex '+ treeIndex);
-                }
+				if (job.getVertex(treeIndex)) {
+					console.log('trying to add a vertex which is already existent');
+					console.log('rank: ' + rank);
+					console.log('treeIndex ' + treeIndex);
+					throw new AppError(
+						'trying to add a vertex where there is already a vertex existent.',
+						TYPE_UNRECOVERABLE
+					);
+				}
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);
 

@@ -1,11 +1,12 @@
-import React, { useState, createContext, useEffect } from 'react';
+import React, { useState, createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { devSettings } from './devDefaults';
-
+import {InfoContext, TYPE_WARNING} from './InfoContextProvider';
 export const SettingsContext = createContext({});
 export function SettingsContextProvider({ children }) {
 	const [settings, setSettings] = useState({ test: 'test' });
 	const [isLoaded, setLoaded] = useState(false);
+    const infoContext = useContext(InfoContext)
 	useEffect(() => {
 		async function fetchSettings() {
 			await axios
@@ -14,7 +15,7 @@ export function SettingsContextProvider({ children }) {
 					setSettings(res.data);
 					setLoaded(true);
 				})
-				.catch((err) => console.log(err.message));
+				.catch(() => infoContext.handleInformation('could not get settings', TYPE_WARNING));
 		}
 		if (process.env.NODE_ENV === 'development') {
 			setSettings(devSettings);
