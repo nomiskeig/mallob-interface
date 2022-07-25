@@ -45,7 +45,7 @@ class App extends React.Component {
 													<AllContext.Consumer>
 														{(context) => (
 															<RequireAuth>
-																{context.settingsContext.isLoaded && (
+																{context.settingsContext.isLoaded  && (
 																	<VisualizationPageManager
 																		vpmref={this.vpmref}
 																		ref={this.vpmref}

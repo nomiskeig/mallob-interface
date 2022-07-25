@@ -4,7 +4,7 @@ import { SettingsContext } from '../../../context/SettingsContextProvider';
 import { UserContext } from '../../../context/UserContextProvider';
 import { AppError } from '../../../context/AppError';
 import { StreamEventManager } from './StreamEventManager';
-import {PastEventManager} from './PastEventManager';
+import { PastEventManager } from './PastEventManager';
 import { JobStorage } from '../model/JobStorage';
 import { TimeManager } from './TimeManager';
 import { Event } from './Event';
@@ -28,6 +28,7 @@ export class VisualizationPageManager extends React.Component {
 	#globalStatsComponent;
 	#detailsComponent;
 	#stateLoaded;
+	#shouldUpdate;
 	constructor(props) {
 		super(props);
 		this.#timeManager = new TimeManager();
@@ -40,8 +41,10 @@ export class VisualizationPageManager extends React.Component {
 		this.#test = new VisTests({ props: this.#jobStorage });
 		this.#detailsComponent = React.createRef();
 		this.#stateLoaded = false;
+		this.#shouldUpdate = true;
 	}
 	shouldComponentUpdate(nextProps) {
+		console.log('shouldComponentUpdate');
 		this.#context = nextProps.context;
 
 		this.#jobStorage.updateContext(nextProps.context);
@@ -50,6 +53,7 @@ export class VisualizationPageManager extends React.Component {
 		}
 		return true;
 	}
+
 	componentDidMount() {
 		this.#visualization = new Visualization(
 			this.#visualizationRef,
@@ -64,39 +68,52 @@ export class VisualizationPageManager extends React.Component {
 			this.#stateLoaded = true;
 		});
 		console.log('mounted');
-        this.#context.infoContext.displayWarning('this is a warning')
+		//this.#context.infoContext.displayUnrecoverable('this is a warning')
 		//this.#jobStorage.addEvents(initialEvents);
 	}
+
+	componentWillUnmount() {
+		this.#shouldUpdate = false;
+	}
 	update() {
-		this.#timeManager.getNextTime();
-        // jump is required => reload the system state etc.
-        if (this.#timeManager.getJump()) {
-            
-            this.#stateLoaded = false;
-            this.#eventManager.closeStream();
-            this.#jobStorage.reset();
-            if (this.#timeManager.isLive()) {
-                this.#eventManager = new StreamEventManager(this.#timeManager);
-            } else {
-                this.#eventManager = new PastEventManager(this.#timeManager);
-            }
-            
-            this.#eventManager.getSystemState(this.#context.userContext).then((res) => {
-                this.#jobStorage.addEvents(res);
-                this.#stateLoaded = true;
-            })
-            //this.#timeManager.setJump();
-        }
-		if (this.#stateLoaded) {
-			let newEvents = this.#eventManager.getNewEvents(
-				this.#context.userContext
-			);
-			this.#jobStorage.addEvents(newEvents);
+		if (this.#shouldUpdate) {
+			return;
 		}
-		this.#timeLineComponent.update();
-		this.#globalStatsComponent.update();
-		this.#detailsComponent.update();
-		this.#timeManager.updateTime();
+		try {
+			this.#timeManager.getNextTime();
+			// jump is required => reload the system state etc.
+			if (this.#timeManager.getJump()) {
+				this.#stateLoaded = false;
+				this.#eventManager.closeStream();
+				this.#jobStorage.reset();
+				if (this.#timeManager.isLive()) {
+					this.#eventManager = new StreamEventManager(this.#timeManager);
+				} else {
+					this.#eventManager = new PastEventManager(this.#timeManager);
+				}
+
+				this.#eventManager
+					.getSystemState(this.#context.userContext)
+					.then((res) => {
+						this.#jobStorage.addEvents(res);
+						this.#stateLoaded = true;
+					});
+			}
+			if (this.#stateLoaded) {
+				let newEvents = this.#eventManager.getNewEvents(
+					this.#context.userContext
+				);
+				this.#jobStorage.addEvents(newEvents);
+			}
+			this.#timeLineComponent.update();
+			this.#globalStatsComponent.update();
+			this.#detailsComponent.update();
+			this.#timeManager.updateTime();
+		} catch (e) {
+			if (this.#shouldUpdate) {
+				this.#context.infoContext.handleInformation(e.getMessage(), e.getType());
+			}
+		}
 	}
 
 	onClick(jobID, treeIndex) {
@@ -136,10 +153,24 @@ export class VisualizationPageManager extends React.Component {
 								<div className='binaryTreeCanvas'></div>
 							</div>
 							<VisTests jobStorage={this.#jobStorage}></VisTests>
-							<button onClick={() => this.#test.startGiveRandomEvents()}>
+							<button
+								onClick={() =>
+									this.#context.infoContext.handleInformation(
+										'asdfasdf',
+										'warning'
+									)
+								}
+							>
 								Start events on update
 							</button>
-							<button onClick={() => this.#test.stopGiveRandomEvents()}>
+							<button
+								onClick={() =>
+									this.#context.infoContext.handleInformation(
+										'wtf',
+										'unrecoverable'
+									)
+								}
+							>
 								Stop events on update
 							</button>
 						</div>
