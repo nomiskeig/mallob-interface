@@ -37,6 +37,9 @@ public class JobConfiguration {
 		this.setPriority(priority);
 		this.setApplication(application);
 		this.setMaxDemand(maxDemand);
+		
+		this.setPrecursor(INT_NOT_SET);
+		
 	}
 	
 
