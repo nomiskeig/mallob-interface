@@ -29,7 +29,7 @@
 }
 
 .pageContainer {
-	height: 100%;
+	height: calc(100% - 40px);
 	background-color: #33333d;
 	//padding: 20px
 }

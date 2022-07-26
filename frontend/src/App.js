@@ -15,6 +15,14 @@ import { InfoContextProvider } from './context/InfoContextProvider';
 import { AllContext, AllContextProvider } from './context/AllContextProvider';
 import { RequireAuth } from './global/RequireAuth';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import {
+	Navbar,
+	PAGE_JOBS,
+	PAGE_VIZ,
+	PAGE_SUBMIT,
+	PAGE_ADMIN,
+} from './global/navbar/Navbar';
+import { NotFoundPage } from './pages/notFound/NotFoundPage';
 
 class App extends React.Component {
 	constructor(props) {
@@ -42,6 +50,7 @@ class App extends React.Component {
 											path='/visualization'
 											element={
 												<AllContextProvider>
+													<Navbar highlight={PAGE_VIZ} />
 													<AllContext.Consumer>
 														{(context) => (
 															<RequireAuth>
@@ -58,6 +67,24 @@ class App extends React.Component {
 												</AllContextProvider>
 											}
 										/>
+										<Route
+											path='/submit'
+											element={
+												<div>
+													<Navbar highlight={PAGE_SUBMIT} />
+												</div>
+											}
+										/>
+										<Route
+											path='/jobs'
+											element={
+												<div>
+													<Navbar highlight={PAGE_JOBS} />
+												</div>
+											}
+										/>
+										}
+										<Route path='*' element={<NotFoundPage />} />
 									</Routes>
 								</BrowserRouter>
 							</UserContextProvider>
