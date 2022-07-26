@@ -7,6 +7,8 @@ public class JobConfiguration {
 	public static final Object OBJECT_NOT_SET = null;
 	
 	public static final int INT_NOT_SET = - Integer.MAX_VALUE;
+	public static final double DOUBLE_NOT_SET = -Double.MAX_VALUE;
+
 	
 	public static final boolean BOOL_DEFAULT = false;
 
@@ -16,8 +18,8 @@ public class JobConfiguration {
 	private int maxDemand;
 	private String wallClockLimit;
 	private String cpuLimit;
-	private String arrival;
-	private int[] dependencies;
+	private double arrival;
+	private String[] dependencies;
 	private String[] dependenciesStrings;
 	private String contentMode;
 	private boolean interrupt;
@@ -39,6 +41,7 @@ public class JobConfiguration {
 		this.setMaxDemand(maxDemand);
 		
 		this.setPrecursor(INT_NOT_SET);
+		this.setArrival(DOUBLE_NOT_SET);
 		
 	}
 	
@@ -80,17 +83,18 @@ public class JobConfiguration {
 	public void setCpuLimit(String cpuLimit) {
 		this.cpuLimit = cpuLimit;
 	}
-	public String getArrival() {
+	public double getArrival() {
 		return arrival;
 	}
-	public void setArrival(String arrival) {
+	public void setArrival(double arrival) {
 		this.arrival = arrival;
 	}
-	public int[] getDependencies() {
+	
+	public String[] getDependencies() {
 		return dependencies;
 	}
-	public void setDependencies(int[] dependencies) {
-		this.dependencies = dependencies;
+	public void setDependencies(String[] dependencies2) {
+		this.dependencies = dependencies2;
 	}
 	public boolean isIncremental() {
 		return incremental;

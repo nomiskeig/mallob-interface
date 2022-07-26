@@ -90,8 +90,11 @@ public class MallobInputImplementation implements MallobInput {
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
 				+ File.separator + NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
 		
-		
+		try {
 		this.writeJsonInDirectory(json, absoluteFilePath);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return processID;
 	}
 	
@@ -133,7 +136,7 @@ public class MallobInputImplementation implements MallobInput {
 		}
 		
 		
-		if (jobConfiguration.getArrival() != JobConfiguration.OBJECT_NOT_SET){
+		if (jobConfiguration.getArrival() != JobConfiguration.DOUBLE_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_ARRIVAL, jobConfiguration.getArrival());
 		}
 		
@@ -146,7 +149,6 @@ public class MallobInputImplementation implements MallobInput {
 			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, jobConfiguration.getDependencies());
 		}
 		
-		
 		if (jobConfiguration.getContentMode() != JobConfiguration.OBJECT_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_CONTENT_MODE, jobConfiguration.getContentMode());
 		}
@@ -154,6 +156,8 @@ public class MallobInputImplementation implements MallobInput {
 		if (jobConfiguration.getDependencies() != JobConfiguration.OBJECT_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, new JSONArray(jobConfiguration.getDependencies()));
 		}
+		
+		json.put(MallobAttributeNames.MALLOB_INCREMENTAL, jobConfiguration.isIncremental());
 		
 		if (jobConfiguration.getLiterals() != JobConfiguration.OBJECT_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_LITERALS, new JSONArray(jobConfiguration.getLiterals()));
