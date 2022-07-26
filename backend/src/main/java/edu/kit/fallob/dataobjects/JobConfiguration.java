@@ -28,23 +28,27 @@ public class JobConfiguration {
 	
 	public JobConfiguration(String name, double priority, 
 			String application, int maxDemand, 
-			double wallClockLimit, double cpuLimit, 
-			double arrival, List<Integer> dependencies, 
-			boolean incremental, int precursor, 
-			int decriptionID, List<String> additionalParameter) 
+			String wallClockLimit, String cpuLimit, 
+			String arrival, int[] dependencies, 
+			String contentMode, boolean interrupt,
+			boolean incremental, int[] literals, 
+			int precursor, String assumptions,
+			boolean done, int decriptionID, 
+			List<String> additionalParameter) 
 	{
 		this.setName(name);
 		this.setPriority(priority);
 		this.setApplication(application);
 		this.setMaxDemand(maxDemand);
-		this.setWallClockLimit(NOT_SET);
-		this.setCpuLimit(NOT_SET);
-		this.setArrival(NOT_SET);
+		this.setWallClockLimit(null);
+		this.setCpuLimit(null);
+		this.setArrival(null);
 		this.setDependencies(null);
 		this.setIncremental(false);
+		this.setLiterals(null);
 		this.setPrecursor(NOT_SET);
-		this.setDescriptionID(decriptionID);
-		this.setAdditionalParameter(additionalParameter);
+		this.setDescriptionID(NOT_SET);
+		this.setAdditionalParameter(null);
 	}
 	
 	/*

@@ -3,11 +3,14 @@ package edu.kit.fallob.dataobjects;
 import java.util.List;
 
 public class NormalUser extends User {
+	
+	private static final double NORMAL_USER_PRIORITY = 0.5;
+	private static final String STRING_REPRESENTATION = "Normal User";
 
-	public NormalUser(String username, String password, String email, boolean isAdmin, double priority,
-			boolean isVerified, List<Integer> jobIDs) {
-		super(username, password, email, isAdmin, priority, isVerified, jobIDs);
-		
+	public NormalUser(String username, String password, String email) {
+		super(username, password, email);
+		this.setAdmin(false);
+		this.setPriority(NORMAL_USER_PRIORITY);
 	}
 
 	@Override
@@ -29,5 +32,13 @@ public class NormalUser extends User {
 	public boolean hasDescriptionAccess(int jobID) {
 		return isOwnerOfJob(jobID);
 	}
+
+	@Override
+	public String toString() {
+		return STRING_REPRESENTATION;
+	}
+	
+	
+	
 
 }

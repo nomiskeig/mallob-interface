@@ -5,6 +5,8 @@ import java.util.List;
 
 public abstract class User {
 	
+	private static final double BASE_PRIORITY = 0.5;
+	
 	protected String username;
 	protected String password;
 	protected String email;
@@ -16,15 +18,12 @@ public abstract class User {
 	
 	
 	public User(String username, String password, 
-			String email, boolean isAdmin, double priority, 
-			boolean isVerified, List<Integer> jobIDs) {
+			String email) {
 		this.setUsername(username);
 		this.setPassword(password);
 		this.setEmail(email);
-		this.setAdmin(isAdmin);
-		this.setPriority(priority);
-		this.setVerified(isVerified);
-		this.setJobIDs(jobIDs);
+		this.setVerified(false);
+		this.setJobIDs(new ArrayList<>());
 	}
 	
 	
@@ -48,6 +47,9 @@ public abstract class User {
 	
 	
 	public abstract boolean hasDescriptionAccess(int jobID);
+	
+	
+	public abstract String toString();
 		
 	
 	

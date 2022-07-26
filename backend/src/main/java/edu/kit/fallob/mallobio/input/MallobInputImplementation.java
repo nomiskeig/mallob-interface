@@ -101,15 +101,15 @@ public class MallobInputImplementation implements MallobInput {
 		addJobDescription(jobJSON, jobDescription);
 		
 		//add additional parameters
-		if (jobConfiguration.getWallClockLimit() != JobConfiguration.NOT_SET) {
+		if (jobConfiguration.getWallClockLimit() != null) {
 			jobJSON.put(MallobAttributeNames.MALLOB_WALLCLOCK_LIMIT, jobConfiguration.getWallClockLimit());
 		}
 		
-		if (jobConfiguration.getCpuLimit() != JobConfiguration.NOT_SET) {
+		if (jobConfiguration.getCpuLimit() != null) {
 			jobJSON.put(MallobAttributeNames.MALLOB_CPU_LIMIT, jobConfiguration.getCpuLimit());
 		}
 		
-		if (jobConfiguration.getArrival() != JobConfiguration.NOT_SET) {
+		if (jobConfiguration.getArrival() != null) {
 			jobJSON.put(MallobAttributeNames.MALLOB_ARRIVAL, jobConfiguration.getArrival());
 		}
 		

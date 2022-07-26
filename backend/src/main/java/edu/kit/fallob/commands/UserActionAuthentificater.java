@@ -14,46 +14,43 @@ import edu.kit.fallob.dataobjects.User;
  */
 public class UserActionAuthentificater {
 	
-	private DaoFactory daoFactory;
+	private UserDao userDao;
 	
-	
-	private User getUser(String username) {
-		UserDao userDao = daoFactory.getUserDao();
-		return userDao.getUserByUsername(username);
+	public UserActionAuthentificater(DaoFactory daoFactory) {
+		userDao = daoFactory.getUserDao();
 	}
 	
 	
 	public boolean hasAbortAccess(String username, int jobID) {
-		return getUser(username).hasAbortAccess(jobID);
+		return userDao.getUserByUsername(username).hasAbortAccess(jobID);
 	}
 	
 	
 	public boolean hasInformationAccess(String username, int jobID) {
-		return getUser(username).hasInformationAccess(jobID);
+		return userDao.getUserByUsername(username).hasInformationAccess(jobID);
 	}
 	
 	
 	public boolean hasResultAccess(String username, int jobID) {
-		return getUser(username).hasResultAccess(jobID);
+		return userDao.getUserByUsername(username).hasResultAccess(jobID);
 	}
 	
 	
 	public boolean hasDescriptionAccessViaJobID(String username, int jobID) {
-		return getUser(username).hasDescriptionAccess(jobID);
+		return userDao.getUserByUsername(username).hasDescriptionAccess(jobID);
 	}
 	
 	
 	public boolean isOwnerOfJob(String username, int jobID) {
-		return getUser(username).isOwnerOfJob(jobID);
+		return userDao.getUserByUsername(username).isOwnerOfJob(jobID);
 	}
 	
 	public boolean isAdmin(String username) {
-		return getUser(username).isAdmin(); 
+		return userDao.getUserByUsername(username).isAdmin(); 
 	}
 	
 	
 	public boolean hasDescriptionAccessViaDescriptionID(String username, int descriptionID) {
-		UserDao userDao = daoFactory.getUserDao();
 		return userDao.getUsernameByDescriptionId(descriptionID).equals(username);
 	}
 

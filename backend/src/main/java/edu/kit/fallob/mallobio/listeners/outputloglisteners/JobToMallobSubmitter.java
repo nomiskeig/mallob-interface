@@ -1,9 +1,14 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
+import java.io.IOException;
+
+import org.springframework.http.HttpStatus;
+
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.mallobio.input.MallobInput;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
+import edu.kit.fallob.springConfig.FallobException;
 
 /**
  * This class provides the functionality to submit a Job in Mallob.
@@ -12,7 +17,7 @@ import edu.kit.fallob.mallobio.input.MallobInputImplementation;
  * @version 1.0
  *
  */
-public class JobToMallobSubmitter implements OutputLogLineListener{
+public class JobToMallobSubmitter implements OutputLogLineListener {
 	
 	private final static int JOB_IS_SUBMITTING = 0;
 	private final static int JOB_IS_VALID = 1;
@@ -33,7 +38,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener{
 	}
 	
 	
-	public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription) {
+	public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription) throws IOException, FallobException {
 		mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
 		
 		synchronized(monitor) {
@@ -45,6 +50,9 @@ public class JobToMallobSubmitter implements OutputLogLineListener{
 					e.printStackTrace();
 				}
 			}
+		}
+		if (jobStatus == JOB_IS_NOT_VALID) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
 		}
 		
 		return jobID;
