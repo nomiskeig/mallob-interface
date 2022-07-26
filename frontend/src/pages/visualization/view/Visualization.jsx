@@ -207,4 +207,8 @@ export class Visualization {
 			});
 		});
 	}
+
+    stop() {
+        this.#two.pause();
+    }
 }
