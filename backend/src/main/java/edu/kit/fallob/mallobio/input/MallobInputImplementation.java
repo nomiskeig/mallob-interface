@@ -71,8 +71,8 @@ public class MallobInputImplementation implements MallobInput {
 		int processID = this.getNextProcess();
 		String filePath = MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID) 
 				+ File.separator + ABORT_FILENAME + JSON_FILE_EXTENSION;
-		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(),
-				filePath);
+		
+		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(), filePath);
 		return processID;
 	}
 	
@@ -85,17 +85,20 @@ public class MallobInputImplementation implements MallobInput {
 	{
 		
 		int processID = this.getNextProcess();
+		JSONObject jsonWithStandardParameters = createSubmitJSON(userName, jobConfiguration, jobDescription);
+		String json = jsonWithStandardParameters.toString();
 
-		String json = createSubmitJSON(userName, jobConfiguration, jobDescription).toString();
+		//IF there are additional parameters, the JSONObject library does not support just adding a whole json
+		//so this has to be done by manipulating the string
+		if (jobConfiguration.getAdditionalParameter() != JobConfiguration.OBJECT_NOT_SET) {
+			json = addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
+		}
+		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
 				+ File.separator + NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
 		
-		try {
 		this.writeJsonInDirectory(json, absoluteFilePath);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 		return processID;
 	}
 	
@@ -176,28 +179,28 @@ public class MallobInputImplementation implements MallobInput {
 			json.put(MallobAttributeNames.MALLOB_DONE, jobConfiguration.isDone());
 		}
 		
-		if (jobConfiguration.getAdditionalParameter() != JobConfiguration.OBJECT_NOT_SET) {
-			addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
-		}
-		
 
 		return json;
 	}
 
 
 	/**
-	 * Given a list of strings that each represent a json key-value themselves, each string is first split on the ':' mark.
-	 * The first part of the string is then going to be the key, whereas the second part is going to be the value.
+	 * This method removes the closing-bracket from the fiven json string and adds a comma, to sperate 
+	 * additionalParameters. 
+	 * After the comma it adds the additional-parameters and the }.
+	 * 
+	 * Therefore the additional parameters have to be the last thing added to the json-string.
 	 * 
 	 * The method is then going to determine, if the second part is a regular json
 	 * @param additionalParameter
-	 * @param json
+	 * @param json a string in .json format (so it ends with }, and all other parameters already written.
 	 */
-	private void addAdditionalParameters(List<String> additionalParameter, JSONObject json) {
-		for (String s : additionalParameter) {
-			String[] parts = s.split(":");
-			json.put(parts[0], parts[1]);
-		}
+	private String addAdditionalParameters(String additionalParameter, String json) {
+		//remove json-closing bracket 
+		String newJson = json.toString().substring(0, json.length());
+		
+		//add additional-parameter tag 
+		return newJson += "," + additionalParameter + "}";
 	}
 
 
