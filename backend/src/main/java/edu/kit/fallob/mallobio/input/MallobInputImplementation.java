@@ -18,6 +18,7 @@ public class MallobInputImplementation implements MallobInput {
 	
 
 	public static final String NEW_JOB_FILENAME = "newjob";
+	public static final String ABORT_FILENAME = "abortjob";
 	
 	public static final String JSON_FILE_EXTENSION = ".json";
 	
@@ -65,13 +66,13 @@ public class MallobInputImplementation implements MallobInput {
 	}	
 
 	@Override
-	public int abortJob(String username, int runningJobID) throws IOException {
+	public int abortJob(String username, String jobName) throws IOException {
 		
 		int processID = this.getNextProcess();
-		
-		this.writeJsonInDirectory(createAbortJSON(username, runningJobID).toString(),
-				MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID));
-				
+		String filePath = MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID) 
+				+ File.separator + ABORT_FILENAME + JSON_FILE_EXTENSION;
+		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(),
+				filePath);
 		return processID;
 	}
 	
@@ -217,10 +218,10 @@ public class MallobInputImplementation implements MallobInput {
 	
 	
 	
-	private JSONObject createAbortJSON(String username, int runningJobID) {
+	private JSONObject createAbortJSON(String username, String jobName) {
 		JSONObject json = new JSONObject();
 		json.put(MallobAttributeNames.MALLOB_USER, username);
-		//json.put(MallobAttributeNames.job, runningJob);
+		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobName);
 		json.put(MallobAttributeNames.MALLOB_INTERRUPT, true);
 		return json;
 	}
