@@ -5,6 +5,8 @@ package edu.kit.fallob.database;
  * @author Valentin Schenk
  * @version 1.0
  */
+import edu.kit.fallob.springConfig.FallobException;
+
 public class DaoFactory {
 
     private final UserDao userDao;
@@ -16,7 +18,7 @@ public class DaoFactory {
      * constructor for the class
      * creates the dao objects
      */
-    public DaoFactory() {
+    public DaoFactory() throws FallobException {
         this.userDao = new UserDaoImpl();
         this.jobDao = new JobDaoImpl();
         this.eventDao = new EventDaoImpl();

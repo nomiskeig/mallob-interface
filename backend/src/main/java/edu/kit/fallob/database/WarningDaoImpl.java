@@ -1,6 +1,7 @@
 package edu.kit.fallob.database;
 
 import edu.kit.fallob.mallobio.outputupdates.Warning;
+import edu.kit.fallob.springConfig.FallobException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class WarningDaoImpl implements WarningDao{
     /**
      * constructor of the class
      */
-    public WarningDaoImpl() {
+    public WarningDaoImpl() throws FallobException {
         this.conn = DatabaseConnectionFactory.getConnection();
     }
 

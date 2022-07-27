@@ -67,6 +67,7 @@
 			<version>4.6.1</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- Dependency for JSON builder -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>

@@ -1,6 +1,8 @@
 package edu.kit.fallob.database;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,28 +20,28 @@ public final class DatabaseConnectionFactory {
      */
     private DatabaseConnectionFactory() {
     }
+    //the massage that gets sent if something goes wrong
+    private static final String ERROR_MESSAGE = "Error, the connection to the database couldn't be established.";
 
     //string that is used to get the database path into the right format for jdbc
     private static final String DATABASE_PATH_FORMAT = "jdbc:h2:%s;IFEXISTS=TRUE";
-    //the username for the database
-    private static final String DATABASE_USER = "fallob";
-    //the password for the database
-    private static final String DATABASE_PASSWORD = "";
 
 
     /**
      * establishes the connection to the database and returns the Connection object
      * @return the new Connection object
      */
-    public static Connection getConnection() {
+    public static Connection getConnection() throws FallobException {
         FallobConfiguration configuration = FallobConfiguration.getInstance();
 
         String path = String.format(DATABASE_PATH_FORMAT, configuration.getDatabaseBasePath());
+        String username = configuration.getDataBaseUsername();
+        String password = configuration.getDatabasePassword();
 
         try {
-            return DriverManager.getConnection(path, DATABASE_USER, DATABASE_PASSWORD);
+            return DriverManager.getConnection(path, username, password);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, ERROR_MESSAGE);
         }
     }
 }
