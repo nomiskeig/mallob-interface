@@ -38,8 +38,8 @@ public class JobConfiguration {
 		this.setName(name);
 		this.setPriority(priority);
 		this.setApplication(application);
-		this.setMaxDemand(maxDemand);
 		
+		this.setMaxDemand(INT_NOT_SET);
 		this.setPrecursor(INT_NOT_SET);
 		this.setArrival(DOUBLE_NOT_SET);
 		

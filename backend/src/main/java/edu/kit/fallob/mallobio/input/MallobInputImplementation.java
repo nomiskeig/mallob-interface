@@ -65,11 +65,11 @@ public class MallobInputImplementation implements MallobInput {
 	}	
 
 	@Override
-	public int abortJob(int runningJobID) throws IOException {
+	public int abortJob(String username, int runningJobID) throws IOException {
 		
 		int processID = this.getNextProcess();
 		
-		this.writeJsonInDirectory(createAbortJSON(runningJobID).toString(),
+		this.writeJsonInDirectory(createAbortJSON(username, runningJobID).toString(),
 				MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID));
 				
 		return processID;
@@ -216,8 +216,13 @@ public class MallobInputImplementation implements MallobInput {
 	}
 	
 	
-	private JSONObject createAbortJSON(int runningJobID) {
-		return null;
+	
+	private JSONObject createAbortJSON(String username, int runningJobID) {
+		JSONObject json = new JSONObject();
+		json.put(MallobAttributeNames.MALLOB_USER, username);
+		//json.put(MallobAttributeNames.job, runningJob);
+		json.put(MallobAttributeNames.MALLOB_INTERRUPT, true);
+		return json;
 	}
 	
 	
