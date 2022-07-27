@@ -17,7 +17,4 @@ public class JobResult {
 	public void setResult(File result) {
 		this.result = result;
 	}
-	
-	
-
 }
