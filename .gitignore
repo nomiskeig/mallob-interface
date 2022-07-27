@@ -38,3 +38,4 @@ build/
 jdt.ls-java-project
 
 *.trace.db
+/backend/bin/

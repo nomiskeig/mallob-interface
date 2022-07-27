@@ -17,8 +17,10 @@ public class MallobOutput {
 	private OutputLogLineDistributor outputLogLineDistributor;
 	
 	
-	public MallobOutput() {
-		
+	public MallobOutput(ResultObjectDistributor resultObjectDistributor,
+			OutputLogLineDistributor outputLogLineDistributor) {
+		this.resultObjectDistributor = resultObjectDistributor;
+		this.outputLogLineDistributor = outputLogLineDistributor;
 	}
 	
 	
