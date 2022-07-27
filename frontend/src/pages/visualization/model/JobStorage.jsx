@@ -67,6 +67,7 @@ export class JobStorage {
 			let treeIndex = event.getTreeIndex();
 			//unload events
 			if (event.getLoad() == 0) {
+                // ignore the unloads while loading the state
 				if (wasEmpty) {
 					return;
 				}
@@ -74,6 +75,7 @@ export class JobStorage {
 					this.#globalStats.getUsedProcesses() - 1
 				);
 				if (job == undefined) {
+                    console.log('non existant job')
 					throw new AppError('Can not stop working on a non-existent job');
 				}
 				if (!job.getVertex(event.getTreeIndex())) {
@@ -133,7 +135,6 @@ export class JobStorage {
 			}
 		});
 		if (wasEmpty) {
-			console.log('updated all');
 			this.#jobUpdateListeners.forEach((listener) => {
 				listener.totalUpdate(this.#jobs);
 			});

@@ -52,12 +52,17 @@ test('calculates the next time with default multiplier', async () => {
 
 test('calculates the next time with other positive multiplier', async () => {
 	let tm = new TimeManager();
+
+    // set timemanager to a past time so the multiplier is not reset because it would surpass the current time
+    let pastTime = addMilliseconds(new Date(), -2000);
+
+    tm.setNextTime(pastTime);
+    tm.updateTime();
 	tm.setMultiplier(2);
 	await new Promise((r) => setTimeout(r, TIMEOUT));
-	let newTime = new Date();
 	let difference = differenceInMilliseconds(
 		tm.getNextTime(),
-		addMilliseconds(newTime, TIMEOUT)
+        addMilliseconds(pastTime, 2 * TIMEOUT)
 	);
 	expect(Math.abs(difference)).toBeLessThanOrEqual(MAX_DIFFERENCE);
 });

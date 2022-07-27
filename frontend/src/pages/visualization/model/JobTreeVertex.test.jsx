@@ -1,5 +1,5 @@
 import { JobTreeVertex } from './JobTreeVertex';
-import { AppError } from '../../../global/errorHandler/AppError';
+import {AppError} from '../../../context/AppError'
 
 test('calculates the depth correctly', () => {
 	let vertex1 = new JobTreeVertex(1, 0);
