@@ -17,10 +17,14 @@ public interface MallobInput {
 	
 	/**
 	 * Creates a JSON in the correct format for the Mallob-API, :
-	 * 	@see href="https://github.com/domschrei/mallob#introducing-a-job">Link to Mallob API</a>
 	 * 
 	 * The creates a .json file, which contains said json and places it in a client-input directory
 	 * (or it creates the file in the directory directly, respectively).
+	 * 
+	 * This directory is generated for each client-process individually by MallobFilePathGenerator
+	 * 
+	 * 
+	 * @see href="https://github.com/domschrei/mallob#introducing-a-job">Link to Mallob API</a>
 	 * 
 	 * 
 	 * @param userName of the user submitting this job
@@ -35,11 +39,17 @@ public interface MallobInput {
 	
 	/**
 	 * Abort a running job from Mallob, using the mallob API : 
-	 * create a .json with the necessary parameters and place it in a client-input directory.
+	 * create a .json with the necessary parameters** and place it in a client-input directory.
+	 * **necessary parameters : 
+	 * --username
+	 * --jobName
+	 * --interrupt = true
 	 * 
-	 * @param runningJobID which has been assigned by mallob. This job will be aborted
+	 * @param username of the user who submitted the job
+	 * @param jobName of the job which is to be aborted 
 	 * @return ID of the process (mallob) that handled the abortion
 	 * @throws IOException if writing the file was not successful 
 	 */
-	int abortJob(int runningJobID) throws IOException;
+	int abortJob(String username, String jobName) throws IOException;
+
 }
