@@ -4,6 +4,7 @@ import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.DatabaseConnectionFactory;
 import edu.kit.fallob.database.WarningDao;
 import edu.kit.fallob.mallobio.outputupdates.Warning;
+import edu.kit.fallob.springConfig.FallobException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +30,7 @@ public class WarningDaoTests {
     private WarningDao warningDao;
 
     @BeforeEach
-    public void setupEach() {
+    public void setupEach() throws FallobException {
         this.databasePath = TestUtility.createDatabaseCopy();
         String jdbcPath = String.format(JDBC_FORMAT, this.databasePath);
 
@@ -44,7 +45,7 @@ public class WarningDaoTests {
     }
 
     @Test
-    public void testSaveAndGet() {
+    public void testSaveAndGet() throws FallobException {
         try(MockedStatic<DatabaseConnectionFactory> factoryMock = Mockito.mockStatic(DatabaseConnectionFactory.class)) {
             factoryMock.when(DatabaseConnectionFactory::getConnection).thenReturn(this.connection);
 

@@ -2,6 +2,7 @@ package edu.kit.fallob.database;
 
 import edu.kit.fallob.mallobio.outputupdates.Warning;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,9 @@ import java.util.List;
  * @version 1.0
  */
 public class WarningDaoImpl implements WarningDao{
+    //error message that is returned if an error occurs
+    private static final String DATABASE_ERROR = "An error occurred while accessing the database";
+
     //the SQL statement for inserting a new warning
     private static final String INSERT_STATEMENT = "INSERT INTO warning (time, message) VALUES (?, ?)";
     //the SQL statement for removing the old warnings
@@ -31,6 +35,7 @@ public class WarningDaoImpl implements WarningDao{
 
     /**
      * constructor of the class
+     * @throws FallobException if an error occurs while accessing the database
      */
     public WarningDaoImpl() throws FallobException {
         this.conn = DatabaseConnectionFactory.getConnection();
@@ -39,9 +44,10 @@ public class WarningDaoImpl implements WarningDao{
     /**
      * saves the given warning persistently in the database
      * @param warning the warning object that contains the data that should be saved
+     * @throws FallobException if an error occurs while accessing the database
      */
     @Override
-    public void save(Warning warning) {
+    public void save(Warning warning) throws FallobException {
         try {
             PreparedStatement statement = this.conn.prepareStatement(INSERT_STATEMENT);
 
@@ -50,16 +56,17 @@ public class WarningDaoImpl implements WarningDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
         }
     }
 
     /**
      * removes all warnings that were stored before the give point in time
      * @param time the point in time that defines which warnings get removed
+     * @throws FallobException if an error occurs while accessing the database
      */
     @Override
-    public void removeAllWarningsBeforeTime(LocalDateTime time) {
+    public void removeAllWarningsBeforeTime(LocalDateTime time) throws FallobException {
         try {
             PreparedStatement statement = this.conn.prepareStatement(DELETE_STATEMENT);
 
@@ -67,7 +74,7 @@ public class WarningDaoImpl implements WarningDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
         }
 
     }
@@ -75,9 +82,10 @@ public class WarningDaoImpl implements WarningDao{
     /**
      * returns all warnings that are currently stored
      * @return a list with all warnings
+     * @throws FallobException if an error occurs while accessing the database
      */
     @Override
-    public List<Warning> getAllWarnings() {
+    public List<Warning> getAllWarnings() throws FallobException {
         List<Warning> warnings = new ArrayList<>();
 
         try {
@@ -90,7 +98,7 @@ public class WarningDaoImpl implements WarningDao{
                 warnings.add(warning);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
         }
 
         return warnings;
