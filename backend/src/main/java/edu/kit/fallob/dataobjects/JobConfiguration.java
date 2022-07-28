@@ -19,7 +19,7 @@ public class JobConfiguration {
 	private String wallClockLimit;
 	private String cpuLimit;
 	private double arrival;
-	private String[] dependencies;
+	private int[] dependencies;
 	private String[] dependenciesStrings;
 	private String contentMode;
 	private boolean interrupt;
@@ -90,10 +90,10 @@ public class JobConfiguration {
 		this.arrival = arrival;
 	}
 	
-	public String[] getDependencies() {
+	public int[] getDependencies() {
 		return dependencies;
 	}
-	public void setDependencies(String[] dependencies2) {
+	public void setDependencies(int[] dependencies2) {
 		this.dependencies = dependencies2;
 	}
 	public boolean isIncremental() {

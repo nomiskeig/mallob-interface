@@ -407,7 +407,6 @@ public class JobDaoImpl implements JobDao{
 
                 User user = userDao.getUserByUsername(username);
 
-                //TODO: change submissionTime to LocalDateTime
                 return new JobInformation(configuration, metaData, user, submissionTime.toString(), status, jobId);
             } else {
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
@@ -626,14 +625,16 @@ public class JobDaoImpl implements JobDao{
             configStatement.setInt(5, configuration.getMaxDemand());
             configStatement.setString(6, configuration.getWallClockLimit());
             configStatement.setString(7, configuration.getCpuLimit());
-            configStatement.setString(8, configuration.getArrival());
+            configStatement.setDouble(8, configuration.getArrival());
             //convert the dependencies int array into an Array object
             Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, new int[][]{configuration.getDependencies()});
             configStatement.setArray(9, dependencies);
             configStatement.setBoolean(10, configuration.isIncremental());
             configStatement.setInt(11, configuration.getPrecursor());
             configStatement.setString(12, configuration.getContentMode());
-            configStatement.setString(13, configuration.getAdditionalParameter());
+            //convert the additional parameters into an Array object
+            Array additionalParameters = this.conn.createArrayOf(ARRAY_TYPE_STRING, configuration.getAdditionalParameter().toArray());
+            configStatement.setArray(13, additionalParameters);
             //convert the dependencies string array into an Array object
             Array dependenciesStrings = this.conn.createArrayOf(ARRAY_TYPE_STRING, configuration.getDependenciesStrings());
             configStatement.setArray(14, dependenciesStrings);
