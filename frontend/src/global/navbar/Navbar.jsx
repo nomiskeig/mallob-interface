@@ -17,7 +17,7 @@ export function Navbar(props) {
 		navigate('/login');
 	}
 	return (
-		<div className='navbarContainer d-flex flex-row justify-content- align-items-center'>
+		<div className='navbarContainer d-flex flex-row  align-items-center'>
             <div className='logo'></div>
 				<NavbarLink
 					link='/jobs'
