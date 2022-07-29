@@ -8,10 +8,9 @@ export class JobStorage {
 	#jobs;
 	#context;
 	#globalStats;
-	#colors;
 	constructor(context) {
-		this.#jobUpdateListeners = new Array();
-		this.#jobs = new Array();
+		this.#jobUpdateListeners =[];
+		this.#jobs =[];
 		this.#context = context;
 		this.#globalStats = new GlobalStats();
 		this.#globalStats.setProcesses(
@@ -19,7 +18,6 @@ export class JobStorage {
 		);
 		this.#globalStats.setUsedProcesses(0);
 		this.#globalStats.setActiveJobs(0);
-		this.#colors = new Array();
 	}
 
 	updateContext(context) {
@@ -27,7 +25,7 @@ export class JobStorage {
 	}
 
 	reset() {
-		this.#jobs = new Array();
+		this.#jobs = [];
 		this.#globalStats.setUsedProcesses(0);
 		this.#globalStats.setActiveJobs(0);
 	}
@@ -78,17 +76,17 @@ export class JobStorage {
 		if (!events) {
 			return;
 		}
-		let wasEmpty = this.#jobs.length == 0 ? true : false;
+		let wasEmpty = this.#jobs.length === 0 ? true : false;
 		events.forEach((event) => {
 			let jobIndex = this.#jobs.findIndex(
-				(e) => e.getJobID() == event.getJobID()
+				(e) => e.getJobID() === event.getJobID()
 			);
 			let job = this.#jobs[jobIndex];
 			let jobID = event.getJobID();
 			let rank = event.getRank();
 			let treeIndex = event.getTreeIndex();
 			//unload events
-			if (event.getLoad() == 0) {
+			if (event.getLoad() === 0) {
 				// ignore the unloads while loading the state
 				if (wasEmpty) {
 					return;
@@ -96,7 +94,7 @@ export class JobStorage {
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() - 1
 				);
-				if (job == undefined) {
+				if (job === undefined) {
 					console.log('non existant job');
 					throw new AppError('Can not stop working on a non-existent job');
 				}
@@ -116,7 +114,7 @@ export class JobStorage {
 				}
 				job.removeVertex(event.getTreeIndex());
 				// remove the job if there are no processes left working on it
-				if (job.getSize() == 0) {
+				if (job.getSize() === 0) {
 					delete this.#jobs[jobIndex];
 					this.#globalStats.setActiveJobs(
 						this.#globalStats.getActiveJobs() - 1
@@ -129,7 +127,7 @@ export class JobStorage {
 					this.#globalStats.getUsedProcesses() + 1
 				);
 				// create now job if job does not exist
-				if (job == undefined) {
+				if (job === undefined) {
 					let newJob = new Job(jobID, getRandomGrayColor(jobID));
 					this.#jobs.push(newJob);
 					job = newJob;
@@ -197,8 +195,8 @@ export class JobStorage {
 	}
 
 	getJob(jobID) {
-		let job = this.#jobs.find((e) => e.getJobID() == jobID);
-		if (job == undefined) {
+		let job = this.#jobs.find((e) => e.getJobID() === jobID);
+		if (job === undefined) {
 			return null;
 		}
 		return job;

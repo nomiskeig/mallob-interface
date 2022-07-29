@@ -8,7 +8,9 @@ export function SettingsContextProvider({ children }) {
 	const [isLoaded, setLoaded] = useState(false);
     const infoContext = useContext(InfoContext)
 	useEffect(() => {
+        console.log('fetching settings')
 		async function fetchSettings() {
+
 			await axios
 				.get(process.env.REACT_APP_API_BASE_PATH + '/api/v1/system/config')
 				.then((res) => {
@@ -23,7 +25,7 @@ export function SettingsContextProvider({ children }) {
 		} else {
 			fetchSettings();
 		}
-	}, []);
+	}, [infoContext] );
 
 	return (
 		<SettingsContext.Provider

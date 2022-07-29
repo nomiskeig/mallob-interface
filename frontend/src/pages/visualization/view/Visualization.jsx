@@ -15,8 +15,8 @@ export class Visualization {
 	constructor(canvas, update, processes, jobStorage, onClick) {
 		this.#two = new Two({ fitted: true });
 		this.#two.appendTo(canvas);
-		this.#nodes = new Array();
-		this.#connections = new Array();
+		this.#nodes = [];
+		this.#connections = [];
 		this.#canvas = canvas;
 		this.#processes = processes;
 		this.#jobStorage = jobStorage;
@@ -133,7 +133,7 @@ export class Visualization {
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
             
             // call the onClick function if ranks match so correct info is shown
-            if (rank == this.#clickedRank) {
+            if (rank === this.#clickedRank) {
                 this.#onClick(job.getJobID(), vertex.getTreeIndex(), rank);
             }
             

@@ -161,7 +161,7 @@ export class VisualizationPageManager extends React.Component {
 									this.#jobStorage.reset();
 									this.#timeManager.setPaused(true);
 									this.#shouldUpdate = false;
-									let events = new Array();
+									let events = [];
 									for (let i = 0; i < 1000; i += 4) {
 										events.push(new Event(null, i, i / 4, 4, 1));
 									}
@@ -172,7 +172,7 @@ export class VisualizationPageManager extends React.Component {
 							</button>
 							<button
 								onClick={() => {
-									let events = new Array();
+									let events = [];
 									for (let i = 8; i < 15; i += 1) {
 										events.push(new Event(null, i * 4, i, 4, 0));
 									}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, createContext } from 'react';
+import React, { useContext, useState, createContext } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
 import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import axios from 'axios';
@@ -18,9 +18,9 @@ export function JobContextProvider({ children }) {
 
 	function fetchMostJobsPossible() {
 		let apiAddress;
-		if (userContext.user.role == ROLE_USER) {
+		if (userContext.user.role === ROLE_USER) {
 			apiAddress = '/api/v1/jobs/info/all';
-		} else if (userContext.user.role == ROLE_ADMIN) {
+		} else if (userContext.user.role === ROLE_ADMIN) {
 			console.log('address is global');
 			apiAddress = '/api/v1/jobs/info/global';
 		}

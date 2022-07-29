@@ -129,7 +129,7 @@ export class TimelineComponent extends React.Component {
                                     return;
 								}
                                 if (e.target.value > 200) {
-                                    this.#context.infoContext.handleInformation('The biggest possibly multiplier is 200.', TYPE_WARNING)
+                                    this.#context.infoContext.handleInformation('The biggest possible multiplier is 200.', TYPE_WARNING)
                                     return;
                                 }
                                 if (e.target.value < 0) {

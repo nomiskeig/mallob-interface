@@ -1,4 +1,3 @@
-import { JobTreeVertex } from './JobTreeVertex';
 export class Job {
 	#color;
     #outerColor;
@@ -9,7 +8,7 @@ export class Job {
 	#size;
 	#vertices;
 	constructor(jobID, color) {
-		this.#vertices = Array();
+		this.#vertices = [];
 		this.#size = 0;
 		// TODO: make color correct, this is just for testing purposes
 
@@ -24,14 +23,14 @@ export class Job {
 	addVertex(vertex) {
 		let index = vertex.getTreeIndex();
 
-		if (this.#vertices[index] == undefined) {
+		if (this.#vertices[index] === undefined) {
 			this.#size++;
 		}
 		this.#vertices[index] = vertex;
 	}
 
 	getVertex(treeIndex) {
-		if (this.#vertices[treeIndex] == undefined) {
+		if (this.#vertices[treeIndex] === undefined) {
 			return null;
 		}
 		return this.#vertices[treeIndex];
@@ -48,7 +47,7 @@ export class Job {
 
 	getParent(treeIndex) {
 		let parentIndex = Math.floor((treeIndex + 1) / 2) - 1;
-		if (this.#vertices[parentIndex] == undefined) {
+		if (this.#vertices[parentIndex] === undefined) {
 			return null;
 		}
 		return this.#vertices[parentIndex];
@@ -56,14 +55,14 @@ export class Job {
 
 	getLeftChild(treeIndex) {
 		let childIndex = 2 * (treeIndex + 1) - 1;
-		if (this.#vertices[childIndex] == undefined) {
+		if (this.#vertices[childIndex] === undefined) {
 			return null;
 		}
 		return this.#vertices[childIndex];
 	}
 	getRightChild(treeIndex) {
 		let childIndex = 2 * (treeIndex + 1);
-		if (this.#vertices[childIndex] == undefined) {
+		if (this.#vertices[childIndex] === undefined) {
 			return null;
 		}
 		return this.#vertices[childIndex];
@@ -94,7 +93,7 @@ export class Job {
 		}
 
 		// walk to the leafs of tree
-		let indices = new Array();
+		let indices = [];
 		indices.push(treeIndex);
 		while (indices.length > 0) {
 			let parentIndex = indices.pop();

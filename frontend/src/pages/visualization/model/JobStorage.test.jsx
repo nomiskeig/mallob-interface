@@ -8,7 +8,13 @@ let mockContext = {
         settings: {
             amountProcesses: 5,
         }
+    },
+    jobContext: {
+        getSingleJobInfo: function(jobID) {return new Promise(function(resolve, reject) {
+            reject();
+        })}
     }
+
 }
 
 beforeEach(() => {

@@ -2,15 +2,9 @@ import React from 'react';
 import './App.css';
 import './custom.scss';
 import { VisualizationPageManager } from './pages/visualization/controller/VisualizationPageManager';
-import { JobContextProvider, JobContext } from './context/JobContextProvider';
-import {
-	SettingsContextProvider,
-	SettingsContext,
-} from './context/SettingsContextProvider';
-import {
-	UserContextProvider,
-	UserContext,
-} from './context/UserContextProvider';
+import { JobContextProvider } from './context/JobContextProvider';
+import { SettingsContextProvider } from './context/SettingsContextProvider';
+import { UserContextProvider } from './context/UserContextProvider';
 import { InfoContextProvider } from './context/InfoContextProvider';
 import { AllContext, AllContextProvider } from './context/AllContextProvider';
 import { RequireAuth } from './global/RequireAuth';

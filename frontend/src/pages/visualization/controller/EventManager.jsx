@@ -4,7 +4,7 @@ export class EventManager {
     events; 
     timeManager;
     constructor(timeManager) {
-        this.events = new Array();
+        this.events = [];
         this.timeManager = timeManager;
     }
     getNewEvents() {

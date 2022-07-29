@@ -87,6 +87,7 @@ export class PastEventManager extends EventManager {
 					isAfter(event.getTime(), this.timeManager.getNextTime()) &&
 					isBefore(event.getTime(), this.timeManager.getLastTime())
 			);
+            return events;
 		}
 	}
 
@@ -115,7 +116,7 @@ export class PastEventManager extends EventManager {
 			.then((res) => {
 				console.log('initialEvents');
 				console.log(res.data);
-				let result = new Array();
+				let result =[];
 				res.data.forEach((event) => {
 					let newEvent = new Event(
 						new Date(event.time),

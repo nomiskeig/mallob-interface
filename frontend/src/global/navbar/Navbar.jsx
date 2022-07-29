@@ -1,7 +1,6 @@
 import { NavbarLink } from './NavbarLink';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { UserContext } from '../../context/UserContextProvider';
 import './Navbar.scss';
 export const PAGE_JOBS = 'jobsPage';

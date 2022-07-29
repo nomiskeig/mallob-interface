@@ -75,7 +75,7 @@ export class StreamEventManager extends EventManager {
 				}
 			} else {
 				// recover events if they get lost and no event is invoked for them, i do not know why that happens
-				let newEvents = new Array();
+				let newEvents = [];
 				let index = events.length - 2;
 				while (true) {
 					let lastEvent = JSON.parse(events[index]);
@@ -120,7 +120,7 @@ export class StreamEventManager extends EventManager {
 			.then((res) => {
 				console.log('initialEvents');
 				console.log(res.data);
-				let result = new Array();
+				let result = [];
 				res.data.forEach((event) => {
 					let newEvent = new Event(
 						new Date(event.time),
