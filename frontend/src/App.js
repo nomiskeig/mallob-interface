@@ -23,7 +23,7 @@ import {
 	PAGE_ADMIN,
 } from './global/navbar/Navbar';
 import { NotFoundPage } from './pages/notFound/NotFoundPage';
-import {LoginPage} from './pages/login/LoginPage'
+import { LoginPage } from './pages/login/LoginPage';
 
 class App extends React.Component {
 	constructor(props) {
@@ -39,7 +39,7 @@ class App extends React.Component {
 							<SettingsContextProvider>
 								<BrowserRouter>
 									<Routes>
-										<Route path='/login' element={<LoginPage/>} />
+										<Route path='/login' element={<LoginPage />} />
 										<Route
 											path='/visualization'
 											element={
@@ -66,6 +66,14 @@ class App extends React.Component {
 											element={
 												<div>
 													<Navbar highlight={PAGE_SUBMIT} />
+												</div>
+											}
+										/>
+										<Route
+											path='/admin'
+											element={
+												<div>
+													<Navbar highlight={PAGE_ADMIN} />
 												</div>
 											}
 										/>

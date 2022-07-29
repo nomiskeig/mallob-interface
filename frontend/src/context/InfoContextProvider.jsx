@@ -52,7 +52,7 @@ export function InfoContextProvider({ children }) {
 				{hasInfo && (
 					<div
 						className={`alert alert-${type} alert-dismissible position-absolute alert w-50 start-50 translate-middle`}
-						style={{ top: '50px' }}
+						style={{ top: '90px' }}
 						role='alert'
 					>
 						<div>{text}</div>
