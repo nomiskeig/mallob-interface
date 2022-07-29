@@ -65,8 +65,13 @@ export class VisualizationPageManager extends React.Component {
 	componentWillUnmount() {
         console.log('will unmount')
 		this.#shouldUpdate = false;
-
+        this.#eventManager.closeStream();
         this.#visualization.stop();
+        this.#visualization = null;
+        this.#eventManager = null;
+        this.#jobStorage = null;
+
+        
 	}
 	update() {
         console.log('updating')
