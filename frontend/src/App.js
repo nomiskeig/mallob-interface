@@ -23,29 +23,23 @@ import {
 	PAGE_ADMIN,
 } from './global/navbar/Navbar';
 import { NotFoundPage } from './pages/notFound/NotFoundPage';
+import {LoginPage} from './pages/login/LoginPage'
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.vpmref = React.createRef();
-		// TODO: reenable this
-		//if (process.env.NODE_ENV === 'development') {
-		localStorage.setItem(
-			'fallob-token',
-			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6InRlc3R1c2VyIn0.IxNQz1xtLmk1vZx3S7SrlwDFR0j9PyZoB29q5_Cbh-s'
-		);
-		//}
 	}
 	render() {
 		return (
 			<div className='App'>
 				<InfoContextProvider>
-					<JobContextProvider>
-						<SettingsContextProvider>
-							<UserContextProvider>
+					<UserContextProvider>
+						<JobContextProvider>
+							<SettingsContextProvider>
 								<BrowserRouter>
 									<Routes>
-										<Route path='/login' element={<div>Login page</div>} />
+										<Route path='/login' element={<LoginPage/>} />
 										<Route
 											path='/visualization'
 											element={
@@ -83,13 +77,12 @@ class App extends React.Component {
 												</div>
 											}
 										/>
-										}
 										<Route path='*' element={<NotFoundPage />} />
 									</Routes>
 								</BrowserRouter>
-							</UserContextProvider>
-						</SettingsContextProvider>
-					</JobContextProvider>
+							</SettingsContextProvider>
+						</JobContextProvider>
+					</UserContextProvider>
 				</InfoContextProvider>
 			</div>
 		);

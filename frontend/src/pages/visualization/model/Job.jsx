@@ -14,7 +14,9 @@ export class Job {
 
 		this.#color = color;
 		this.#jobID = jobID;
-        this.#jobName = null;
+		this.#jobName = null;
+        this.#username = null;
+        this.#userEmail = null;
 	}
 
 	addVertex(vertex) {
@@ -39,7 +41,7 @@ export class Job {
 		if (this.#vertices[treeIndex] !== undefined) {
 			this.#size--;
 		}
-        delete this.#vertices[treeIndex];
+		delete this.#vertices[treeIndex];
 	}
 
 	getParent(treeIndex) {
@@ -75,9 +77,9 @@ export class Job {
 
 	getSubtree(treeIndex) {
 		let subtree = new Job(this.#jobID, this.#color);
-        if (treeIndex === null) {
-            return subtree;
-        }
+		if (treeIndex === null) {
+			return subtree;
+		}
 		// walk to root of tree
 		let currentIndex = treeIndex;
 		while (currentIndex !== 0) {
@@ -114,10 +116,32 @@ export class Job {
 		return this.#jobID;
 	}
 	getColor() {
-        // TODO: correct color
-			return this.#color;
+		// TODO: correct color
+		return this.#color;
 	}
-    getJobName() {
-        return this.#jobName;
-    }
+	getJobName() {
+		return this.#jobName;
+	}
+	setColor(color) {
+		this.#color = color;
+	}
+
+	setUsername(name) {
+		this.#username = name;
+	}
+	getUsername() {
+		return this.#username;
+	}
+
+	setUserEmail(email) {
+		this.#userEmail = email;
+	}
+
+	getUserEmail() {
+		return this.#userEmail;
+	}
+
+	setJobName(name) {
+		this.#jobName = name;
+	}
 }

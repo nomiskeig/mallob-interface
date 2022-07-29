@@ -3,7 +3,7 @@ import './InfoContextProvider.scss'
 export const InfoContext = createContext({});
 export const TYPE_INFO = 'info';
 export const TYPE_WARNING = 'warning'
-export const TYPE_ERROR = 'error';
+export const TYPE_ERROR = 'danger';
 export const TYPE_UNRECOVERABLE = 'unrecoverable';
 export function InfoContextProvider({ children }) {
     const [text ,setText] = useState('')
@@ -20,8 +20,6 @@ export function InfoContextProvider({ children }) {
         if (isUnrecoverable) {
             return;
         }
-        console.log(isUnrecoverable)
-        console.log(text)
         setText(text);
         setType(type);
         setHasInfo(true);

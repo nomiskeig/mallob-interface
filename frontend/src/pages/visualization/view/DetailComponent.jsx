@@ -32,6 +32,13 @@ export class DetailsComponent extends React.Component {
 		}
          
 		let title = getTitle();
+        let showUserInfos = false; 
+        if (job) {
+            if (job.getUsername()) {
+                showUserInfos = true;
+            }
+        }
+
 		return (
 			<div className='detailsContainer d-flex align-items-start flex-column'>
 				<div className='headerContainer d-flex flex-row'>
@@ -42,7 +49,7 @@ export class DetailsComponent extends React.Component {
 					<div className='body d-flex flex-row align-items-start justify-content-center'>
 						<div className='details d-flex justify-content-start align-items-start flex-column'>
 							<p>
-								Rank: {clickedVertex.getRank()}:{' '}
+								Rank: {clickedVertex.getRank()}{' '}
 							</p>
 							<p>Volume: {job.getSize()}</p>
 							<p>
@@ -50,7 +57,7 @@ export class DetailsComponent extends React.Component {
 								{job.getSubtree(this.#clickedTreeIndex).getSize()}
 							</p>
 						</div>
-						<div className='userInfos}'></div>
+						<div className='userInfos'>{showUserInfos && <div>{job.getUsername()}{job.getUserEmail()}</div>}</div>
 					</div>
 				)}
 			</div>

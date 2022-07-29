@@ -3,6 +3,8 @@ import React, { useState, createContext } from 'react';
 const jwt = require('jsonwebtoken');
 export const NO_TOKEN_AVAILABLE = 'noTokenAvailable';
 export const LOCAL_STORAGE_TOKEN = 'fallob-token';
+export const ROLE_ADMIN = 'admin';
+export const ROLE_USER = 'user';
 export const UserContext = createContext(
 	'user context is not correctly connected'
 );
@@ -29,6 +31,8 @@ export function UserContextProvider({ children }) {
 		});
 	}
 
+
+
 	function login(token) {
 		localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
 		let payload = extractPayload(token);
@@ -38,6 +42,7 @@ export function UserContextProvider({ children }) {
 			username: payload.username,
 			isLoaded: true,
 		});
+        console.log(user.username);
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);

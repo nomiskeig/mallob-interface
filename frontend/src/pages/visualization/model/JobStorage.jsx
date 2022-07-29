@@ -37,13 +37,13 @@ export class JobStorage {
 	 *
 	 */
 	addEvents(events) {
+		function getSeededRandom(a) {
+			var t = (a += 0x6d2b79f5);
+			t = Math.imul(t ^ (t >>> 15), t | 1);
+			t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+		}
 		function getRandomColor(jobID) {
-			function getSeededRandom(a) {
-				var t = (a += 0x6d2b79f5);
-				t = Math.imul(t ^ (t >>> 15), t | 1);
-				t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-				return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-			}
 			let color =
 				'hsl(' +
 				360 * getSeededRandom(jobID) +
@@ -52,6 +52,11 @@ export class JobStorage {
 				(45 + 10 * getSeededRandom(getSeededRandom(jobID))) +
 				'%)';
 			return color;
+		}
+		function getRandomGrayColor(jobID) {
+			// https://stackoverflow.com/questions/46893750/how-to-generate-random-grey-colors-in-javascript
+			var v = ((getSeededRandom(jobID) * 128) | 0).toString(16);
+			return '#' + v + v + v;
 		}
 		if (!events) {
 			return;
@@ -67,7 +72,7 @@ export class JobStorage {
 			let treeIndex = event.getTreeIndex();
 			//unload events
 			if (event.getLoad() == 0) {
-                // ignore the unloads while loading the state
+				// ignore the unloads while loading the state
 				if (wasEmpty) {
 					return;
 				}
@@ -75,7 +80,7 @@ export class JobStorage {
 					this.#globalStats.getUsedProcesses() - 1
 				);
 				if (job == undefined) {
-                    console.log('non existant job')
+					console.log('non existant job');
 					throw new AppError('Can not stop working on a non-existent job');
 				}
 				if (!job.getVertex(event.getTreeIndex())) {
@@ -108,12 +113,32 @@ export class JobStorage {
 				);
 				// create now job if job does not exist
 				if (job == undefined) {
-					let newJob = new Job(jobID, getRandomColor(jobID));
+					let newJob = new Job(jobID, getRandomGrayColor(jobID));
 					this.#jobs.push(newJob);
 					job = newJob;
 					this.#globalStats.setActiveJobs(
 						this.#globalStats.getActiveJobs() + 1
 					);
+					this.#context.jobContext.getSingleJobInfo(jobID).then((info) => {
+						job.setColor(getRandomColor(jobID));
+                        job.setJobName(info.config.name);
+                        
+                        console.log('definiting job ' + jobID);
+                        console.log(info.user);
+                        console.log(this.#context.userContext.user.username);
+						if (info.user !== this.#context.userContext.user.username) {
+							job.setUsername(info.user);
+							job.setUserEmail(info.email);
+						}
+
+						this.#jobUpdateListeners.forEach((listener) => {
+							job
+								.getVertices()
+								.forEach((vertex) =>
+									listener.update(job, vertex.getTreeIndex(), true)
+								);
+						});
+					});
 				}
 				if (job.getVertex(treeIndex)) {
 					console.log('trying to add a vertex which is already existent');
