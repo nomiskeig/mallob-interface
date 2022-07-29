@@ -1,6 +1,7 @@
 import { JobTreeVertex } from './JobTreeVertex';
 export class Job {
 	#color;
+    #outerColor;
 	#jobID;
 	#username;
 	#userEmail;
@@ -17,6 +18,7 @@ export class Job {
 		this.#jobName = null;
         this.#username = null;
         this.#userEmail = null;
+        this.#outerColor = null;
 	}
 
 	addVertex(vertex) {
@@ -144,4 +146,10 @@ export class Job {
 	setJobName(name) {
 		this.#jobName = name;
 	}
+    setOuterColor(color) {
+        this.#outerColor = color;
+    }
+    getOuterColor() {
+        return this.#outerColor;
+    }
 }

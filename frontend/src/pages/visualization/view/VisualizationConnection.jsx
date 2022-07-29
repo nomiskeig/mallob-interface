@@ -36,11 +36,11 @@ export class VisualizationConnection {
             return
         }
         let dif = Math.abs(otherDepth - this.#depth);
-        this.#line.opacity= Math.max(0.8 - dif * 0.1)
+        this.#line.opacity= Math.max(0.8 - dif * 0.1, 0.1)
     }
 
     setWidthBasedOnDepth() {
-        this.#line.linewidth = Math.max(15  - 1.5 * this.#depth, 0)
+        this.#line.linewidth = Math.max(15  - 1.5 * this.#depth, 1)
         
     }
 

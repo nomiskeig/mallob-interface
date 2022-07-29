@@ -53,6 +53,23 @@ export class JobStorage {
 				'%)';
 			return color;
 		}
+		function getRandomOuterColor(jobID) {
+			console.log(
+                'orginal: ' + getSeededRandom(jobID) +
+				'\n random1 : ' +
+					getSeededRandom(getSeededRandom(jobID)) +
+					'\n random2: ' +
+					getSeededRandom(getSeededRandom(getSeededRandom(jobID)))
+			);
+			let color =
+				'hsl(' +
+				360 * getSeededRandom(getSeededRandom(jobID) * 100) +
+				',' +
+				'100%,' +
+				(45 + 10 * getSeededRandom(10 *getSeededRandom(1000 *getSeededRandom(jobID)))) +
+				'%)';
+			return color;
+		}
 		function getRandomGrayColor(jobID) {
 			// https://stackoverflow.com/questions/46893750/how-to-generate-random-grey-colors-in-javascript
 			var v = ((getSeededRandom(jobID) * 128) | 0).toString(16);
@@ -121,11 +138,9 @@ export class JobStorage {
 					);
 					this.#context.jobContext.getSingleJobInfo(jobID).then((info) => {
 						job.setColor(getRandomColor(jobID));
-                        job.setJobName(info.config.name);
-                        
-                        console.log('definiting job ' + jobID);
-                        console.log(info.user);
-                        console.log(this.#context.userContext.user.username);
+						job.setOuterColor(getRandomOuterColor(jobID));
+						console.log(getRandomOuterColor(jobID));
+						job.setJobName(info.config.name);
 						if (info.user !== this.#context.userContext.user.username) {
 							job.setUsername(info.user);
 							job.setUserEmail(info.email);
