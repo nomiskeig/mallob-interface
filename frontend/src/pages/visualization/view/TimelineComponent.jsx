@@ -71,6 +71,7 @@ export class TimelineComponent extends React.Component {
 							'& .MuiSlider-thumb': {
 								transition: 'none',
 							},
+                            color: '#45b087'
 						}}
 					></Slider>
 				</div>
