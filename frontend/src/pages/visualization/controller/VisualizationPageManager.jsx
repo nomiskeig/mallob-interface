@@ -8,6 +8,7 @@ import './VisualizationPageManager.scss';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailComponent';
+import {Event} from './Event'
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
 	#eventManager;
@@ -69,6 +70,9 @@ export class VisualizationPageManager extends React.Component {
 	}
 	update() {
         console.log('updating')
+        if (!this.#shouldUpdate) {
+            return;
+        }
 		try {
 			this.#timeManager.getNextTime();
 			// jump is required => reload the system state etc.
@@ -142,6 +146,24 @@ export class VisualizationPageManager extends React.Component {
 							<div className='binaryTreeCanvasContainer'>
 								<div className='binaryTreeCanvas'></div>
 							</div>
+                            <button onClick={() => {
+                                console.log('showing tree');
+                                this.#jobStorage.reset();
+                                this.#timeManager.setPaused(true);
+                                this.#shouldUpdate = false;
+                                let events = new Array();
+                                for (let i = 0; i < 1000; i += 4) {
+                                    events.push(new Event(null, i, i/4, 4, 1));
+                                }
+                                this.#jobStorage.addEvents(events);
+                            }}>Show tree</button>
+                            <button onClick={() => {
+                                let events = new Array();
+                                for (let i = 8; i< 15; i+=1) {
+                                    events.push(new Event(null, i*4, i, 4,0));
+                                }
+                                this.#jobStorage.addEvents(events);
+                            }}>Remove some vertices from the tree</button>
 						</div>
 					</div>
 				</div>
