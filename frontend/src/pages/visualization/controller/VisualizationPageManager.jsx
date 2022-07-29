@@ -45,6 +45,7 @@ export class VisualizationPageManager extends React.Component {
 	}
 
 	componentDidMount() {
+        this.#context.jobContext.fetchMostJobsPossible();
 		this.#visualization = new Visualization(
 			this.#visualizationRef,
 			this.update.bind(this),
@@ -61,10 +62,13 @@ export class VisualizationPageManager extends React.Component {
 	}
 
 	componentWillUnmount() {
+        console.log('will unmount')
 		this.#shouldUpdate = false;
+
         this.#visualization.stop();
 	}
 	update() {
+        console.log('updating')
 		try {
 			this.#timeManager.getNextTime();
 			// jump is required => reload the system state etc.

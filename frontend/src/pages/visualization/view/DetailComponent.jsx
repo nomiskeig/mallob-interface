@@ -1,5 +1,5 @@
 import React from 'react';
-import './DetailsComponent.scss'
+import './DetailsComponent.scss';
 export class DetailsComponent extends React.Component {
 	#jobStorage;
 	#clickedTreeIndex;
@@ -30,14 +30,14 @@ export class DetailsComponent extends React.Component {
 			}
 			return 'anonymous job';
 		}
-         
+
 		let title = getTitle();
-        let showUserInfos = false; 
-        if (job) {
-            if (job.getUsername()) {
-                showUserInfos = true;
-            }
-        }
+		let showUserInfos = false;
+		if (job) {
+			if (job.getUsername()) {
+				showUserInfos = true;
+			}
+		}
 
 		return (
 			<div className='detailsContainer d-flex align-items-start flex-column'>
@@ -46,18 +46,24 @@ export class DetailsComponent extends React.Component {
 					<div className='buttons'></div>
 				</div>
 				{job && clickedVertex && (
-					<div className='body d-flex flex-row align-items-start justify-content-center'>
+					<div className='bodyContainer d-flex flex-row align-items-start justify-content-between'>
 						<div className='details d-flex justify-content-start align-items-start flex-column'>
-							<p>
-								Rank: {clickedVertex.getRank()}{' '}
-							</p>
+							<p>Rank: {clickedVertex.getRank()} </p>
 							<p>Volume: {job.getSize()}</p>
 							<p>
 								Subtree Volume:{' '}
 								{job.getSubtree(this.#clickedTreeIndex).getSize()}
 							</p>
 						</div>
-						<div className='userInfos'>{showUserInfos && <div>{job.getUsername()}{job.getUserEmail()}</div>}</div>
+						<div className='userInfos d-flex justify-content-start align-items-start flex-column'>
+							{showUserInfos && (
+								<React.Fragment>
+                                    <p>User information:</p>
+									<p>Name: {job.getUsername()}</p>
+									<p>Email: {job.getUserEmail()}</p>
+								</React.Fragment>
+							)}
+						</div>
 					</div>
 				)}
 			</div>
