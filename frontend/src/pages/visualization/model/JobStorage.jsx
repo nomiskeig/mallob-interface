@@ -137,7 +137,6 @@ export class JobStorage {
 					this.#context.jobContext.getSingleJobInfo(jobID).then((info) => {
 						job.setColor(getRandomColor(jobID));
 						job.setOuterColor(getRandomOuterColor(jobID));
-						console.log(getRandomOuterColor(jobID));
 						job.setJobName(info.config.name);
 						if (info.user !== this.#context.userContext.user.username) {
 							job.setUsername(info.user);
