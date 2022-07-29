@@ -153,7 +153,7 @@ export class JobStorage {
 									listener.update(job, vertex.getTreeIndex(), true)
 								);
 						});
-					});
+					}).catch(err => {});
 				}
 				if (job.getVertex(treeIndex)) {
 					console.log('trying to add a vertex which is already existent');

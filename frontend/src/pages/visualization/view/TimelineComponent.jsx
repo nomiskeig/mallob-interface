@@ -5,17 +5,22 @@ import format from 'date-fns/format';
 import addMilliseconds from 'date-fns/addMilliseconds';
 import parseISO from 'date-fns/parseISO';
 import './TimelineComponent.scss';
+import { TYPE_WARNING } from '../../../context/InfoContextProvider';
 export class TimelineComponent extends React.Component {
 	#timeManager;
 	#position;
 	#changing = false;
+	#context;
 	constructor(props) {
 		super(props);
-
+		this.#context = props.context;
 		this.#timeManager = props.timeManager;
 	}
 	update() {
 		this.forceUpdate();
+	}
+	updateContext(context) {
+		this.#context = context;
 	}
 
 	render() {
@@ -50,23 +55,23 @@ export class TimelineComponent extends React.Component {
 						valueLabelFormat={valueText}
 						valueLabelDisplay='auto'
 						onChange={(event, newValue) => {
-                            console.log(newValue)
+							console.log(newValue);
 							this.#position = newValue;
 							this.#changing = true;
 						}}
 						onChangeCommitted={(event, newValue) => {
 							this.#changing = false;
-                            console.log(newValue)
+							console.log(newValue);
 							this.#timeManager.setNextTime(
 								addMilliseconds(startTime, newValue)
-                            );
+							);
 							this.#timeManager.setJump();
 						}}
-                        sx={{
-                            '& .MuiSlider-thumb': {
-                                transition: 'none'
-                            }
-                        }}
+						sx={{
+							'& .MuiSlider-thumb': {
+								transition: 'none',
+							},
+						}}
 					></Slider>
 				</div>
 				<div className='speedContainer d-flex flex-row flex-wrap justify-items-center'>
@@ -110,10 +115,28 @@ export class TimelineComponent extends React.Component {
 						<input
 							className='replaySpeedInput form-control'
 							id='replaySpeed'
-							max={200}
-							min={-200}
+							//max={200}
+							//min={-200}
 							type='number'
-							onChange={(e) => this.#timeManager.setMultiplier(e.target.value)}
+							onChange={(e) => {
+								//e.preventDefault()
+								if (isNaN(e.target.value)) {
+									this.#context.infoContext.handleInformation(
+										e.target.value + ' is not a number.',
+										TYPE_WARNING
+									);
+                                    return;
+								}
+                                if (e.target.value > 200) {
+                                    this.#context.infoContext.handleInformation('The biggest possibly multiplier is 200.', TYPE_WARNING)
+                                    return;
+                                }
+                                if (e.target.value < 0) {
+                                    this.#context.infoContext.handleInformation('Negative multipliers are currently not supported.', TYPE_WARNING)
+                                    return;
+                                }
+								this.#timeManager.setMultiplier(e.target.value);
+							}}
 							value={this.#timeManager.getMultiplier()}
 						></input>
 					</form>

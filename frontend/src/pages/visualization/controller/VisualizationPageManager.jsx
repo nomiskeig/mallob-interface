@@ -8,7 +8,7 @@ import './VisualizationPageManager.scss';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailComponent';
-import {Event} from './Event'
+import { Event } from './Event';
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
 	#eventManager;
@@ -37,8 +37,10 @@ export class VisualizationPageManager extends React.Component {
 	shouldComponentUpdate(nextProps) {
 		console.log('shouldComponentUpdate');
 		this.#context = nextProps.context;
+        
 
 		this.#jobStorage.updateContext(nextProps.context);
+        this.#timeLineComponent.updateContext(nextProps.context);
 		if (this.#context.userContext.user.isLoaded) {
 			this.update();
 		}
@@ -46,7 +48,7 @@ export class VisualizationPageManager extends React.Component {
 	}
 
 	componentDidMount() {
-        this.#context.jobContext.fetchMostJobsPossible();
+		this.#context.jobContext.fetchMostJobsPossible();
 		this.#visualization = new Visualization(
 			this.#visualizationRef,
 			this.update.bind(this),
@@ -63,21 +65,19 @@ export class VisualizationPageManager extends React.Component {
 	}
 
 	componentWillUnmount() {
-        console.log('will unmount')
+		console.log('will unmount');
 		this.#shouldUpdate = false;
-        this.#eventManager.closeStream();
-        this.#visualization.stop();
-        this.#visualization = null;
-        this.#eventManager = null;
-        this.#jobStorage = null;
-
-        
+		this.#eventManager.closeStream();
+		this.#visualization.stop();
+		this.#visualization = null;
+		this.#eventManager = null;
+		this.#jobStorage = null;
 	}
 	update() {
-        console.log('updating')
-        if (!this.#shouldUpdate) {
-            return;
-        }
+		console.log('updating');
+		if (!this.#shouldUpdate) {
+			return;
+		}
 		try {
 			this.#timeManager.getNextTime();
 			// jump is required => reload the system state etc.
@@ -110,7 +110,10 @@ export class VisualizationPageManager extends React.Component {
 			this.#timeManager.updateTime();
 		} catch (e) {
 			if (this.#shouldUpdate) {
-				this.#context.infoContext.handleInformation(e.getMessage(), e.getType());
+				this.#context.infoContext.handleInformation(
+					e.getMessage(),
+					e.getType()
+				);
 			}
 		}
 	}
@@ -146,29 +149,38 @@ export class VisualizationPageManager extends React.Component {
 						<div className='halfContainer d-flex flex-column align-items-center'>
 							<DetailsComponent
 								ref={(el) => (this.#detailsComponent = el)}
+								context={this.#context}
 								jobStorage={this.#jobStorage}
 							></DetailsComponent>
 							<div className='binaryTreeCanvasContainer'>
 								<div className='binaryTreeCanvas'></div>
 							</div>
-                            <button onClick={() => {
-                                console.log('showing tree');
-                                this.#jobStorage.reset();
-                                this.#timeManager.setPaused(true);
-                                this.#shouldUpdate = false;
-                                let events = new Array();
-                                for (let i = 0; i < 1000; i += 4) {
-                                    events.push(new Event(null, i, i/4, 4, 1));
-                                }
-                                this.#jobStorage.addEvents(events);
-                            }}>Show tree</button>
-                            <button onClick={() => {
-                                let events = new Array();
-                                for (let i = 8; i< 15; i+=1) {
-                                    events.push(new Event(null, i*4, i, 4,0));
-                                }
-                                this.#jobStorage.addEvents(events);
-                            }}>Remove some vertices from the tree</button>
+							<button
+								onClick={() => {
+									console.log('showing tree');
+									this.#jobStorage.reset();
+									this.#timeManager.setPaused(true);
+									this.#shouldUpdate = false;
+									let events = new Array();
+									for (let i = 0; i < 1000; i += 4) {
+										events.push(new Event(null, i, i / 4, 4, 1));
+									}
+									this.#jobStorage.addEvents(events);
+								}}
+							>
+								Show tree
+							</button>
+							<button
+								onClick={() => {
+									let events = new Array();
+									for (let i = 8; i < 15; i += 1) {
+										events.push(new Event(null, i * 4, i, 4, 0));
+									}
+									this.#jobStorage.addEvents(events);
+								}}
+							>
+								Remove some vertices from the tree
+							</button>
 						</div>
 					</div>
 				</div>

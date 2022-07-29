@@ -98,10 +98,10 @@ export class PastEventManager extends EventManager {
 		// forwards
 		// todo
 
-		this.getNewEvents();
 		let nextTime = this.timeManager.getNextTime();
 		this.#forwardBuffer = nextTime;
 		this.#backwardBuffer = nextTime;
+		this.getNewEvents();
 		return axios({
 			method: 'get',
 			url:
