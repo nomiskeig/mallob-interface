@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -333,19 +334,18 @@ public class JobDaoImpl implements JobDao{
                 int maxDemand = result.getInt(5);
                 String wallclockLimit = result.getString(6);
                 String cpuLimit = result.getString(7);
-                String arrival = result.getString(8);
+                double arrival = result.getDouble(8);
                 Integer[] dependencies = (Integer[]) result.getArray(9).getArray();
                 boolean incremental = result.getBoolean(10);
-                String precursor = result.getString(11);
+                int precursor = result.getInt(11);
                 String contentMode = result.getString(12);
-                String additionalConfig = result.getString(13);
+                String[] additionalConfigArray = (String[]) result.getArray(13).getArray();
+                //converting the array back into a list
+                List<String> additionalConfig = Arrays.asList(additionalConfigArray);
                 String[] dependenciesString = (String[]) result.getArray(14).getArray();
                 String precursorString = result.getString(15);
 
-
-                //TODO: remove interrupt, literals, assumptions and done from jobConfiguration class and make constructor with dependenciesString and precursorString parameter
-                //return new JobConfiguration(name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, descriptionId, additionalConfig, contentMode);
-                return null;
+                return this.assembleJobConfiguration(name, priority, application, descriptionId, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, dependenciesString, incremental, precursor, precursorString, contentMode, additionalConfig);
             } else {
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
@@ -627,7 +627,7 @@ public class JobDaoImpl implements JobDao{
             configStatement.setString(7, configuration.getCpuLimit());
             configStatement.setDouble(8, configuration.getArrival());
             //convert the dependencies int array into an Array object
-            Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, new int[][]{configuration.getDependencies()});
+            Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, new Integer[][]{configuration.getDependencies()});
             configStatement.setArray(9, dependencies);
             configStatement.setBoolean(10, configuration.isIncremental());
             configStatement.setInt(11, configuration.getPrecursor());
@@ -644,6 +644,25 @@ public class JobDaoImpl implements JobDao{
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
         }
+    }
+
+    //assembles and returns a new JobConfiguration object out of the different configuration parameters
+    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, double arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, List<String> additionalParameters) {
+        JobConfiguration configuration = new JobConfiguration(name, priority, application);
+        configuration.setDescriptionID(descriptionId);
+        configuration.setMaxDemand(maxDemand);
+        configuration.setWallClockLimit(wallclockLimit);
+        configuration.setCpuLimit(cpuLimit);
+        configuration.setArrival(arrival);
+        configuration.setDependencies(dependencies);
+        configuration.setDependenciesStrings(dependenciesStrings);
+        configuration.setIncremental(incremental);
+        configuration.setPrecursor(precursor);
+        configuration.setPrecursorString(precursorString);
+        configuration.setContentMode(contentMode);
+        configuration.setAdditionalParameter(additionalParameters);
+
+        return configuration;
     }
 
     /**

@@ -122,7 +122,7 @@ public class MallobInputTests {
 		config.setWallClockLimit(WALLCLOCK_LIMIT);
 		config.setCpuLimit(CPU_LIMIT);
 		config.setArrival(ARRIVAL);
-		config.setDependencies(DEPENDENCIES);
+		config.setDependenciesStrings(DEPENDENCIES);
 		config.setIncremental(false);
 		
 		TEST_JOB = "{\"application\":\"SAT\","
