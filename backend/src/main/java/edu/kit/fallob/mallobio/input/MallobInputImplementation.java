@@ -88,7 +88,7 @@ public class MallobInputImplementation implements MallobInput {
 		JSONObject jsonWithStandardParameters = createSubmitJSON(userName, jobConfiguration, jobDescription);
 		String json = jsonWithStandardParameters.toString();
 
-		//IF there are additional parameters, the JSONObject library does not support just adding a whole json
+		//IF there are additional parameters, the JSONObject library does not support just adding a single string (formatted as a key-value-pair)
 		//so this has to be done by manipulating the string
 		if (jobConfiguration.getAdditionalParameter() != JobConfiguration.OBJECT_NOT_SET) {
 			json = addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
