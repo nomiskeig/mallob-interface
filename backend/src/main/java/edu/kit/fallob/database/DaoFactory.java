@@ -1,5 +1,7 @@
 package edu.kit.fallob.database;
 
+import edu.kit.fallob.springConfig.FallobException;
+
 public class DaoFactory {
 
     private final UserDao userDao;
@@ -7,7 +9,7 @@ public class DaoFactory {
     private final EventDao eventDao;
     private final WarningDao warningDao;
 
-    public DaoFactory() {
+    public DaoFactory() throws FallobException {
         this.userDao = new UserDaoImpl();
         this.jobDao = new JobDaoImpl();
         this.eventDao = new EventDaoImpl();
