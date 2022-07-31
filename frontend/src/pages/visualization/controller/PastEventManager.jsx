@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { EventManager } from './EventManager';
-import { Event } from './Event';
-import {AppError} from '../../../context/AppError'
-import TYPE_UNRECOVERABLE from '../../../context/InfoContextProvider';
+import {Event} from './Event'
 import addSeconds from 'date-fns/addSeconds';
 import isAfter from 'date-fns/isAfter';
 import isBefore from 'date-fns/isBefore';
