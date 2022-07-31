@@ -1,13 +1,16 @@
 package edu.kit.fallob.mallobio.output;
 
+import java.io.File;
 import java.util.List;
 
+import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
 
 public class MallobOutputWatcherManager {
 	
 	private static MallobOutputWatcherManager manager;
 	private ResultObjectDistributor resulDistributor;
+	
 	
 	private List<MallobClientOutputWatcher> watchers;
 	private List<Thread> watcherThreads;
@@ -42,8 +45,10 @@ public class MallobOutputWatcherManager {
 	 */
 	 /// .api/jobs.0/out/<user-name>.<job-name>.json
 	public void addNewWatcher(String userName, String jobName, int clientProcessID) {
-		String pathToOutputDirectory = ".api/jobs." + Integer.toString(clientProcessID) + "/out/";
-		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectory);
+		String pathToOutputDirectpory = 
+				MallobFilePathGenerator.generatePathToMallobOutDirectory(clientProcessID);
+		String expectedResultName = userName + "." + jobName + ".json";
+		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName);
 		watcher.setDistributor(resulDistributor);
 		watchers.add(watcher);
 		

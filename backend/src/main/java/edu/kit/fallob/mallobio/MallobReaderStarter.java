@@ -1,6 +1,5 @@
 package edu.kit.fallob.mallobio;
 
-import edu.kit.fallob.mallobio.output.MallobClientOutputWatcher;
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
 import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
@@ -60,7 +59,7 @@ public class MallobReaderStarter {
 	 * @param amountReaderThreads Amount of threads that each hold MallobOutputReader
 	 * @param readingIntervalPerReadingThread Inteval between read of every MallobOutputReader
 	 */
-	public void initParsingModule(String mallbLogDirectory, 
+	public void initParsingModule(String mallobBaseDirectory, 
 			int amountProcesses,
 			int amountWatcherThreads,
 			int watchingIntervalPerWatcherThread,
@@ -73,13 +72,16 @@ public class MallobReaderStarter {
 			throw new IllegalArgumentException("Cant have more threads than watchers/readers");
 		}
 		
+		MallobFilePathGenerator.BASEPATH_MALLOB_API = mallobBaseDirectory;
+		
 		watcherManager = MallobOutputWatcherManager.getInstance();
-		watcherManager.setup(mallbLogDirectory, amountWatcherThreads, watchingIntervalPerWatcherThread);
+		//watcherManager.setup(mallbLogDirectory);
+		
 		
 		initializeMallobOuptut();
 		
 		
-		initializeReaders(mallbLogDirectory, 
+		initializeReaders( 
 				 amountProcesses,
 				 amountReaderThreads,
 				 readingIntervalPerReadingThread);
@@ -100,7 +102,7 @@ public class MallobReaderStarter {
 	 * @param amountReaderThreads
 	 * @param readingIntervalPerReadingThread
 	 */
-	private void initializeReaders(String mallbLogDirectory, 
+	private void initializeReaders( 
 			int amountProcesses,
 			int amountReaderThreads,
 			int readingIntervalPerReadingThread) 
@@ -115,7 +117,7 @@ public class MallobReaderStarter {
 		for (int i = 0; i < amountProcesses; i++) {
 			
 			//initialize MallobOutputreader
-			readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateLogFilePath(i, mallbLogDirectory));
+			readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateLogFilePath(i));
 			
 			//give output-reader the correct distributor :
 			readers[i].addProcessor(logDistributor);
@@ -135,6 +137,8 @@ public class MallobReaderStarter {
 	 * mallobOutput is going to hold a reference of both the log and resultDistributor
 	 */
 	private void initializeMallobOuptut() {
+
+		
 		this.logDistributor = new OutputLogLineDistributor();
 		this.resultDistributor = new ResultObjectDistributor();
 		
@@ -154,7 +158,6 @@ public class MallobReaderStarter {
 	public void startMallobio() {
 
 		MallobOutputRunnerThread.startThreadPoolExecution(readerThreadPool);
-		this.watcherManager.startThreads();
 	}
 
 
@@ -165,7 +168,6 @@ public class MallobReaderStarter {
 	 */
 	public void stopMallobio() throws InterruptedException {
 		MallobOutputRunnerThread.stopThreadPoolExecution(readerThreadPool, readerRunners);
-		this.watcherManager.stopThreads();
 	}
 	
 	public MallobOutput getMallobOutput() throws NullPointerException {

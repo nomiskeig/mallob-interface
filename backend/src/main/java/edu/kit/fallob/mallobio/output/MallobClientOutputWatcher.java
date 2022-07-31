@@ -33,15 +33,14 @@ public class MallobClientOutputWatcher implements Runnable{
 	private String pathToMallobDirectory;
 		
 	private ResultObjectDistributor distributor;
-	
-	private List<String> processedResults;
-	
+		
+	private String expectedResultName;
 	private boolean retreivedResult;
 	
 	
 	
 	
-	public MallobClientOutputWatcher(String pathToMallobDirectory) {
+	public MallobClientOutputWatcher(String pathToMallobDirectory, String expectedResultName) {
 		System.out.println(pathToMallobDirectory);
 		setupClientOutputWatcher(pathToMallobDirectory);
 	}
@@ -49,7 +48,6 @@ public class MallobClientOutputWatcher implements Runnable{
 	
 	private void setupClientOutputWatcher(String pathToMallobDirectory) {
 		this.pathToMallobDirectory = pathToMallobDirectory;
-		this.processedResults = new ArrayList<>();
 		retreivedResult = false;
 		//scanInitialFiles();
 	}
@@ -89,9 +87,15 @@ public class MallobClientOutputWatcher implements Runnable{
 			WatchKey nextKey = watcher.take();
 			for (WatchEvent<?> event : nextKey.pollEvents()) {
 				
-				if (isResult(event)){
-					WatchEvent<Path> ev = (WatchEvent<Path>)event;
-			        Path filename = ev.context();
+				if (event.kind() != StandardWatchEventKinds.ENTRY_CREATE) {
+					continue;
+				}
+				
+				WatchEvent<Path> ev = (WatchEvent<Path>)event;
+		        Path filename = ev.context();
+		        
+				if (isResult(filename)){
+					
 			        retreivedResult = true;
 			        this.pushResultObject(new ResultAvailableObject(filename.toAbsolutePath().toString()));
 				}
@@ -104,11 +108,11 @@ public class MallobClientOutputWatcher implements Runnable{
 	/**
 	 * Decides weather an event, detected by the WathcServie is the creation of the result file.
 	 * If yes, it returns true, if no false
-	 * @param event
+	 * @param filename
 	 * @return checks if the given event is the result file
 	 */
-	private boolean isResult(WatchEvent<?> event) {
-		if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+	private boolean isResult(Path filename) {
+		if (filename.toString().equals(this.expectedResultName)) {
 			return true;
 		}
 		return false;

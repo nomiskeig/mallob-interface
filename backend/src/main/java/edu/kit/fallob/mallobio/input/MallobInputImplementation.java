@@ -57,8 +57,7 @@ public class MallobInputImplementation implements MallobInput {
 			JobDescription jobDescription) throws IOException 
 	{
 		this.writeJsonInDirectory(createSubmitJSON(userName, jobConfiguration, jobDescription), 
-				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, 
-						clientProcessIDs[lastUsedClientProcesSubmit]));
+				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, clientProcessIDs[lastUsedClientProcesSubmit]));
 		
 		int processID = lastUsedClientProcesSubmit;
 		updateSubmitCounter();
