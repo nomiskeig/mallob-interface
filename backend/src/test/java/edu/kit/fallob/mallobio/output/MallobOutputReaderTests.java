@@ -19,7 +19,7 @@ public class MallobOutputReaderTests {
 	public static final int TEST_FILE_LINES = 100;
 	
 	//for test on windows 
-	public static final String FILE_PATH = System.getProperty("user.dir") + "\\testFile.txt";
+	public static final String FILE_PATH = System.getProperty("user.dir") + File.separator + "testFile.txt";
 	
 	//for test on linux
 	//public static final String FILE_PATH = "/testFile.txt";
