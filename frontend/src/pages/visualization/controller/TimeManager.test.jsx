@@ -2,6 +2,7 @@ import { TimeManager, TIME_BACKWARD, TIME_FORWARD } from './TimeManager';
 import { waitFor } from '@testing-library/react';
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
 import addMilliseconds from 'date-fns/addMilliseconds';
+import addSeconds from 'date-fns/addSeconds'
 
 const TIMEOUT = 50;
 const MAX_DIFFERENCE = 10
@@ -75,3 +76,65 @@ test('calculates the next time with negative multiplier', async () => {
     let difference = differenceInMilliseconds(tm.getNextTime(), addMilliseconds(newTime, - TIMEOUT * 3))
     expect(Math.abs(difference)).toBeLessThanOrEqual(MAX_DIFFERENCE);
 });
+
+test('sets paused', () =>{
+    let tm = new TimeManager();
+    tm.setPaused(true);
+    expect(tm.isPaused()).toBeTruthy();
+}) 
+
+test('sets jump', ()=>{
+    let tm = new TimeManager();
+    expect(tm.getJump()).toBeFalsy();
+    tm.setJump();
+    expect(tm.getJump()).toBeTruthy();
+})
+
+test('sets the multiplier', () => {
+    let tm = new TimeManager();
+    tm.setMultiplier(5);
+    expect(tm.getMultiplier()).toBe(5);
+})
+
+
+test('returns the correct last date', ()=> {
+    let tm = new TimeManager();
+    tm.setMultiplier(200);
+    let nextTime = tm.getNextTime();
+    tm.updateTime();
+    expect(tm.getLastTime()).toBe(nextTime);
+})
+
+
+test('sets to live if the next time is close enough to the current time', ()=> {
+    let tm = new TimeManager();
+    tm.setNextTime(addSeconds(new Date(), -200));
+    tm.updateTime();
+    tm.getNextTime();
+    expect(tm.isLive()).toBeFalsy();
+    tm.setNextTime(new Date());
+    tm.getNextTime();
+    expect(tm.isLive()).toBeTruthy();
+})
+
+
+test('does not update the time if is paused', () =>{
+    let tm = new TimeManager();
+    let time = addSeconds(new Date(), -200);
+    tm.setNextTime(time);
+    tm.updateTime();
+    tm.setPaused(true);
+    expect(tm.getNextTime()).toBe(time);
+    
+
+});
+
+test('sets live to false if paused while live', () =>{
+    let tm = new TimeManager();
+    expect(tm.isLive()).toBeTruthy();
+    tm.setPaused(true);
+    tm.getNextTime();
+    expect(tm.isLive()).toBeFalsy();
+
+})
+

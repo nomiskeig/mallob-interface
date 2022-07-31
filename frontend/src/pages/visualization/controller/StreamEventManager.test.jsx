@@ -31,6 +31,7 @@ beforeEach(() => {
 });
 afterEach(() => {
 	jest.clearAllMocks();
+    streamEventManager.closeStream();
 });
 function setTimeManagerDefaults() {
 	jest.spyOn(TimeManager.prototype, 'getNextTime').mockReturnValue(nextTime);
@@ -50,6 +51,7 @@ test('gets the current system state', () => {
 		expect(data.length).toBe(1);
 	});
 	expect(axios).toBeCalledTimes(1);
+
 });
 
 test('opens the stream when getSystemState is called', () => {
@@ -59,6 +61,7 @@ test('opens the stream when getSystemState is called', () => {
 		data: testSystemState,
 	});
 	streamEventManager.getSystemState(mockUserContext);
+    streamEventManager.closeStream();
 	//expect(openFn).toHaveBeenCalledTimes(1);
 });
 // something does not work with the spy in the above test, if you remove the spy this does work...
