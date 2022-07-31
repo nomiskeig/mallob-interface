@@ -339,9 +339,7 @@ public class JobDaoImpl implements JobDao{
                 boolean incremental = result.getBoolean(10);
                 int precursor = result.getInt(11);
                 String contentMode = result.getString(12);
-                String[] additionalConfigArray = (String[]) result.getArray(13).getArray();
-                //converting the array back into a list
-                List<String> additionalConfig = Arrays.asList(additionalConfigArray);
+                String additionalConfig = result.getString(13);
                 String[] dependenciesString = (String[]) result.getArray(14).getArray();
                 String precursorString = result.getString(15);
 
@@ -632,9 +630,7 @@ public class JobDaoImpl implements JobDao{
             configStatement.setBoolean(10, configuration.isIncremental());
             configStatement.setInt(11, configuration.getPrecursor());
             configStatement.setString(12, configuration.getContentMode());
-            //convert the additional parameters into an Array object
-            Array additionalParameters = this.conn.createArrayOf(ARRAY_TYPE_STRING, configuration.getAdditionalParameter().toArray());
-            configStatement.setArray(13, additionalParameters);
+            configStatement.setString(13, configuration.getAdditionalParameter());
             //convert the dependencies string array into an Array object
             Array dependenciesStrings = this.conn.createArrayOf(ARRAY_TYPE_STRING, configuration.getDependenciesStrings());
             configStatement.setArray(14, dependenciesStrings);
@@ -647,7 +643,7 @@ public class JobDaoImpl implements JobDao{
     }
 
     //assembles and returns a new JobConfiguration object out of the different configuration parameters
-    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, double arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, List<String> additionalParameters) {
+    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, double arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, String additionalParameters) {
         JobConfiguration configuration = new JobConfiguration(name, priority, application);
         configuration.setDescriptionID(descriptionId);
         configuration.setMaxDemand(maxDemand);
