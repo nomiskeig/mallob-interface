@@ -8,11 +8,11 @@ export class EventManager {
         this.timeManager = timeManager;
     }
     getNewEvents() {
-       console.log('not implemented')
+        throw 'the getNewEvents method can not be used on the parent class';
     }
 
     getSystemState(userContext) {
-        console.log('not implemented')
+        throw 'the getSystemState method can not be used on the parent class';
     }
     closeStream() {
 

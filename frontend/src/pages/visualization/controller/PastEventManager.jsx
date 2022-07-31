@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { EventManager } from './EventManager';
 import { Event } from './Event';
+import {AppError} from '../../../context/AppError'
+import TYPE_UNRECOVERABLE from '../../../context/InfoContextProvider';
 import addSeconds from 'date-fns/addSeconds';
 import isAfter from 'date-fns/isAfter';
 import isBefore from 'date-fns/isBefore';
@@ -18,7 +20,6 @@ export class PastEventManager extends EventManager {
 
 	getNewEvents() {
 		//forwards
-		// TODO: what happens if request takes too long and events are skipped
 		if (this.timeManager.getDirection() === 1) {
 			// buffer to small, load new events
 			if (
@@ -95,9 +96,6 @@ export class PastEventManager extends EventManager {
 		if (process.env.NODE_ENV === 'development') {
 			return null;
 		}
-		// create a puffer
-		// forwards
-		// todo
 
 		let nextTime = this.timeManager.getNextTime();
 		this.#forwardBuffer = nextTime;
@@ -129,9 +127,5 @@ export class PastEventManager extends EventManager {
 				});
 				return result;
 			})
-			.catch((e) => {
-				console.log(e.message);
-				throw e;
-			});
 	}
 }
