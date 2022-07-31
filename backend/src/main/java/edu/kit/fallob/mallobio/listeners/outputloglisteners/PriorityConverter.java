@@ -1,6 +1,7 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.springConfig.FallobException;
 
 /**
  * 
@@ -14,7 +15,7 @@ public class PriorityConverter {
 	
 	private DaoFactory factory;
 	
-	public PriorityConverter(DaoFactory factory) {
+	public PriorityConverter(DaoFactory factory) throws FallobException {
 		this.factory = new DaoFactory();
 	}
 
