@@ -83,11 +83,6 @@ public class MallobInputImplementation implements MallobInput {
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) throws IOException 
 	{
-<<<<<<< HEAD
-		this.writeJsonInDirectory(createSubmitJSON(userName, jobConfiguration, jobDescription), 
-				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, clientProcessIDs[lastUsedClientProcesSubmit]));
-=======
->>>>>>> d9b5499b69669800c6c76afdd501e10d2388afe9
 		
 		int processID = this.getNextProcess();
 		JSONObject jsonWithStandardParameters = createSubmitJSON(userName, jobConfiguration, jobDescription);
