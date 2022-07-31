@@ -272,3 +272,8 @@ test('removing a non existent vertex does not break', () => {
 	job.removeVertex(1);
 	expect(job.getSize()).toBe(0);
 });
+
+test('getVertices returns empty array if there is no vertex', () =>{
+    let job = new Job(1, '#123456');
+    expect(job.getVertices()).toEqual([]);
+})

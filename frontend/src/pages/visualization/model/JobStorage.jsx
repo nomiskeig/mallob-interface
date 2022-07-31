@@ -9,8 +9,8 @@ export class JobStorage {
 	#context;
 	#globalStats;
 	constructor(context) {
-		this.#jobUpdateListeners =[];
-		this.#jobs =[];
+		this.#jobUpdateListeners = [];
+		this.#jobs = [];
 		this.#context = context;
 		this.#globalStats = new GlobalStats();
 		this.#globalStats.setProcesses(
@@ -53,8 +53,9 @@ export class JobStorage {
 		}
 		function getRandomOuterColor(jobID) {
 			console.log(
-                'orginal: ' + getSeededRandom(jobID) +
-				'\n random1 : ' +
+				'orginal: ' +
+					getSeededRandom(jobID) +
+					'\n random1 : ' +
 					getSeededRandom(getSeededRandom(jobID)) +
 					'\n random2: ' +
 					getSeededRandom(getSeededRandom(getSeededRandom(jobID)))
@@ -64,7 +65,11 @@ export class JobStorage {
 				360 * getSeededRandom(getSeededRandom(jobID) * 100) +
 				',' +
 				'100%,' +
-				(45 + 10 * getSeededRandom(10 *getSeededRandom(1000 *getSeededRandom(jobID)))) +
+				(45 +
+					10 *
+						getSeededRandom(
+							10 * getSeededRandom(1000 * getSeededRandom(jobID))
+						)) +
 				'%)';
 			return color;
 		}
@@ -91,9 +96,6 @@ export class JobStorage {
 				if (wasEmpty) {
 					return;
 				}
-				this.#globalStats.setUsedProcesses(
-					this.#globalStats.getUsedProcesses() - 1
-				);
 				if (job === undefined) {
 					console.log('non existant job');
 					throw new AppError('Can not stop working on a non-existent job');
@@ -107,6 +109,9 @@ export class JobStorage {
 						TYPE_UNRECOVERABLE
 					);
 				}
+				this.#globalStats.setUsedProcesses(
+					this.#globalStats.getUsedProcesses() - 1
+				);
 				if (!wasEmpty) {
 					this.#jobUpdateListeners.forEach((listener) =>
 						listener.update(job, treeIndex, false)
@@ -115,7 +120,9 @@ export class JobStorage {
 				job.removeVertex(event.getTreeIndex());
 				// remove the job if there are no processes left working on it
 				if (job.getSize() === 0) {
-					delete this.#jobs[jobIndex];
+					//delete this.#jobs[jobIndex];
+                    this.#jobs.splice(jobIndex, 1);
+                    console.log(this.#jobs)
 					this.#globalStats.setActiveJobs(
 						this.#globalStats.getActiveJobs() - 1
 					);
@@ -129,28 +136,39 @@ export class JobStorage {
 				// create now job if job does not exist
 				if (job === undefined) {
 					let newJob = new Job(jobID, getRandomGrayColor(jobID));
+                    console.log('adding new job' + jobID)
 					this.#jobs.push(newJob);
 					job = newJob;
 					this.#globalStats.setActiveJobs(
 						this.#globalStats.getActiveJobs() + 1
 					);
-					this.#context.jobContext.getSingleJobInfo(jobID).then((info) => {
-						job.setColor(getRandomColor(jobID));
-						job.setOuterColor(getRandomOuterColor(jobID));
-						job.setJobName(info.config.name);
-						if (info.user !== this.#context.userContext.user.username) {
-							job.setUsername(info.user);
-							job.setUserEmail(info.email);
-						}
+					this.#context.jobContext
+						.getSingleJobInfo(jobID)
+						.then((info) => {
+							console.log(info);
+							console.log(info.config.name);
+							job.setColor(getRandomColor(jobID));
+							job.setOuterColor(getRandomOuterColor(jobID));
+							job.setJobName(info.config.name);
+						console.log(job.getJobName());
+                            console.log(this.#context.userContext.user.username);
+							if (info.user !== this.#context.userContext.user.username) {
+                                console.log('set username')
+								job.setUsername(info.user);
+								job.setUserEmail(info.email);
+							}
 
-						this.#jobUpdateListeners.forEach((listener) => {
-							job
-								.getVertices()
-								.forEach((vertex) =>
-									listener.update(job, vertex.getTreeIndex(), true)
-								);
-						});
-					}).catch(err => {});
+							this.#jobUpdateListeners.forEach((listener) => {
+                                console.log('updating listener')
+                                console.log(job.getVertices())
+								job
+									.getVertices()
+									.forEach((vertex) =>
+										listener.update(job, vertex.getTreeIndex(), true)
+									);
+							});
+						})
+						.catch((err) => {});
 				}
 				if (job.getVertex(treeIndex)) {
 					console.log('trying to add a vertex which is already existent');
@@ -182,10 +200,10 @@ export class JobStorage {
 		this.#jobUpdateListeners.push(jul);
 	}
 
-	removeJobUpdateLisener(jul) {
+	removeJobUpdateListener(jul) {
 		let index = this.#jobUpdateListeners.findIndex((e) => e === jul);
-		if (index) {
-			this.#jobUpdateListeners[index] = undefined;
+		if (index !== undefined) {
+			this.#jobUpdateListeners.splice(index, 1);
 		}
 	}
 
