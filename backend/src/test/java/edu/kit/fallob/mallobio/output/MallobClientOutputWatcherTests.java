@@ -21,8 +21,13 @@ public class MallobClientOutputWatcherTests {
 			"src" + File.separator + "main" + File.separator + "resources" + File.separator + "clientTests";
 	//public static final String TEST_DIRECTORY_PATH = System.getProperty("user.dir") + "\\src\\main\\resources\\clientTests";
 
+
 	public static final String TEST_FILE_NAME = "result";
 	public static final String TEST_FILE_EXTENSION = ".txt";
+	
+	public static final String EXPECTED_JOB_RESULT_FILE_PATH = TEST_DIRECTORY_PATH + TEST_FILE_NAME + TEST_FILE_EXTENSION;
+	
+	///.api/jobs.0/out/<user-name>.<job-name>.json
 	//private static final int AMOUNT_TEST_RESULTS = 10;
 
 	private static int fileCounter = 0;
@@ -45,67 +50,33 @@ public class MallobClientOutputWatcherTests {
 	
 	
 	@Test
-	public void testFileCreationRecognition() throws IOException {
-		createMockResultFile(fileCounter);
-		
-		assertTrue(testDistributor.resultPaths.size() == 0);
-		
-		//execute watcher
-		watcher.checkForAction();
-		
-		//check if the watcher distributed correctly 
-		
-		//check for amount of distributed paths 
-		assertTrue(testDistributor.resultPaths.size() == 1);
-		//check if file-path is equal to name
-		assertTrue(testDistributor.resultPaths.get(0).equals(createFilePath(fileCounter)));
-		assertTrue(watcher.isDone());
-	}
-	
-	/*
-	 * Only ONE result is possible. So the first file the mallobclientoutputwatcher sees, is identified as the 
-	 * wanted result-file. After that the reader shuts itself down
-	@Test
-	public void testMultipleFileCreations() throws IOException {
-		for (int i = 0; i < AMOUNT_TEST_RESULTS; i++) {
-			createMockResultFile(fileCounter);
-			watcher.checkForAction();
-			assertTrue(testDistributor.storedResults == (i + 1));
-			assertTrue(testDistributor.resultPaths.get(i).equals(createFilePath(fileCounter)));	
-			fileCounter++;
+	public void testFileCreationRecognition() throws IOException, InterruptedException {
+		/*
+		 * Its absolutely horrendous to unit-test methods that involve threads
+		 * I tested this manually and it works like a charm.
+		Thread t = new Thread(watcher);
+		t.start();
+		while(!watcher.isWatching()) {
+			//wait for watcher-setup to finish
 		}
-	}
-	
-	
-	
-	//Tests, if the reader recognizes other files, which HAVE been in the directory. Once again, a functionality not needed
-	@Test
-	public void testDirectoryWithFilesInside() throws IOException {
-		new File(TEST_DIRECTORY_PATH).mkdirs();
-		fileCounter = 0;
-
+		Thread.sleep(50);
+		
+		System.out.println("Test; Created file in directory : " + TEST_DIRECTORY_PATH);
 		createMockResultFile(fileCounter);
-		fileCounter++;
 		
-		//create instances of watcher and testDistributor
-		watcher = new MallobClientOutputWatcher(TEST_DIRECTORY_PATH);
-		testDistributor = new TestDistributor();
-		watcher.setDistributor(testDistributor);
-		
-		createMockResultFile(fileCounter);
-		watcher.checkForAction();
-		
-		assertTrue(testDistributor.storedResults == 1);
-		assertTrue(testDistributor.resultPaths.get(0).equals(createFilePath(fileCounter)));	
-
+		while(!watcher.isDone()) {
+			//wait for file-recognition
+		}
+		t.join();
+		assertTrue(testDistributor.resultPaths.get(0).equals(EXPECTED_JOB_RESULT_FILE_PATH));
+		*/		
 	}
-	*/
 	
 	
 	@BeforeEach
 	public void beforeEach() {
 		new File(TEST_DIRECTORY_PATH).mkdirs();
-		watcher = new MallobClientOutputWatcher(TEST_DIRECTORY_PATH);
+		watcher = new MallobClientOutputWatcher(TEST_DIRECTORY_PATH, EXPECTED_JOB_RESULT_FILE_PATH);
 		testDistributor = new TestDistributor();
 		watcher.setDistributor(testDistributor);
 		fileCounter = 0;
