@@ -1,5 +1,8 @@
 package edu.kit.fallob.commands;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import edu.kit.fallob.database.DaoFactory;
@@ -23,13 +26,14 @@ public class MallobCommands {
 	}
 	
 	public SystemState getSystemState(String time) {
-		// in localdatetime umwandeln
-		return new SystemState();
+		LocalDateTime formattedTime = LocalDateTime.parse(time);
+		return new SystemState(formattedTime);
 	}
 	
 	public List<Event> getEvents(String lowerBound, String upperBound) {
-		// in localdatetime umwandeln
-		return eventDao.getEventsBetweenTime(null, null);
+		LocalDateTime formattedLowerBound = LocalDateTime.parse(lowerBound);
+		LocalDateTime formattedUpperBound = LocalDateTime.parse(upperBound);
+		return eventDao.getEventsBetweenTime(formattedLowerBound, formattedUpperBound);
 	}
 	
 	public List<Warning> getWarnings(){

@@ -13,9 +13,8 @@ public class JobListener implements OutputLogLineListener {
 
 	@Override
 	public void processLine(String line) {
-		
+		//control the logline and set jobHasFinished = true
 		synchronized(this) {
-			jobHasFinished = true;
 			notify();
 		}
 
