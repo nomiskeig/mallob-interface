@@ -54,6 +54,17 @@ public class MallobInputTests {
 	public static final String[] DEPENDENCIES = {"admin.prereq-job1", "admin.prereq-job2"};
 	public static final boolean INCREMENTAL = false;
 	
+	public static final int MAX_DEMAND = 5;
+	public static final String CONTENT_MODE = "raw"; //if this is in config, file will be read as binary
+	
+	
+	public static final String ADDITIONAL_PARAMETERS = "\"additionalParameters\":{\r\n"
+			+ "        \"additionalParameter1\" : \"String\",\r\n"
+			+ "        \"additionalParameter2\" : 2,\r\n"
+			+ "        \"additionalParameter3\" : [\"Array\", \"von\", \"Strings\"]\r\n"
+			+ "    }";
+	
+	
 	public static File descriptionFile;
 
 	

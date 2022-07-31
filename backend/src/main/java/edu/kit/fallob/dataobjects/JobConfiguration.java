@@ -30,7 +30,7 @@ public class JobConfiguration {
 	private String assumptions;
 	private boolean done;
 	private int descriptionID;
-	private List<String> additionalParameter;
+	private String additionalParameter;
 	
 	public JobConfiguration(String name, double priority, 
 			String application) 
@@ -114,10 +114,10 @@ public class JobConfiguration {
 	public void setDescriptionID(int decriptionID) {
 		this.descriptionID = decriptionID;
 	}
-	public List<String> getAdditionalParameter() {
+	public String getAdditionalParameter() {
 		return additionalParameter;
 	}
-	public void setAdditionalParameter(List<String> additionalParameter) {
+	public void setAdditionalParameter(String additionalParameter) {
 		this.additionalParameter = additionalParameter;
 	}
 
