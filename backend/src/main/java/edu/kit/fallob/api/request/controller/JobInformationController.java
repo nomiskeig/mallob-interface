@@ -59,7 +59,11 @@ public class JobInformationController {
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         List<JobInformationProxy> proxies = new ArrayList<>();
         for (JobInformation jobInfo : jobInformations) {
             proxies.add(new JobInformationProxy(jobInfo));
@@ -76,6 +80,7 @@ public class JobInformationController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         List<JobInformationProxy> proxies = new ArrayList<>();
         for (JobInformation jobInfo : jobInformations) {
             proxies.add(new JobInformationProxy(jobInfo));
@@ -92,6 +97,7 @@ public class JobInformationController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         List<JobInformationProxy> proxies = new ArrayList<>();
         for (JobInformation jobInfo : jobInformations) {
             proxies.add(new JobInformationProxy(jobInfo));
@@ -139,7 +145,11 @@ public class JobInformationController {
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         return getDescriptionsZip(response, jobDescriptions);
     }
     @GetMapping(value = "/description/all")
@@ -177,7 +187,11 @@ public class JobInformationController {
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         return getResultsZip(response, jobResults);
     }
     @GetMapping(value = "/solution/all")

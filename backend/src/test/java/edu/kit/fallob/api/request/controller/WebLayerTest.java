@@ -27,6 +27,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -225,28 +228,29 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string("{\"jobId\":1}"));
     }
 
+
     //TODO Test submit Job with url Description
     //TODO Test endpoints with user not verified
-//    @Test
-//    @WithMockUser
-//    public void submitJobWithUrl() throws Exception {
-//        try (InputStream in = url.openStream()) {
-//            Files.copy(in, Paths.get(fileName));
-//        }
-//        File file = new File("description.cnf");
-//        FileWriter myWriter = new FileWriter(file);
-//        myWriter.write(DESCRIPTION_CONTENT);
-//        myWriter.close();
-//        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
-//        MockMultipartFile multipartFile = new MockMultipartFile("file", "description.cnf",
-//                MediaType.TEXT_PLAIN_VALUE, DESCRIPTION_CONTENT.getBytes());
-//
-//        when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
-//
-//        this.mockMvc.perform(multipart("/api/v1/jobs/submit/exclusive/description").file(multipartFile)).andDo(print())
-//                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":0}"));
-//
-//    }
+
+    @Test
+    @WithMockUser
+    public void submitJobWithUrl() throws Exception {
+        File file = new File("description.cnf");
+        FileWriter myWriter = new FileWriter(file);
+        myWriter.write(DESCRIPTION_CONTENT);
+        myWriter.close();
+        String url = file.toURI().toURL().toString();
+        SubmitJobRequest submitJobRequest = new SubmitJobRequest(jobConfig, url);
+
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
+
+        when(jobSubmitCommands.submitJobWithDescriptionInclusive(null, jobDescription, jobConfig)).thenReturn(1);
+
+        this.mockMvc.perform(post("/api/v1/jobs/submit/url")
+                .content(objectMapper.writeValueAsString(submitJobRequest)).contentType("application/json")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":1}"));
+
+    }
 
 
     @Test

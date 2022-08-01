@@ -42,7 +42,7 @@ public class FallobCommands implements UserDetailsService {
 
 //        User user = userRepo.findByUsername(username);
 
-//        if(user == null || !user.isVerified()) {
+//        if (user == null || !user.isVerified()) {
 //            throw new UsernameNotFoundException("User not found in the database or is not verified");
 //        } else {
 //            List <SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getUserType));
