@@ -31,7 +31,7 @@ export class TimelineComponent extends React.Component {
 			);
 			return text;
 		}
-		let startTime = parseISO(this.props.startTime);
+		let startTime = parseISO(this.#context.settingsContext.settings.startTime);
 		let currentTime = this.#timeManager.isLive()
 			? this.#timeManager.getNextTime()
 			: new Date();
