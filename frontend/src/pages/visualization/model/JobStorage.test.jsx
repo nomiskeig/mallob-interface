@@ -135,7 +135,8 @@ test('calls the update method after adding a job and is not reset before', () =>
 		//jobStorage.getJob(event2.getJobID()),
 		Job.mock.instances[1],
 		event2.getTreeIndex(),
-		true
+		true,
+        false
 	);
 });
 
