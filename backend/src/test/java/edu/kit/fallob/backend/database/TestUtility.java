@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 public final class TestUtility {
@@ -30,14 +31,16 @@ public final class TestUtility {
     private static final String DATABASE_COPY_PATH = "./src/test/resources/database/fallobTestDatabaseCopy";
     private static final String FILE_EXTENSION = ".mv.db";
     private static final String LOG_EXTENSION = ".trace.db";
+    private static final String TIME_PATTERN = "HHmmssSSS";
 
     public static String createDatabaseCopy() {
         //i have no fucking idea why this is necessary but if the names of 2 copies are the same the tests don't work correctly
         //it probably happens because of the internal caching of the file
-        int randomNumber = (int) (Math.random() * 1000000);
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern(TIME_PATTERN);
+        String time = LocalDateTime.now().format(timeFormat);
 
         Path originalDatabase = Paths.get(INITIAL_DATABASE_PATH + FILE_EXTENSION);
-        Path copiedDatabase = Paths.get(DATABASE_COPY_PATH + randomNumber + FILE_EXTENSION);
+        Path copiedDatabase = Paths.get(DATABASE_COPY_PATH + time + FILE_EXTENSION);
 
         Assertions.assertTrue(Files.exists(originalDatabase));
         Assertions.assertFalse(Files.exists(copiedDatabase));
@@ -49,9 +52,8 @@ public final class TestUtility {
         }
 
         Assertions.assertTrue(Files.exists(copiedDatabase));
-
-
-        return DATABASE_COPY_PATH + randomNumber;
+        
+        return DATABASE_COPY_PATH + time;
     }
 
     public static Connection getConnection(String path) {
@@ -70,7 +72,7 @@ public final class TestUtility {
         Assertions.assertTrue(Files.exists(databaseCopy));
 
         try {
-            Files.deleteIfExists(databaseCopy);
+            Files.delete(databaseCopy);
             //delete log file if exists
             Files.deleteIfExists(databaseCopyLog);
         } catch (IOException e) {

@@ -88,12 +88,14 @@ public class WarningDaoTests {
     }
 
     @Test
-    public void testRemovalMultiple() throws FallobException {
+    public void testRemovalMultiple() throws FallobException, InterruptedException {
         Warning testWarning1 = new Warning(TEST_LOG_LINE);
         Warning testWarning2 = new Warning(SECOND_TEST_LOG_LINE);
 
         this.warningDao.save(testWarning1);
+        Thread.sleep(1000);
         LocalDateTime currentTime = LocalDateTime.now();
+        Thread.sleep(1000);
         this.warningDao.save(testWarning2);
 
         List<Warning> warningsBeforeDeletion = this.warningDao.getAllWarnings();

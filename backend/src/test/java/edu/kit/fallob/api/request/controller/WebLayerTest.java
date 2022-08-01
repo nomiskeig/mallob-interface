@@ -102,15 +102,15 @@ public class WebLayerTest {
 
     @BeforeAll
     public static void setup() {
-        String[] dependencies = new String[2];
-        dependencies[0] = "1";
-        dependencies[1] = "2";
+        Integer[] dependencies = new Integer[2];
+        dependencies[0] = 1;
+        dependencies[1] = 2;
         String[] params = new String[1];
         params[0] = "params";
         jobConfig = new JobConfiguration("Job1", 1, "application");
         jobConfig.setDescriptionID(1);
         jobConfig.setMaxDemand(1);
-        jobConfig.setDependencies(params);
+        //jobConfig.setDependencies(params);
         jobConfig.setIncremental(true);
         jobConfig.setDependencies(dependencies);
         jobConfig.setWallClockLimit(String.valueOf(1.0));
