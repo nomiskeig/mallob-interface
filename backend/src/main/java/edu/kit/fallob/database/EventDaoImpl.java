@@ -21,7 +21,7 @@ public class EventDaoImpl implements EventDao{
 
     //error message that are returned if an error occurs
     private static final String DATABASE_ERROR = "An error occurred while accessing the database";
-    private static final String DATABASE_NOT_FOUND = "Error, the requested ";
+    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found";
 
     private static final String INSERT_STATEMENT = "INSERT INTO event (jobId, rank, time, load, treeIndex)"
                                                     + " VALUES (?, ?, ?, ?, ?)";
@@ -52,7 +52,7 @@ public class EventDaoImpl implements EventDao{
             statement.setInt(2, event.getProcessID());
             //TODO
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 
@@ -70,7 +70,7 @@ public class EventDaoImpl implements EventDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 
@@ -110,7 +110,7 @@ public class EventDaoImpl implements EventDao{
 
             return events;
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 
@@ -132,7 +132,7 @@ public class EventDaoImpl implements EventDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
 
     }

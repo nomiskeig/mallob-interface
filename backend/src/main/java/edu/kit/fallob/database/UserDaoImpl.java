@@ -55,7 +55,7 @@ public class UserDaoImpl implements UserDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 
@@ -72,7 +72,7 @@ public class UserDaoImpl implements UserDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 
@@ -106,7 +106,7 @@ public class UserDaoImpl implements UserDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 
@@ -152,7 +152,7 @@ public class UserDaoImpl implements UserDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
 }
