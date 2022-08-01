@@ -15,6 +15,12 @@ public class MallobAttributeNames {
 	
 	public static final String MALLOB_USER = "user";
 	public static final String MALLOB_JOB_NAME = "name";
+	public static final String MALLOB_PRIORTIY = "priority";
+	public static final String MALLOB_APPLICATION = "application";
+	
+	public static final String MALLOB_DESCRIPTION = "files";
+
+
 	public static final String MALLOB_WALLCLOCK_LIMIT = "wallclock-limit";
 	public static final String MALLOB_CPU_LIMIT = "cpu-limit";
 	public static final String MALLOB_ARRIVAL = "arrival";
@@ -24,6 +30,7 @@ public class MallobAttributeNames {
 	public static final String MALLOB_INTERRUPT = "interrupt";
 	public static final String MALLOB_INCREMENTAL = "incremental";
 	public static final String MALLOB_LITERALS = "literals";
+	public static final String MALLOB_PRECURSOR = "precursor";
 	public static final String MALLOB_ASSUMPTIONS = "assumptions";
 	public static final String MALLOB_DONE = "done";
 	
@@ -31,4 +38,5 @@ public class MallobAttributeNames {
 			MALLOB_JOB_NAME, MALLOB_WALLCLOCK_LIMIT, MALLOB_CPU_LIMIT, MALLOB_ARRIVAL,
 			MALLOB_MAX_DEMAND, MALLOB_DEPENDENCIES, MALLOB_CONTENT_MODE, MALLOB_INTERRUPT,
 			MALLOB_INCREMENTAL, MALLOB_LITERALS, MALLOB_ASSUMPTIONS, MALLOB_DONE};
+	
 }

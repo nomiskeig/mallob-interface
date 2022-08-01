@@ -1,9 +1,9 @@
 package edu.kit.fallob.api.request.controller;
 
 public class Defaults {
-    private float priority;
-    private String wallClockLimit;
-    private String contentMode;
+    private final float priority;
+    private final String wallClockLimit;
+    private final String contentMode;
 
 
     public Defaults(float priority, String wallClockLimit, String contentMode) {
