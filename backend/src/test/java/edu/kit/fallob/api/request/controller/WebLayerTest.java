@@ -102,13 +102,19 @@ public class WebLayerTest {
 
     @BeforeAll
     public static void setup() {
-        List<Integer> dependencies = new ArrayList<>();
-        dependencies.add(2);
-        dependencies.add(3);
-        List<String> params = new ArrayList<>();
-        params.add("params");
-        jobConfig = new JobConfiguration("Job1", 1, "app", 1, 1.0, 1.0,
-                1.0, dependencies, true, 2, 1, params);
+        String[] dependencies = new String[2];
+        dependencies[0] = "1";
+        dependencies[1] = "2";
+        String[] params = new String[1];
+        params[0] = "params";
+        jobConfig = new JobConfiguration("Job1", 1, "application");
+        jobConfig.setDescriptionID(1);
+        jobConfig.setMaxDemand(1);
+        jobConfig.setDependencies(params);
+        jobConfig.setIncremental(true);
+        jobConfig.setDependencies(dependencies);
+        jobConfig.setWallClockLimit(String.valueOf(1.0));
+        jobConfig.setCpuLimit(String.valueOf(1.0));
     }
 
     @Test
