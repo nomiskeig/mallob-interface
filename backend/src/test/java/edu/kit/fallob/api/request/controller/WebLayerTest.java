@@ -91,12 +91,12 @@ public class WebLayerTest {
     private static final String NOT_FOUND_EXCEPTION_MULTIPLE = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND_MULTIPLE + "\"}";
 
     private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":{\"name\":\"Job1\"," +
-            "\"priority\":1.0,\"application\":\"app\",\"maxDemand\":1,\"wallClockLimit\":null,\"cpuLimit\":null,\"arrival\":null," +
-            "\"dependencies\":null,\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":false,\"literals\":null," +
-            "\"precursor\":0,\"precursorString\":null,\"assumptions\":null,\"done\":false,\"descriptionID\":0,\"additionalParameter\":null}," +
-            "\"email\":\"kalo@gmail.com\",\"username\":\"kalo\",\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1," +
-            "\"resultMetaData\":{\"parsingTime\":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0," +
-            "\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
+            "\"priority\":1.0,\"application\":\"application\",\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\"," +
+            "\"arrival\":1.0,\"dependencies\":[\"1\",\"2\"],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false," +
+            "\"incremental\":true,\"literals\":null,\"precursor\":-2147483647,\"precursorString\":null,\"assumptions\":null," +
+            "\"done\":false,\"descriptionID\":1,\"additionalParameter\":null},\"email\":\"kalo@gmail.com\",\"username\":\"kalo\"," +
+            "\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\":1.0," +
+            "\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}]}";
 
 
 
@@ -115,6 +115,7 @@ public class WebLayerTest {
         jobConfig.setDependencies(dependencies);
         jobConfig.setWallClockLimit(String.valueOf(1.0));
         jobConfig.setCpuLimit(String.valueOf(1.0));
+        jobConfig.setArrival(1.0);
     }
 
     @Test
