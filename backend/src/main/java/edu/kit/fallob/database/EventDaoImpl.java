@@ -26,7 +26,7 @@ public class EventDaoImpl implements EventDao{
     private static final String INSERT_STATEMENT = "INSERT INTO event (jobId, rank, time, load, treeIndex)"
                                                     + " VALUES (?, ?, ?, ?, ?)";
     private static final String REMOVE_BEFORE_TIME = "DELETE FROM event WHERE time < ?";
-    private static final String GET_BETWEEN_TIME = "SELECT * FROM event WHERE time > ? AND time <= ?";
+    private static final String GET_BETWEEN_TIME = "SELECT * FROM event WHERE load = 1 AND time <= ? MINUS SELECT * FROM event WHERE load = 0 AND time <= ?";
     private static final String TIME_OF_FIRST_EVENT = "SELECT time FROM event WHERE MIN(time)";
 
     private final Connection conn;
@@ -50,7 +50,11 @@ public class EventDaoImpl implements EventDao{
 
             statement.setInt(1, event.getJobID());
             statement.setInt(2, event.getProcessID());
-            //TODO
+            statement.setObject(3, event.getTime());
+            statement.setBoolean(4, event.isLoad());
+            statement.setInt(5, event.getTreeIndex());
+
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
@@ -82,8 +86,16 @@ public class EventDaoImpl implements EventDao{
      */
     @Override
     public List<Event> getEventsByTime(LocalDateTime time) throws FallobException {
-        //TODO
-        return null;
+        List<Event> events = new ArrayList<>();
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(GET_BETWEEN_TIME);
+            statement.setString(1, time.toString());
+            statement.setString(2, time.toString());
+
+            return this.getEvents(statement);
+        } catch (SQLException e) {
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+        }
     }
 
     /**
@@ -95,20 +107,12 @@ public class EventDaoImpl implements EventDao{
      */
     @Override
     public List<Event> getEventsBetweenTime(LocalDateTime startTime, LocalDateTime endTime) throws FallobException {
-        List<Event> events = new ArrayList<>();
         try {
             PreparedStatement statement = this.conn.prepareStatement(GET_BETWEEN_TIME);
             statement.setString(1, startTime.toString());
             statement.setString(2, endTime.toString());
 
-            ResultSet result = statement.executeQuery();
-
-            while (result.next()) {
-                Event event = this.constructEvent(result);
-                events.add(event);
-            }
-
-            return events;
+            return this.getEvents(statement);
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
@@ -138,12 +142,31 @@ public class EventDaoImpl implements EventDao{
     }
 
     /**
-     * contructs a new Event object from the ResultSet from the database
-     * @param result the ResultSet that contains the information necessary to construct the event
-     * @return the constructed Event object
+     * returns a list of events based on a given prepared statement
+     * @param statement the prepared statement that defines which events should be returned
+     * @return the list of events
+     * @throws FallobException if an error occurs while accessing the database
      */
-    private Event constructEvent(ResultSet result) {
-        //TODO: missing constructor in Event class
-        return null;
+    private List<Event> getEvents(PreparedStatement statement) throws FallobException {
+        List<Event> events = new ArrayList<>();
+        try {
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                //start at index 2 because index 1 is the eventId which is unnecessary
+                int jobId = result.getInt(2);
+                int processId = result.getInt(3);
+                LocalDateTime time = result.getTimestamp(4).toLocalDateTime();
+                boolean load = result.getBoolean(5);
+                int treeIndex = result.getInt(6);
+
+                Event event = new Event(processId, treeIndex, jobId, load, time);
+                events.add(event);
+            }
+
+            return events;
+        } catch (SQLException e) {
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+        }
     }
 }
