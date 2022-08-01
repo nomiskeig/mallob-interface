@@ -33,9 +33,10 @@ public class FallobConfiguration {
 	private String resultBasePath;
 	private String dataBaseUsername;
 	private String databasePassword;
-	
-	
-	
+
+
+	private String startTime;
+
 	private FallobConfiguration() {
 		
 	}
@@ -182,6 +183,15 @@ public class FallobConfiguration {
 		this.resultBasePath = resultBasePath;
 	}
 
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+
 
 	public String getDataBaseUsername() {
 		return dataBaseUsername;
@@ -201,8 +211,9 @@ public class FallobConfiguration {
 	public void setDatabasePassword(String databasePassword) {
 		this.databasePassword = databasePassword;
 	}
-	
-	
-	
+
+
+
+
 
 }

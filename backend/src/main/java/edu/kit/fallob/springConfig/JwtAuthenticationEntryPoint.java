@@ -17,7 +17,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-
+        if (response.getStatus() == 403) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not verified or corrupt token");
+        }
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 }
