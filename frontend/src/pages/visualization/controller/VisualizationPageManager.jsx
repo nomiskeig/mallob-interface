@@ -9,7 +9,7 @@ import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailsComponent';
 import { Event } from './Event';
-import {BinaryTree} from '../view/BinaryTree'
+import { BinaryTree } from '../view/BinaryTree';
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
 	#eventManager;
@@ -22,8 +22,8 @@ export class VisualizationPageManager extends React.Component {
 	#detailsComponent;
 	#stateLoaded;
 	#shouldUpdate;
-    #binaryTree;
-    #binaryTreeRef
+	#binaryTree;
+	#binaryTreeRef;
 	constructor(props) {
 		super(props);
 		this.#timeManager = new TimeManager();
@@ -31,7 +31,7 @@ export class VisualizationPageManager extends React.Component {
 		this.#context = props.context;
 		this.#jobStorage = new JobStorage(this.#context);
 		this.#visualizationRef = React.createRef();
-        this.#binaryTreeRef = React.createRef();
+		this.#binaryTreeRef = React.createRef();
 		this.#timeLineComponent = React.createRef();
 		this.#globalStatsComponent = React.createRef();
 		this.#detailsComponent = React.createRef();
@@ -41,10 +41,9 @@ export class VisualizationPageManager extends React.Component {
 	shouldComponentUpdate(nextProps) {
 		console.log('shouldComponentUpdate');
 		this.#context = nextProps.context;
-        
 
 		this.#jobStorage.updateContext(nextProps.context);
-        this.#timeLineComponent.updateContext(nextProps.context);
+		this.#timeLineComponent.updateContext(nextProps.context);
 		if (this.#context.userContext.user.isLoaded) {
 			this.update();
 		}
@@ -60,8 +59,12 @@ export class VisualizationPageManager extends React.Component {
 			this.#jobStorage,
 			this.onClick.bind(this)
 		);
-        this.#binaryTree = new BinaryTree(this.#jobStorage, this.#binaryTreeRef, this.#context.settingsContext.settings.amountProcesses)
-        this.#jobStorage.addJobUpdateListener(this.#binaryTree);
+		this.#binaryTree = new BinaryTree(
+			this.#jobStorage,
+			this.#binaryTreeRef,
+			this.#context.settingsContext.settings.amountProcesses
+		);
+		this.#jobStorage.addJobUpdateListener(this.#binaryTree);
 		this.#jobStorage.addJobUpdateListener(this.#visualization);
 		this.#eventManager.getSystemState(this.#context.userContext).then((res) => {
 			this.#jobStorage.addEvents(res);
@@ -126,12 +129,11 @@ export class VisualizationPageManager extends React.Component {
 
 	onClick(jobID, treeIndex) {
 		this.#detailsComponent.setClicked(jobID, treeIndex);
-        if (jobID !== null) {
-            this.#binaryTree.displayTree(jobID, treeIndex);
-
-        } else {
-            this.#binaryTree.clearTree();
-        }
+		if (jobID !== null) {
+			this.#binaryTree.displayTree(jobID, treeIndex);
+		} else {
+			this.#binaryTree.clearTree();
+		}
 	}
 
 	render() {
@@ -148,7 +150,7 @@ export class VisualizationPageManager extends React.Component {
 							</div>
 							<TimelineComponent
 								timeManager={this.#timeManager}
-                                context={this.#context}
+								context={this.#context}
 								ref={(el) => (this.#timeLineComponent = el)}
 							></TimelineComponent>
 							<GlobalStatsComponent
@@ -165,7 +167,10 @@ export class VisualizationPageManager extends React.Component {
 								jobStorage={this.#jobStorage}
 							></DetailsComponent>
 							<div className='binaryTreeCanvasContainer'>
-								<div className='binaryTreeCanvas' ref={(el) => (this.#binaryTreeRef = el)}></div>
+								<div
+									className='binaryTreeCanvas'
+									ref={(el) => (this.#binaryTreeRef = el)}
+								></div>
 							</div>
 							<button
 								onClick={() => {
@@ -174,14 +179,15 @@ export class VisualizationPageManager extends React.Component {
 									this.#timeManager.setPaused(true);
 									this.#shouldUpdate = false;
 									let events = [];
-									for (let i = 0; i < 100; i += 1) {
-										events.push(new Event(null, i, i , 4, 1));
+									for (let i = 0; i < 250; i += 1) {
+										events.push(new Event(null, i * 4, i, 4, 1));
 									}
 									this.#jobStorage.addEvents(events);
 								}}
 							>
 								Show tree
 							</button>
+
 							<button
 								onClick={() => {
 									let events = [];

@@ -8,8 +8,8 @@ export class BinaryTree {
 	#two;
 	#nodes;
 	#lines;
-	#clickedTreeIndex;
 	#processes;
+    #clickedTreeIndex;
 	constructor(jobStorage, canvas, processes) {
 		this.#jobStorage = jobStorage;
 		this.#canvas = canvas;
@@ -19,7 +19,7 @@ export class BinaryTree {
 		this.#nodes = [];
 		this.#lines = [];
 		this.#canvas = canvas;
-		this.#clickedTreeIndex = null;
+
 		let lineGroup = this.#two.makeGroup();
 		let circleGroup = this.#two.makeGroup();
 		let textGroup = this.#two.makeGroup();
@@ -43,15 +43,11 @@ export class BinaryTree {
 	}
 
 	totalUpdate() {
-		console.log('total update');
-		this.#clickedTreeIndex = null;
-		this.#displayedJobID = null;
 		this.clearTree();
 	}
 
 	clearTree() {
 		console.log('clearing tree');
-		this.#clickedTreeIndex = null;
 		this.#displayedJobID = null;
 		for (let i = 0; i < this.#processes; i++) {
 			this.#lines[i].opacity = 0;
@@ -64,11 +60,11 @@ export class BinaryTree {
 		if (clickedTreeIndex == null) {
 			return;
 		}
+        this.#clickedTreeIndex = clickedTreeIndex
 
 		this.clearTree();
 		console.log('displaying tree');
 		this.#displayedJobID = jobID;
-		this.#clickedTreeIndex = clickedTreeIndex;
 		let job = this.#jobStorage.getJob(jobID);
 		let vertices = job.getVertices();
 		vertices.forEach((vertex) => {
@@ -127,6 +123,7 @@ export class BinaryTree {
 			// display vertex
 			this.#nodes[updatedTreeIndex].setToJobTreeVertex(vertex, job);
 			let coords = this.getCoords(updatedTreeIndex, biggestIndex);
+            let subtree = job.getSubtree(this.#clickedTreeIndex);
 
 			let parent = job.getParent(updatedTreeIndex);
 			if (parent) {
@@ -137,6 +134,9 @@ export class BinaryTree {
 					parentCoords,
 					job
 				);
+                if (subtree.getParent(updatedTreeIndex)) {
+                    this.#lines[updatedTreeIndex].opacity = 1;
+                }
 			}
 			let leftChild = job.getLeftChild(updatedTreeIndex);
 			if (leftChild) {
@@ -150,6 +150,9 @@ export class BinaryTree {
 					coords,
 					job
 				);
+                if (subtree.getLeftChild(updatedTreeIndex)) {
+                    this.#lines[leftChild.getTreeIndex()].opacity = 1;
+                }
 			}
 			let rightChild = job.getRightChild(updatedTreeIndex);
 			if (rightChild) {
@@ -163,6 +166,9 @@ export class BinaryTree {
 					coords,
 					job
 				);
+                if (subtree.getRightChild(updatedTreeIndex)) {
+                    this.#lines[rightChild.getTreeIndex()].opacity = 1;
+                }
 			}
 		} else {
 			// remove vertex
@@ -178,17 +184,6 @@ export class BinaryTree {
 			}
 		}
 		this.#two.update();
-
-		/*if (justForColor && job.getJobID() === this.#displayedJobID) {
-			console.log('update color in tree');
-			let vertex = job.getVertex(updatedTreeIndex);
-			this.#nodes[updatedTreeIndex].setToJobTreeVertex(vertex, job);
-			this.#two.update();
-			return;
-		}
-		if (job.getJobID() == this.#displayedJobID && !justForColor) {
-			this.displayTree(job.getJobID(), this.#clickedTreeIndex);
-		}*/
 	}
 
 	getCoords(treeIndex, highestIndex) {
@@ -196,7 +191,7 @@ export class BinaryTree {
 			return Math.trunc(Math.log2(index + 1));
 		}
 		let availableHeight = this.#canvas.clientHeight - 10;
-		let availableWidth = this.#canvas.clientWidth - 12;
+		let availableWidth = this.#canvas.clientWidth - 20;
 
 		let depth = getDepth(treeIndex);
 		let maxDepth = getDepth(highestIndex);
@@ -204,7 +199,7 @@ export class BinaryTree {
 		let amountNodesWithDepth = Math.pow(2, depth);
 		let xSpacing = availableWidth / (2 * amountNodesWithDepth);
 		let posInRow = treeIndex - Math.pow(2, depth) + 2;
-		let x = xSpacing + 2 * xSpacing * (posInRow - 1);
+		let x = 10 +  xSpacing + 2 * xSpacing * (posInRow - 1);
 		return new CoordPair(x, y);
 	}
 }
