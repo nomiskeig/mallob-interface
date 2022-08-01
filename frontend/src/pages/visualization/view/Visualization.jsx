@@ -21,6 +21,7 @@ export class Visualization {
 		this.#processes = processes;
 		this.#jobStorage = jobStorage;
         this.#onClick = onClick;
+        this.#clickedRank = null;
 		let connectionGroup = this.#two.makeGroup();
 		let nodeGroup = this.#two.makeGroup();
 		let textGroup = this.#two.makeGroup();
@@ -121,7 +122,8 @@ export class Visualization {
 		this.#hoveredRank = null;
 	}
 
-	update(job, updatedTreeIndex, add) {
+	update(job, updatedTreeIndex, add, justForColor) {
+        console.warn('should not be called');
 		let vertex = job.getVertex(updatedTreeIndex);
 		let parentVertex = job.getParent(updatedTreeIndex);
 		let leftChild = job.getLeftChild(updatedTreeIndex);
@@ -133,8 +135,8 @@ export class Visualization {
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
             
             // call the onClick function if ranks match so correct info is shown
-            if (rank === this.#clickedRank) {
-                this.#onClick(job.getJobID(), vertex.getTreeIndex(), rank);
+            if (rank === this.#clickedRank && !justForColor) {
+                this.#onClick(job.getJobID(), vertex.getTreeIndex());
             }
             
             // update connection from left child to vertex itself
@@ -169,6 +171,9 @@ export class Visualization {
 				);
 			}
 		} else {
+            if (rank === this.#clickedRank) {
+                this.#onClick(null, null)
+            }
 			this.#nodes[rank].reset();
 			if (leftChild) {
 				this.#connections[leftChild.getRank()].reset();
@@ -184,6 +189,8 @@ export class Visualization {
 	}
 
 	totalUpdate(jobs) {
+        console.warn('total update called');
+        console.log(jobs);
         for (let i = 0; i < this.#processes; i++) {
             this.#nodes[i].reset();
             this.#connections[i].reset();
@@ -206,6 +213,13 @@ export class Visualization {
 				}
 			});
 		});
+        if (this.#clickedRank === null) {
+            return;
+        }
+        let nodeClicked = this.#nodes[this.#clickedRank];
+        this.#onClick(nodeClicked.getJobID(), nodeClicked.getTreeIndex())
+    
+
 	}
 
     stop() {

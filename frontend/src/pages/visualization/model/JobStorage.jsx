@@ -114,7 +114,7 @@ export class JobStorage {
 				);
 				if (!wasEmpty) {
 					this.#jobUpdateListeners.forEach((listener) =>
-						listener.update(job, treeIndex, false)
+						listener.update(job, treeIndex, false,false)
 					);
 				}
 				job.removeVertex(event.getTreeIndex());
@@ -164,7 +164,7 @@ export class JobStorage {
 								job
 									.getVertices()
 									.forEach((vertex) =>
-										listener.update(job, vertex.getTreeIndex(), true)
+										listener.update(job, vertex.getTreeIndex(), true, true)
 									);
 							});
 						})
@@ -184,7 +184,7 @@ export class JobStorage {
 
 				if (!wasEmpty) {
 					this.#jobUpdateListeners.forEach((listener) => {
-						listener.update(job, treeIndex, true);
+						listener.update(job, treeIndex, true, false);
 					});
 				}
 			}
