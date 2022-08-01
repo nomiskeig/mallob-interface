@@ -1,6 +1,5 @@
 package edu.kit.fallob.commands;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Service @RequiredArgsConstructor @Slf4j
+@Service @Slf4j
 public class FallobCommands implements UserDetailsService {
 	
 	private DaoFactory daoFactory;
