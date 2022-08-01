@@ -42,8 +42,10 @@ export class TimeManager {
 	}
 	setPaused(paused) {
 		this.#paused = paused;
-        this.#jump = true;
-        this.#live = false;
+		if (this.#live) {
+			this.#jump = true;
+		}
+		this.#live = false;
 	}
 
 	setJump() {
@@ -59,10 +61,7 @@ export class TimeManager {
 			if (this.#paused) {
 				this.#lastTimeMeasured = currentTime;
 				this.#nextTime = this.#lastTime;
-                if (this.#live) {
-                    this.#live = false;
-                    this.#jump = true;
-                }
+				return this.#nextTime;
 			} else {
 				let differenceInMillis = differenceInMilliseconds(
 					currentTime,
@@ -70,39 +69,40 @@ export class TimeManager {
 				);
 				this.#lastTimeMeasured = currentTime;
 				let millisToAdd = differenceInMillis * this.#multiplier;
-                // TODO: this can at most be the current time or at least the startTime
+				// TODO: this can at most be the current time or at least the startTime
 				let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
-                if (isAfter(nextTime, new Date())) {
-                    nextTime = new Date();
-                }
+				if (isAfter(nextTime, new Date())) {
+					nextTime = new Date();
+				}
 				this.#nextTime = nextTime;
-                // set to live so that the stream is used again when replay speed is too fast
-				if (!this.#live && Math.abs(differenceInMilliseconds(this.#nextTime, new Date())) < 100) {
-					this.#live = true;
-                    this.#jump = true;
-                    this.#multiplier = 1;
-                }
+				// set to live so that the stream is used again when next time is current enough
 			}
+		}
+		if (
+			!this.#live &&
+			Math.abs(differenceInMilliseconds(this.#nextTime, new Date())) < 100
+		) {
+			this.#live = true;
+			this.#jump = true;
+			this.#multiplier = 1;
+		} else if (
+			this.#live &&
+			Math.abs(differenceInMilliseconds(this.#nextTime, new Date())) >= 100
+		) {
+			// set live to false if the difference is too big
+			this.#live = false;
 		}
 		return this.#nextTime;
 	}
 
 	setNextTime(time) {
 		this.#nextTime = time;
-		if (Math.abs(differenceInMilliseconds(time, new Date())) < 100) {
-			this.#live = true;
-		} else {
-			this.#live = false;
-		}
 	}
 
 	isLive() {
 		return this.#live;
 	}
 
-	setLive() {
-		this.#live = true;
-	}
 	getLastTime() {
 		return this.#lastTime;
 	}

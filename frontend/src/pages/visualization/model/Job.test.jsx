@@ -183,8 +183,97 @@ test('returns correct subtree when subtree has is not connected', () => {
 	job.addVertex(vertex2);
 	job.addVertex(vertex3);
 	let subtree = job.getSubtree(vertex1.getTreeIndex());
-    expect(subtree.getSize()).toBe(3);
-    expect(subtree.getVertex(vertex1.getTreeIndex())).toBe(vertex1);
-    expect(subtree.getVertex(vertex2.getTreeIndex())).toBe(vertex2);
-    expect(subtree.getVertex(vertex3.getTreeIndex())).toBe(vertex3);
+	expect(subtree.getSize()).toBe(3);
+	expect(subtree.getVertex(vertex1.getTreeIndex())).toBe(vertex1);
+	expect(subtree.getVertex(vertex2.getTreeIndex())).toBe(vertex2);
+	expect(subtree.getVertex(vertex3.getTreeIndex())).toBe(vertex3);
 });
+
+test('returns null if the child is is not part of the job', () => {
+	let job = new Job();
+	let vertex = new JobTreeVertex(0, 3);
+	job.addVertex(vertex);
+	expect(job.getLeftChild(vertex.getTreeIndex())).toBeNull();
+	expect(job.getRightChild(vertex.getTreeIndex())).toBeNull();
+});
+
+test('return the vertices', () => {
+	let job = new Job();
+	let vertex1 = new JobTreeVertex(0, 3);
+	job.addVertex(vertex1);
+	expect(job.getVertices()).toEqual([vertex1]);
+	let vertex2 = new JobTreeVertex(1, 4);
+	job.addVertex(vertex2);
+	expect(job.getVertices().sort()).toEqual([vertex1, vertex2].sort());
+});
+
+test('sets the initial color', () => {
+	let color = '#123456';
+	let job = new Job(1, color);
+	expect(job.getColor()).toBe(color);
+});
+
+test('set the color with the setter', () => {
+	let color1 = '#123456';
+	let color2 = '#654321';
+	let job = new Job(1, color1);
+	job.setColor(color2);
+	expect(job.getColor()).toBe(color2);
+});
+
+test('sets the username', () => {
+	let username = 'bob';
+	let job = new Job(1, '#123456');
+	job.setUsername(username);
+	expect(job.getUsername()).toBe(username);
+});
+
+test('sets the useremail', () => {
+	let email = 'mail1';
+	let job = new Job(1, '#123456');
+	job.setUserEmail(email);
+	expect(job.getUserEmail()).toBe(email);
+});
+
+test('sets the initial jobID', () => {
+	let job = new Job(1, '#123456');
+	expect(job.getJobID()).toBe(1);
+});
+
+test('sets the outer color', () => {
+	let outerColor = '#654321';
+	let job = new Job(1, '#123456');
+	job.setOuterColor(outerColor);
+	expect(job.getOuterColor()).toBe(outerColor);
+});
+
+test('sets the job name', () => {
+	let jobname = 'job1name';
+	let job = new Job(1, '#123456');
+	job.setJobName(jobname);
+	expect(job.getJobName()).toBe(jobname);
+});
+
+test('overwrites a vertex if theres already a vertex with on that treeIndex', () => {
+	let job = new Job(1, '#123456');
+	let vertex1 = new JobTreeVertex(0, 2);
+	let vertex2 = new JobTreeVertex(1, 2);
+	job.addVertex(vertex1);
+	expect(job.getSize()).toBe(1);
+	expect(job.getVertex(vertex1.getTreeIndex())).toBe(vertex1);
+	job.addVertex(vertex2);
+	expect(job.getSize()).toBe(1);
+	expect(job.getVertex(vertex2.getTreeIndex())).toBe(vertex2);
+	expect(job.getVertex(vertex2.getTreeIndex())).toBe(vertex2);
+});
+
+test('removing a non existent vertex does not break', () => {
+	let job = new Job(1, '#123456');
+	job.removeVertex(1);
+	expect(job.getSize()).toBe(0);
+});
+
+test('getVertices returns empty array if there is no vertex', () =>{
+    let job = new Job(1, '#123456');
+    expect(job.getVertices()).toEqual([]);
+})

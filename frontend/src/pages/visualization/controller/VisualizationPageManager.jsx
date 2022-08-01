@@ -7,7 +7,7 @@ import { Visualization } from '../view/Visualization';
 import './VisualizationPageManager.scss';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
-import { DetailsComponent } from '../view/DetailComponent';
+import { DetailsComponent } from '../view/DetailsComponent';
 import { Event } from './Event';
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
@@ -136,7 +136,7 @@ export class VisualizationPageManager extends React.Component {
 							</div>
 							<TimelineComponent
 								timeManager={this.#timeManager}
-								startTime={this.#context.settingsContext.settings.startTime}
+                                context={this.#context}
 								ref={(el) => (this.#timeLineComponent = el)}
 							></TimelineComponent>
 							<GlobalStatsComponent
