@@ -1,9 +1,9 @@
 package edu.kit.fallob.api.request.controller;
 
 public class FallobConfigurationsResponse {
-    private int amountProcesses;
-    private String startTime;
-    private Defaults defaults;
+    private final int amountProcesses;
+    private final String startTime;
+    private final Defaults defaults;
 
     public FallobConfigurationsResponse(int amountProcesses, String startTime, Defaults defaults) {
         this.amountProcesses = amountProcesses;
