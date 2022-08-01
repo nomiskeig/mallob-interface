@@ -25,7 +25,7 @@ public class WarningDaoImpl implements WarningDao{
     //the SQL statement for inserting a new warning
     private static final String INSERT_STATEMENT = "INSERT INTO warning (time, message) VALUES (?, ?)";
     //the SQL statement for removing the old warnings
-    private static final String DELETE_STATEMENT = "DELETE FROM warning WHERE time < '?'";
+    private static final String DELETE_STATEMENT = "DELETE FROM warning WHERE time < ?";
     //the SQL query to get all warning in the database
     private static final String GET_QUERY = "SELECT * FROM warning";
     //the index of the result that describes where the message of the warning is stored
