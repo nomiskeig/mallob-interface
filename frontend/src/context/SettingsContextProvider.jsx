@@ -8,7 +8,6 @@ export function SettingsContextProvider({ children }) {
 	const [isLoaded, setLoaded] = useState(false);
     const infoContext = useContext(InfoContext)
 	useEffect(() => {
-        console.log('fetching settings')
 		async function fetchSettings() {
 
 			await axios

@@ -18,6 +18,7 @@ import {
 } from './global/navbar/Navbar';
 import { NotFoundPage } from './pages/notFound/NotFoundPage';
 import { LoginPage } from './pages/login/LoginPage';
+import {JobPage} from './pages/jobPage/JobPage'
 
 class App extends React.Component {
 	constructor(props) {
@@ -76,6 +77,15 @@ class App extends React.Component {
 											element={
 												<div>
 													<Navbar highlight={PAGE_JOBS} />
+												</div>
+											}
+										/>
+										<Route
+											path='/job/:jobID'
+											element={
+												<div>
+													<Navbar highlight={PAGE_JOBS} />
+													<JobPage />
 												</div>
 											}
 										/>
