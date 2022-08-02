@@ -21,6 +21,7 @@ import edu.kit.fallob.springConfig.FallobException;
  *
  */
 public class JobAbortCommands {
+
 	
 	private DaoFactory daoFactory;
 	private MallobInput mallobInput;

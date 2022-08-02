@@ -1,6 +1,11 @@
 package edu.kit.fallob.commands;
 
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.dataobjects.User;
+import edu.kit.fallob.springConfig.FallobException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +20,7 @@ import edu.kit.fallob.dataobjects.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service @Slf4j
@@ -35,15 +41,12 @@ public class FallobCommands implements UserDetailsService {
         // JPA Beispiel fur die Implementation
 
 //        User user = userRepo.findByUsername(username);
-//        if(user == null) {
-//            log.error("User not found in the database");
-//            throw new UsernameNotFoundException("User not found in the database");
+
+//        if(user == null || !user.isVerified()) {
+//            throw new UsernameNotFoundException("User not found in the database or is not verified");
 //        } else {
-//            log.info("User found in the database: {}", username);
-//            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//            user.getRoles().forEach(role -> {
-//                authorities.add(new SimpleGrantedAuthority(role.getName()));
-//            });
+//            List <SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getUserType));
+//
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
     	User user = userDao.getUserByUsername(username);

@@ -1,37 +1,47 @@
 package edu.kit.fallob.api.request.controller;
 
 
-import edu.kit.fallob.dataobjects.JobConfiguration;
-import edu.kit.fallob.dataobjects.JobInformation;
-import edu.kit.fallob.dataobjects.ResultMetaData;
+import edu.kit.fallob.dataobjects.*;
 
 public class JobInformationProxy {
 
-    private JobInformation jobInformation;
+    private final JobConfiguration configuration;
+    private final ResultMetaData rmd;
+    private final String email;
+    private final String username;
+    private final String submitTime;
+    private final JobStatus jobStatus;
+    private final int jobID;
 
     public JobInformationProxy(JobInformation jobInformation) {
-        this.jobInformation = jobInformation;
+        this.configuration = jobInformation.getJobConfiguration();
+        this.jobID = jobInformation.getJobID();
+        this.jobStatus = jobInformation.getJobStatus();
+        this.submitTime = jobInformation.getSubmitTime();
+        this.rmd = jobInformation.getResultMetaData();
+        this.email = jobInformation.getUser().getEmail();
+        this.username = jobInformation.getUser().getUsername();
     }
 
-    public JobConfiguration getJobConfig() {
-        return null;
+    public JobConfiguration getConfiguration() {
+        return configuration;
     }
-    public int getJobId() {
-        return 0;
+    public int getId() {
+        return jobID;
     }
-    public String getUserEmail() {
-        return null;
+    public String getEmail() {
+        return email;
     }
-    public String getUserName() {
-        return null;
+    public String getUsername() {
+        return username;
     }
-    public String getUserSubmitTime() {
-        return null;
+    public String getSubmitTime() {
+        return submitTime;
     }
-    public String getUserJobStatus() {
-        return null;
+    public JobStatus getJobStatus() {
+        return jobStatus;
     }
     public ResultMetaData getResultMetaData() {
-        return null;
+        return rmd;
     }
 }

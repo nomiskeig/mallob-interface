@@ -71,4 +71,10 @@ public class MallobOutputReader implements MallobOutputActionChecker {
 	public void checkForAction() {
 		readNextLine();
 	}
+
+
+	@Override
+	public boolean isDone() {
+		return false;
+	}
 }

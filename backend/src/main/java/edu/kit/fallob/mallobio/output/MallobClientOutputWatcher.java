@@ -23,26 +23,27 @@ import java.util.Arrays;
 public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	
 	private String pathToMallobDirectory;
-	
-	private int clientProcessRank;
-	
+		
 	private ResultObjectDistributor distributor;
 	
 	private List<String> processedResults;
 	
+	private boolean retreivedResult;
 	
 	
-	public MallobClientOutputWatcher(String pathToMallobDirectory, int clientProcessID) {
-		this.pathToMallobDirectory = pathToMallobDirectory;
-		this.clientProcessRank = clientProcessID;
-		this.processedResults = new ArrayList<>();
-		scanInitialFiles();
-	}
+	
 	
 	public MallobClientOutputWatcher(String pathToMallobDirectory) {
+		System.out.println(pathToMallobDirectory);
+		setupClientOutputWatcher(pathToMallobDirectory);
+	}
+	
+	
+	private void setupClientOutputWatcher(String pathToMallobDirectory) {
 		this.pathToMallobDirectory = pathToMallobDirectory;
 		this.processedResults = new ArrayList<>();
-		scanInitialFiles();
+		retreivedResult = false;
+		//scanInitialFiles();
 	}
 	
 	
@@ -52,7 +53,11 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 	/**
 	 * This method scans the given directory for initial files,
 	 * such that these files can be distinguished from results
-	 */
+	 * 
+	 * The idea of this method is to scan files that have been in the directory beforehand, 
+	 * such that the Output-Watcher only pushes newly created/moved files to the distributor 
+	 * 
+	 
 	private void scanInitialFiles() {
 		File directrory = new File(pathToMallobDirectory);
 		List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
@@ -61,10 +66,16 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 		}
 	}
 	
+	*/
+	
 	/**
 	 * Check for changes in the directory, given in the creation of the file
 	 */
 	public void watchDirectory() {
+		if (retreivedResult) {
+			return;
+		}
+		
 		File directrory = new File(pathToMallobDirectory);
 		//List<File> files = new ArrayList<>(Arrays.asList(directrory.listFiles()));
 		List<File> files = List.of(directrory.listFiles());
@@ -93,6 +104,11 @@ public class MallobClientOutputWatcher implements MallobOutputActionChecker{
 
 	private void pushResultObject(ResultAvailableObject rao) {
 		this.distributor.distributeResultObject(rao);
+		this.retreivedResult = true;
+	}
+	
+	public boolean isDone() {
+		return retreivedResult;
 	}
 
 	@Override
