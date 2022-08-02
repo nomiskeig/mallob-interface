@@ -19,20 +19,25 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.sql.Date;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -79,6 +84,9 @@ public class WebLayerTest {
 
     @MockBean
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
     private static JobConfiguration jobConfig;
 
@@ -228,9 +236,7 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string("{\"jobId\":1}"));
     }
 
-
-    //TODO Test submit Job with url Description
-    //TODO Test endpoints with user not verified
+    //TODO Test endpoints with user not verified - Only IntegrationTest possible?
 
     @Test
     @WithMockUser
@@ -244,11 +250,50 @@ public class WebLayerTest {
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
 
-        when(jobSubmitCommands.submitJobWithDescriptionInclusive(null, jobDescription, jobConfig)).thenReturn(1);
+        when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
+                .thenAnswer((Answer<Integer>) invocationOnMock -> {
+                    JobDescription usedJobDescription = invocationOnMock.getArgument(1);
+                    JobConfiguration usedConfig = invocationOnMock.getArgument(2);
+                    boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
+                            && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
+                            == jobConfig.isInterrupt() && Objects.equals((usedConfig.getAdditionalParameter()), jobConfig.getAdditionalParameter())
+                            && usedConfig.getApplication().equals(jobConfig.getApplication())
+                            && Arrays.equals((usedConfig.getDependencies()), jobConfig.getDependencies()) && usedConfig.getPrecursor() == jobConfig.getPrecursor()
+                            && usedConfig.getPriority() == jobConfig.getPriority() && usedConfig.getDescriptionID() == jobConfig.getDescriptionID()
+                            && usedConfig.getName().equals(jobConfig.getName()) && Arrays.equals((usedConfig.getLiterals()), jobConfig.getLiterals())
+                            && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit()) && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
+                    List<File> descriptionFiles = jobDescription.getDescriptionFiles();
+                    List<File> usedDescriptionFiles = usedJobDescription.getDescriptionFiles();
+                    boolean allFilesMatch = true;
+                    outer:
+                    for (int i = 0; i < descriptionFiles.size(); i++) {
+                        BufferedReader bf1 = Files.newBufferedReader(descriptionFiles.get(i).toPath());
+                        BufferedReader bf2 = Files.newBufferedReader(usedDescriptionFiles.get(i).toPath());
+
+                            String line1, line2;
+                            while ((line1 = bf1.readLine()) != null) {
+                                line2 = bf2.readLine();
+                                if (!line1.equals(line2)) {
+                                    allFilesMatch = false;
+                                    bf1.close();
+                                    bf2.close();
+                                    break outer;
+                                }
+                            }
+                            bf1.close();
+                            bf2.close();
+                        }
+
+                    if (allFilesMatch && jobConfigEqualsUsedConfig) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
 
         this.mockMvc.perform(post("/api/v1/jobs/submit/url")
                 .content(objectMapper.writeValueAsString(submitJobRequest)).contentType("application/json")).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":1}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"jobId\":1}"));
 
     }
 
@@ -279,30 +324,41 @@ public class WebLayerTest {
                 .andExpect(content().string("{\"status\":\"CONFLICT\",\"message\":" + "\"Username already registered\"}"));
     }
 
-    //TODO The tests below are not executed correctly - find fix
-//    @Test
-//    public void loginSuccessfully() throws Exception {
-//        String username = "kalo";
-//        String password = "1234";
-//        when(fallobCommands.loadUserByUsername(username)).thenReturn(new org.springframework.security.core.userdetails.User(username, password, Collections.singleton(UserType.NORMAL_USER)));
-//        UserRequest userRequest = new UserRequest(username, password);
-//
-//        this.mockMvc.perform(post("/api/v1/users/login").content(objectMapper.writeValueAsString(userRequest))
-//                        .contentType("application/json")).andDo(print())
-//                .andExpect(status().isOk()).andExpect(content().string("\"OK\""));
-//    }
-//
-//    @Test
-//    public void loginException() throws Exception {
-//        String username = "kalo";
-//        String password = "1234";
-//        when(fallobCommands.loadUserByUsername(username)).thenThrow(new UsernameNotFoundException("Username already registered"));
-//        UserRequest userRequest = new UserRequest(username, password);
-//
-//        this.mockMvc.perform(post("/api/v1/users/login").content(objectMapper.writeValueAsString(userRequest))
-//                        .contentType("application/json")).andDo(print()).andExpect(status().isNotFound())
-//                .andExpect(content().string("{\"status\":\"CONFLICT\",\"message\":" + "\"Username already registered\"}"));
-//    }
+    @Test
+    public void loginSuccessfully() throws Exception {
+        String username = "kalo";
+        String password = "1234";
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, password, Collections.singleton(UserType.NORMAL_USER));
+        when(fallobCommands.loadUserByUsername(username)).thenReturn(userDetails);
+        UserRequest userRequest = new UserRequest(username, password);
+        Authentication authentication = mock(Authentication.class);
+        authentication.setAuthenticated(true);
+        when(authentication.isAuthenticated()).thenReturn(true);
+
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+        when(jwtTokenUtil.generateToken(userDetails)).thenReturn("1234");
+
+        this.mockMvc.perform(post("/api/v1/users/login").content(objectMapper.writeValueAsString(userRequest))
+                        .contentType("application/json")).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string("{\"token\":\"1234\"}"));
+    }
+
+    @Test
+    public void loginException() throws Exception {
+        String username = "kalo";
+        String password = "1234";
+        when(fallobCommands.loadUserByUsername(username)).thenThrow(new UsernameNotFoundException("User not found"));
+        UserRequest userRequest = new UserRequest(username, password);
+        Authentication authentication = mock(Authentication.class);
+        authentication.setAuthenticated(true);
+        when(authentication.isAuthenticated()).thenReturn(true);
+
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+
+        this.mockMvc.perform(post("/api/v1/users/login").content(objectMapper.writeValueAsString(userRequest))
+                        .contentType("application/json")).andDo(print()).andExpect(status().isNotFound())
+                .andExpect(content().string("{\"status\":\"NOT_FOUND\",\"message\":" + "\"User not found\"}"));
+    }
 
 
     @Test
@@ -880,16 +936,17 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getMallobEventsSuccessfully() throws Exception {
-        // TODO To be changed when Event is implemented
+        String startTime = "2020-02-13T18:51:09.840Z";
+        String endTime = "2020-02-13T18:54:09.234Z";
         List<Event> eventsList = new ArrayList<>();
-        Event event = new Event("LogLine would be given here");
+        Event event = new Event(1, 1, 1, true, new Date(1659441300000L));
         eventsList.add(event);
 
-        when(mallobCommands.getEvents("2020-02-13T18:51:09.840Z", "2020-02-13T18:54:09.234Z")).thenReturn(eventsList);
+        when(mallobCommands.getEvents(startTime, endTime)).thenReturn(eventsList);
 
-        this.mockMvc.perform(get("/api/v1/events/events?startTime=2020-02-13T18:51:09.840Z&endTime=2020-02-13T18:54:09.234Z"))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\":" +
-                        "\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false,\"time\":null}]}"));
+        this.mockMvc.perform(get("/api/v1/events/events?startTime=" + startTime + "&endTime=" + endTime))
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
+                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"2022-08-02\"}]}"));
     }
 
     @Test
@@ -905,18 +962,18 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getSystemStateSuccessfully() throws Exception {
-        // TODO To be changed when Event is implemented
+        String time = "2020-02-13T18:51:09.840Z";
         List<Event> eventsList = new ArrayList<>();
-        Event event = new Event("LogLine would be given here");
+        Event event = new Event(1, 1, 1, true, new Date(1659441300000L));
         eventsList.add(event);
         SystemState systemState = new SystemState();
         systemState.setSystemState(eventsList);
 
-        when(mallobCommands.getSystemState("2020-02-13T18:51:09.840Z")).thenReturn(systemState);
+        when(mallobCommands.getSystemState(time)).thenReturn(systemState);
 
-        this.mockMvc.perform(get("/api/v1/events/state?time=2020-02-13T18:51:09.840Z"))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{\"logLine\"" +
-                        ":\"LogLine would be given here\",\"processID\":0,\"treeIndex\":0,\"jobID\":0,\"load\":false,\"time\":null}]}"));
+        this.mockMvc.perform(get("/api/v1/events/state?time=" + time))
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
+                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"2022-08-02\"}]}"));
     }
 
     @Test
@@ -928,6 +985,7 @@ public class WebLayerTest {
                 .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string("{\"status\":\"NOT_FOUND\"" +
                         ",\"message\":\"Time point not valid\"}"));
     }
+
 
     //FROM HERE EXCEPTION HANDLING TESTS
 
