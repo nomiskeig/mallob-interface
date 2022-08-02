@@ -19,10 +19,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -93,7 +93,7 @@ public class JobDaoImpl implements JobDao{
     public int saveJobConfiguration(JobConfiguration configuration, String username, int mallobId) throws FallobException {
         try {
             //add data to job table
-            PreparedStatement jobStatement = conn.prepareStatement(JOB_INSERT);
+            PreparedStatement jobStatement = conn.prepareStatement(JOB_INSERT, Statement.RETURN_GENERATED_KEYS);
             jobStatement.setString(1, username);
             //set the current time as submission time
             jobStatement.setObject(2, LocalDateTime.now());
@@ -133,7 +133,7 @@ public class JobDaoImpl implements JobDao{
     public int saveJobDescription(JobDescription description, String username) throws FallobException {
         try {
             //add the entry to the database
-            PreparedStatement statement = this.conn.prepareStatement(DESCRIPTION_INSERT);
+            PreparedStatement statement = this.conn.prepareStatement(DESCRIPTION_INSERT, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, username);
             statement.setString(2, description.getSubmitType().name());
             statement.setObject(3, LocalDateTime.now());
@@ -584,7 +584,7 @@ public class JobDaoImpl implements JobDao{
             if (keys.next()) {
                 return keys.getInt(1);
             } else {
-                throw new FallobException(HttpStatus.NOT_IMPLEMENTED, DATABASE_ERROR);
+                throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
             }
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
