@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public final class FileHandler {
 
-    private static final double BIT_TO_MB_RATIO = 0.000000125;
+    private static final double BIT_TO_MB_RATIO = 1000000;
 
     /**
      * saves the given file at the given path on the local filesystem
@@ -21,7 +21,10 @@ public final class FileHandler {
      * @param path the path at which the file should get saved
      */
     public static void saveFileAtPath(File file, String path) {
+        assert file.isFile();
         file.renameTo(new File(path));
+        assert !file.isFile();
+        assert new File(path).isFile();
     }
 
     /**

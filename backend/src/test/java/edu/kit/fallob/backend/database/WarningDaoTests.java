@@ -21,7 +21,6 @@ public class WarningDaoTests {
     private static final String SECOND_TEST_LOG_LINE = "Second Test warning";
 
     private String databasePath;
-
     private Connection connection;
     private WarningDao warningDao;
 

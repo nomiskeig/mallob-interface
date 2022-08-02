@@ -54,10 +54,11 @@ public class JobDaoImpl implements JobDao{
     private static final String CONFIGURATION_INSERT = "INSERT INTO jobConfiguration (jobId, name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, contentMode, additionalConfig, dependenciesStrings, precursorString) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_JOB_ID = "UPDATE jobDescription SET jobId=? WHERE descriptionId=?";
     private static final String DESCRIPTION_INSERT = "INSERT INTO jobDescription (username, submitType, uploadTime) VALUES (?, ?, ?)";
-    private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription WHERE MIN(uploadTime)";
+    private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription ORDER BY uploadTime DESC";
     private static final String GET_JOBS_BEFORE_TIME = "SELECT jobId FROM job WHERE submissionTime < ?";
     private static final String DELETE_FROM_JOB = "DELETE FROM job WHERE jobID=?";
     private static final String DELETE_FROM_JOB_CONFIGURATION = "DELETE FROM jobConfiguration WHERE jobId=?";
+    private static final String DELETE_FROM_JOB_DESCRIPTION = "DELETE FROM jobDescription WHERE descriptionId = ?";
     private static final String DELETE_FROM_META_DATA = "DELETE FROM resultMetaData WHERE jobId=?";
     private static final String GET_ALL_JOBIDS = "SELECT jobId FROM job WHERE username=?";
     private static final String GET_SUBMIT_TYPE = "SELECT submitType FROM jobDescription WHERE descriptionId=?";
@@ -171,11 +172,12 @@ public class JobDaoImpl implements JobDao{
             PreparedStatement getDescriptionId = this.conn.prepareStatement(GET_OLDEST_JOB_DESCRIPTION);
             ResultSet result = getDescriptionId.executeQuery();
 
+            //get the first entry from the result set which is the oldest
             if(result.next()) {
                 descriptionId = result.getInt(1);
             }
 
-            PreparedStatement statement = this.conn.prepareStatement(DELETE_FROM_JOB_CONFIGURATION);
+            PreparedStatement statement = this.conn.prepareStatement(DELETE_FROM_JOB_DESCRIPTION);
             statement.setInt(1, descriptionId);
 
             statement.executeUpdate();
@@ -335,12 +337,15 @@ public class JobDaoImpl implements JobDao{
                 String wallclockLimit = result.getString(6);
                 String cpuLimit = result.getString(7);
                 double arrival = result.getDouble(8);
-                Integer[] dependencies = (Integer[]) result.getArray(9).getArray();
+                Array dependenciesArray = result.getArray(9);
+                //make an Integer array out of the sql array
+                Integer[] dependencies = this.assembleIntegerArray(dependenciesArray);
                 boolean incremental = result.getBoolean(10);
                 int precursor = result.getInt(11);
                 String contentMode = result.getString(12);
                 String additionalConfig = result.getString(13);
-                String[] dependenciesString = (String[]) result.getArray(14).getArray();
+                Array dependenciesStringArray = result.getArray(14);
+                String[] dependenciesString = this.assembleStringArray(dependenciesStringArray);
                 String precursorString = result.getString(15);
 
                 return this.assembleJobConfiguration(name, priority, application, descriptionId, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, dependenciesString, incremental, precursor, precursorString, contentMode, additionalConfig);
@@ -386,7 +391,13 @@ public class JobDaoImpl implements JobDao{
     @Override
     public JobInformation getJobInformation(int jobId) throws FallobException {
         JobConfiguration configuration = this.getJobConfiguration(jobId);
-        ResultMetaData metaData = this.getResultMetaData(jobId);
+        ResultMetaData metaData;
+        //check if meta data is already available and set to null if not
+        try {
+            metaData = this.getResultMetaData(jobId);
+        } catch (FallobException e) {
+            metaData = null;
+        }
         JobStatus status = this.getJobStatus(jobId);
 
         try {
@@ -625,7 +636,7 @@ public class JobDaoImpl implements JobDao{
             configStatement.setString(7, configuration.getCpuLimit());
             configStatement.setDouble(8, configuration.getArrival());
             //convert the dependencies int array into an Array object
-            Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, new Integer[][]{configuration.getDependencies()});
+            Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, configuration.getDependencies());
             configStatement.setArray(9, dependencies);
             configStatement.setBoolean(10, configuration.isIncremental());
             configStatement.setInt(11, configuration.getPrecursor());
@@ -638,7 +649,7 @@ public class JobDaoImpl implements JobDao{
 
             configStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -690,5 +701,37 @@ public class JobDaoImpl implements JobDao{
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
+    }
+
+    /**
+     * construct a new Integer array out of the sql array that comes from the database
+     * @param array the sql array that should be converted
+     * @return the Integer array that was constructed
+     * @throws SQLException if something goes wring with the sql array
+     */
+    private Integer[] assembleIntegerArray(Array array) throws SQLException {
+        Object arrayObject = array.getArray();
+        int arrayLength = java.lang.reflect.Array.getLength(arrayObject);
+
+        Integer[] integers = new Integer[arrayLength];
+
+        for (int i = 0; i < arrayLength - 1; i++) {
+            Integer integer = (Integer) java.lang.reflect.Array.get(arrayObject, i);
+            integers[i] = integer;
+        }
+        return integers;
+    }
+
+    private String[] assembleStringArray(Array array) throws SQLException {
+        Object arrayObject = array.getArray();
+        int arrayLength = java.lang.reflect.Array.getLength(arrayObject);
+
+        String[] strings = new String[arrayLength];
+
+        for (int i = 0; i < arrayLength - 1; i++) {
+            String string = (String) java.lang.reflect.Array.get(arrayObject, i);
+            strings[i] = string;
+        }
+        return strings;
     }
 }

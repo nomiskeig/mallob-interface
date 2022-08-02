@@ -31,7 +31,12 @@ public final class TestUtility {
     private static final String DATABASE_COPY_PATH = "./src/test/resources/database/fallobTestDatabaseCopy";
     private static final String FILE_EXTENSION = ".mv.db";
     private static final String LOG_EXTENSION = ".trace.db";
+    private static final String TXT_EXTENSION = ".txt";
     private static final String TIME_PATTERN = "HHmmssSSS";
+    private static final String DESCRIPTION_DIR_PATH = "./src/test/resources/database/descriptions";
+    private static final String RESULT_DIR_PATH = "./src/test/resources/database/results";
+    private static final String INITIAL_TEST_FILE_PATH = "./src/test/resources/database/test";
+    private static final String COPY_TEST_FILE_PATH = "./src/test/resources/database/testCopy";
 
     public static String createDatabaseCopy() {
         //i have no fucking idea why this is necessary but if the names of 2 copies are the same the tests don't work correctly
@@ -80,7 +85,63 @@ public final class TestUtility {
         }
 
         Assertions.assertFalse(Files.exists(databaseCopy));
+    }
 
+    public static String createTestFileCopy() {
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern(TIME_PATTERN);
+        String time = LocalDateTime.now().format(timeFormat);
 
+        Path originalFile = Paths.get(INITIAL_TEST_FILE_PATH + TXT_EXTENSION);
+        Path copiedFile = Paths.get(COPY_TEST_FILE_PATH + time + TXT_EXTENSION);
+
+        Assertions.assertTrue(Files.exists(originalFile));
+        Assertions.assertFalse(Files.exists(copiedFile));
+
+        try {
+            Files.copy(originalFile, copiedFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Assertions.assertTrue(Files.exists(copiedFile));
+
+        return COPY_TEST_FILE_PATH + time + TXT_EXTENSION;
+    }
+
+    public static void removeTestFileCopy(String path) throws IOException {
+        Path file = Paths.get(path);
+        Files.deleteIfExists(file);
+    }
+
+    public static String createNewConfigurationDir() {
+        new File(DESCRIPTION_DIR_PATH).mkdirs();
+        return DESCRIPTION_DIR_PATH;
+    }
+
+    public static String createNewResultDir() {
+        new File(RESULT_DIR_PATH).mkdirs();
+        return RESULT_DIR_PATH;
+    }
+
+    public static void deleteDirs() {
+        File descriptionDirectory = new File(DESCRIPTION_DIR_PATH);
+
+        File[] allFiles = descriptionDirectory.listFiles();
+        if (allFiles != null) {
+            for (File file: allFiles) {
+                file.delete();
+            }
+        }
+        descriptionDirectory.delete();
+
+        File resultDirectory = new File(RESULT_DIR_PATH);
+
+        allFiles = resultDirectory.listFiles();
+        if (allFiles != null) {
+            for (File file: allFiles) {
+                file.delete();
+            }
+        }
+        resultDirectory.delete();
     }
 }
