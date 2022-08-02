@@ -16,7 +16,7 @@ public class JobPendingCommand {
 	
 	
 	
-	public JobPendingCommand() {
+	public JobPendingCommand() throws FallobException{
 		daoFactory = new DaoFactory();
 		uaa = new UserActionAuthentificater(daoFactory);
 	}

@@ -30,7 +30,7 @@ public class FallobCommands implements UserDetailsService {
 	private UserDao userDao;
 	
 	
-	public FallobCommands() {
+	public FallobCommands() throws FallobException {
 		daoFactory = new DaoFactory();
 		userDao = daoFactory.getUserDao(); 
 	}

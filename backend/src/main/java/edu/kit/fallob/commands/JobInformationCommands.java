@@ -19,7 +19,7 @@ public class JobInformationCommands {
 	private JobDao jobDao;
 	
 	
-	public JobInformationCommands() {
+	public JobInformationCommands() throws FallobException{
 		daoFactory = new DaoFactory();
 		jobDao = daoFactory.getJobDao();
 		uaa = new UserActionAuthentificater(daoFactory);

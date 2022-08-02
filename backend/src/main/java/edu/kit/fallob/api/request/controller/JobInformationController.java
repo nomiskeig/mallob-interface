@@ -2,7 +2,7 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.JobDescriptionCommands;
 import edu.kit.fallob.commands.JobInformationCommands;
-import edu.kit.fallob.commands.JobPendingCommmand;
+import edu.kit.fallob.commands.JobPendingCommand;
 import edu.kit.fallob.commands.JobResultCommand;
 import edu.kit.fallob.dataobjects.*;
 import edu.kit.fallob.springConfig.FallobException;
@@ -35,7 +35,7 @@ public class JobInformationController {
     @Autowired
     private JobDescriptionCommands jobDescriptionCommand;
     @Autowired
-    private JobPendingCommmand jobPendingCommmand;
+    private JobPendingCommand jobPendingCommmand;
 
     @GetMapping("/info/single/{jobId}")
     public ResponseEntity<Object> getSingleJobInformation(@PathVariable int jobId, HttpServletRequest httpRequest) {

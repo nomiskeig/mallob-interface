@@ -17,7 +17,7 @@ public class JobResultCommand {
 	private JobDao jobDao;
 	private UserActionAuthentificater uaa;
 	
-	public JobResultCommand() {
+	public JobResultCommand()throws FallobException {
 		daoFactory = new DaoFactory();
 		jobDao = daoFactory.getJobDao();
 		uaa = new UserActionAuthentificater(daoFactory);

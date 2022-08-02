@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class MallobCommands {
 	
@@ -26,7 +25,7 @@ public class MallobCommands {
 	private EventDao eventDao;
 	private WarningDao warningDao;
 	
-	public MallobCommands() {
+	public MallobCommands() throws FallobException{
 		daoFactory = new DaoFactory();
 		eventDao = daoFactory.getEventDao();
 		warningDao = daoFactory.getWarningDao();

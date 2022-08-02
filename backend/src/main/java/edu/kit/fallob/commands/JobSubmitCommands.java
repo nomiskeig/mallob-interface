@@ -29,7 +29,7 @@ public class JobSubmitCommands {
 	private UserActionAuthentificater uaa;
 	
 	
-	public JobSubmitCommands() {
+	public JobSubmitCommands() throws FallobException{
 		daoFactory = new DaoFactory();
 		
 		uaa = new UserActionAuthentificater(daoFactory);
@@ -94,7 +94,8 @@ public class JobSubmitCommands {
 	
 	private void formatConfiguration(JobConfiguration jobConfiguration) {
 		JobDao jobDao = daoFactory.getJobDao();
-		int[] dependencies = jobConfiguration.getDependencies();
+		//int[] dependencies = jobConfiguration.getDependencies();
+        int[] dependencies = {1,2};
 		int precursor = jobConfiguration.getPrecursor();
 		if (dependencies != null) {
 			String[] jobNames = new String[dependencies.length];
@@ -103,9 +104,9 @@ public class JobSubmitCommands {
 			}
 			jobConfiguration.setDependenciesStrings(jobNames);
 		}
-		if (precursor != JobConfiguration.NOT_SET) {
-			jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
-		}
+		//if (precursor != JobConfiguration.NOT_SET) {
+	//		jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
+	//	}
 		
 	}
 

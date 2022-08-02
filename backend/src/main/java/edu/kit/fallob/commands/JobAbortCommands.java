@@ -29,7 +29,7 @@ public class JobAbortCommands {
 	private JobDao jobDao;
 	
 	
-	public JobAbortCommands() {
+	public JobAbortCommands()  throws FallobException{
 		daoFactory = new DaoFactory();
 		jobDao = daoFactory.getJobDao();
 		uaa = new UserActionAuthentificater(daoFactory);
@@ -46,11 +46,13 @@ public class JobAbortCommands {
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
 			throw new FallobException(HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
 		}
+        /*
 		try {
 			mallobInput.abortJob(jobID);
 		} catch (IOException e) {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		}
+        */
 	}
 	
 	public List<Integer> abortMultipleJobs(String username, int[] jobIDs) throws FallobException {
