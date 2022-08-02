@@ -26,8 +26,10 @@ public class EventDaoImpl implements EventDao{
     private static final String INSERT_STATEMENT = "INSERT INTO event (jobId, rank, time, load, treeIndex)"
                                                     + " VALUES (?, ?, ?, ?, ?)";
     private static final String REMOVE_BEFORE_TIME = "DELETE FROM event WHERE time < ?";
-    private static final String GET_BETWEEN_TIME = "SELECT * FROM event WHERE load = 1 AND time <= ? MINUS SELECT * FROM event WHERE load = 0 AND time <= ?";
-    private static final String TIME_OF_FIRST_EVENT = "SELECT time FROM event WHERE MIN(time)";
+    private static final String GET_LOAD_1_EVENTS = "SELECT * FROM event WHERE load = true AND time <= ?";
+    private static final String GET_LOAD_0_EVENTS = "SELECT * FROM event WHERE load = false AND time <= ?";
+    private static final String GET_BETWEEN_TIME = "SELECT * FROM event WHERE time >= ? AND time < ?";
+    private static final String TIME_OF_FIRST_EVENT = "SELECT time FROM event ORDER BY time ASC";
 
     private final Connection conn;
 
@@ -86,13 +88,32 @@ public class EventDaoImpl implements EventDao{
      */
     @Override
     public List<Event> getEventsByTime(LocalDateTime time) throws FallobException {
-        List<Event> events = new ArrayList<>();
         try {
-            PreparedStatement statement = this.conn.prepareStatement(GET_BETWEEN_TIME);
-            statement.setString(1, time.toString());
-            statement.setString(2, time.toString());
+            //get all events that happened before the given time split into load 1 and load 0 events
+            PreparedStatement statementLoad1 = this.conn.prepareStatement(GET_LOAD_1_EVENTS);
+            statementLoad1.setString(1, time.toString());
+            List<Event> load1Events = this.getEvents(statementLoad1);
 
-            return this.getEvents(statement);
+            PreparedStatement statementLoad0 = this.conn.prepareStatement(GET_LOAD_0_EVENTS);
+            statementLoad0.setString(1, time.toString());
+            List<Event> load0Events = this.getEvents(statementLoad0);
+
+            //iterate over all the load 0 events
+            for (Event event: load0Events) {
+                int process = event.getProcessID();
+                int jobId = event.getJobID();
+
+                //search for the matching load1 event and remove it from the list
+                for (Event load1Event: load1Events) {
+                    if (process == load1Event.getProcessID() && jobId == load1Event.getJobID()) {
+                        load1Events.remove(load1Event);
+                        break;
+                    }
+                }
+            }
+
+            return load1Events;
+
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }

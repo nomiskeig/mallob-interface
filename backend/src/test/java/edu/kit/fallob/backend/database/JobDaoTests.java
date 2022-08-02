@@ -99,8 +99,8 @@ public class JobDaoTests {
         long expectedLength = descriptionFile.length();
         expectedFileLengths.add(expectedLength);
 
-        JobDescription testDescription1 = new JobDescription(descriptionFiles, SubmitType.EXCLUSIVE);
-        JobDescription testDescription2 = new JobDescription(new ArrayList<>(), SubmitType.URL);
+        JobDescription testDescription1 = new JobDescription(new ArrayList<>(), SubmitType.EXCLUSIVE);
+        JobDescription testDescription2 = new JobDescription(descriptionFiles, SubmitType.URL);
 
         int descriptionId1 = this.jobDao.saveJobDescription(testDescription1, TEST_USERNAME);
         Thread.sleep(1000);
@@ -108,13 +108,11 @@ public class JobDaoTests {
 
         this.jobDao.removeOldestJobDescription();
 
-        JobDescription returnedDescription = this.jobDao.getJobDescription(descriptionId1);
+        JobDescription returnedDescription = this.jobDao.getJobDescription(descriptionId2);
 
-        this.compareJobDescriptions(returnedDescription, expectedFileLengths, SubmitType.EXCLUSIVE);
+        this.compareJobDescriptions(returnedDescription, expectedFileLengths, SubmitType.URL);
 
-        Assertions.assertThrows(FallobException.class, () -> {
-            this.jobDao.getJobDescription(descriptionId2);
-        });
+        Assertions.assertThrows(FallobException.class, () -> this.jobDao.getJobDescription(descriptionId1));
     }
 
     @Test

@@ -54,7 +54,7 @@ public class JobDaoImpl implements JobDao{
     private static final String CONFIGURATION_INSERT = "INSERT INTO jobConfiguration (jobId, name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, contentMode, additionalConfig, dependenciesStrings, precursorString) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_JOB_ID = "UPDATE jobDescription SET jobId=? WHERE descriptionId=?";
     private static final String DESCRIPTION_INSERT = "INSERT INTO jobDescription (username, submitType, uploadTime) VALUES (?, ?, ?)";
-    private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription ORDER BY uploadTime DESC";
+    private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription ORDER BY uploadTime ASC";
     private static final String GET_JOBS_BEFORE_TIME = "SELECT jobId FROM job WHERE submissionTime < ?";
     private static final String DELETE_FROM_JOB = "DELETE FROM job WHERE jobID=?";
     private static final String DELETE_FROM_JOB_CONFIGURATION = "DELETE FROM jobConfiguration WHERE jobId=?";
