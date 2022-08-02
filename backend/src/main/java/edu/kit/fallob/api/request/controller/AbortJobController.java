@@ -64,7 +64,7 @@ public class AbortJobController {
         String username = (String) httpRequest.getAttribute("username");
         List<Integer> successfullyAborted;
         try {
-            successfullyAborted = jobAbortCommand.abortAlGlobalJob(username);
+            successfullyAborted = jobAbortCommand.abortAllGlobalJob(username);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());

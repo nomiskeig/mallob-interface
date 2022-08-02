@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
  */
 public class FallobException extends Exception{
 
-    private final HttpStatus status;
-    private final String message;
+    private HttpStatus status;
+    private String message;
 
     public FallobException(HttpStatus status, String message) {
         this.setStatus(status);

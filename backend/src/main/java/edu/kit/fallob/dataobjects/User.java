@@ -14,6 +14,8 @@ public abstract class User {
 	protected double priority;
 	protected boolean isVerified;
 	protected List<Integer> jobIDs;
+
+	protected UserType userType;
 	
 	
 	
@@ -100,5 +102,12 @@ public abstract class User {
 		this.isAdmin = isAdmin;
 	}
 
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
 
 }

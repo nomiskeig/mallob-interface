@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 public class MallobCommands {
 	
 	private DaoFactory daoFactory;
@@ -26,17 +25,23 @@ public class MallobCommands {
 	private WarningDao warningDao;
 	
 	public MallobCommands() throws FallobException{
-		daoFactory = new DaoFactory();
-		eventDao = daoFactory.getEventDao();
-		warningDao = daoFactory.getWarningDao();
+		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+		try {
+			daoFactory = new DaoFactory();
+			eventDao = daoFactory.getEventDao();
+			warningDao = daoFactory.getWarningDao();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
 	}
 	
-	public SystemState getSystemState(String time) {
+	public SystemState getSystemState(String time) throws FallobException {
 		LocalDateTime formattedTime = LocalDateTime.parse(time);
 		return new SystemState(formattedTime);
 	}
 	
-	public List<Event> getEvents(String lowerBound, String upperBound) {
+	public List<Event> getEvents(String lowerBound, String upperBound) throws FallobException {
 		LocalDateTime formattedLowerBound = LocalDateTime.parse(lowerBound);
 		LocalDateTime formattedUpperBound = LocalDateTime.parse(upperBound);
 		return eventDao.getEventsBetweenTime(formattedLowerBound, formattedUpperBound);

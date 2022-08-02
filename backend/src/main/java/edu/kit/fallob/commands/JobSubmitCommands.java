@@ -7,12 +7,12 @@ import org.springframework.http.HttpStatus;
 
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
-import edu.kit.fallob.database.UserDao;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.stereotype.Service;
 
 /**
  * This class provides methods which submit a new Job, restart a canceled Job or save a new Jobdescription.
@@ -21,6 +21,7 @@ import edu.kit.fallob.springConfig.FallobException;
  * @version 1.0
  *
  */
+@Service
 public class JobSubmitCommands {
 	
 	
@@ -30,9 +31,15 @@ public class JobSubmitCommands {
 	
 	
 	public JobSubmitCommands() throws FallobException{
-		daoFactory = new DaoFactory();
-		
-		uaa = new UserActionAuthentificater(daoFactory);
+		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+		try {
+			daoFactory = new DaoFactory();
+
+			uaa = new UserActionAuthentificater(daoFactory);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
 	}
 	
 	
@@ -54,7 +61,7 @@ public class JobSubmitCommands {
 	}
 	
 	
-	public int submitJobWithDescription(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
+	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 		formatConfiguration(jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		JobDao jobDao = daoFactory.getJobDao();
@@ -87,7 +94,7 @@ public class JobSubmitCommands {
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 	}
 	
-	public int saveJobDescription(String username, JobDescription jobDescription) {
+	public int saveJobDescription(String username, JobDescription jobDescription) throws FallobException {
 		JobDao jobDao = daoFactory.getJobDao();
 		return jobDao.saveJobDescription(jobDescription, username, jobDescription.getSubmitType());
 	}

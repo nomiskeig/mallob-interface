@@ -1,5 +1,6 @@
 package edu.kit.fallob.commands;
 
+import edu.kit.fallob.dataobjects.ResultMetaData;
 import org.springframework.http.HttpStatus;
 
 import edu.kit.fallob.database.DaoFactory;
@@ -7,7 +8,9 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobListener;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JobPendingCommand {
 	
 	private MallobOutput mallobOutput;
@@ -17,11 +20,17 @@ public class JobPendingCommand {
 	
 	
 	public JobPendingCommand() throws FallobException{
-		daoFactory = new DaoFactory();
-		uaa = new UserActionAuthentificater(daoFactory);
+		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+		try {
+			daoFactory = new DaoFactory();
+			uaa = new UserActionAuthentificater(daoFactory);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
 	}
 	
-	public void waitForJob(String username, int jobID) throws FallobException {
+	public ResultMetaData waitForJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
@@ -31,6 +40,9 @@ public class JobPendingCommand {
 		mallobOutput.addOutputLogLineListener(jobListener);
 		jobListener.waitForJob();
 		mallobOutput.removeOutputLogLineListener(jobListener);
+
+		//TODO Temporary fix from kalo (need an ResultMetaData-Object of the job the user is waiting for)
+		return null;
 	}
 
 }

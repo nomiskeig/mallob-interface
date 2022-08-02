@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -68,7 +69,7 @@ public class WebLayerTest {
     private JobResultCommand jobResultCommand;
 
     @MockBean
-    private JobPendingCommmand jobPendingCommmand;
+    private JobPendingCommand jobPendingCommand;
 
     @MockBean
     private JobDescriptionCommands jobDescriptionCommands;
@@ -88,6 +89,9 @@ public class WebLayerTest {
     @MockBean
     private AuthenticationManager authenticationManager;
 
+    private static int[] jobIds;
+
+    private static List<Integer> jobIdsList;
     private static JobConfiguration jobConfig;
 
     private static final String DESCRIPTION_CONTENT = "Here would usually be the Literals in cnf format";
@@ -113,6 +117,12 @@ public class WebLayerTest {
 
     @BeforeAll
     public static void setup() {
+        jobIds = new int[2];
+        jobIds[0] = 1;
+        jobIds[1] = 2;
+        jobIdsList = new ArrayList<>();
+        jobIdsList.add(1);
+        jobIdsList.add(2);
         String[] dependencies = new String[2];
         dependencies[0] = "1";
         dependencies[1] = "2";
@@ -391,10 +401,8 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortMultipleJobsSuccessfully() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
-        when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenReturn(jobIds);
+
+        when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenReturn(jobIdsList);
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
         this.mockMvc.perform(post("/api/v1/jobs/cancel/multiple").content(objectMapper.writeValueAsString(abortJobRequest))
@@ -405,9 +413,6 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortMultipleJobsException() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
         when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
@@ -419,9 +424,6 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortMultipleJobsUnsuccessfully() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
         when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenReturn(new ArrayList<>());
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
@@ -445,10 +447,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = "NORMAL_USER")
     public void abortJobsGloballyForbidden() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
-        when(jobAbortCommands.abortAlGlobalJob(null)).thenReturn(jobIds);
+        when(jobAbortCommands.abortAllGlobalJob(null)).thenReturn(jobIdsList);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/global")).andDo(print())
                 .andExpect(status().isForbidden());
@@ -460,7 +459,7 @@ public class WebLayerTest {
         List<Integer> jobIds = new ArrayList<>();
         jobIds.add(1);
         jobIds.add(2);
-        when(jobAbortCommands.abortAlGlobalJob(null)).thenReturn(jobIds);
+        when(jobAbortCommands.abortAllGlobalJob(null)).thenReturn(jobIds);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/global")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string("{\"jobIds\":[1,2]}"));
@@ -488,9 +487,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getSingleJobInformationSuccessfully() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
+        User user = new NormalUser("kalo", "1234", "kalo@gmail.com");
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         when(jobInformationCommands.getSingleJobInformation(null, 1)).thenReturn(jobInformation);
@@ -511,9 +508,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getMultipleJobInformationSuccessfully() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
+        User user = new NormalUser("kalo", "1234", "kalo@gmail.com");
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
@@ -529,9 +524,6 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getMultipleJobInformationException() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
         when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         JobInformationRequest abortJobRequest = new JobInformationRequest(jobIds);
@@ -543,9 +535,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getAllJobInformationSuccessfully() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
+        User user = new NormalUser("kalo", "1234", "kalo@gmail.com");
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
@@ -559,9 +549,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = "ADMIN")
     public void getGlobalJobInformationSuccessfully() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
+        User user = new NormalUser("kalo", "1234", "kalo@gmail.com");
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
@@ -575,9 +563,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = "NORMAL_USER")
     public void getGlobalJobInformationForbidden() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        User user = new User("kalo", "1234", "kalo@gmail.com", 1, true, jobIds);
+        User user = new NormalUser("kalo", "1234", "kalo@gmail.com");
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         JobInformation jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
         List<JobInformation> jobInformationList = new ArrayList<>();
@@ -640,9 +626,7 @@ public class WebLayerTest {
         FileWriter myWriter2 = new FileWriter(file2);
         myWriter2.write(DESCRIPTION_CONTENT);
         myWriter2.close();
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
+
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
         JobDescription jobDescription2 = new JobDescription(Collections.singletonList(file2), SubmitType.EXCLUSIVE);
         List<JobDescription> jobDescriptionList = new ArrayList<>();
@@ -652,7 +636,7 @@ public class WebLayerTest {
         when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenReturn(jobDescriptionList);
         JobInformationRequest jobDescriptionRequest = new JobInformationRequest(jobIds);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/description", jobIds).content(objectMapper.writeValueAsString(jobDescriptionRequest))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
                 .contentType("application/json")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
         Assertions.assertEquals(368, result.getResponse().getContentAsByteArray().length);
@@ -662,9 +646,6 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getMultipleJobDescriptionException() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
         JobInformationRequest jobDescriptionRequest = new JobInformationRequest(jobIds);
         when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
@@ -738,9 +719,7 @@ public class WebLayerTest {
         FileWriter myWriter2 = new FileWriter(file2);
         myWriter2.write(SOLUTION_CONTENT);
         myWriter2.close();
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
+
         JobResult jobResult = new JobResult(file);
         JobResult jobResult2 = new JobResult(file2);
         List<JobResult> jobResultList = new ArrayList<>();
@@ -750,7 +729,7 @@ public class WebLayerTest {
         when(jobResultCommand.getMultipleJobResult(null, jobIds)).thenReturn(jobResultList);
         JobInformationRequest jobResultRequest = new JobInformationRequest(jobIds);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/solution", jobIds).content(objectMapper.writeValueAsString(jobResultRequest))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/solution").content(objectMapper.writeValueAsString(jobResultRequest))
                 .contentType("application/json")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
         Assertions.assertEquals(356, result.getResponse().getContentAsByteArray().length);
@@ -760,9 +739,6 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getMultipleJobResultException() throws Exception {
-        List<Integer> jobIds = new ArrayList<>();
-        jobIds.add(1);
-        jobIds.add(2);
         JobInformationRequest jobResultRequest = new JobInformationRequest(jobIds);
         when(jobResultCommand.getMultipleJobResult(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
@@ -801,7 +777,7 @@ public class WebLayerTest {
     @WithMockUser
     public void waitForJobSuccessfully() throws Exception {
         ResultMetaData result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        when(jobPendingCommmand.waitForJob(null, 1)).thenReturn(result);
+        when(jobPendingCommand.waitForJob(null, 1)).thenReturn(result);
 
         this.mockMvc.perform(get("/api/v1/jobs/waitFor/{jobId}", 1)).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string("{\"resultMetaData\":{\"parsingTime\":1.0," +
@@ -811,7 +787,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void waitForJobException() throws Exception {
-        when(jobPendingCommmand.waitForJob(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND));
+        when(jobPendingCommand.waitForJob(null, 1)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND));
 
         this.mockMvc.perform(get("/api/v1/jobs/waitFor/{jobId}", 1)).andDo(print())
                 .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION));
@@ -966,7 +942,7 @@ public class WebLayerTest {
         List<Event> eventsList = new ArrayList<>();
         Event event = new Event(1, 1, 1, true, new Date(1659441300000L));
         eventsList.add(event);
-        SystemState systemState = new SystemState();
+        SystemState systemState = new SystemState(LocalDateTime.now());
         systemState.setSystemState(eventsList);
 
         when(mallobCommands.getSystemState(time)).thenReturn(systemState);

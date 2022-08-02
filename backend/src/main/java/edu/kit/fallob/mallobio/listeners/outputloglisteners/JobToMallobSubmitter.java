@@ -2,6 +2,7 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import java.io.IOException;
 
+import edu.kit.fallob.configuration.FallobConfiguration;
 import org.springframework.http.HttpStatus;
 
 import edu.kit.fallob.dataobjects.JobConfiguration;
@@ -33,7 +34,10 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 	
 	public JobToMallobSubmitter(String username) {
 		this.username = username;
-		this.mallobInput = new MallobInputImplementation();
+
+		//TODO Implemented by kalo - not sure if correct (compiler was showing an error)
+		FallobConfiguration fallobConfiguration = FallobConfiguration.getInstance();
+		this.mallobInput = new MallobInputImplementation(fallobConfiguration.getMallobBasePath(), fallobConfiguration.getAmountProcesses());
 		this.monitor = new Object();
 	}
 	

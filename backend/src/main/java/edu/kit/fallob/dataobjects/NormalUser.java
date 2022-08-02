@@ -11,6 +11,7 @@ public class NormalUser extends User {
 		super(username, password, email);
 		this.setAdmin(false);
 		this.setPriority(NORMAL_USER_PRIORITY);
+		this.setUserType(UserType.NORMAL_USER);
 	}
 
 	@Override

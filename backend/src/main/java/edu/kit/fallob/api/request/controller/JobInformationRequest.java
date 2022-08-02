@@ -4,19 +4,19 @@ import java.util.List;
 
 public class JobInformationRequest {
 
-    private List<Integer> jobIds;
+    private int[] jobIds;
 
     public JobInformationRequest(){}
 
-    public JobInformationRequest(List<Integer> jobIds) {
+    public JobInformationRequest(int[] jobIds) {
         this.jobIds = jobIds;
     }
 
-    public List<Integer> getJobIds() {
+    public int[] getJobIds() {
         return jobIds;
     }
 
-    public void setJobIds(List<Integer> jobIds) {
+    public void setJobIds(int[] jobIds) {
         this.jobIds = jobIds;
     }
 }

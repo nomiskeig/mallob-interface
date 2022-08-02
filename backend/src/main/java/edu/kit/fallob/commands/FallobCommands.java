@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Service @Slf4j
+@Service
 public class FallobCommands implements UserDetailsService {
 	
 	private DaoFactory daoFactory;
@@ -31,8 +31,13 @@ public class FallobCommands implements UserDetailsService {
 	
 	
 	public FallobCommands() throws FallobException {
-		daoFactory = new DaoFactory();
-		userDao = daoFactory.getUserDao(); 
+		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+		try {
+			daoFactory = new DaoFactory();
+			userDao = daoFactory.getUserDao();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
     @Override
@@ -56,8 +61,8 @@ public class FallobCommands implements UserDetailsService {
     }
     
     
-    public void register(String username, String password, String email) {
-    	
+    public boolean register(String username, String password, String email) throws FallobException {
+    	return false;
     }
     
     

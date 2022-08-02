@@ -12,6 +12,7 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.input.MallobInput;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.stereotype.Service;
 
 /**
  * This class provides methods to abort running jobs.
@@ -20,6 +21,7 @@ import edu.kit.fallob.springConfig.FallobException;
  * @version 1.0
  *
  */
+@Service
 public class JobAbortCommands {
 
 	
@@ -29,16 +31,22 @@ public class JobAbortCommands {
 	private JobDao jobDao;
 	
 	
-	public JobAbortCommands()  throws FallobException{
-		daoFactory = new DaoFactory();
-		jobDao = daoFactory.getJobDao();
-		uaa = new UserActionAuthentificater(daoFactory);
+	public JobAbortCommands() throws FallobException{
+		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+		try {
+			daoFactory = new DaoFactory();
+			jobDao = daoFactory.getJobDao();
+			uaa = new UserActionAuthentificater(daoFactory);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
 		
 	}
 	
 	
 	
-	public void abortSingleJob(String username, int jobID) throws FallobException {
+	public boolean abortSingleJob(String username, int jobID) throws FallobException {
 		if (!uaa.hasAbortAccess(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
@@ -53,6 +61,7 @@ public class JobAbortCommands {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		}
         */
+		return true;
 	}
 	
 	public List<Integer> abortMultipleJobs(String username, int[] jobIDs) throws FallobException {

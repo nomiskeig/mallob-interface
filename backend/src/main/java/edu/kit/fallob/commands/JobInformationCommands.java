@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class JobInformationCommands {
 	
 	
@@ -20,9 +22,14 @@ public class JobInformationCommands {
 	
 	
 	public JobInformationCommands() throws FallobException{
-		daoFactory = new DaoFactory();
-		jobDao = daoFactory.getJobDao();
-		uaa = new UserActionAuthentificater(daoFactory);
+		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+		try {
+			daoFactory = new DaoFactory();
+			jobDao = daoFactory.getJobDao();
+			uaa = new UserActionAuthentificater(daoFactory);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	
