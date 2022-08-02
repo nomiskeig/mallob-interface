@@ -113,7 +113,7 @@ public final class TestUtility {
         Files.deleteIfExists(file);
     }
 
-    public static String createNewConfigurationDir() {
+    public static String createNewDescriptionDir() {
         new File(DESCRIPTION_DIR_PATH).mkdirs();
         return DESCRIPTION_DIR_PATH;
     }

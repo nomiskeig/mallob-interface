@@ -46,7 +46,7 @@ public class JobDaoTests {
     @BeforeEach
     public void setup() throws FallobException {
         this.databasePath = TestUtility.createDatabaseCopy();
-        this.descriptionDir = TestUtility.createNewConfigurationDir();
+        this.descriptionDir = TestUtility.createNewDescriptionDir();
         this.testFilePath = TestUtility.createTestFileCopy();
         this.resultDir = TestUtility.createNewResultDir();
         this.connection = TestUtility.getConnection(this.databasePath);
