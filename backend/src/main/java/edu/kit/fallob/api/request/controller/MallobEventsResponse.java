@@ -1,18 +1,16 @@
 package edu.kit.fallob.api.request.controller;
 
-import edu.kit.fallob.mallobio.outputupdates.Event;
-
 import java.util.List;
 
 public class MallobEventsResponse {
 
-    private final List<Event> events;
+    private final List<EventProxy> events;
 
-    public MallobEventsResponse(List<Event> events) {
+    public MallobEventsResponse(List<EventProxy> events) {
         this.events = events;
     }
 
-    public List<Event> getEvents() {
+    public List<EventProxy> getEvents() {
         return events;
     }
 }

@@ -32,7 +32,7 @@ public class JobDescription {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof JobDescription) {
-			return descriptionFiles.equals(((JobDescription) obj).getDescriptionFiles()) && submitType.equals(((JobDescription) obj).submitType);
+				return submitType.equals(((JobDescription) obj).submitType) && descriptionFiles.equals(((JobDescription) obj).descriptionFiles);
 		}
 		return false;
 	}

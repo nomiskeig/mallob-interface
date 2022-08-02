@@ -33,18 +33,18 @@ public class JobConfiguration {
 	private boolean done;
 	private int descriptionID;
 	private String additionalParameter;
-	
-	public JobConfiguration(String name, double priority, 
-			String application) 
+
+	public JobConfiguration(String name, double priority,
+							String application)
 	{
 		this.setName(name);
 		this.setPriority(priority);
 		this.setApplication(application);
-		
+
 		this.setMaxDemand(INT_NOT_SET);
 		this.setPrecursor(INT_NOT_SET);
 		this.setArrival(DOUBLE_NOT_SET);
-		
+
 	}
 	
 

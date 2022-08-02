@@ -35,7 +35,11 @@ public class UserController {
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         if (!successful) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registering was unsuccessful");
         }

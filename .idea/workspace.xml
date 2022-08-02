@@ -4,8 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2747dc0e-f464-48b3-b19e-3ed853345e3d" name="Changes" comment="Resolved merge conflicts">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="General fixes and more tests">
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/UserType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/FallobCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/FallobCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobAbortCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobAbortCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobDescriptionCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobDescriptionCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobPendingCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobPendingCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobResultCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobResultCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobSubmitCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobSubmitCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/MallobCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/MallobCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/JobConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/JobConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/NormalUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/NormalUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/SystemState.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/SystemState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/listeners/outputloglisteners/JobToMallobSubmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/listeners/outputloglisteners/JobToMallobSubmitter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/FallobException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/FallobException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -21,6 +40,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -53,10 +77,11 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/kaloy/Downloads/Fallob/backend/src/main/java/edu/kit/fallob/springConfig&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
     &quot;spring.configuration.checksum&quot;: &quot;b43fdd98b1fd705ae4c3a10cf25aad8a&quot;
   }
 }</component>
@@ -69,6 +94,11 @@
       <recent name="edu.kit.fallob.backend" />
     </key>
   </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn package" />
+    </option>
+  </component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
@@ -76,7 +106,69 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.WebLayerTest">
+  <component name="RunManager" selected="JUnit.AuthenticationTest">
+    <configuration name="AuthenticationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="edu.kit.fallob.springConfig.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.springConfig" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.springConfig.AuthenticationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuthenticationTest.JwtTokenTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="edu.kit.fallob.springConfig.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.springConfig" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.springConfig.AuthenticationTest" />
+      <option name="METHOD_NAME" value="JwtTokenTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HttpRequestTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.HttpRequestTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HttpRequestTest.getSystemStateUnauthorized" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.HttpRequestTest" />
+      <option name="METHOD_NAME" value="getSystemStateUnauthorized" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="WebLayerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -92,63 +184,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WebLayerTest.whenMethodArgumentMismatch_thenBadRequest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.WebLayerTest" />
-      <option name="METHOD_NAME" value="whenMethodArgumentMismatch_thenBadRequest" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="WebLayerTest.whenNoHandlerForHttpRequest_thenNotFound" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.WebLayerTest" />
-      <option name="METHOD_NAME" value="whenNoHandlerForHttpRequest_thenNotFound" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="WebLayerTest.whenSendInvalidHttpMediaType_thenUnsupportedMediaType" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.WebLayerTest" />
-      <option name="METHOD_NAME" value="whenSendInvalidHttpMediaType_thenUnsupportedMediaType" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BackendApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="BackendApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="backend" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="edu.kit.fallob.BackendApplication" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -162,18 +200,18 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AuthenticationTest" />
         <item itemvalue="JUnit.WebLayerTest" />
-        <item itemvalue="Spring Boot.BackendApplication (1)" />
-        <item itemvalue="JUnit.WebLayerTest.whenNoHandlerForHttpRequest_thenNotFound" />
-        <item itemvalue="JUnit.WebLayerTest.whenMethodArgumentMismatch_thenBadRequest" />
-        <item itemvalue="JUnit.WebLayerTest.whenSendInvalidHttpMediaType_thenUnsupportedMediaType" />
+        <item itemvalue="JUnit.AuthenticationTest.JwtTokenTest" />
+        <item itemvalue="JUnit.HttpRequestTest.getSystemStateUnauthorized" />
+        <item itemvalue="JUnit.HttpRequestTest" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2747dc0e-f464-48b3-b19e-3ed853345e3d" name="Changes" comment="" />
+      <changelist id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="" />
       <created>1657429820022</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -185,6 +223,7 @@
       <workItem from="1657958567583" duration="21842000" />
       <workItem from="1658054942761" duration="854000" />
       <workItem from="1658055818727" duration="128983000" />
+      <workItem from="1659397594749" duration="26350000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -326,18 +365,42 @@
       <option name="project" value="LOCAL" />
       <updated>1659346001569</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="General fixes and more tests">
+      <created>1659465592790</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1659465592790</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -363,7 +426,8 @@
     <MESSAGE value="Implemented the rest of the mockMvc tests plus general bug fixes." />
     <MESSAGE value="General bug fixes/merge resolves" />
     <MESSAGE value="Resolved merge conflicts" />
-    <option name="LAST_COMMIT_MESSAGE" value="Resolved merge conflicts" />
+    <MESSAGE value="General fixes and more tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="General fixes and more tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -442,7 +506,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java</url>
-          <line>77</line>
+          <line>80</line>
           <properties class="edu.kit.fallob.api.request.controller.AbortJobController" method="abortJob">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -451,7 +515,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>323</line>
+          <line>393</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortSingleJobUnsuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -469,7 +533,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>332</line>
+          <line>402</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortMultipleJobsSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -478,7 +542,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>314</line>
+          <line>384</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortSingleJobException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -487,7 +551,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>305</line>
+          <line>375</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortSingleJobSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -496,7 +560,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>346</line>
+          <line>414</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortMultipleJobsException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -505,7 +569,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>360</line>
+          <line>425</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortMultipleJobsUnsuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -514,7 +578,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>546</line>
+          <line>592</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getSingleJobDescriptionFile">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -523,7 +587,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationController.java</url>
-          <line>101</line>
+          <line>107</line>
           <properties class="edu.kit.fallob.api.request.controller.JobInformationController" method="getSingleJobDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -532,7 +596,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationController.java</url>
-          <line>207</line>
+          <line>221</line>
           <properties class="edu.kit.fallob.api.request.controller.JobInformationController" method="getDescriptionsZip">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -541,7 +605,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>564</line>
+          <line>610</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getSingleJobDescriptionException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -550,7 +614,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>757</line>
+          <line>793</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -559,7 +623,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>877</line>
+          <line>913</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getMallobEventsSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -568,7 +632,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/MallobEventsController.java</url>
-          <line>22</line>
+          <line>23</line>
           <properties class="edu.kit.fallob.api.request.controller.MallobEventsController" method="getMallobUpdates">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -577,7 +641,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>74</line>
+          <line>81</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithIncludedDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -586,21 +650,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>155</line>
+          <line>176</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="submitJobInclusiveSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="51" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/JobDescription.java</url>
-          <line>32</line>
-          <properties class="edu.kit.fallob.dataobjects.JobDescription" method="equals">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
@@ -612,17 +667,8 @@
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/UserController.java</url>
-          <line>30</line>
-          <properties class="edu.kit.fallob.api.request.controller.UserController" method="register">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="57" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>265</line>
+          <line>324</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="registerException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -631,8 +677,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>291</line>
-          <properties class="edu.kit.fallob.api.request.controller.WebLayerTest">
+          <line>356</line>
+          <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="loginException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -640,8 +686,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>279</line>
-          <properties class="edu.kit.fallob.api.request.controller.WebLayerTest">
+          <line>337</line>
+          <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="loginSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -649,7 +695,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/UserController.java</url>
-          <line>44</line>
+          <line>48</line>
           <properties class="edu.kit.fallob.api.request.controller.UserController" method="createAuthenticationToken">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -658,12 +704,75 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/UserController.java</url>
-          <line>64</line>
+          <line>68</line>
           <properties class="edu.kit.fallob.api.request.controller.UserController" method="authenticate">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtAuthenticationEntryPoint.java</url>
+          <line>17</line>
+          <properties class="edu.kit.fallob.springConfig.JwtAuthenticationEntryPoint" method="commence">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
+          <line>32</line>
+          <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithUrlDescription">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java</url>
+          <line>55</line>
+          <properties class="edu.kit.fallob.springConfig.JwtTokenUtil" method="generateToken">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java</url>
+          <line>65</line>
+          <properties class="edu.kit.fallob.springConfig.JwtTokenUtil" method="doGenerateToken">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/MallobEventsController.java</url>
+          <line>39</line>
+          <properties class="edu.kit.fallob.api.request.controller.MallobEventsController" method="getSystemState">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
+          <line>940</line>
+          <properties class="edu.kit.fallob.api.request.controller.WebLayerTest">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="71" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/dataobjects/SystemState.java</url>
+          <line>15</line>
+          <properties class="edu.kit.fallob.dataobjects.SystemState" method="&lt;init&gt;">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="72" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java</url>
@@ -672,8 +781,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationController.java</url>
-          <line>132</line>
+          <line>138</line>
           <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java</url>
+          <line>57</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java</url>
+          <line>66</line>
+          <option name="timeStamp" value="68" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

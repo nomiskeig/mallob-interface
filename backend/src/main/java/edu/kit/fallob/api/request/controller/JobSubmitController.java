@@ -38,7 +38,7 @@ public class JobSubmitController {
             url = new URL(request.getUrl());
             file = new File(url.getFile());
             FileUtils.copyURLToFile(url, file);
-        } catch (IOException ioException) {
+        } catch (IOException | NullPointerException ioException) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -54,7 +54,11 @@ public class JobSubmitController {
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
 
@@ -66,6 +70,9 @@ public class JobSubmitController {
             jobNewId = jobSubmitCommand.submitJobWithDescriptionID(username, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
 
@@ -93,7 +100,11 @@ public class JobSubmitController {
         } catch (IOException e) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, "An error occurred while creating a file with the job description.");
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
+
         JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
         return getInclusiveCommandResponse(request, username, jobDescription);
     }

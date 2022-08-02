@@ -4,19 +4,19 @@ import java.util.List;
 
 public class AbortJobRequest {
 
-    private List<Integer> jobIds;
+    private int[] jobIds;
 
     public AbortJobRequest(){}
 
-    public AbortJobRequest(List<Integer> jobIds) {
+    public AbortJobRequest(int[] jobIds) {
         this.jobIds = jobIds;
     }
 
-    public List<Integer> getJobIds() {
+    public int[] getJobIds() {
         return jobIds;
     }
 
-    public void setJobIds(List<Integer> jobIds) {
+    public void setJobIds(int[] jobIds) {
         this.jobIds = jobIds;
     }
 }

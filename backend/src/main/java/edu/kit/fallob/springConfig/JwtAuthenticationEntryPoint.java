@@ -20,6 +20,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         if (response.getStatus() == 403) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not verified or corrupt token");
         }
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+        }
     }
 }

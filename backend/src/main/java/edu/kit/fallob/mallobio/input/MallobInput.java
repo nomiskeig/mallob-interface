@@ -2,6 +2,7 @@ package edu.kit.fallob.mallobio.input;
 
 import java.io.IOException;
 
+
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 
@@ -36,6 +37,7 @@ public interface MallobInput {
 	int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
 			JobDescription jobDescription) throws IOException;
+
 	
 	/**
 	 * Abort a running job from Mallob, using the mallob API : 
