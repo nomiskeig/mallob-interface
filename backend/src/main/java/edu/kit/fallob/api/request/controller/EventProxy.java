@@ -3,6 +3,7 @@ package edu.kit.fallob.api.request.controller;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 public class EventProxy {
 
@@ -11,7 +12,7 @@ public class EventProxy {
     private final int treeIndex;
     private final int jobID;
     private final boolean load;
-    private final Date time;
+    private final LocalDateTime time;
 
 
 
@@ -42,7 +43,7 @@ public class EventProxy {
         return processID;
     }
 
-    public Date getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 

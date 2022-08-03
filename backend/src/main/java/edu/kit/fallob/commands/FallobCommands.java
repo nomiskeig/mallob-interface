@@ -4,6 +4,7 @@ import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.springConfig.FallobException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -51,8 +52,13 @@ public class FallobCommands implements UserDetailsService {
 //
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
-    	User user = userDao.getUserByUsername(username);
-    	List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		User user = null;
+		try {
+			user = userDao.getUserByUsername(username);
+		} catch (FallobException e) {
+			throw new UsernameNotFoundException(e.getMessage());
+		}
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
     	authorities.add(new SimpleGrantedAuthority(user.toString()));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }

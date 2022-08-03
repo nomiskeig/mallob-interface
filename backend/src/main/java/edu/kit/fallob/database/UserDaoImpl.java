@@ -3,6 +3,7 @@ package edu.kit.fallob.database;
 import edu.kit.fallob.dataobjects.Admin;
 import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
+import edu.kit.fallob.dataobjects.UserType;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.http.HttpStatus;
 
@@ -28,10 +29,6 @@ public class UserDaoImpl implements UserDao{
     private static final String USERNAME_BY_JOB_ID = "SELECT username FROM job WHERE jobId = ?";
     private static final String USERNAME_BY_DESCRIPTION_ID = "SELECT username FROM jobDescription WHERE descriptionId = ?";
 
-    //strings that are used to identify the different types of users
-    private static final String USER_TYPE = "NormalUser";
-    private static final String ADMIN_TYPE = "Administrator";
-
     private final Connection conn;
 
     /**
@@ -53,16 +50,7 @@ public class UserDaoImpl implements UserDao{
             PreparedStatement statement = this.conn.prepareStatement(INSERT_USER);
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
-
-            //this part is ugly, but unfortunately it's the only way this is working
-            String userType;
-            if (user instanceof Admin) {
-                userType = ADMIN_TYPE;
-            } else {
-                userType = USER_TYPE;
-            }
-
-            statement.setString(3, userType);
+            statement.setString(3, user.getUserType().toString());
             statement.setDouble(4, user.getPriority());
             statement.setBoolean(5, user.isVerified());
             statement.setString(6, user.getEmail());
@@ -107,14 +95,14 @@ public class UserDaoImpl implements UserDao{
             if (result.next()) {
                 //start by index 2 because index 1 is the username
                 String password = result.getString(2);
-                String userType = result.getString(3);
+                UserType userType = UserType.valueOf(result.getString(3));
                 double priority = result.getDouble(4);
                 boolean isVerified = result.getBoolean(5);
                 String email = result.getString(6);
 
                 User returnUser;
                 //this part is also ugly but the only way it's working
-                if(userType.equals(ADMIN_TYPE)) {
+                if(userType.equals(UserType.ADMIN)) {
                     returnUser = new Admin(username, password, email);
                 } else {
                     returnUser = new NormalUser(username, password, email);

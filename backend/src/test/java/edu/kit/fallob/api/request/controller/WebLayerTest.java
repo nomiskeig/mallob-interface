@@ -33,7 +33,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -107,7 +106,7 @@ public class WebLayerTest {
 
     private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":{\"name\":\"Job1\"," +
             "\"priority\":1.0,\"application\":\"application\",\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\"," +
-            "\"arrival\":1.0,\"dependencies\":[\"1\",\"2\"],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false," +
+            "\"arrival\":1.0,\"dependencies\":[1,2],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false," +
             "\"incremental\":true,\"literals\":null,\"precursor\":-2147483647,\"precursorString\":null,\"assumptions\":null," +
             "\"done\":false,\"descriptionID\":1,\"additionalParameter\":null},\"email\":\"kalo@gmail.com\",\"username\":\"kalo\"," +
             "\"submitTime\":\"12:34:32\",\"jobStatus\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\":1.0," +
@@ -915,14 +914,15 @@ public class WebLayerTest {
         String startTime = "2020-02-13T18:51:09.840Z";
         String endTime = "2020-02-13T18:54:09.234Z";
         List<Event> eventsList = new ArrayList<>();
-        Event event = new Event(1, 1, 1, true, new Date(1659441300000L));
+        LocalDateTime timeBetween = LocalDateTime.of(2020, 2, 13, 18, 52, 9);
+        Event event = new Event(1, 1, 1, true, timeBetween);
         eventsList.add(event);
 
         when(mallobCommands.getEvents(startTime, endTime)).thenReturn(eventsList);
 
         this.mockMvc.perform(get("/api/v1/events/events?startTime=" + startTime + "&endTime=" + endTime))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
-                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"2022-08-02\"}]}"));
+                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"2020-02-13T18:52:09\"}]}"));
     }
 
     @Test
@@ -940,7 +940,8 @@ public class WebLayerTest {
     public void getSystemStateSuccessfully() throws Exception {
         String time = "2020-02-13T18:51:09.840Z";
         List<Event> eventsList = new ArrayList<>();
-        Event event = new Event(1, 1, 1, true, new Date(1659441300000L));
+        LocalDateTime timeBetween = LocalDateTime.of(2020, 2, 13, 18, 52, 9);
+        Event event = new Event(1, 1, 1, true, timeBetween);
         eventsList.add(event);
         SystemState systemState = new SystemState(LocalDateTime.now());
         systemState.setSystemState(eventsList);
@@ -949,7 +950,7 @@ public class WebLayerTest {
 
         this.mockMvc.perform(get("/api/v1/events/state?time=" + time))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
-                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"2022-08-02\"}]}"));
+                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"2020-02-13T18:52:09\"}]}"));
     }
 
     @Test
