@@ -42,17 +42,18 @@ export class DetailsComponent extends React.Component {
 			if (job.getUsername()) {
 				showUserInfos = true;
 			}
-            if (job.getJobName()) {
+            if (job.getJobName() && clickedVertex) {
                 showButtons = true;
             }
 		}
+        console.log(showButtons)
 
 		return (
 			<div className='detailsContainer d-flex align-items-start flex-column'>
 				<div className='headerContainer d-flex flex-row align-items-center'>
 					<div className='jobName'>{title}</div>
 					<div className='buttons ms-auto d-flex flex-row '>
-						{showButtons && process.env.NODE_ENV !== 'development' && (
+						{showButtons  && (
 							<React.Fragment>
 								<Button color='#f24236' text='cancel job'></Button>
 								<div className='buttonSpacer'></div>
