@@ -11,6 +11,7 @@ public class Admin extends User {
 		super(username, password, email);
 		this.setAdmin(true);
 		this.setPriority(ADMIN_PRIORITY);
+		this.setUserType(UserType.ADMIN);
 		
 	}
 
