@@ -22,15 +22,36 @@ export class Visualization {
 		this.#jobStorage = jobStorage;
 		this.#onClick = onClick;
 
+		new ResizeObserver((entries) => {
+			entries.forEach((entry) => {
+				console.log('resized');
+				this.#two.width = entry.contentRect.width;
+				let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
+                canvas.style.height = desiredHeight
+				this.#two.height = desiredHeight;
+                // update location of nodes and lines
+                for (let i = 0; i < this.#processes; i++) {
+                    let coords = this.#getCoords(i);
+                    this.#nodes[i].setCoords(coords.getX(), coords.getY())
+                    let connection = this.#connections[i];
+                    let otherCoords = connection.getOtherRank() ? this.#getCoords(connection.getOtherRank()) : null;
+                    let otherX = otherCoords ? otherCoords.getX() : 0;
+                    let otherY = otherCoords ? otherCoords.getY() : 0;
+
+                    connection.setCoords(coords.getX(), coords.getY(), otherX, otherY)
+                }
+
+			});
+		}).observe(document.querySelector('.visualizationCanvas'));
 		canvas.addEventListener('mousedown', (event) => {
 			if (event.target.tagName === 'path') {
 				return;
 			}
 			onClick(null, null);
 			this.#clickedRank = null;
-            this.onHoverLeave();
+			this.onHoverLeave();
 		});
-        this.#clickedRank = null;
+		this.#clickedRank = null;
 		let connectionGroup = this.#two.makeGroup();
 		let nodeGroup = this.#two.makeGroup();
 		let textGroup = this.#two.makeGroup();
@@ -60,8 +81,8 @@ export class Visualization {
 				(jobID, treeIndex) => {
 					onClick(jobID, treeIndex);
 					this.#clickedRank = i;
-                    this.#hoveredRank = i;
-                    this.onHoverEnter(i);
+					this.#hoveredRank = i;
+					this.onHoverEnter(i);
 				}
 			);
 		}
@@ -83,15 +104,14 @@ export class Visualization {
 		return new CoordPair(xPos, yPos);
 	}
 	onHoverEnter(rank) {
-        if (this.#clickedRank !== null && this.#clickedRank !== rank) {
-            return;
-        }
+		if (this.#clickedRank !== null && this.#clickedRank !== rank) {
+			return;
+		}
 		let jobID = this.#nodes[rank].getJobID();
 		let treeIndex = this.#nodes[rank].getTreeIndex();
-        if (!this.#clickedRank) {
-            
-		this.#hoveredRank = rank;
-        }
+		if (!this.#clickedRank) {
+			this.#hoveredRank = rank;
+		}
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].updateOpacityForHover();
 			this.#connections[i].hideForHover();
@@ -132,9 +152,9 @@ export class Visualization {
 			});
 	}
 	onHoverLeave() {
-        if (this.#clickedRank) {
-            return;
-        }
+		if (this.#clickedRank) {
+			return;
+		}
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].resetHover();
 			this.#connections[i].resetHover();
@@ -143,7 +163,7 @@ export class Visualization {
 	}
 
 	update(job, updatedTreeIndex, add, justForColor) {
-        console.warn('should not be called');
+		console.warn('should not be called');
 		let vertex = job.getVertex(updatedTreeIndex);
 		let parentVertex = job.getParent(updatedTreeIndex);
 		let leftChild = job.getLeftChild(updatedTreeIndex);
@@ -153,13 +173,13 @@ export class Visualization {
 		if (add) {
 			// show node
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
-            
-            // call the onClick function if ranks match so correct info is shown
-            if (rank === this.#clickedRank && !justForColor) {
-                this.#onClick(job.getJobID(), vertex.getTreeIndex());
-            }
-            
-            // update connection from left child to vertex itself
+
+			// call the onClick function if ranks match so correct info is shown
+			if (rank === this.#clickedRank && !justForColor) {
+				this.#onClick(job.getJobID(), vertex.getTreeIndex());
+			}
+
+			// update connection from left child to vertex itself
 			if (leftChild) {
 				let connection = this.#connections[leftChild.getRank()];
 				connection.useConnection(
@@ -191,9 +211,9 @@ export class Visualization {
 				);
 			}
 		} else {
-            if (rank === this.#clickedRank) {
-                this.#onClick(null, null)
-            }
+			if (rank === this.#clickedRank) {
+				this.#onClick(null, null);
+			}
 			this.#nodes[rank].reset();
 			if (leftChild) {
 				this.#connections[leftChild.getRank()].reset();
@@ -209,13 +229,13 @@ export class Visualization {
 	}
 
 	totalUpdate(jobs) {
-        console.warn('total update called');
-        console.log(jobs);
-        for (let i = 0; i < this.#processes; i++) {
-            this.#nodes[i].reset();
-            this.#connections[i].reset();
-        }
-        this.#onClick(null, null);
+		console.warn('total update called');
+		console.log(jobs);
+		for (let i = 0; i < this.#processes; i++) {
+			this.#nodes[i].reset();
+			this.#connections[i].reset();
+		}
+		this.#onClick(null, null);
 		jobs.forEach((job) => {
 			let vertices = job.getVertices();
 			vertices.forEach((vertex) => {
@@ -233,13 +253,11 @@ export class Visualization {
 				}
 			});
 		});
-        if (this.#clickedRank === null) {
-            return;
-        }
-        let nodeClicked = this.#nodes[this.#clickedRank];
-        this.#onClick(nodeClicked.getJobID(), nodeClicked.getTreeIndex())
-    
-
+		if (this.#clickedRank === null) {
+			return;
+		}
+		let nodeClicked = this.#nodes[this.#clickedRank];
+		this.#onClick(nodeClicked.getJobID(), nodeClicked.getTreeIndex());
 	}
 
 	stop() {

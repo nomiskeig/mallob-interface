@@ -46,7 +46,6 @@ export class DetailsComponent extends React.Component {
                 showButtons = true;
             }
 		}
-        console.log(showButtons)
 
 		return (
 			<div className='detailsContainer d-flex align-items-start flex-column'>

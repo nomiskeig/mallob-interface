@@ -24,6 +24,7 @@ export class VisualizationPageManager extends React.Component {
 	#shouldUpdate;
 	#binaryTree;
 	#binaryTreeRef;
+	#showDetailsPanel;
 	constructor(props) {
 		super(props);
 		this.#timeManager = new TimeManager();
@@ -37,10 +38,10 @@ export class VisualizationPageManager extends React.Component {
 		this.#detailsComponent = React.createRef();
 		this.#stateLoaded = false;
 		this.#shouldUpdate = true;
+		this.#showDetailsPanel = true;
 	}
 	shouldComponentUpdate(nextProps) {
-		console.log('shouldComponentUpdate');
-		this.#context = nextProps.context;
+		console.log('shouldComponentUpdate'); this.#context = nextProps.context;
 
 		this.#jobStorage.updateContext(nextProps.context);
 		this.#timeLineComponent.updateContext(nextProps.context);
@@ -119,12 +120,21 @@ export class VisualizationPageManager extends React.Component {
 			this.#timeManager.updateTime();
 		} catch (e) {
 			if (this.#shouldUpdate) {
+                try {
 				this.#context.infoContext.handleInformation(
 					e.getMessage(),
 					e.getType()
 				);
+                } catch (f) {
+                    console.error(e.message)
+                }
 			}
 		}
+	}
+	toggleDetailsPanel() {
+		this.#showDetailsPanel = !this.#showDetailsPanel;
+        this.forceUpdate();
+        console.log('toggeled')
 	}
 
 	onClick(jobID, treeIndex) {
@@ -140,7 +150,7 @@ export class VisualizationPageManager extends React.Component {
 		return (
 			<div className='pageContainer'>
 				<div className='row g-0'>
-					<div className='col-12 col-md-6 visualizationHalf d-flex align-items-center justify-content-center'>
+					<div className={`col-12 col-md-${this.#showDetailsPanel ? 6 : 12} visualizationHalf d-flex align-items-center justify-content-center`}>
 						<div className='halfContainer d-flex flex-column align-items-center'>
 							<div className='visCanvasContainer'>
 								<div
@@ -152,6 +162,7 @@ export class VisualizationPageManager extends React.Component {
 								timeManager={this.#timeManager}
 								context={this.#context}
 								ref={(el) => (this.#timeLineComponent = el)}
+								toggleDetails={this.toggleDetailsPanel.bind(this)}
 							></TimelineComponent>
 							<GlobalStatsComponent
 								ref={(el) => (this.#globalStatsComponent = el)}
@@ -159,48 +170,48 @@ export class VisualizationPageManager extends React.Component {
 							></GlobalStatsComponent>
 						</div>
 					</div>
-					<div className='col-12 col-md-6 binaryTreeHalf d-flex align-items-center justify-content-center'>
-						<div className='halfContainer d-flex flex-column align-items-center'>
-							<DetailsComponent
-								ref={(el) => (this.#detailsComponent = el)}
-								context={this.#context}
-								jobStorage={this.#jobStorage}
-							></DetailsComponent>
-							<div className='binaryTreeCanvasContainer'>
-								<div
-									className='binaryTreeCanvas'
-									ref={(el) => (this.#binaryTreeRef = el)}
-								></div>
-							</div>
-							<button
-								onClick={() => {
-									console.log('showing tree');
-									this.#jobStorage.reset();
-									this.#timeManager.setPaused(true);
-									this.#shouldUpdate = false;
-									let events = [];
-									for (let i = 0; i < 250; i += 1) {
-										events.push(new Event(null, i * 4, i, 4, 1));
-									}
-									this.#jobStorage.addEvents(events);
-								}}
-							>
-								Show tree
-							</button>
+						<div className={`col-12 col-md-6 binaryTreeHalf d-flex align-items-center justify-content-center ${!this.#showDetailsPanel ? 'hiddenPanel' : ''}`}>
+							<div className='halfContainer d-flex flex-column align-items-center'>
+								<DetailsComponent
+									ref={(el) => (this.#detailsComponent = el)}
+									context={this.#context}
+									jobStorage={this.#jobStorage}
+								></DetailsComponent>
+								<div className='binaryTreeCanvasContainer'>
+									<div
+										className='binaryTreeCanvas'
+										ref={(el) => (this.#binaryTreeRef = el)}
+									></div>
+								</div>
+								<button
+									onClick={() => {
+										console.log('showing tree');
+										this.#jobStorage.reset();
+										this.#timeManager.setPaused(true);
+										this.#shouldUpdate = false;
+										let events = [];
+										for (let i = 0; i < 250; i += 1) {
+											events.push(new Event(null, i * 4, i, 4, 1));
+										}
+										this.#jobStorage.addEvents(events);
+									}}
+								>
+									Show tree
+								</button>
 
-							<button
-								onClick={() => {
-									let events = [];
-									for (let i = 8; i < 15; i += 1) {
-										events.push(new Event(null, i * 4, i, 4, 0));
-									}
-									this.#jobStorage.addEvents(events);
-								}}
-							>
-								Remove some vertices from the tree
-							</button>
+								<button
+									onClick={() => {
+										let events = [];
+										for (let i = 8; i < 15; i += 1) {
+											events.push(new Event(null, i * 4, i, 4, 0));
+										}
+										this.#jobStorage.addEvents(events);
+									}}
+								>
+									Remove some vertices from the tree
+								</button>
+							</div>
 						</div>
-					</div>
 				</div>
 			</div>
 		);
