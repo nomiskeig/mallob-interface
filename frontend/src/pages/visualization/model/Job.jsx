@@ -10,8 +10,6 @@ export class Job {
 	constructor(jobID, color) {
 		this.#vertices = [];
 		this.#size = 0;
-		// TODO: make color correct, this is just for testing purposes
-
 		this.#color = color;
 		this.#jobID = jobID;
 		this.#jobName = null;
@@ -73,14 +71,11 @@ export class Job {
 	}
 
 	getVertices() {
-		return this.#vertices;
+		return this.#vertices.filter(vertex => vertex !== undefined);
 	}
 
 	getSubtree(treeIndex) {
 		let subtree = new Job(this.#jobID, this.#color);
-		if (treeIndex === null) {
-			return subtree;
-		}
 		// walk to root of tree
 		let currentIndex = treeIndex;
 		while (currentIndex !== 0) {
@@ -117,7 +112,6 @@ export class Job {
 		return this.#jobID;
 	}
 	getColor() {
-		// TODO: correct color
 		return this.#color;
 	}
 	getJobName() {

@@ -29,4 +29,11 @@ public class JobDescription {
 		this.descriptionFiles = descriptionFiles;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof JobDescription) {
+				return submitType.equals(((JobDescription) obj).submitType) && descriptionFiles.equals(((JobDescription) obj).descriptionFiles);
+		}
+		return false;
+	}
 }
