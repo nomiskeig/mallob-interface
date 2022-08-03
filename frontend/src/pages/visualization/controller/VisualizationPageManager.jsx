@@ -39,6 +39,7 @@ export class VisualizationPageManager extends React.Component {
 		this.#stateLoaded = false;
 		this.#shouldUpdate = true;
 		this.#showDetailsPanel = true;
+        this.#shouldUpdate = false;
 	}
 	shouldComponentUpdate(nextProps) {
 		this.#context = nextProps.context;
@@ -71,6 +72,7 @@ export class VisualizationPageManager extends React.Component {
 			this.#jobStorage.addEvents(res);
 			this.#stateLoaded = true;
 		});
+        this.#shouldUpdate = true;
 	}
 
 	componentWillUnmount() {
