@@ -23,6 +23,8 @@ export class VisualizationNode {
 	}
 
 	registerCallbacks(onHoverEnter, onHoverLeave, onClick) {
+        this.#circle._renderer.elem.style.cursor = 'pointer'
+        this.#text._renderer.elem.style.cursor = 'default'
 		this.#circle._renderer.elem.addEventListener('mouseover', () => {
 			onHoverEnter(this.#rank);
 		});
