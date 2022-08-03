@@ -66,6 +66,7 @@ export class DetailsComponent extends React.Component {
 					<div className='bodyContainer d-flex flex-row align-items-start justify-content-between'>
 						<div className='details d-flex justify-content-start align-items-start flex-column'>
 							<p>Rank: {clickedVertex.getRank()} </p>
+                            <p>Index: {clickedVertex.getTreeIndex()} </p>
 							<p>Volume: {job.getSize()}</p>
 							<p>
 								Subtree Volume:{' '}
