@@ -59,7 +59,7 @@ class App extends React.Component {
 										<Route
 											path='/submit'
 											element={
-												<div>
+												<div className='heightContainer'>
 													<Navbar highlight={PAGE_SUBMIT} />
 												</div>
 											}
@@ -67,7 +67,7 @@ class App extends React.Component {
 										<Route
 											path='/admin'
 											element={
-												<div>
+												<div className='heightContainer'>
 													<Navbar highlight={PAGE_ADMIN} />
 												</div>
 											}
@@ -75,7 +75,7 @@ class App extends React.Component {
 										<Route
 											path='/jobs'
 											element={
-												<div>
+												<div className='heightContainer'>
 													<Navbar highlight={PAGE_JOBS} />
 												</div>
 											}
@@ -83,7 +83,7 @@ class App extends React.Component {
 										<Route
 											path='/job/:jobID'
 											element={
-												<div>
+												<div className='heightContainer'>
 													<Navbar highlight={PAGE_JOBS} />
 													<JobPage />
 												</div>

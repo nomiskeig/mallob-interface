@@ -1,4 +1,4 @@
-import React, { useContext, useState, createContext } from 'react';
+import React, { useContext, useState, createContext, useEffect, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
 import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import axios from 'axios';
@@ -11,12 +11,12 @@ const testJob = {
 		wallclockLimit: '100s',
 		cpuLimit: '100ms',
 		arrival: new Date().toISOString(),
-		dependencies: [2, 3],
+		dependencies: [2, 3, 4],
 		incremental: true,
 		precursor: 4,
-		contentMode: text,
+		contentMode: 'text',
 	},
-	jobID: jobID,
+	jobID: 1,
 	submitTime: new Date().toISOString(),
 	status: 'done',
 	resultData: {
@@ -43,16 +43,34 @@ const dep2Job = {
 	},
 	jobID: 3,
 };
+const dep3Job = {
+	config: {
+		name: 'dep3name',
+	},
+	jobID: 4,
+};
+
+function reducer(jobs, action) {
+    switch(action.type) {
+        case 'addJob':
+            return [...jobs, action.newJob];
+        case 'setJobs':
+            // TODO: maybe keep jobs wich  are not in new jobs
+            return action.jobs;
+    }
+}
 export const JobContext = createContext({});
 export function JobContextProvider({ children }) {
 	let userContext = useContext(UserContext);
 	let infoContext = useContext(InfoContext);
-	const [jobs, setJobs] = useState([]);
+//	const [jobs, setJobs] = useState([]);
+
+    const [jobs, dispatch] = useReducer(reducer, [])
 
 	async function fetchJobs() {
 		await axios
 			.get('/api/v1/jobs/all')
-			.then((res) => setJobs(res))
+			.then((res) =>{})// setJobs(res))
 			.catch((err) => console.log(err));
 	}
 
@@ -72,7 +90,8 @@ export function JobContextProvider({ children }) {
 			},
 		})
 			.then((res) => {
-				setJobs(res.data.information);
+                // TODO: UPdate to useReducer
+                dispatch({type: 'setJobs', jobs: res.data.information})
 				console.log(jobs);
 				console.log(res.data.information);
 			})
@@ -89,14 +108,21 @@ export function JobContextProvider({ children }) {
 	// TODO: does not actually replace the job if its there
 	function loadSingleJob(jobID) {
 		if (process.env.NODE_ENV === 'development') {
-			if (jobID === 1) {
-				setJobs([...jobs, testJob]);
+			if (jobID == 1) {
+                dispatch({type: 'addJob', newJob: testJob})
+				return;
 			}
-			if (jobID === 2) {
-				setJobs([...jobs, dep1Job]);
+			if (jobID == 2) {
+                dispatch({type: 'addJob', newJob: dep1Job})
+				return;
 			}
-			if (jobID === 3) {
-				setJobs([...jobs, dep2Job]);
+			if (jobID == 3) {
+                dispatch({type: 'addJob', newJob: dep2Job})
+				return;
+			}
+			if (jobID == 4) {
+                dispatch({type: 'addJob', newJob: dep3Job})
+				return;
 			}
 		}
 	}
@@ -119,7 +145,7 @@ export function JobContextProvider({ children }) {
 						},
 					})
 						.then((res) => {
-							jobs.push(res.data);
+                            dispatch({type: 'addJob', newJob: res.data})
 							resolve(res.data);
 						})
 						.catch((res) => reject(null));
@@ -135,6 +161,7 @@ export function JobContextProvider({ children }) {
 				fetchJobs: fetchJobs,
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,
+				loadSingleJob: loadSingleJob,
 			}}
 		>
 			{children}
