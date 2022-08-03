@@ -35,8 +35,20 @@ export function LoginPage(props) {
     }
 
 
+    const loginURL = '/login';
     function login(){
         alert("Logging in with : username=" + usernameContent + ", password=" + passwordContent);
+        const axios = require('axios');
+        const response = axios.post(loginURL, {
+            username : {usernameContent},
+            password : {passwordContent}
+        });
+        
+        if (response.status === 200){ //request went through and username + password were accepted 
+            userContext.login(response.data);
+        } else{
+
+        }
     }
 
 
