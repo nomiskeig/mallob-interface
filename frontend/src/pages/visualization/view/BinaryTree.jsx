@@ -47,7 +47,6 @@ export class BinaryTree {
 	}
 
 	clearTree() {
-		console.log('clearing tree');
 		this.#displayedJobID = null;
 		for (let i = 0; i < this.#processes; i++) {
 			this.#lines[i].opacity = 0;
@@ -63,7 +62,6 @@ export class BinaryTree {
         this.#clickedTreeIndex = clickedTreeIndex
 
 		this.clearTree();
-		console.log('displaying tree');
 		this.#displayedJobID = jobID;
 		let job = this.#jobStorage.getJob(jobID);
 		let vertices = job.getVertices();
@@ -109,17 +107,14 @@ export class BinaryTree {
 	}
 
 	update(job, updatedTreeIndex, add, justForColor) {
-		console.log('updating tree');
 		if (job.getJobID() !== this.#displayedJobID) {
 			return;
 		}
-		console.log('should update the tree');
 		let vertices = job.getVertices();
 		let biggestIndex = vertices[vertices.length - 1].getTreeIndex();
 		let vertex = job.getVertex(updatedTreeIndex);
 
 		if (add) {
-			console.log('displaying');
 			// display vertex
 			this.#nodes[updatedTreeIndex].setToJobTreeVertex(vertex, job);
 			let coords = this.getCoords(updatedTreeIndex, biggestIndex);

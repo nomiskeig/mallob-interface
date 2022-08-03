@@ -24,7 +24,6 @@ export class Visualization {
 
 		new ResizeObserver((entries) => {
 			entries.forEach((entry) => {
-				console.log('resized');
 				this.#two.width = entry.contentRect.width;
 				let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
                 canvas.style.height = desiredHeight
@@ -130,9 +129,6 @@ export class Visualization {
 		}
 		let job = this.#jobStorage.getJob(jobID);
 		let hoveredVertex = job.getVertex(treeIndex);
-		console.log(
-			'hovered: treeIndex: ' + treeIndex + ' rank: ' + hoveredVertex.getRank()
-		);
 		job.getVertices().forEach((vertex) => {
 			let rank = vertex.getRank();
 			this.#nodes[rank].resetHover();
@@ -163,7 +159,6 @@ export class Visualization {
 	}
 
 	update(job, updatedTreeIndex, add, justForColor) {
-		console.warn('should not be called');
 		let vertex = job.getVertex(updatedTreeIndex);
 		let parentVertex = job.getParent(updatedTreeIndex);
 		let leftChild = job.getLeftChild(updatedTreeIndex);
@@ -229,8 +224,6 @@ export class Visualization {
 	}
 
 	totalUpdate(jobs) {
-		console.warn('total update called');
-		console.log(jobs);
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].reset();
 			this.#connections[i].reset();

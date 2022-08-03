@@ -55,13 +55,11 @@ export class TimelineComponent extends React.Component {
 						valueLabelFormat={valueText}
 						valueLabelDisplay='auto'
 						onChange={(event, newValue) => {
-							console.log(newValue);
 							this.#position = newValue;
 							this.#changing = true;
 						}}
 						onChangeCommitted={(event, newValue) => {
 							this.#changing = false;
-							console.log(newValue);
 							this.#timeManager.setNextTime(
 								addMilliseconds(startTime, newValue)
 							);
