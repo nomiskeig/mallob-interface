@@ -123,6 +123,8 @@ export class BinaryTree {
 			// display vertex
 			this.#nodes[updatedTreeIndex].setToJobTreeVertex(vertex, job);
 			let coords = this.getCoords(updatedTreeIndex, biggestIndex);
+            this.#nodes[updatedTreeIndex].setX(coords.getX());
+            this.#nodes[updatedTreeIndex].setY(coords.getY())
             let subtree = job.getSubtree(this.#clickedTreeIndex);
 
 			let parent = job.getParent(updatedTreeIndex);
