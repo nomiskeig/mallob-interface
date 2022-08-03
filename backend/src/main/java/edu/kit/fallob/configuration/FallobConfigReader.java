@@ -18,6 +18,7 @@ import org.json.JSONObject;
  *
  */
 public class FallobConfigReader {
+	
 	private String pathToFallobConfigFile;
 	
 	
@@ -39,13 +40,14 @@ public class FallobConfigReader {
 	 * Read config-file and set parameters in FallobConfiguration
 	 * 
 	 * @throws IOException if reading of file-contents was not successful 
+	 * @throws org.json.JSONException if a value was not found in the json. For required values, see Fallob-API
 	 */
-	public void setupFallobConfig() throws IOException {
+	public void setupFallobConfig() throws IOException, org.json.JSONException {
 		String jsonString = getFileContent();
 		FallobConfiguration c = FallobConfiguration.getInstance();
 		JSONObject json = new JSONObject(jsonString);
 		
-		
+		c.setAmountProcesses(json.getInt("amountProcesses"));
 		c.setMaxJobsTotal(json.getInt("maxJobsTotal"));
 		c.setMaxJobsUser(json.getInt("maxJobsUser"));
 		
@@ -63,18 +65,18 @@ public class FallobConfigReader {
 		c.setWarningStorageTime(json.getInt("warningStorageTime"));
 		c.setMaxDescriptionStorageSize(json.getInt("maxDescriptionStorageSize"));
 		
-		c.setDefaultJobPriority(json.getFloat("defaultJobPriority"));
+		c.setDefaultJobPriority((float) json.getDouble("defaultJobPriority"));
 		
 		
 		
 		c.setDefaultWallClockLimit(json.getString("default-wallclock-limit"));
 		c.setDefaultContentMode(json.getString("defaultContentMode"));
 		
-		c.setDescriptionsbasePath(json.getString("descriptionsbasePath"));
+		c.setDescriptionsbasePath(json.getString("descriptionsBasePath"));
 		c.setDatabaseBasePath(json.getString("databaseBasePath"));
 		c.setMallobBasePath(json.getString("mallobBasePath"));
 		c.setResultBasePath(json.getString("resultBasePath"));
-		c.setDataBaseUsername(json.getString("dataBaseUsername"));
+		c.setDataBaseUsername(json.getString("databaseUsername"));
 		c.setDatabasePassword(json.getString("databasePassword"));
 	}
 
