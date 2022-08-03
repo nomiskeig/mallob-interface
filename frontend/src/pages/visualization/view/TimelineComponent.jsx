@@ -44,7 +44,7 @@ export class TimelineComponent extends React.Component {
 		}
 
 		return (
-			<div className='timelineContainer d-flex flex-column align-items-center'>
+			<div className='timelineContainer mt-auto d-flex flex-column align-items-center'>
 				<div className='sliderContainer'>
 					<Slider
 						step={1}

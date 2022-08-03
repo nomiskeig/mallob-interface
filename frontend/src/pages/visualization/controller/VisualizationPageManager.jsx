@@ -152,7 +152,7 @@ export class VisualizationPageManager extends React.Component {
 				<div className='row g-0'>
 					<div className={`col-12 col-md-${this.#showDetailsPanel ? 6 : 12} visualizationHalf d-flex align-items-center justify-content-center`}>
 						<div className='halfContainer d-flex flex-column align-items-center'>
-							<div className='visCanvasContainer'>
+							<div className='visCanvasContainer '>
 								<div
 									className='visualizationCanvas'
 									ref={(el) => (this.#visualizationRef = el)}
