@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { devSettings } from './devDefaults';
+//import { devSettings } from './devDefaults';
 import {InfoContext, TYPE_WARNING} from './InfoContextProvider';
 export const SettingsContext = createContext({});
 export function SettingsContextProvider({ children }) {

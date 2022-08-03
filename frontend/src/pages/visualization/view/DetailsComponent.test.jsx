@@ -7,6 +7,9 @@ import { JobTreeVertex } from '../model/JobTreeVertex';
 import { BrowserRouter } from 'react-router-dom';
 ('');
 
+afterEach(() => {
+    jest.resetAllMocks();
+})
 jest.mock('../model/JobStorage.jsx');
 
 test('renders', async () => {
@@ -26,15 +29,20 @@ test('displays the buttons if the name of the job is set',async () => {
 	job.addVertex(vertex);
 
 	jobStorage.getJob.mockReturnValueOnce(job);
+    let element = React.createRef();
 
 	render(
 		<React.Fragment>
 			<BrowserRouter>
-				<DetailsComponent jobStorage={jobStorage}  />
+				<DetailsComponent ref={(el) => element = el} jobStorage={jobStorage}  />
 			</BrowserRouter>
 		</React.Fragment>
 	);
+    element.setClicked(1, treeIndex)
+    waitFor(() => {
     expect(screen.queryAllByRole('button').length).toBe(2)
+        
+    })
 });
 test('displays no buttons if the name of the job is not set',async () => {
 	let jobStorage = new JobStorage();
