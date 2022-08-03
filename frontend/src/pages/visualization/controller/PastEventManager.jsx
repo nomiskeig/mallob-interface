@@ -92,9 +92,9 @@ export class PastEventManager extends EventManager {
 	}
 
 	async getSystemState(userContext) {
-		if (process.env.NODE_ENV === 'development') {
-			return null;
-		}
+		//if (process.env.NODE_ENV === 'development') {
+		//	return null;
+		//}
 		// create a puffer
 		// forwards
 		// todo

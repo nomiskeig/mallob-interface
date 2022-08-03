@@ -10,8 +10,8 @@ export class Visualization {
 	#connections;
 	#canvas;
 	#hoveredRank;
-    #clickedRank;
-    #onClick
+	#clickedRank = null;
+	#onClick;
 	constructor(canvas, update, processes, jobStorage, onClick) {
 		this.#two = new Two({ fitted: true });
 		this.#two.appendTo(canvas);
@@ -20,7 +20,16 @@ export class Visualization {
 		this.#canvas = canvas;
 		this.#processes = processes;
 		this.#jobStorage = jobStorage;
-        this.#onClick = onClick;
+		this.#onClick = onClick;
+
+		canvas.addEventListener('mousedown', (event) => {
+			if (event.target.tagName === 'path') {
+				return;
+			}
+			onClick(null, null);
+			this.#clickedRank = null;
+            this.onHoverLeave();
+		});
 		let connectionGroup = this.#two.makeGroup();
 		let nodeGroup = this.#two.makeGroup();
 		let textGroup = this.#two.makeGroup();
@@ -47,13 +56,15 @@ export class Visualization {
 			this.#nodes[i].registerCallbacks(
 				this.onHoverEnter.bind(this),
 				this.onHoverLeave.bind(this),
-                (jobID, treeIndex) => {
-                    onClick(jobID, treeIndex);
-                    this.#clickedRank = i;
-                }
+				(jobID, treeIndex) => {
+					onClick(jobID, treeIndex);
+					this.#clickedRank = i;
+                    this.#hoveredRank = i;
+                    this.onHoverEnter(i);
+				}
 			);
 		}
-        // set the correct height of the canvas
+		// set the correct height of the canvas
 		let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
 		canvas.style.height = desiredHeight;
 		this.#two.height = desiredHeight;
@@ -71,9 +82,15 @@ export class Visualization {
 		return new CoordPair(xPos, yPos);
 	}
 	onHoverEnter(rank) {
+        if (this.#clickedRank !== null && this.#clickedRank !== rank) {
+            return;
+        }
 		let jobID = this.#nodes[rank].getJobID();
 		let treeIndex = this.#nodes[rank].getTreeIndex();
+        if (!this.#clickedRank) {
+            
 		this.#hoveredRank = rank;
+        }
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].updateOpacityForHover();
 			this.#connections[i].hideForHover();
@@ -114,6 +131,9 @@ export class Visualization {
 			});
 	}
 	onHoverLeave() {
+        if (this.#clickedRank) {
+            return;
+        }
 		for (let i = 0; i < this.#processes; i++) {
 			this.#nodes[i].resetHover();
 			this.#connections[i].resetHover();
@@ -129,15 +149,15 @@ export class Visualization {
 		let rank = vertex.getRank();
 		let vertexCoords = this.#getCoords(rank);
 		if (add) {
-            // show node
+			// show node
 			this.#nodes[rank].setToJobTreeVertex(vertex, job);
-            
-            // call the onClick function if ranks match so correct info is shown
-            if (rank === this.#clickedRank) {
-                this.#onClick(job.getJobID(), vertex.getTreeIndex(), rank);
-            }
-            
-            // update connection from left child to vertex itself
+
+			// call the onClick function if ranks match so correct info is shown
+			if (rank === this.#clickedRank) {
+				this.#onClick(job.getJobID(), vertex.getTreeIndex(), rank);
+			}
+
+			// update connection from left child to vertex itself
 			if (leftChild) {
 				let connection = this.#connections[leftChild.getRank()];
 				connection.useConnection(
@@ -184,11 +204,11 @@ export class Visualization {
 	}
 
 	totalUpdate(jobs) {
-        for (let i = 0; i < this.#processes; i++) {
-            this.#nodes[i].reset();
-            this.#connections[i].reset();
-        }
-        this.#onClick(null, null);
+		for (let i = 0; i < this.#processes; i++) {
+			this.#nodes[i].reset();
+			this.#connections[i].reset();
+		}
+		this.#onClick(null, null);
 		jobs.forEach((job) => {
 			let vertices = job.getVertices();
 			vertices.forEach((vertex) => {
@@ -208,7 +228,7 @@ export class Visualization {
 		});
 	}
 
-    stop() {
-        this.#two.pause();
-    }
+	stop() {
+		this.#two.pause();
+	}
 }

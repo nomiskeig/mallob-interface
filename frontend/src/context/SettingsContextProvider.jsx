@@ -19,12 +19,12 @@ export function SettingsContextProvider({ children }) {
 				})
 				.catch(() => infoContext.handleInformation('could not get settings', TYPE_WARNING));
 		}
-		if (process.env.NODE_ENV === 'development') {
-			setSettings(devSettings);
-			setLoaded(true);
-		} else {
+		//if (process.env.NODE_ENV === 'development') {
+		//	setSettings(devSettings);
+		//	setLoaded(true);
+		//} else {
 			fetchSettings();
-		}
+		//}
 	}, [infoContext] );
 
 	return (

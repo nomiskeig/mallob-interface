@@ -38,9 +38,9 @@ export class StreamEventManager extends EventManager {
 	}
 
 	async getSystemState(userContext) {
-		if (process.env.NODE_ENV === 'development') {
-			return null;
-		}
+		//if (process.env.NODE_ENV === 'development') {
+		//	return null;
+		//}
         console.log('getting system state')
 		this.#stream = new XMLHttpRequest();
 		let initialTime = this.timeManager.getNextTime();
