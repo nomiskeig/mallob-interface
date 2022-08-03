@@ -1,7 +1,9 @@
 package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.MallobCommands;
+import edu.kit.fallob.springConfig.FallobWarning;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,7 @@ public class MallobStartStopController {
 
     @PostMapping("/start")
     public ResponseEntity<Object> startMallob(@RequestBody MallobStartStopRequest request) {
-        boolean successful = mallobCommands.startMallob(request.getParams());
-        if (!successful) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is already running");
-        }
-        return ResponseEntity.ok(HttpStatus.OK);
+        return startMallobHelper(request);
     }
     @PostMapping("/stop")
     public ResponseEntity<Object> stopMallob(){
@@ -37,7 +35,18 @@ public class MallobStartStopController {
         if (!successful) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is not running");
         }
-        successful = mallobCommands.startMallob(request.getParams());
+        return startMallobHelper(request);
+    }
+
+    private ResponseEntity<Object> startMallobHelper(@RequestBody MallobStartStopRequest request) {
+        boolean successful;
+        try {
+            successful = mallobCommands.startMallob(request.getParams());
+        } catch (NullPointerException exception) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
         if (!successful) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is already running");
         }
