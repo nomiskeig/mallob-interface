@@ -55,16 +55,10 @@ export function JobPage(props) {
 		if (!job) {
 			return;
 		}
-		console.log('lol');
 		let value = job;
-		console.log(param);
 		param.path.forEach((path) => {
-			console.log(value);
-			console.log(path);
 			value = value[path];
-			console.log(value);
 			if (!value) {
-				console.log('returning');
 				return;
 			}
 		});
@@ -116,10 +110,10 @@ export function JobPage(props) {
 				</div>
 				<div className='lowerPanelContainer row jobPageRow g-0'>
 					<div className='col-12 col-md-6'>
-						<div className='panel lowerPanel descriptionPanel'></div>
+						<div className='panel lowerPanel  lowerPanelLeft descriptionPanel'></div>
 					</div>
 					<div className='col-12 col-md-6'>
-						<div className='panel lowerPanel dependencyPanel'>
+						<div className='panel lowerPanel lowerPanelRight dependencyPanel'>
 							<DependencyTable dependencies={dependencies} />
 						</div>
 					</div>
