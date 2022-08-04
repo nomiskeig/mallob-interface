@@ -1,7 +1,9 @@
+import './DependencyTable.scss'
+
 export function DependencyTable(props) {
 	let rows = props.dependencies.map((job, i) => (
 		<tr key={i}>
-			<td align='left'>{job.config.name}</td>
+			<td className='dependencyTableRow' align='left'>{job.config.name}</td>
 		</tr>
 	));
 
@@ -10,7 +12,7 @@ export function DependencyTable(props) {
 			<table className='table table-sm table-striped'>
 				<thead>
 					<tr>
-						<th style={{textAlign: 'left'}} >{'Name'}</th>
+						<th className='dependencyTableHeader dependencyTableRow' style={{textAlign: 'left'}} >{'Name'}</th>
 					</tr>
 				</thead>
 				<tbody>{rows}</tbody>

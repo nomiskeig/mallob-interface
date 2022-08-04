@@ -110,10 +110,13 @@ export function JobPage(props) {
 				</div>
 				<div className='lowerPanelContainer row jobPageRow g-0'>
 					<div className='col-12 col-md-6'>
-						<div className='panel lowerPanel  lowerPanelLeft descriptionPanel'></div>
+						<div className='panel lowerPanel  lowerPanelLeft descriptionPanel'>
+                            <Header title={'Description'}/>
+                        </div>
 					</div>
 					<div className='col-12 col-md-6'>
 						<div className='panel lowerPanel lowerPanelRight dependencyPanel'>
+                            <Header title={'Dependencies'}/>
 							<DependencyTable dependencies={dependencies} />
 						</div>
 					</div>
