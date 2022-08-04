@@ -1,5 +1,10 @@
 package edu.kit.fallob.mallobio.input;
 
+
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.dataobjects.JobConfiguration;
+import edu.kit.fallob.dataobjects.JobDescription;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,10 +13,10 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.kit.fallob.dataobjects.JobConfiguration;
-import edu.kit.fallob.dataobjects.JobDescription;
+
 import edu.kit.fallob.dataobjects.MallobAttributeNames;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
+
 
 public class MallobInputImplementation implements MallobInput {
 	
