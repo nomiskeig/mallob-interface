@@ -65,7 +65,7 @@ export function JobPage(props) {
 		if (value) {
 			return (
 				<div className='singleParamDisplay'>
-					<InputWithLabel value={value} labelText={param.name} />
+					<InputWithLabel disabled={true} value={value} labelText={param.name} />
 				</div>
 			);
 		}
@@ -98,6 +98,7 @@ export function JobPage(props) {
 								</div>
 								<div className='submitAndStatus '>
 									<InputWithLabel
+                                        disabled={true}
 										value={submitted}
 										labelText={'Submitted at'}
 									/>

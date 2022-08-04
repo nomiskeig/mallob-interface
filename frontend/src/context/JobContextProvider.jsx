@@ -18,7 +18,7 @@ const testJob = {
 	},
 	jobID: 1,
 	submitTime: new Date().toISOString(),
-	status: 'done',
+	status: 'inProgress',
 	resultData: {
 		time: {
 			parsing: 0.72,
