@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public final class FileHandler {
 
-    private static final double BIT_TO_MB_RATIO = 0.000000125;
+    private static final double BIT_TO_MB_RATIO = 1000000;
 
     /**
      * saves the given file at the given path on the local filesystem
@@ -21,7 +21,10 @@ public final class FileHandler {
      * @param path the path at which the file should get saved
      */
     public static void saveFileAtPath(File file, String path) {
+        assert file.isFile();
         file.renameTo(new File(path));
+        assert !file.isFile();
+        assert new File(path).isFile();
     }
 
     /**
@@ -30,6 +33,7 @@ public final class FileHandler {
      * @param regex a string that contains the regex pattern that is used to find the wanted files
      * @return a list of all files whose filename matches the regex pattern
      */
+
     public static List<File> getFilesByRegex(String directoryPath, String regex) {
         File directory = new File(directoryPath);
 
