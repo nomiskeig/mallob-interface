@@ -1,5 +1,6 @@
 package edu.kit.fallob.mallobio.outputupdates;
 
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,7 @@ public class Event extends OutputUpdate {
 	private int treeIndex;
 	private int jobID;
 	private boolean load;
-	private Date time;
+	private LocalDateTime time;
 	
 
 	/**
@@ -40,7 +41,7 @@ public class Event extends OutputUpdate {
 	}
 	
 	
-	public Event(int processID, int treeIndex, int jobID, boolean load, Date time) {
+	public Event(int processID, int treeIndex, int jobID, boolean load, LocalDateTime time) {
 		super(null);
 		this.processID = processID;
 		this.treeIndex = treeIndex;
@@ -79,7 +80,7 @@ public class Event extends OutputUpdate {
 	}
 
 
-	public Date getTime() {
+	public LocalDateTime getTime() {
 		return time;
 	}
 

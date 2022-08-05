@@ -25,9 +25,9 @@ public class MallobOutputTests {
 	
 	@BeforeEach
 	public void setup() {
-		logDistributor = new OutputLogLineDistributor();
-		resultDistributor = new ResultObjectDistributor();
-		output = new MallobOutput(resultDistributor, logDistributor);
+		output = MallobOutput.getInstance();
+		logDistributor = output.getOutputLogLineDistributor();
+		resultDistributor = output.getResultObjectDistributor();
 		
 		logListener = new TestListener();
 		resultListener = new TestResultListener();
