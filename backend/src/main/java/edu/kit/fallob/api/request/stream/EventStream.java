@@ -4,6 +4,8 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.outputupdates.Event;
+import edu.kit.fallob.springConfig.FallobException;
+import edu.kit.fallob.springConfig.FallobWarning;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
@@ -46,7 +48,18 @@ public class EventStream implements OutputLogLineListener {
         System.out.println("got new event");
         if (Event.isEvent(line)) {
             Event event = new Event(line);
-            int jobId = this.jobDao.getJobIdByMallobId(event.getJobID());
+            int jobId = 0;
+            try {
+                jobId = this.jobDao.getJobIdByMallobId(event.getJobID());
+            } catch (FallobException e) {
+                FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
+                try {
+                    emitter.send(warning);
+                    return;
+                } catch (IOException ex) {
+                    return;
+                }
+            }
 
             //convert the load boolean into an integer for the json object
             int loadInt = event.isLoad() ? 1 : 0;
