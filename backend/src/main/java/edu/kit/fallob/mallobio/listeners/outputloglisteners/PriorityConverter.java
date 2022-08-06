@@ -27,7 +27,7 @@ public class PriorityConverter {
 	 * @param jobPriority priority of the job, has to be between 0 and 1
 	 * @return a double p with the following property : 0 <= p <= 1
 	 */
-	public double getPriorityForMallob(String username, double jobPriority) {
+	public double getPriorityForMallob(String username, double jobPriority) throws FallobException {
 		return jobPriority * factory.getUserDao().getUserByUsername(username).getPriority();
 	}
 }

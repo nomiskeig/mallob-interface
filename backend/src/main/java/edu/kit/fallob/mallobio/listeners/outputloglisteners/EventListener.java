@@ -2,6 +2,7 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import edu.kit.fallob.database.EventDao;
 import edu.kit.fallob.mallobio.outputupdates.Event;
+import edu.kit.fallob.springConfig.FallobException;
 
 /**
  * 
@@ -25,7 +26,11 @@ public class EventListener implements OutputLogLineListener {
 	@Override
 	public void processLine(String line) {
 		if (Event.isEvent(line)) {
-			eventDao.save(new Event(line));
+			try {
+				eventDao.save(new Event(line));
+			} catch (FallobException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 

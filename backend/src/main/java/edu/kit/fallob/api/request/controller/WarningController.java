@@ -2,7 +2,10 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.MallobCommands;
 import edu.kit.fallob.mallobio.outputupdates.Warning;
+import edu.kit.fallob.springConfig.FallobException;
+import edu.kit.fallob.springConfig.FallobWarning;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +22,13 @@ public class WarningController {
 
     @GetMapping("/api/v1/system/mallobInfo")
     public ResponseEntity<Object> getMallobWarnings() {
-        List<Warning> warnings = warningCommand.getWarnings();
+        List<Warning> warnings = null;
+        try {
+            warnings = warningCommand.getWarnings();
+        } catch (FallobException e) {
+            FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
         return ResponseEntity.ok(new WarningResponse(warnings));
     }
 }
