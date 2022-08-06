@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
 import { ROLE_ADMIN } from '../../context/UserContextProvider';
+import { StatusLabel } from '../../global/statusLabel/StatusLabel';
 export function JobTable(props) {
 	let [rows, setRows] = useState([]);
 	let [columns, setColumns] = useState([]);
@@ -69,8 +70,8 @@ export function JobTable(props) {
 			</div>
 		);
 	}
-	console.log({ filteredConfigParams });
 	useEffect(() => {
+        // create columns
 		let columns = [
 			{
 				field: 'id',
@@ -97,8 +98,10 @@ export function JobTable(props) {
 		);
 		columns.push({
 			field: 'status',
-			headerName: 'Status',
 			width: 200,
+			renderCell: (param) => {
+				return <StatusLabel status={param.row.status} />;
+			},
 		});
 
 		setColumns(columns);
