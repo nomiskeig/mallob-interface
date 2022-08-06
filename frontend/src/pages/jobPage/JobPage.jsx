@@ -30,6 +30,9 @@ function getStatus(job) {
 }
 export function JobPage(props) {
 	let { jobID } = useParams();
+    if (jobID === undefined) {
+        jobID = props.jobID;
+    }
 	let jobContext = useContext(JobContext);
 	//	let [job, setJob] = useState(null);
 	let [loaded, setLoaded] = useState(false);

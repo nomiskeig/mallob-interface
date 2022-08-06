@@ -1,4 +1,10 @@
-import React, { useContext, useState, createContext, useEffect, useReducer } from 'react';
+import React, {
+	useContext,
+	useState,
+	createContext,
+	useEffect,
+	useReducer,
+} from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
 import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import axios from 'axios';
@@ -51,26 +57,36 @@ const dep3Job = {
 };
 
 function reducer(jobs, action) {
-    switch(action.type) {
-        case 'addJob':
-            return [...jobs, action.newJob];
-        case 'setJobs':
-            // TODO: maybe keep jobs wich  are not in new jobs
-            return action.jobs;
-    }
+	switch (action.type) {
+		case 'addJob':
+			return [...jobs, action.newJob];
+		case 'addOrReplaceJob':
+			let index = jobs.findIndex((job) => job.jobID == action.newJob.jobID);
+            console.log('index from addOrReplace', index)
+			if (index != undefined) {
+				let newJobs = [...jobs];
+				newJobs.splice(index, 1, action.newJob);
+                console.log(newJobs)
+				return newJobs;
+			}
+			return [...jobs, action.newJob];
+		case 'setJobs':
+			// TODO: maybe keep jobs wich  are not in new jobs
+			return action.jobs;
+	}
 }
 export const JobContext = createContext({});
 export function JobContextProvider({ children }) {
 	let userContext = useContext(UserContext);
 	let infoContext = useContext(InfoContext);
-//	const [jobs, setJobs] = useState([]);
+	//	const [jobs, setJobs] = useState([]);
 
-    const [jobs, dispatch] = useReducer(reducer, [])
+	const [jobs, dispatch] = useReducer(reducer, []);
 
 	async function fetchJobs() {
 		await axios
 			.get('/api/v1/jobs/all')
-			.then((res) =>{})// setJobs(res))
+			.then((res) => {}) // setJobs(res))
 			.catch((err) => console.log(err));
 	}
 
@@ -89,8 +105,8 @@ export function JobContextProvider({ children }) {
 			},
 		})
 			.then((res) => {
-                // TODO: UPdate to useReducer
-                dispatch({type: 'setJobs', jobs: res.data.information})
+				// TODO: UPdate to useReducer
+				dispatch({ type: 'setJobs', jobs: res.data.information });
 			})
 			.catch((err) =>
 				infoContext.handleInformation(
@@ -106,19 +122,19 @@ export function JobContextProvider({ children }) {
 	function loadSingleJob(jobID) {
 		if (process.env.NODE_ENV === 'development') {
 			if (jobID == 1) {
-                dispatch({type: 'addJob', newJob: testJob})
+				dispatch({ type: 'addOrReplaceJob', newJob: testJob });
 				return;
 			}
 			if (jobID == 2) {
-                dispatch({type: 'addJob', newJob: dep1Job})
+				dispatch({ type: 'addOrReplaceJob', newJob: dep1Job });
 				return;
 			}
 			if (jobID == 3) {
-                dispatch({type: 'addJob', newJob: dep2Job})
+				dispatch({ type: 'addOrReplaceJob', newJob: dep2Job });
 				return;
 			}
 			if (jobID == 4) {
-                dispatch({type: 'addJob', newJob: dep3Job})
+				dispatch({ type: 'addOrReplaceJob', newJob: dep3Job });
 				return;
 			}
 		}
@@ -142,7 +158,7 @@ export function JobContextProvider({ children }) {
 						},
 					})
 						.then((res) => {
-                            dispatch({type: 'addJob', newJob: res.data})
+							dispatch({ type: 'addJob', newJob: res.data });
 							resolve(res.data);
 						})
 						.catch((res) => reject(null));

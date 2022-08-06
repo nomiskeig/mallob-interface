@@ -132,13 +132,11 @@ export function JobTable(props) {
 					}
 				});
 
-				console.log(value);
 
 				row[param.internalName] = value ? value : '';
 			});
 			return row;
 		});
-		console.log({ rows, columns });
 		setRows(rows);
 	}, [props.jobs, selectedIndices, filterUser]);
 
@@ -168,6 +166,8 @@ export function JobTable(props) {
 					columns={columns}
 					disableColumnMenu={true}
 					disableExtendRowFullWidth={true}
+                    onRowClick={(params) => {
+                        props.setClickedJob(params.id)}}
 				/>
 			</div>
 		</div>

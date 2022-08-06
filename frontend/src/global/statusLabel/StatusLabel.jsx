@@ -10,7 +10,6 @@ export function StatusLabel(props) {
     if (props.status === null) {return null}
 	switch (props.status) {
 		case JOB_STATUS_DONE:
-            console.log('done')
 			color = '#198754';
 			text = 'done';
 			break;
