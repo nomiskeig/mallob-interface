@@ -47,7 +47,7 @@ public class MallobCommands {
 		return eventDao.getEventsBetweenTime(formattedLowerBound, formattedUpperBound);
 	}
 	
-	public List<Warning> getWarnings(){
+	public List<Warning> getWarnings() throws FallobException {
 		return warningDao.getAllWarnings();
 	}
 	

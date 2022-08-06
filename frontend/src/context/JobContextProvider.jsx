@@ -79,7 +79,6 @@ export function JobContextProvider({ children }) {
 		if (userContext.user.role === ROLE_USER) {
 			apiAddress = '/api/v1/jobs/info/all';
 		} else if (userContext.user.role === ROLE_ADMIN) {
-			console.log('address is global');
 			apiAddress = '/api/v1/jobs/info/global';
 		}
 		axios({
