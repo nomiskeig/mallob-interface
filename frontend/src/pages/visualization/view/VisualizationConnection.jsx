@@ -3,6 +3,7 @@ export class VisualizationConnection {
 	#depth = 0;
 	#defaultOpacity = 0;
 	#defaultWidth = 3;
+    #otherRank = null;
 	constructor(line) {
 		this.#line = line;
 	}
@@ -15,6 +16,7 @@ export class VisualizationConnection {
 		this.#line.linewidth = this.#defaultWidth;
 		this.#defaultOpacity = Math.max(1 - 0.15 * this.#depth, 0.1);
 		this.#line.opacity = this.#defaultOpacity;
+        this.#otherRank = jtv.getRank();
 	}
 	reset() {
 		this.#line.noStroke();
@@ -28,6 +30,9 @@ export class VisualizationConnection {
 		this.#line.opacity = this.#defaultOpacity;
 		this.#line.linewidth = this.#defaultWidth;
 	}
+    getOtherRank() {
+        return this.#otherRank;
+    }
 
 	updateOpacityForHover(otherDepth) {
 		if (this.#defaultOpacity === 0) {
@@ -40,4 +45,10 @@ export class VisualizationConnection {
 	setWidthBasedOnDepth() {
 		this.#line.linewidth = Math.max(15 - 1.5 * this.#depth, 1);
 	}
+    setCoords(x1, y1, x2, y2) {
+        this.#line.vertices[0].x = x1;
+        this.#line.vertices[0].y = y1;
+        this.#line.vertices[1].x = x2;
+        this.#line.vertices[1].y = y2;
+    }
 }

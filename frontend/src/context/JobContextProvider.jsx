@@ -21,7 +21,6 @@ export function JobContextProvider({ children }) {
 		if (userContext.user.role === ROLE_USER) {
 			apiAddress = '/api/v1/jobs/info/all';
 		} else if (userContext.user.role === ROLE_ADMIN) {
-			console.log('address is global');
 			apiAddress = '/api/v1/jobs/info/global';
 		}
 		axios({
@@ -33,8 +32,6 @@ export function JobContextProvider({ children }) {
 		})
 			.then((res) => {
 				setJobs(res.data.information);
-				console.log(jobs);
-				console.log(res.data.information);
 			})
 			.catch((err) =>
 				infoContext.handleInformation(
