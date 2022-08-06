@@ -1,12 +1,56 @@
 export const configParameters = [
-	{ name: 'Priority', path: ['config', 'priority'] },
-	{ name: 'Application', path: ['config', 'application'] },
-	{ name: 'Maximum Demand', path: ['config', 'maxDemand'] },
-	{ name: 'Wallclock-Limit', path: ['config', 'wallclockLimit'] },
-    {name: 'CPU-Limit', path: ['config', 'cpuLimit']},
-    {name: 'Arrival', path: ['config', 'arrival']},
-    {name: 'Incremental', path: ['config, incremental']},
-    {name: 'Precursor', path: ['config', 'precursor']},
-    {name: 'Content-Mode', path: ['config', 'contentMode']}
-
+	{
+		name: 'Priority',
+		path: ['config', 'priority'],
+		internalName: 'priority',
+		width: 40,
+	},
+	{
+		name: 'Application',
+		path: ['config', 'application'],
+		internalName: 'application',
+		width: 100,
+	},
+	{
+		name: 'Maximum Demand',
+		path: ['config', 'maxDemand'],
+		internalName: 'maxDemand',
+		width: 100,
+	},
+	{
+		name: 'Wallclock-Limit',
+		path: ['config', 'wallclockLimit'],
+		internalName: 'wallclockLimit',
+		width: 100,
+	},
+	{
+		name: 'CPU-Limit',
+		path: ['config', 'cpuLimit'],
+		internalName: 'cpuLimit',
+		width: 100,
+	},
+	{
+		name: 'Arrival',
+		path: ['config', 'arrival'],
+		internalName: 'arrival',
+		width: 300,
+	},
+	{
+		name: 'Incremental',
+		path: ['config, incremental'],
+		internalName: 'incrementatal',
+		width: 100,
+	},
+	{
+		name: 'Precursor',
+		path: ['config', 'precursor'],
+		internalName: 'precursor',
+		width: 50,
+	},
+	{
+		name: 'Content-Mode',
+		path: ['config', 'contentMode'],
+		internalName: 'contentMode',
+		width: 100,
+	},
 ];

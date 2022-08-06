@@ -1,0 +1,13 @@
+$controlBarHeight: 80px;
+
+.dataGridContainer {
+    height: 100%;
+}
+
+.controlBar  {
+    height: $controlBarHeight;
+}
+.dataGridWrapper {
+    height: calc(100% - $controlBarHeight);
+    background-color: white
+}

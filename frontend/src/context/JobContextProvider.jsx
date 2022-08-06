@@ -91,8 +91,6 @@ export function JobContextProvider({ children }) {
 			.then((res) => {
                 // TODO: UPdate to useReducer
                 dispatch({type: 'setJobs', jobs: res.data.information})
-				console.log(jobs);
-				console.log(res.data.information);
 			})
 			.catch((err) =>
 				infoContext.handleInformation(

@@ -90,7 +90,7 @@ export function JobPage(props) {
 			<div className='marginContainer'>
 				<div className='row jobPageRow g-0'>
 					<div className='col jobPageColumn'>
-						<div className='panel upperPanel infoPanel d-flex flex-column'>
+						<div className='jobPagePanel upperPanel infoPanel d-flex flex-column'>
 							<Header title={name}></Header>
 							<div className='infoPanelContainer d-flex flex-row justify-content-between'>
 								<div className='parameterDisplay d-flex flex-column flex-wrap align-items-start justify-content-start'>
@@ -111,12 +111,12 @@ export function JobPage(props) {
 				</div>
 				<div className='lowerPanelContainer row jobPageRow g-0'>
 					<div className='col-12 col-md-6'>
-						<div className='panel lowerPanel  lowerPanelLeft descriptionPanel'>
+						<div className='jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel'>
                             <Header title={'Description'}/>
                         </div>
 					</div>
 					<div className='col-12 col-md-6'>
-						<div className='panel lowerPanel lowerPanelRight dependencyPanel'>
+						<div className='jobPagePanel lowerPanel lowerPanelRight dependencyPanel'>
                             <Header title={'Dependencies'}/>
 							<DependencyTable dependencies={dependencies} />
 						</div>

@@ -16,7 +16,7 @@
 }
 
 
-.panel {
+.jobPagePanel {
     background-color: #555564;
     margin: auto;
     //display: grid; width: 100%;
@@ -24,10 +24,10 @@
     //margin-top: 40px;
     height: calc(100% - 40px) !important;
     width: calc(100%);
-    border-radius: 10px;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: $panelBorderRadius;
+	box-shadow: $panelShadow;
     height: 90%;
-    padding: $panel-padding
+    padding: $panelPadding
     //width: 90%
 
 }
@@ -65,7 +65,7 @@
 }
 
 .infoPanel {
-    padding: $panel-padding;
+    padding: $panelPadding;
     //overflow-y: scroll;
 
 }
