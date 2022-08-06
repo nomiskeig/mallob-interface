@@ -15,6 +15,7 @@
 
 .visCanvasContainer {
 	overflow: scroll;
+    width: 100%
 }
 
 .halfContainer {
@@ -41,4 +42,8 @@
 }
 .binaryTreeCanvas {
     height: 100%
+}
+
+.hiddenPanel {
+    display: none !important;
 }

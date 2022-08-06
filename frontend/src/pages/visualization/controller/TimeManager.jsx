@@ -79,18 +79,20 @@ export class TimeManager {
 			}
 		}
 		if (
-			!this.#live &&
+			!this.#live && !this.#paused &&
 			Math.abs(differenceInMilliseconds(this.#nextTime, new Date())) < 100
 		) {
 			this.#live = true;
 			this.#jump = true;
 			this.#multiplier = 1;
 		} else if (
+           
 			this.#live &&
 			Math.abs(differenceInMilliseconds(this.#nextTime, new Date())) >= 100
 		) {
 			// set live to false if the difference is too big
 			this.#live = false;
+            this.jump = true;
 		}
 		return this.#nextTime;
 	}

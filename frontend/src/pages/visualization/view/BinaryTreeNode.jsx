@@ -10,7 +10,6 @@ export class BinaryTreeNode {
     setToJobTreeVertex(jtv, job) {
         this.#circle.opacity = 1;
         this.#circle.fill = job.getColor();
-        console.log('updating color in vertex ' + job.getColor())
         this.#text.opacity = 1;
         this.#circle.opacity = 1
         this.#text.value = jtv.getRank();

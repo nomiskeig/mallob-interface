@@ -30,18 +30,13 @@ export class PastEventManager extends EventManager {
 				this.timeManager.getMultiplier() * 5 && !this.#isLoading && !this.timeManager.isPaused()
 			) {
                 this.#isLoading  =true;
-				console.log('load forward puffer');
-				console.log(this.#forwardBuffer.toISOString());
 				let endTime = addSeconds(
 					this.#forwardBuffer,
 					this.timeManager.getMultiplier() * 20
 				);
 				if (isAfter(endTime, new Date())) {
-					console.log(' end is after current time');
 					endTime = new Date();
 				}
-				//console.log('endTime');
-				//console.log(endTime);
 				axios({
 					method: 'get',
 					url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/events/events',
@@ -50,8 +45,6 @@ export class PastEventManager extends EventManager {
 						endTime: endTime.toISOString(),
 					},
 				}).then((res) => {
-					//console.log('got forward puffer');
-					//kjkkconsole.log(res.data);
 					res.data.forEach((event) =>
 						this.events.push(
 							new Event(
@@ -66,7 +59,6 @@ export class PastEventManager extends EventManager {
 					this.events.sort(function (a, b) {
 						return differenceInMilliseconds(a.getTime(), b.getTime());
 					});
-					console.log(this.events);
 
 					this.#forwardBuffer = endTime;
                         this.#isLoading = false;
@@ -77,7 +69,6 @@ export class PastEventManager extends EventManager {
 				isBefore(event.getTime(), this.timeManager.getNextTime())
 			);
 			this.events.splice(0, newEvents.length);
-			//console.log(newEvents);
 
 			return newEvents;
 		} else {
@@ -91,9 +82,9 @@ export class PastEventManager extends EventManager {
 	}
 
 	async getSystemState(userContext) {
-		if (process.env.NODE_ENV === 'development') {
-			return null;
-		}
+		//if (process.env.NODE_ENV === 'development') {
+		//	return null;
+		//}
 
 		let nextTime = this.timeManager.getNextTime();
 		this.#forwardBuffer = nextTime;
@@ -110,8 +101,6 @@ export class PastEventManager extends EventManager {
 			},
 		})
 			.then((res) => {
-				console.log('initialEvents');
-				console.log(res.data);
 				let result =[];
 				res.data.forEach((event) => {
 					let newEvent = new Event(
