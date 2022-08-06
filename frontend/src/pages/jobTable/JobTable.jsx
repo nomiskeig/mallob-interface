@@ -1,20 +1,41 @@
 import './JobTable.scss';
 import { configParameters } from '../jobPage/Parameters';
-import { useState, useEffect } from 'react';
+import React, {  useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
+import { ROLE_ADMIN } from '../../context/UserContextProvider';
 export function JobTable(props) {
 	let [rows, setRows] = useState([]);
 	let [columns, setColumns] = useState([]);
-	let [selectedIndices, setSelectedIndices] = useState([
-		0, 1, 2, 3, 4, 5, 6, 7,
-	]);
+	let [selectedIndices, setSelectedIndices] = useState([]);
 	let [filterUser, setFilterUser] = useState(false);
 
-	let filteredConfigParams = configParameters.filter((param, index) => {
-		if (!selectedIndices.includes(index)) {
+	let isAdmin = props.user.role == ROLE_ADMIN;
+
+	let filteredConfigParams = configParameters.filter((param) => {
+		if (!selectedIndices.includes(param.index)) {
 			return false;
 		}
 		return true;
+	});
+
+	let possibleParams = configParameters.filter((param) => {
+		if (selectedIndices.includes(param.index)) {
+			return false;
+		}
+		return true;
+	});
+	let paramDropdownItems = possibleParams.map((param) => {
+		return {
+			onClick: () => {
+				console.log('clicked');
+				let newIndices = selectedIndices;
+				newIndices.push(param.index);
+				console.log(newIndices);
+				setSelectedIndices([...selectedIndices, param.index]);
+			},
+			name: param.name,
+		};
 	});
 	console.log({ filteredConfigParams });
 	useEffect(() => {
@@ -30,13 +51,22 @@ export function JobTable(props) {
 			})
 		);
 		setColumns(columns);
-	}, []);
+	}, [selectedIndices]);
 
 	useEffect(() => {
+        // calculate rows
 		if (!props.jobs) {
 			return;
 		}
 		let jobs = props.jobs;
+        if (filterUser) {
+            jobs = jobs.filter((job) =>{
+                if (job.user === props.user.username) {
+                    return true;
+                }
+                return false;
+            })
+        }
 		let rows = jobs.map((job) => {
 			let row = { id: job.jobID };
 			filteredConfigParams.forEach((param) => {
@@ -56,13 +86,28 @@ export function JobTable(props) {
 		});
 		console.log({ rows, columns });
 		setRows(rows);
-	}, [props.jobs]);
+	}, [props.jobs, selectedIndices, filterUser]);
 
 	return (
 		<div className='dataGridContainer'>
-            <div className='controlBar d-flex flex-row'>
-                <span>Show all jobs</span>
-            </div>
+			<div className='controlBar d-flex flex-row align-content-end'>
+				<DropdownComponent
+					title={'Pick shown attributes'}
+					items={paramDropdownItems}
+				></DropdownComponent>
+				{isAdmin && (
+					<React.Fragment>
+						<div className='showJobsLabel'>Show all jobs</div>
+						<input
+							className='form-check-input'
+							type='checkbox'
+							onClick={() => setFilterUser(!filterUser)}
+                            checked={!filterUser}
+                            onChange={() => setFilterUser(!filterUser)}
+						></input>
+					</React.Fragment>
+				)}
+			</div>
 			<div className='dataGridWrapper'>
 				<DataGrid rows={rows} columns={columns} />
 			</div>
