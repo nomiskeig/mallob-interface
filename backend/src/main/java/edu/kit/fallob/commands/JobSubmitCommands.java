@@ -65,7 +65,7 @@ public class JobSubmitCommands {
 		formatConfiguration(jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		JobDao jobDao = daoFactory.getJobDao();
-		int descriptionID = jobDao.saveJobDescription(jobDescription, username, jobDescription.getSubmitType());
+		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 		
@@ -96,10 +96,10 @@ public class JobSubmitCommands {
 	
 	public int saveJobDescription(String username, JobDescription jobDescription) throws FallobException {
 		JobDao jobDao = daoFactory.getJobDao();
-		return jobDao.saveJobDescription(jobDescription, username, jobDescription.getSubmitType());
+		return jobDao.saveJobDescription(jobDescription, username);
 	}
 	
-	private void formatConfiguration(JobConfiguration jobConfiguration) {
+	private void formatConfiguration(JobConfiguration jobConfiguration) throws FallobException {
 		JobDao jobDao = daoFactory.getJobDao();
 		//int[] dependencies = jobConfiguration.getDependencies();
         int[] dependencies = {1,2};

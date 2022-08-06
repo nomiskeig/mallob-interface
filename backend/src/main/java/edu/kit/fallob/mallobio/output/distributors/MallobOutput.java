@@ -11,16 +11,25 @@ import edu.kit.fallob.mallobio.listeners.resultlisteners.ResultObjectListener;
  */
 public class MallobOutput {
 
+	private static MallobOutput mallobOutput = null;
+
 	
 	private ResultObjectDistributor resultObjectDistributor;
 	
 	private OutputLogLineDistributor outputLogLineDistributor;
 	
 	
-	public MallobOutput(ResultObjectDistributor resultObjectDistributor,
-			OutputLogLineDistributor outputLogLineDistributor) {
-		this.resultObjectDistributor = resultObjectDistributor;
-		this.outputLogLineDistributor = outputLogLineDistributor;
+	private MallobOutput() {
+		this.resultObjectDistributor = new ResultObjectDistributor();
+		this.outputLogLineDistributor = new OutputLogLineDistributor();
+	}
+
+	public static MallobOutput getInstance() {
+		if (mallobOutput == null) {
+			mallobOutput = new MallobOutput();
+		}
+
+		return mallobOutput;
 	}
 	
 	
@@ -39,6 +48,12 @@ public class MallobOutput {
 	public void removeOutputLogLineListener(OutputLogLineListener listener) {
 		this.outputLogLineDistributor.removeListener(listener);
 	}
-	
-	
+
+	public ResultObjectDistributor getResultObjectDistributor() {
+		return resultObjectDistributor;
+	}
+
+	public OutputLogLineDistributor getOutputLogLineDistributor() {
+		return outputLogLineDistributor;
+	}
 }

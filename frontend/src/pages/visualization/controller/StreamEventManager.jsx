@@ -31,16 +31,15 @@ export class StreamEventManager extends EventManager {
 	}
 
 	async getSystemState(userContext) {
-		if (process.env.NODE_ENV === 'development') {
-			return null;
-		}
         window.onbeforeunload = () =>  {
             this.closeStream();
         }
+		//if (process.env.NODE_ENV === 'development') {
+		//	return null;
+		//}
 		this.#stream = new XMLHttpRequest();
 		let initialTime = this.timeManager.getNextTime();
 		//TODO: stream authentification
-        console.log(this.#stream)
 		this.#stream.open(
 			'GET',
 			process.env.REACT_APP_API_BASE_PATH + '/api/v1/events/eventStream',
@@ -51,13 +50,7 @@ export class StreamEventManager extends EventManager {
 			if (!this.#lastTimeReceived) {
 				let lastEventString = events[events.length - 2];
 
-				console.log('tast4Eventsk');
-				for (let i = 2; i < 6; i++) {
-					//console.log(JSON.parse(events[events.length - i]));
-				}
 				let lastEvent = JSON.parse(lastEventString);
-				console.log('lastEvent');
-				console.log(lastEvent);
 				let newEvent = new Event(
 					new Date(lastEvent.time),
 					lastEvent.rank,
@@ -86,10 +79,6 @@ export class StreamEventManager extends EventManager {
 						lastEvent.jobID,
 						lastEvent.load
 					);
-					console.log(
-						'last time received: ' + this.#lastTimeReceived.toISOString()
-					);
-					console.log(lastEvent);
 					if (isAfter(newEvent.getTime(), initialTime)) {
 						newEvents.push(newEvent);
 					}
@@ -98,9 +87,6 @@ export class StreamEventManager extends EventManager {
 				this.#lastTimeReceived = newEvents[0].getTime();
 				newEvents.reverse().forEach((event) => this.events.push(event));
 			}
-		};
-		this.#stream.onloadstart = () => {
-			console.log('loaded');
 		};
 		this.#stream.send();
 		return axios({
@@ -114,8 +100,6 @@ export class StreamEventManager extends EventManager {
 			},
 		})
 			.then((res) => {
-				console.log('initialEvents');
-				console.log(res.data);
 				let result = [];
 				res.data.forEach((event) => {
 					let newEvent = new Event(
@@ -130,7 +114,6 @@ export class StreamEventManager extends EventManager {
 					result.push(newEvent);
 					//}
 				});
-				console.log(result);
 				return result;
 			})
 	}

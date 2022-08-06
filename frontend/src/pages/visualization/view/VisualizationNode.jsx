@@ -23,6 +23,8 @@ export class VisualizationNode {
 	}
 
 	registerCallbacks(onHoverEnter, onHoverLeave, onClick) {
+        this.#circle._renderer.elem.style.cursor = 'pointer'
+        this.#text._renderer.elem.style.cursor = 'default'
 		this.#circle._renderer.elem.addEventListener('mouseover', () => {
 			onHoverEnter(this.#rank);
 		});
@@ -64,4 +66,10 @@ export class VisualizationNode {
 	getTreeIndex() {
 		return this.#treeIndex;
 	}
+    setCoords(x, y) {
+        this.#circle.position.x = x;
+        this.#circle.position.y = y;
+        this.#text.position.x = x;
+        this.#text.position.y = y-14;
+    }
 }

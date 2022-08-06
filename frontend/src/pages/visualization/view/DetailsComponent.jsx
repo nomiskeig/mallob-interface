@@ -42,7 +42,7 @@ export class DetailsComponent extends React.Component {
 			if (job.getUsername()) {
 				showUserInfos = true;
 			}
-            if (job.getJobName()) {
+            if (job.getJobName() && clickedVertex) {
                 showButtons = true;
             }
 		}
@@ -52,7 +52,7 @@ export class DetailsComponent extends React.Component {
 				<div className='headerContainer d-flex flex-row align-items-center'>
 					<div className='jobName'>{title}</div>
 					<div className='buttons ms-auto d-flex flex-row '>
-						{showButtons && process.env.NODE_ENV !== 'development' && (
+						{showButtons  && (
 							<React.Fragment>
 								<Button color='#f24236' text='cancel job'></Button>
 								<div className='buttonSpacer'></div>
@@ -65,6 +65,7 @@ export class DetailsComponent extends React.Component {
 					<div className='bodyContainer d-flex flex-row align-items-start justify-content-between'>
 						<div className='details d-flex justify-content-start align-items-start flex-column'>
 							<p>Rank: {clickedVertex.getRank()} </p>
+                            <p>Index: {clickedVertex.getTreeIndex()} </p>
 							<p>Volume: {job.getSize()}</p>
 							<p>
 								Subtree Volume:{' '}
