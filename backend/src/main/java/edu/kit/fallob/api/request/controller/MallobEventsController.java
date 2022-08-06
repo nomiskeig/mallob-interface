@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,12 @@ public class MallobEventsController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        return ResponseEntity.ok(new MallobEventsResponse(events));
+
+        List<EventProxy> eventProxies = new ArrayList<>();
+        for (Event event : events) {
+            eventProxies.add(new EventProxy(event));
+        }
+        return ResponseEntity.ok(new MallobEventsResponse(eventProxies));
     }
     @GetMapping("/state")
     public ResponseEntity<Object> getSystemState(@RequestParam String time) {
@@ -39,6 +45,11 @@ public class MallobEventsController {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        return ResponseEntity.ok(new MallobEventsResponse(state.getSystemState()));
+
+        List<EventProxy> eventProxies = new ArrayList<>();
+        for (Event event : state.getSystemState()) {
+            eventProxies.add(new EventProxy(event));
+        }
+        return ResponseEntity.ok(new MallobEventsResponse(eventProxies));
     }
 }
