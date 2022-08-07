@@ -65,9 +65,7 @@ export function JobTable(props) {
 							</svg>
 						</div>
 						<div className='tableHeaderSpacer'></div>
-					</React.Fragment>
-				)}
-			</div>
+					</React.Fragment>)} </div>
 		);
 	}
 	useEffect(() => {

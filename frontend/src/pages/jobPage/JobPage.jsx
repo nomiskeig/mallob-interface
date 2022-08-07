@@ -3,6 +3,7 @@ import { JobContext } from '../../context/JobContextProvider';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { Header } from '../../global/header/Header';
+import { JobPageButton } from '../../global/buttons/JobPageButton';
 import { useParams } from 'react-router-dom';
 import { configParameters } from './Parameters';
 import {
@@ -30,9 +31,10 @@ function getStatus(job) {
 }
 export function JobPage(props) {
 	let { jobID } = useParams();
-    if (jobID === undefined) {
-        jobID = props.jobID;
-    }
+	if (jobID === undefined) {
+		jobID = props.jobID;
+	}
+	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
 	//	let [job, setJob] = useState(null);
 	let [loaded, setLoaded] = useState(false);
@@ -51,8 +53,6 @@ export function JobPage(props) {
 			}
 		}
 	}, [loaded, loadedDependencies, jobContext, jobID, job]);
-    
-
 
 	let parameterDisplayList = configParameters.map((param) => {
 		if (!job) {
@@ -68,7 +68,11 @@ export function JobPage(props) {
 		if (value) {
 			return (
 				<div className='singleParamDisplay'>
-					<InputWithLabel disabled={true} value={value} labelText={param.name} />
+					<InputWithLabel
+						disabled={true}
+						value={value}
+						labelText={param.name}
+					/>
 				</div>
 			);
 		}
@@ -87,40 +91,45 @@ export function JobPage(props) {
 
 	let name = job ? job.config.name : '';
 	let submitted = job ? job.submitTime : '';
-    let status = job ? getStatus(job) : null;
+	let status = job ? getStatus(job) : null;
+
+
+    
 	return (
-		<div className='jobPageContainer'>
-			<div className='marginContainer'>
-				<div className='row jobPageRow g-0'>
-					<div className='col jobPageColumn'>
-						<div className='jobPagePanel upperPanel infoPanel d-flex flex-column'>
-							<Header title={name}></Header>
+		<div className={embedded ? 'embeddedPageContainer' : 'jobPageContainer'}>
+			<div className={embedded ? '' : 'marginContainer'}>
+				<div className={embedded ? '': 'row jobPageRow g-0'}>
+					<div className={embedded ? '' : 'col jobPageColumn'}>
+						<div className={embedded ? '': 'jobPagePanel upperPanel infoPanel d-flex flex-column'}>
+							<Header title={name}>
+								{embedded && <JobPageButton jobID={jobID}></JobPageButton>}
+							</Header>
 							<div className='infoPanelContainer d-flex flex-row justify-content-between'>
 								<div className='parameterDisplay d-flex flex-column flex-wrap align-items-start justify-content-start'>
 									{parameterDisplayList}
 								</div>
 								<div className='submitAndStatus '>
 									<InputWithLabel
-                                        disabled={true}
+										disabled={true}
 										value={submitted}
 										labelText={'Submitted at'}
 									/>
 									<div className='statusTitle'>Status</div>
-                                    {status && <StatusLabel status={status}/>}
+									{status && <StatusLabel status={status} />}
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div className='lowerPanelContainer row jobPageRow g-0'>
-					<div className='col-12 col-md-6'>
-						<div className='jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel'>
-                            <Header title={'Description'}/>
-                        </div>
+				<div className={embedded ? 'd-flex flex-column-reverse' : 'lowerPanelContainer row jobPageRow g-0'}>
+					<div className={embedded ? '' : 'col-12 col-md-6'}>
+						<div className={embedded ? '': 'jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel'}>
+							<Header title={'Description'} />
+						</div>
 					</div>
-					<div className='col-12 col-md-6'>
-						<div className='jobPagePanel lowerPanel lowerPanelRight dependencyPanel'>
-                            <Header title={'Dependencies'}/>
+					<div className={embedded ? '' :'col-12 col-md-6'}>
+						<div className={embedded ? '' :'jobPagePanel lowerPanel lowerPanelRight dependencyPanel'}>
+							<Header title={'Dependencies'} />
 							<DependencyTable dependencies={dependencies} />
 						</div>
 					</div>

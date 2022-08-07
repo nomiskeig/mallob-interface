@@ -22,8 +22,8 @@ export function JobTablePage(props) {
 
 	return (
 		<div className='jobTablePageContainer'>
-			<div className='row g-0'>
-				<div className='col-12 col-md-6 tableHalf'>
+			<div className='row g-0 jobTablePageRow'>
+				<div className='col-12 col-md-6 tableHalf jobTablePageCol'>
 					<div className='jobTablePagePanel'>
 						<JobTable
 							jobs={jobs}
@@ -35,10 +35,10 @@ export function JobTablePage(props) {
 						></JobTable>
 					</div>
 				</div>
-				<div className='col-12 col-md-6 jobPageHalf'>
-					<div className='jobTablePagePanel'>
+				<div className='col-12 col-md-6 jobPageHalf jobTablePageCol'>
+					<div className='jobTablePagePanel jobPageHalfPanel'>
 						{displayedJobID !== null && (
-							<JobPage jobID={displayedJobID}></JobPage>
+							<JobPage embedded={true} jobID={displayedJobID}></JobPage>
 						)}
 					</div>
 				</div>

@@ -92,3 +92,9 @@
     margin-top: 20px;
     margin-bottom: 0.5rem;
 }
+
+.embeddedPageContainer {
+    height: 100%;
+    overflow: scroll;
+    padding: $panelPadding;
+}
