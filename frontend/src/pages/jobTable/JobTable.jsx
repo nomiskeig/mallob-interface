@@ -9,6 +9,7 @@ export function JobTable(props) {
 	let [rows, setRows] = useState([]);
 	let [columns, setColumns] = useState([]);
 	let [selectedIndices, setSelectedIndices] = useState([]);
+	let [selectedJobs, setSelectedJobs] = useState([]);
 	let [filterUser, setFilterUser] = useState(false);
 
 	let isAdmin = props.user.role == ROLE_ADMIN;
@@ -35,6 +36,21 @@ export function JobTable(props) {
 			name: param.name,
 		};
 	});
+	function toggleSelectedJob(jobID) {
+        console.log('toggle', jobID)
+        let newSelectedJobs = [...selectedJobs];
+        if (selectedJobs.includes(jobID)) {
+            // remove job
+            let index = selectedJobs.indexOf(jobID);
+            newSelectedJobs.splice(index, 1);
+            setSelectedJobs(newSelectedJobs);
+        } else {
+            newSelectedJobs.push(jobID);
+            setSelectedJobs(newSelectedJobs)
+        }
+
+        
+    }
 	function getHeaderButtons(index, name, internalName) {
 		return (
 			<div className='d-flex flex-row align-items-center  headerRender'>
@@ -65,18 +81,18 @@ export function JobTable(props) {
 							</svg>
 						</div>
 						<div className='tableHeaderSpacer'></div>
-					</React.Fragment>)} </div>
+					</React.Fragment>
+				)}{' '}
+			</div>
 		);
 	}
 	useEffect(() => {
-        // create columns
+		// create columns
 		let columns = [
 			{
 				field: 'id',
 				width: 100,
-				renderHeader: () => {
-					return getHeaderButtons(null, 'Job-ID', 'id');
-				},
+				headerName: 'Job-ID',
 			},
 		];
 		columns = columns.concat(
@@ -97,13 +113,27 @@ export function JobTable(props) {
 		columns.push({
 			field: 'status',
 			width: 200,
+			headerName: 'Status',
 			renderCell: (param) => {
-				return <StatusLabel status={param.row.status} />;
+				return (
+					<div className='d-flex justify-content-around statusCell'>
+						<StatusLabel status={param.row.status} />
+						<input
+							className='form-check-intput'
+							type='checkbox'
+							checked={selectedJobs.includes(param.row.id)}
+                            onChange={() => toggleSelectedJob(param.row.id)}
+							value=''
+						></input>
+					</div>
+				);
 			},
 		});
 
+		//columns[columns.length-2]['flex'] = 1;
+
 		setColumns(columns);
-	}, [selectedIndices]);
+	}, [selectedIndices, selectedJobs]);
 
 	useEffect(() => {
 		// calculate rows
@@ -130,13 +160,12 @@ export function JobTable(props) {
 					}
 				});
 
-
 				row[param.internalName] = value ? value : '';
 			});
 			return row;
 		});
 		setRows(rows);
-	}, [props.jobs, selectedIndices, filterUser]);
+	}, [props.jobs, selectedIndices, filterUser, selectedJobs]);
 
 	return (
 		<div className='dataGridContainer'>
@@ -164,8 +193,22 @@ export function JobTable(props) {
 					columns={columns}
 					disableColumnMenu={true}
 					disableExtendRowFullWidth={true}
-                    onRowClick={(params) => {
-                        props.setClickedJob(params.id)}}
+					disableSelectionOnClick={true}
+					onRowClick={(params, event) => {
+						if (event.target.type === 'checkbox') {
+							return;
+						}
+						console.log(params, event);
+						props.setClickedJob(params.id);
+					}}
+					sx={{
+						'& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+							borderRight: '1px solid black',
+						},
+						'& .MuiDataGrid-columnSeparator': {
+							display: 'none',
+						},
+					}}
 				/>
 			</div>
 		</div>
