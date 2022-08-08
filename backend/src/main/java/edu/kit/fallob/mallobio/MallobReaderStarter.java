@@ -135,11 +135,12 @@ public class MallobReaderStarter {
 	 * mallobOutput is going to hold a reference of both the log and resultDistributor
 	 */
 	private void initializeMallobOuptut() {
-		this.logDistributor = new OutputLogLineDistributor();
-		this.resultDistributor = new ResultObjectDistributor();
+		this.mallobOutput = MallobOutput.getInstance();
+
+		this.logDistributor = this.mallobOutput.getOutputLogLineDistributor();
+		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
 		
 		this.watcherManager.setResultDistributor(resultDistributor);
-		this.mallobOutput = new MallobOutput(resultDistributor, logDistributor);
 	}
 	
 	

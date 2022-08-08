@@ -20,10 +20,10 @@ public class FallobConfiguration {
 	private int maxJobsUser;
 	private int[] clientProcesses;
 	private int garbageCollectorInterval;
-	private int jobStorageTime;
-	private int eventStorageTime;
-	private int warningStorageTime;
-	private int maxDescriptionStorageSize;
+	private long jobStorageTime;
+	private long eventStorageTime;
+	private long warningStorageTime;
+	private long maxDescriptionStorageSize;
 	private float defaultJobPriority;
 	private String defaultWallClockLimit;
 	private String defaultContentMode;
@@ -33,9 +33,10 @@ public class FallobConfiguration {
 	private String resultBasePath;
 	private String dataBaseUsername;
 	private String databasePassword;
-	
-	
-	
+
+
+	private String startTime;
+
 	private FallobConfiguration() {
 		
 	}
@@ -95,34 +96,34 @@ public class FallobConfiguration {
 	}
 	
 	
-	public int getJobStorageTime() {
+	public long getJobStorageTime() {
 		return jobStorageTime;
 	}
-    void setJobStorageTime(int jobStorageTime) {
+    void setJobStorageTime(long jobStorageTime) {
 		this.jobStorageTime = jobStorageTime;
 	}
     
     
-	public int getEventStorageTime() {
+	public long getEventStorageTime() {
 		return eventStorageTime;
 	}
-	void setEventStorageTime(int eventStorageTime) {
+	void setEventStorageTime(long eventStorageTime) {
 		this.eventStorageTime = eventStorageTime;
 	}
 	
 	
-	public int getWarningStorageTime() {
+	public long getWarningStorageTime() {
 		return warningStorageTime;
 	}
-	void setWarningStorageTime(int warningStorageTime) {
+	void setWarningStorageTime(long warningStorageTime) {
 		this.warningStorageTime = warningStorageTime;
 	}
 	
 	
-	public int getMaxDescriptionStorageSize() {
+	public long getMaxDescriptionStorageSize() {
 		return maxDescriptionStorageSize;
 	}
-	void setMaxDescriptionStorageSize(int maxDescriptionStorageSize) {
+	void setMaxDescriptionStorageSize(long maxDescriptionStorageSize) {
 		this.maxDescriptionStorageSize = maxDescriptionStorageSize;
 	}
 	
@@ -182,6 +183,15 @@ public class FallobConfiguration {
 		this.resultBasePath = resultBasePath;
 	}
 
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+
 
 	public String getDataBaseUsername() {
 		return dataBaseUsername;
@@ -201,8 +211,9 @@ public class FallobConfiguration {
 	public void setDatabasePassword(String databasePassword) {
 		this.databasePassword = databasePassword;
 	}
-	
-	
-	
+
+
+
+
 
 }
