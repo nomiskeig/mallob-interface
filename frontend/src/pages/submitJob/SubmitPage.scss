@@ -1,0 +1,18 @@
+@use 'src/global/global' as *;
+
+.submitPageContainer {
+    height: calc(100% - 40px);
+    background-color: $backgroundColorPage;
+    color: white;
+    
+}
+
+.submitPageRow {
+    height: 50%;
+}
+
+.submitPageColumn {
+    height: 100%
+}
+
+

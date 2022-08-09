@@ -22,11 +22,11 @@
     //display: grid; width: 100%;
     //height: 100%;
     //margin-top: 40px;
-    height: calc(100% - 40px) !important;
+    height: calc(100% - 40px) ;
     width: calc(100%);
     border-radius: $panelBorderRadius;
 	box-shadow: $panelShadow;
-    height: 90%;
+    //height: 90%;
     padding: $panelPadding
     //width: 90%
 

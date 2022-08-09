@@ -90,9 +90,9 @@ export function JobContextProvider({ children }) {
 			.catch((err) => console.log(err));
 	}
 
-	function fetchMostJobsPossible() {
+	function fetchMostJobsPossible(restrictToOwnJobs) {
 		let apiAddress;
-		if (userContext.user.role === ROLE_USER) {
+		if (userContext.user.role === ROLE_USER || restrictToOwnJobs) {
 			apiAddress = '/api/v1/jobs/info/all';
 		} else if (userContext.user.role === ROLE_ADMIN) {
 			apiAddress = '/api/v1/jobs/info/global';
@@ -115,6 +115,10 @@ export function JobContextProvider({ children }) {
 				)
 			);
 	}
+    function loadAllJobsOfUser() {
+        this.fetchMostJobsPossible(true);
+
+    }
 
 	// loads a single job from the backend and stores it into state;
 	// replaces the information in state if its currently in there
@@ -175,6 +179,7 @@ export function JobContextProvider({ children }) {
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,
 				loadSingleJob: loadSingleJob,
+                loadAllJobsOfUser: loadAllJobsOfUser
 			}}
 		>
 			{children}

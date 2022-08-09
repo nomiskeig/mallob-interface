@@ -20,6 +20,7 @@ import { NotFoundPage } from './pages/notFound/NotFoundPage';
 import { LoginPage } from './pages/login/LoginPage';
 import {JobPage} from './pages/jobPage/JobPage'
 import {JobTablePage} from './pages/jobTable/JobTablePage'
+import {SubmitPage} from './pages/submitJob/SubmitPage'
 
 class App extends React.Component {
 	constructor(props) {
@@ -62,6 +63,7 @@ class App extends React.Component {
 											element={
 												<div className='heightContainer'>
 													<Navbar highlight={PAGE_SUBMIT} />
+                                                    <SubmitPage />
 												</div>
 											}
 										/>
