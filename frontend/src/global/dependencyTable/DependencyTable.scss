@@ -2,12 +2,23 @@
     background-color: white;
 }
 
-.dependencyTableRow {
+.dependencyTableCell {
     padding-left: 10px !important;
+    padding-right: 10px !important
 }
 
 .dependencyTableHeader {
     padding-top: 7px !important;
     padding-bottom: 7px !important;
+
     border-bottom: 1px solid black;
+}
+
+.dependencyTableFirstColumn {
+    border-right: 1px solid black;
+}
+
+.dependencyTableLastColumn {
+    width: 110px;
+
 }

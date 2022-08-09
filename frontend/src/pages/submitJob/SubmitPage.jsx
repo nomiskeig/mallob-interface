@@ -50,7 +50,6 @@ export function SubmitPage(props) {
 								onChange={(selectedJobIDs) => {
 									selectedJobIDs = selectedJobIDs;
 								}}
-								onUnselect={() => {}}
 							/>
 						</div>
 					</div>
