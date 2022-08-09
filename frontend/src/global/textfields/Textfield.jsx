@@ -10,5 +10,5 @@ export function InputLabel(props) {
         'backgroundColor': props.color 
     } : {}
     */
-    return <input placeholder={props.placeholder} id={id} onChange={props.onChange} type="text"/>;
+    return <input placeholder={props.placeholder} id={id} onChange={props.onChange} className={props.className} type={props.type}/>;
 }

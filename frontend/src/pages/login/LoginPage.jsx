@@ -3,6 +3,8 @@ import {UserContext} from '../../context/UserContextProvider'
 import {useNavigate} from 'react-router-dom';
 import {Button} from '../../global/buttons/Button';
 import {InputLabel} from '../../global/textfields/Textfield';
+import { Link } from 'react-router-dom';
+
 
 
 export function LoginPage(props) {
@@ -37,7 +39,12 @@ export function LoginPage(props) {
 
     const loginURL = '/login';
     function login(){
-        alert("Logging in with : username=" + usernameContent + ", password=" + passwordContent);
+        //alert("Logging in with : username=" + usernameContent + ", password=" + passwordContent);
+        if (usernameContent === username || passwordContent === password){
+            alert("Please enter a valid username and/or password.");
+            return;
+        }
+
         const axios = require('axios');
         const response = axios.post(loginURL, {
             username : {usernameContent},
@@ -46,24 +53,40 @@ export function LoginPage(props) {
         
         if (response.status === 200){ //request went through and username + password were accepted 
             userContext.login(response.data);
-        } else{
+        } 
+
+        if (response.status === 404){ //user not found 
 
         }
+        
+        else{
+
+        }
+        //TODO : testing, error handling if pw was wrong, forward user onto job-page, tidy up login page (make it look nice )
     }
 
 
     return (
-		<div>
-			<button onClick={loginAdmin}>Log in as admin</button>
-            <button onClick={loginUser}>Login in as user</button>
+		<div className="h-100 d-flex align-items-center justify-content-center">
 
+            <form>
+                <div class="form-outline mb-4">
+                <InputLabel placeholder={username} id={username} onChange={handleChangeUsername} type="email" className="form-control form-control-lg"></InputLabel>
+                </div>
 
-            <div>
-                <InputLabel placeholder={username} id={username} onChange={handleChangeUsername}></InputLabel>
-                <InputLabel placeholder={password} id={password} onChange={handleChangePassword}></InputLabel>
+                <div class="form-outline mb-4">
+                <InputLabel placeholder={password} id={password} onChange={handleChangePassword} type="password" className="form-control form-control-lg"></InputLabel>
+                </div>
 
-                <Button text={btext} onClick={login} />
-            </div>
+                <Button text={btext} onClick={login} className="btn btn-primary btn-lg btn-block" />
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+
+                <div class="d-flex justify-content-around align-items-center mb-4">
+                    <Link to="/register/RegisterPage">Register</Link>
+                </div>
+            </form>
+
 
 		</div>
 	);
