@@ -34,10 +34,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 	
 	public JobToMallobSubmitter(String username) {
 		this.username = username;
-
-		//TODO Implemented by kalo - not sure if correct (compiler was showing an error)
-		FallobConfiguration fallobConfiguration = FallobConfiguration.getInstance();
-		this.mallobInput = new MallobInputImplementation(fallobConfiguration.getMallobBasePath(), fallobConfiguration.getAmountProcesses());
+		this.mallobInput = MallobInputImplementation.getInstance();
 		this.monitor = new Object();
 	}
 	
