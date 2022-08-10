@@ -19,6 +19,12 @@ public class AbortJobController {
     @Autowired
     private JobAbortCommands jobAbortCommand;
 
+    private static final String NO_JOBS_ACTIVE = "No jobs are active";
+
+    private static final String JOB_NOT_ACTIVE = "Job is not active";
+
+    private static final String USERNAME = "username";
+
     @PostMapping("/single/{jobId}")
     public ResponseEntity<Object> abortSingleJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
@@ -26,7 +32,7 @@ public class AbortJobController {
 
     @PostMapping("/multiple")
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortMultipleJobs(username, request.getJobIds());
@@ -41,13 +47,13 @@ public class AbortJobController {
         if (!successfullyAborted.isEmpty()) {
             return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("No jobs are active");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(NO_JOBS_ACTIVE);
         }
     }
 
     @PostMapping("/all")
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortAllJobs(username);
@@ -61,7 +67,7 @@ public class AbortJobController {
 
     @PostMapping("/global")
     public ResponseEntity<Object> abortAllGlobalJobs(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortAllGlobalJob(username);
@@ -79,7 +85,7 @@ public class AbortJobController {
     }
 
     private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         boolean successful;
         try {
             successful = jobAbortCommand.abortSingleJob(username, jobId);
@@ -91,7 +97,7 @@ public class AbortJobController {
         if (successful) {
             return ResponseEntity.ok(HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Job is not active");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(JOB_NOT_ACTIVE);
         }
     }
 }
