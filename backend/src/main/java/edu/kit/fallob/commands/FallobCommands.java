@@ -77,11 +77,6 @@ public class FallobCommands implements UserDetailsService {
     
     
     public boolean register(String username, String password, String email) throws FallobException {
-		if (!checkEmail(email)) {
-			throw new FallobException(HttpStatus.CONFLICT, DUPLICATE_EMAIL);
-		} else if (!checkUsername(username)) {
-			throw new FallobException(HttpStatus.CONFLICT, DUPLICATE_USERNAME);
-		}
 		String encodedPassword = passwordEncoder.encode(password);
 		userDao.save(new NormalUser(username, encodedPassword, email));
 		return true;
@@ -91,12 +86,4 @@ public class FallobCommands implements UserDetailsService {
     public FallobConfiguration getFallobConfiguration() {
     	return FallobConfiguration.getInstance();
     }
-
-	private boolean checkEmail(String email) {
-		return false;
-	}
-
-	private boolean checkUsername(String username) {
-		return false;
-	}
 }
