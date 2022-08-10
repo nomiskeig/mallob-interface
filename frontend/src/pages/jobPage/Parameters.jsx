@@ -1,3 +1,6 @@
+export const INPUT_TYPE_TEXT = 'text';
+export const INPUT_TYPE_SELECT = 'select';
+export const INPUT_TYPE_BOOLEAN = 'boolean'
 export const configParameters = [
 	{
 		name: 'Priority',
@@ -5,6 +8,9 @@ export const configParameters = [
 		internalName: 'priority',
 		width: 40,
         index: 0,
+        required: false,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: true
 	},
 	{
 		name: 'Application',
@@ -12,6 +18,13 @@ export const configParameters = [
 		internalName: 'application',
 		width: 100,
         index: 1,
+        required: true,
+        inputType: INPUT_TYPE_SELECT,
+        selectValues: ['SAT', 'DUMMY', 'KMEANS'],
+        showOnJobPage: true,
+        updateSubmitJob: (job, newValue) => {
+            job['application'] = newValue;
+        }
 
 	},
 	{
@@ -20,6 +33,10 @@ export const configParameters = [
 		internalName: 'maxDemand',
 		width: 100,
         index: 2,
+        required: false,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: true
+
 	},
 	{
 		name: 'Wallclock-Limit',
@@ -27,6 +44,9 @@ export const configParameters = [
 		internalName: 'wallclockLimit',
 		width: 100,
         index: 3,
+        required: false,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: true
 	},
 	{
 		name: 'CPU-Limit',
@@ -34,6 +54,9 @@ export const configParameters = [
 		internalName: 'cpuLimit',
 		width: 100,
         index: 4,
+        required: false,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: true
 	},
 	{
 		name: 'Arrival',
@@ -41,20 +64,30 @@ export const configParameters = [
 		internalName: 'arrival',
 		width: 300,
         index: 5,
+        required: false,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: true
 	},
 	{
 		name: 'Incremental',
 		path: ['config, incremental'],
-		internalName: 'incrementatal',
+		internalName: 'incremental',
 		width: 100,
         index: 6,
+        required: false,
+        inputType: INPUT_TYPE_BOOLEAN,
+        showOnJobPage: true
+
 	},
 	{
 		name: 'Precursor',
 		path: ['config', 'precursor'],
 		internalName: 'precursor',
 		width: 50,
-        index: 7
+        index: 7,
+        required: false,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: true
 	},
 	{
 		name: 'Content-Mode',
@@ -62,5 +95,32 @@ export const configParameters = [
 		internalName: 'contentMode',
 		width: 100,
         index: 8,
+        required: false,
+        inputType: INPUT_TYPE_SELECT,
+        selectValues: ['raw', 'text'],
+        showOnJobPage: true
 	},
+    {
+        name: 'Name',
+        internalName: 'name',
+        path: ['config', 'name'],
+        index: 9,
+        width: 200,
+        validateValue: (value) => {
+            return true;
+        },
+        updateSubmitJob: (submitJob, newValue) => {
+            submitJob['name'] = newValue;
+        },
+        required: true,
+        inputType: INPUT_TYPE_TEXT,
+        showOnJobPage: false
+
+
+        
+    }
 ];
+export function getIndexByParam(paramToFind) {
+    return configParameters.findIndex(param => param.internalName === paramToFind.internalName);
+
+}

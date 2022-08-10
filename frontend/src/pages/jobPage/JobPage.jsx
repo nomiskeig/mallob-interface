@@ -54,11 +54,12 @@ export function JobPage(props) {
 		}
 	}, [loaded, loadedDependencies, jobContext, jobID, job]);
 
-	let parameterDisplayList = configParameters.map((param) => {
+	let parameterDisplayList = configParameters.filter(param => param.showOnJobPage).map((param) => {
 		if (!job) {
 			return;
 		}
 		let value = job;
+        console.log(param)
 		param.path.forEach((path) => {
 			value = value[path];
 			if (!value) {
