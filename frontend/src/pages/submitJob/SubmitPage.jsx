@@ -51,11 +51,12 @@ export function SubmitPage(props) {
 						title={param.name}
 						items={param.selectValues.map((value) => ({
 							onClick: () => {
-								param.updateSubmitJob(jobToSubmit, value);
+                                jobToSubmit[param.internalName] = value;
 								setJobToSubmit(jobToSubmit);
 							},
 							name: value,
 						}))}
+                        displaySelectedValue={true}
 					></DropdownComponent>
 				);
 		}

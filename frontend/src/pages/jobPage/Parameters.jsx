@@ -109,9 +109,6 @@ export const configParameters = [
         validateValue: (value) => {
             return true;
         },
-        updateSubmitJob: (submitJob, newValue) => {
-            submitJob['name'] = newValue;
-        },
         required: true,
         inputType: INPUT_TYPE_TEXT,
         showOnJobPage: false
