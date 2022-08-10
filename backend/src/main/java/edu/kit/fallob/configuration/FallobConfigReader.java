@@ -52,32 +52,44 @@ public class FallobConfigReader {
 		c.setMaxJobsUser(json.getInt("maxJobsUser"));
 		
 		//int-array is a little bit more complicated
-		JSONArray arr = json.getJSONArray("clientProcesses");
+		JSONArray arr = json.getJSONArray("client-processes");
 		int[] clientProcesses = new int[arr.length()];
 		for (int i = 0; i < arr.length(); i++) {
 			clientProcesses[i] = arr.getInt(i);
 		}
 		
 		c.setClientProcesses(clientProcesses);
-		c.setGarbageCollectorInterval(json.getInt("garbageCollectorInterval"));
-		c.setJobStorageTime(json.getInt("jobStorageTime"));
-		c.setEventStorageTime(json.getInt("eventStorageTime"));
-		c.setWarningStorageTime(json.getInt("warningStorageTime"));
-		c.setMaxDescriptionStorageSize(json.getInt("maxDescriptionStorageSize"));
-		
-		c.setDefaultJobPriority((float) json.getDouble("defaultJobPriority"));
-		
-		
-		
-		c.setDefaultWallClockLimit(json.getString("default-wallclock-limit"));
-		c.setDefaultContentMode(json.getString("defaultContentMode"));
-		
-		c.setDescriptionsbasePath(json.getString("descriptionsBasePath"));
-		c.setDatabaseBasePath(json.getString("databaseBasePath"));
-		c.setMallobBasePath(json.getString("mallobBasePath"));
-		c.setResultBasePath(json.getString("resultBasePath"));
-		c.setDataBaseUsername(json.getString("databaseUsername"));
-		c.setDatabasePassword(json.getString("databasePassword"));
+
+		//get json object for the storage values
+		JSONObject storageJson = json.getJSONObject("storage");
+
+		c.setGarbageCollectorInterval(storageJson.getInt("garbageCollectorInterval"));
+		c.setJobStorageTime(storageJson.getInt("jobStorageTime"));
+		c.setEventStorageTime(storageJson.getInt("eventStorageTime"));
+		c.setWarningStorageTime(storageJson.getInt("warningStorageTime"));
+		c.setMaxDescriptionStorageSize(storageJson.getInt("maxDescriptionStorageSize"));
+
+
+		//get the json object for the default values
+		JSONObject defaultsJson = json.getJSONObject("defaults");
+
+		c.setDefaultJobPriority((float) defaultsJson.getDouble("priority"));
+		c.setDefaultWallClockLimit(defaultsJson.getString("wallclockLimit"));
+		c.setDefaultContentMode(defaultsJson.getString("contentMode"));
+
+		//get the json object for the path values
+		JSONObject pathsJson = json.getJSONObject("paths");
+
+		c.setDescriptionsbasePath(pathsJson.getString("descriptionsBasePath"));
+		c.setDatabaseBasePath(pathsJson.getString("databaseBasePath"));
+		c.setMallobBasePath(pathsJson.getString("mallobBasePath"));
+		c.setResultBasePath(pathsJson.getString("resultBasePath"));
+
+		//get the json object for the database values
+		JSONObject databaseJson = json.getJSONObject("database");
+
+		c.setDataBaseUsername(databaseJson.getString("databaseUsername"));
+		c.setDatabasePassword(databaseJson.getString("databasePassword"));
 	}
 
 	

@@ -62,23 +62,33 @@ public class FallobConfigReaderTests {
 		o.put("amountProcesses", AMOUNT_PROCESSES);
 		o.put("maxJobsTotal", MAX_JOBS);
 		o.put("maxJobsUser", MAXJOBSUSER);
-		o.put("clientProcesses", new JSONArray(CLIENT_PROCESSES));
-		o.put("garbageCollectorInterval", GARBAGECOLLECTINTERVAL);
-		o.put("jobStorageTime", STORAGETIME);
-		o.put("eventStorageTime", STORAGETIME);
-		o.put("warningStorageTime", STORAGETIME);
-		o.put("maxDescriptionStorageSize", MAX_DESCRIPTION_SIZE);
-		o.put("defaultJobPriority", DEFAULTJOBPRIORITY);
-		o.put("default-wallclock-limit", WC_LIMIT);
-		o.put("defaultContentMode", CONTENT_MODE);
-		o.put("descriptionsBasePath", DESCRIPTION_BASE_PATH);
-		o.put("mallobBasePath", MALLOB_BASE_PATH);
-		o.put("resultBasePath", RESULT_BASE_PATH);
-		o.put("databaseBasePath", DATABASE_BASE_PATH);
-		o.put("databaseUsername", DB_USERNAME);
-		o.put("databasePassword", DB_PW);
+		o.put("client-processes", new JSONArray(CLIENT_PROCESSES));
 
+		JSONObject storage = new JSONObject();
+		storage.put("garbageCollectorInterval", GARBAGECOLLECTINTERVAL);
+		storage.put("jobStorageTime", STORAGETIME);
+		storage.put("eventStorageTime", STORAGETIME);
+		storage.put("warningStorageTime", STORAGETIME);
+		storage.put("maxDescriptionStorageSize", MAX_DESCRIPTION_SIZE);
+		o.put("storage", storage);
 
+		JSONObject defaults = new JSONObject();
+		defaults.put("priority", DEFAULTJOBPRIORITY);
+		defaults.put("wallclockLimit", WC_LIMIT);
+		defaults.put("contentMode", CONTENT_MODE);
+		o.put("defaults", defaults);
+
+		JSONObject paths = new JSONObject();
+		paths.put("descriptionsBasePath", DESCRIPTION_BASE_PATH);
+		paths.put("mallobBasePath", MALLOB_BASE_PATH);
+		paths.put("resultBasePath", RESULT_BASE_PATH);
+		paths.put("databaseBasePath", DATABASE_BASE_PATH);
+		o.put("paths", paths);
+
+		JSONObject database = new JSONObject();
+		database.put("databaseUsername", DB_USERNAME);
+		database.put("databasePassword", DB_PW);
+		o.put("database", database);
 
 		return o;
 	}

@@ -15,9 +15,7 @@ import edu.kit.fallob.configuration.FallobConfigReader;
 public class BackendApplication {
 
 	public static void main(String[] args) {
-		
-		/*
-		 * -----------------------Production code.Ddo not use until integration-tests begin--------------------------
+
 		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {
@@ -33,7 +31,7 @@ public class BackendApplication {
 			e.printStackTrace();
 			return;
 		}
-		*/
+
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}
