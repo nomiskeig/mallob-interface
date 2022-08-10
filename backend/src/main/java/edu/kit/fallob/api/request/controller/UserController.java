@@ -27,6 +27,8 @@ public class UserController {
     @Autowired
     private FallobCommands fallobCommand;
 
+    private static final String REGISTER_UNSUCCESSFUL = "Registering was unsuccessful";
+
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {
         boolean successful;
@@ -41,7 +43,7 @@ public class UserController {
         }
 
         if (!successful) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registering was unsuccessful");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(REGISTER_UNSUCCESSFUL);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }

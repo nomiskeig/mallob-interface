@@ -29,9 +29,16 @@ public class JobSubmitController {
     @Autowired
     private JobSubmitCommands jobSubmitCommand;
 
+    private static final String USERNAME = "username";
+
+    private static final String JOB_DESCRIPTION_EMPTY = "Job description can not be empty";
+
+    private static final String FILE_ERROR = "An error occurred while creating a file with the job description.";
+
+    private static final String FILE_NAME = "jobDescription.cnf";
     @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         URL url;
         File file;
         try {
@@ -64,7 +71,7 @@ public class JobSubmitController {
 
     @PostMapping("/exclusive/config")
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         int jobNewId;
         try {
             jobNewId = jobSubmitCommand.submitJobWithDescriptionID(username, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration());
@@ -80,9 +87,9 @@ public class JobSubmitController {
     }
     @PostMapping("/inclusive")
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<File> files = new ArrayList<>();
-        File file = new File("jobDescription.cnf");
+        File file = new File(FILE_NAME);
         try {
             FileWriter myWriter = new FileWriter(file);
             List<String> lines = request.getJobDescription();
@@ -98,7 +105,7 @@ public class JobSubmitController {
             files.add(file);
             myWriter.close();
         } catch (IOException e) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, "An error occurred while creating a file with the job description.");
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, FILE_ERROR);
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
@@ -111,7 +118,7 @@ public class JobSubmitController {
 
     @PostMapping("/restart/{jobId}")
     public ResponseEntity<Object> restartJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         int jobNewId;
         try {
             jobNewId = jobSubmitCommand.restartCanceledJob(username, jobId);
@@ -125,10 +132,9 @@ public class JobSubmitController {
     }
     @PostMapping("/exclusive/description")
     public ResponseEntity<Object> saveDescription(MultipartFile file, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         if (file.isEmpty()) {
-            String message = "Job description can not be empty";
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, message);
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         int descriptionId;

@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/system/mallob")
 public class MallobStartStopController {
 
+    private static final String SYSTEM_RUNNING = "The system is already running";
+
+    private static final String SYSTEM_NOT_RUNNING = "The system is not running";
+
     @Autowired
     private MallobCommands mallobCommands;
 
@@ -25,7 +29,7 @@ public class MallobStartStopController {
     public ResponseEntity<Object> stopMallob(){
         boolean successful = mallobCommands.stopMallob();
         if (!successful) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is not running");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(SYSTEM_NOT_RUNNING);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -33,7 +37,7 @@ public class MallobStartStopController {
     public ResponseEntity<Object> restartMallob(@RequestBody MallobStartStopRequest request){
         boolean successful = mallobCommands.stopMallob();
         if (!successful) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is not running");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(SYSTEM_NOT_RUNNING);
         }
         return startMallobHelper(request);
     }
@@ -48,7 +52,7 @@ public class MallobStartStopController {
         }
 
         if (!successful) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("The system is already running");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(SYSTEM_RUNNING);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
