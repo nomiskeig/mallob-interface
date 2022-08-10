@@ -19,6 +19,6 @@ public class FallobConfigurationController {
     public ResponseEntity<Object> getFallobConfiguration() {
             FallobConfiguration fallobConfig  = fallobConfigCommand.getFallobConfiguration();
             Defaults defaults = new Defaults(fallobConfig.getDefaultJobPriority(), fallobConfig.getDefaultWallClockLimit(), fallobConfig.getDefaultContentMode());
-            return ResponseEntity.ok(new FallobConfigurationsResponse(fallobConfig.getAmountProcesses(), fallobConfig.getStartTime(), defaults));
+            return ResponseEntity.ok(new FallobConfigurationsResponse(fallobConfig.getAmountProcesses(), fallobConfig.getStartTime().toString(), defaults));
     }
 }
