@@ -4,6 +4,7 @@ import './SubmitPage.scss';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
+import { Description } from '../../global/description/Description';
 import { Header } from '../../global/header/Header';
 import { JobContext } from '../../context/JobContextProvider';
 import { UserContext } from '../../context/UserContextProvider';
@@ -51,12 +52,12 @@ export function SubmitPage(props) {
 						title={param.name}
 						items={param.selectValues.map((value) => ({
 							onClick: () => {
-                                jobToSubmit[param.internalName] = value;
+								jobToSubmit[param.internalName] = value;
 								setJobToSubmit(jobToSubmit);
 							},
 							name: value,
 						}))}
-                        displaySelectedValue={true}
+						displaySelectedValue={true}
 					></DropdownComponent>
 				);
 		}
@@ -66,12 +67,6 @@ export function SubmitPage(props) {
 		.map((param) => {
 			return getInputBasedOnParam(param);
 		});
-	/*let optionalParamInputs = 
-		configParameters
-			.filter((param) => !param.required)
-			.filter((param, index) => selectedOptionalParams.includes(index))
-			.map((param) => getInputBasedOnParam(param))
-*/
 	let optionalParamInputs = selectedOptionalIndices.map((index) =>
 		getInputBasedOnParam(configParameters[index])
 	);
@@ -117,8 +112,9 @@ export function SubmitPage(props) {
 				</div>
 				<div className='row g-0 submitPageRow'>
 					<div className='col-12 col-md-6'>
-						<div className='submitPagePanel lowerPanel lowerPanelLeft'>
+						<div className='submitPagePanel lowerPanel lowerPanelLeft d-flex flex-column'>
 							<Header title={'Description'} />
+							<Description />
 						</div>
 					</div>
 					<div className='col-12 col-md-6'>
