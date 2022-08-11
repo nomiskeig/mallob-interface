@@ -111,13 +111,13 @@ export function SubmitPage(props) {
 					</div>
 				</div>
 				<div className='row g-0 submitPageRow'>
-					<div className='col-12 col-md-6'>
+					<div className='col-12 col-md-6 submitPageCol'>
 						<div className='submitPagePanel lowerPanel lowerPanelLeft d-flex flex-column'>
 							<Header title={'Description'} />
 							<Description />
 						</div>
 					</div>
-					<div className='col-12 col-md-6'>
+					<div className='col-12 col-md-6 submitPageCol'>
 						<div className='submitPagePanel lowerPanel lowerPanelRight'>
 							<Header title={'Dependencies'} />
 							<DependencyTable
