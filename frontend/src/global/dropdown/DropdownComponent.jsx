@@ -3,6 +3,13 @@ import { useState } from 'react';
 
 export function DropdownComponent(props) {
 	let [selected, setSelected] = useState(null);
+	let displayedText = 'Select';
+	if (props.displaySelectedValue && selected !== null) {
+		displayedText = selected;
+	} else if (props.default && selected === null) {
+		displayedText = props.default;
+	}
+
 	return (
 		<div className='dropdown dropdownComponentContainer'>
 			<div style={{ textAlign: 'left' }}>{props.title}</div>
@@ -18,9 +25,7 @@ export function DropdownComponent(props) {
 						color: 'black',
 					}}
 				>
-					{props.displaySelectedValue && selected !== null
-						? selected
-						: 'Select'}
+					{displayedText}
 				</button>
 				<ul className='dropdown-menu' aria-labelledby='dropdownMenu'>
 					{props.items.map((item) => {
