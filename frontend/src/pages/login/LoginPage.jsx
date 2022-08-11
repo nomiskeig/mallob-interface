@@ -79,7 +79,7 @@ export function LoginPage(props) {
     }
 
     return (
-        <div className="container py-5 loginPage">
+        <div className="py-5 loginPage">
             <div>
                 <div class="text-center">
                     <h1 class="mt-1 mb-5 pb-1 loginSlogan">Welcome to Mallob!</h1>
