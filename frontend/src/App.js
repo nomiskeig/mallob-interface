@@ -18,6 +18,7 @@ import {
 } from './global/navbar/Navbar';
 import { NotFoundPage } from './pages/notFound/NotFoundPage';
 import { LoginPage } from './pages/login/LoginPage';
+import { AdminPage } from './pages/admin/AdminPage';
 
 class App extends React.Component {
 	constructor(props) {
@@ -34,6 +35,7 @@ class App extends React.Component {
 								<BrowserRouter>
 									<Routes>
 										<Route path='/login' element={<LoginPage />} />
+
 										<Route
 											path='/visualization'
 											element={
@@ -62,13 +64,17 @@ class App extends React.Component {
 													<Navbar highlight={PAGE_SUBMIT} />
 												</div>
 											}
+											
 										/>
+
 										<Route
 											path='/admin'
 											element={
 												<div>
 													<Navbar highlight={PAGE_ADMIN} />
+													<AdminPage />
 												</div>
+
 											}
 										/>
 										<Route

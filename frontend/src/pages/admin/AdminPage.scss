@@ -1,0 +1,52 @@
+.registerPage{
+    background-color:#33333d;
+    margin:0%;
+    margin-left:0%;
+    margin-right:0%;
+
+    width: 100%;
+    width: 100vw;
+    height: 100%;
+}
+
+.pageContent{
+    background-color: #555564;
+    padding: 3%;
+}
+
+.separator{
+    margin: 0;
+    color: #33333d;
+}
+
+.warnings{
+    background-color:white;
+    width: 50%;
+    border-radius:2%;
+    padding: 1%;
+    background-color: orange;
+}
+
+.navbar{
+    width: 100%;
+}
+
+.warningsElement{
+    width: 100%;
+    height: 20%;
+    padding-top: 1%;
+    text-align: left;
+    padding-left: 1%;
+}
+
+.warningsElementOne{
+    background-color: lightgrey;
+}
+
+.warningsElementTwo{
+    background-color: white;
+}
+
+//navbar 
+nav ul{height:200px; width:18%;}
+nav ul{overflow:hidden; overflow-y:scroll;}

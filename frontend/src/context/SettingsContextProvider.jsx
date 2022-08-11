@@ -23,7 +23,7 @@ export function SettingsContextProvider({ children }) {
 		//	setSettings(devSettings);
 		//	setLoaded(true);
 		//} else {
-			fetchSettings();
+		//	fetchSettings();
 		//}
 	}, [infoContext] );
 
