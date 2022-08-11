@@ -3,7 +3,8 @@ import {UserContext} from '../../context/UserContextProvider'
 import {useNavigate} from 'react-router-dom';
 import {Button} from '../../global/buttons/Button';
 import {InputLabel} from '../../global/textfields/Textfield';
-import { Link } from 'react-router-dom';
+import './../login/LoginPage.scss'
+
 
 
 
@@ -57,19 +58,26 @@ export function RegisterPage(props) {
     }
 
     return (
-      <div className="h-100 d-flex align-items-center justify-content-center" id="logindiv">
+        <div className="py-5 loginPage">
+            <div>
+                <div class="text-center">
+                    <h1 class="mt-1 mb-5 pb-1 loginSlogan">Sign up!</h1>
+                </div>
+                <div className="d-flex align-items-center justify-content-center container h-100 formContainer" id="logindiv">
 
-            <form>
-                {getInputLabel("youremail@bsp.exmpl", handleChangeEmail, "email")}
-                {getInputLabel("username", handleChangeUsername, "text")}
-                {getInputLabel("password", handleChangePassword, "password")}
-                {getInputLabel("confirm password", handleChangeConfirmPassword, "password")}
+                    <form>
 
+                    {getInputLabel("youremail@bsp.exmpl", handleChangeEmail, "email")}
+                    {getInputLabel("username", handleChangeUsername, "text")}
+                    {getInputLabel("password", handleChangePassword, "password")}
+                    {getInputLabel("confirm password", handleChangeConfirmPassword, "password")}
                 <div>
                     <Button text={"Register!"} onClick={register} className="btn btn-primary btn-lg btn-block" />
                     <Button text={"Back to Login"} onClick={goBackToLogin} className="btn-link btn btn-primary btn-lg btn-block" />
                 </div>
-            </form>
-      </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 	);
 }
