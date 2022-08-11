@@ -7,20 +7,69 @@ import { Link } from 'react-router-dom';
 
 
 
-export function LoginPage(props) {
+export function RegisterPage(props) {
     let userContext = useContext(UserContext)
     let navigate = useNavigate();
 
+    let emailContent = "";
+    let usernameContent = "";
+    let passwordContent = "";
+    let confirmPasswordContent = "";
 
-    let btext = "Login";
-    const username = "username";
-    const password = "password";
+    const handleChangeEmail = event =>{
+      emailContent = event.target.value;
+  }
+
+  const handleChangeUsername = event =>{
+        usernameContent = event.target.value;
+  }
+
+  const handleChangePassword = event =>{
+      passwordContent = event.target.value;
+  }
+
+  const handleChangeConfirmPassword = event =>{
+      confirmPasswordContent = event.target.value;
+  }
+
+  
+  function register(){
+      if (passwordContent !== confirmPasswordContent){
+            alert("Password does not match confirmation");
+      }
+      alert("register!");
+  }
 
 
+  
+  function getInputLabel(placeholder,changeHandler, inputType){
+    return (
+        <div class="form-outline mb-4">
+        <InputLabel placeholder={placeholder} onChange={changeHandler} type={inputType} className="form-control form-control-lg"></InputLabel>
+        </div>
+    );
+
+}
+
+
+    function goBackToLogin(){
+      navigate('/login/');
+    }
 
     return (
-		<div className="h-100 d-flex align-items-center justify-content-center">
-            <p>This is the reigster page</p>
-		</div>
+      <div className="h-100 d-flex align-items-center justify-content-center" id="logindiv">
+
+            <form>
+                {getInputLabel("youremail@bsp.exmpl", handleChangeEmail, "email")}
+                {getInputLabel("username", handleChangeUsername, "text")}
+                {getInputLabel("password", handleChangePassword, "password")}
+                {getInputLabel("confirm password", handleChangeConfirmPassword, "password")}
+
+                <div>
+                    <Button text={"Register!"} onClick={register} className="btn btn-primary btn-lg btn-block" />
+                    <Button text={"Back to Login"} onClick={goBackToLogin} className="btn-link btn btn-primary btn-lg btn-block" />
+                </div>
+            </form>
+      </div>
 	);
 }
