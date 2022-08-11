@@ -33,7 +33,7 @@ public class UserController {
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {
         boolean successful;
         try {
-            successful = fallobCommand.register(request.getEmail(), request.getUsername(), request.getPassword());
+            successful = fallobCommand.register(request.getUsername(), request.getPassword(), request.getEmail());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
