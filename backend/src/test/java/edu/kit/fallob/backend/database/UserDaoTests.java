@@ -44,6 +44,10 @@ public class UserDaoTests {
             this.userDao = daoFactory.getUserDao();
             this.jobDao = daoFactory.getJobDao();
         }
+
+        //set verified to true because it's always set to true for the integration tests and otherwise the test fail
+        TEST_USER.setVerified(true);
+        TEST_ADMIN.setVerified(true);
     }
 
     @Test
