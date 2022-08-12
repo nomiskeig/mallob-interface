@@ -16,7 +16,6 @@ $panelBorderRadius: 10px;
 }
 .submitPagePanel {
     background-color: $backgroundColorPanel;
-    margin: auto;
     height: calc(100% - 40px);
     width: 100%;
     border-radius: $panelBorderRadius;
@@ -27,6 +26,7 @@ $panelBorderRadius: 10px;
 .lowerPanel {
     width: calc(100% - 10px);
     margin-top: 10px;
+    height: calc(100% - 70px);
 }
 
 .lowerPanelLeft {

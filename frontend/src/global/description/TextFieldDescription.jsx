@@ -9,12 +9,14 @@ export function TextFieldDescription(props) {
 		let newDescriptions = [...descriptions];
 		newDescriptions[index] = newValue;
 		setDescriptions(newDescriptions);
+        props.setDescriptions(newDescriptions)
 	}
     function addDescription() {
         let newDescriptions = [...descriptions];
         newDescriptions.push('');
         setCurrentDescription(newDescriptions.length -1);
         setDescriptions(newDescriptions);
+        
     }
 	console.log(descriptions);
 	let textFieldPickerButtons = descriptions.map((description, index) => {

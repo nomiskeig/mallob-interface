@@ -10,7 +10,12 @@ export const configParameters = [
         index: 0,
         required: false,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 	},
 	{
 		name: 'Application',
@@ -22,8 +27,17 @@ export const configParameters = [
         inputType: INPUT_TYPE_SELECT,
         selectValues: ['SAT', 'DUMMY', 'KMEANS'],
         showOnJobPage: true,
-        updateSubmitJob: (job, newValue) => {
-            job['application'] = newValue;
+        validateValue: (value) => {
+            if (value === undefined) {
+                return {
+                    isValid: false,
+                    reason: 'Application is required.'
+                }
+            }
+            return {
+                isValid: true
+            }
+
         }
 
 	},
@@ -35,7 +49,12 @@ export const configParameters = [
         index: 2,
         required: false,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 
 	},
 	{
@@ -46,7 +65,12 @@ export const configParameters = [
         index: 3,
         required: false,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 	},
 	{
 		name: 'CPU-Limit',
@@ -56,7 +80,12 @@ export const configParameters = [
         index: 4,
         required: false,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 	},
 	{
 		name: 'Arrival',
@@ -66,7 +95,12 @@ export const configParameters = [
         index: 5,
         required: false,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 	},
 	{
 		name: 'Incremental',
@@ -76,7 +110,12 @@ export const configParameters = [
         index: 6,
         required: false,
         inputType: INPUT_TYPE_BOOLEAN,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 
 	},
 	{
@@ -87,7 +126,12 @@ export const configParameters = [
         index: 7,
         required: false,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 	},
 	{
 		name: 'Content-Mode',
@@ -98,7 +142,12 @@ export const configParameters = [
         required: false,
         inputType: INPUT_TYPE_SELECT,
         selectValues: ['raw', 'text'],
-        showOnJobPage: true
+        showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        }
 	},
     {
         name: 'Name',
@@ -107,7 +156,16 @@ export const configParameters = [
         index: 9,
         width: 200,
         validateValue: (value) => {
-            return true;
+           if (value === undefined  || value === '')  {
+                return {
+                    isValid: false,
+                    reason: 'Name is required.'
+                }
+            }
+            return {
+                isValid: true
+            }
+
         },
         required: true,
         inputType: INPUT_TYPE_TEXT,
