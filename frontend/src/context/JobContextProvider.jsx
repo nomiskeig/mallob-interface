@@ -105,7 +105,6 @@ export function JobContextProvider({ children }) {
 			},
 		})
 			.then((res) => {
-				// TODO: UPdate to useReducer
 				dispatch({ type: 'setJobs', jobs: res.data.information });
 			})
 			.catch((err) =>
@@ -116,6 +115,7 @@ export function JobContextProvider({ children }) {
 			);
 	}
     function loadAllJobsOfUser() {
+        console.log('load all jobs of user');
         this.fetchMostJobsPossible(true);
 
     }

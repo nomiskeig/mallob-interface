@@ -32,6 +32,7 @@ export function JobTablePage(props) {
                                 console.log(id);
 								setDisplayedJobID(id);
 							}}
+                            refresh={() => jobContext.loadAllJobsOfUser()}
 						></JobTable>
 					</div>
 				</div>

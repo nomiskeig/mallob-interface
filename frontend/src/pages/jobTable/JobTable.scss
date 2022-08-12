@@ -1,4 +1,4 @@
-$controlBarHeight: 80px;
+$controlBarHeight: 60px;
 
 .dataGridContainer {
     height: 100%;
@@ -6,6 +6,7 @@ $controlBarHeight: 80px;
 
 .controlBar  {
     height: $controlBarHeight;
+    margin-bottom: 10px;
 }
 .dataGridWrapper {
     height: calc(100% - $controlBarHeight);
@@ -13,7 +14,7 @@ $controlBarHeight: 80px;
 }
 
 .showJobsLabel {
-    height: 10px;
+    height: 20px;
 }
 
 

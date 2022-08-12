@@ -37,49 +37,47 @@ export function JobTable(props) {
 		};
 	});
 	function toggleSelectedJob(jobID) {
-        let newSelectedJobs = [...selectedJobs];
-        if (selectedJobs.includes(jobID)) {
-            // remove job
-            let index = selectedJobs.indexOf(jobID);
-            newSelectedJobs.splice(index, 1);
-            setSelectedJobs(newSelectedJobs);
-        } else {
-            newSelectedJobs.push(jobID);
-            setSelectedJobs(newSelectedJobs)
-        }
-
-        
-    }
+		let newSelectedJobs = [...selectedJobs];
+		if (selectedJobs.includes(jobID)) {
+			// remove job
+			let index = selectedJobs.indexOf(jobID);
+			newSelectedJobs.splice(index, 1);
+			setSelectedJobs(newSelectedJobs);
+		} else {
+			newSelectedJobs.push(jobID);
+			setSelectedJobs(newSelectedJobs);
+		}
+	}
 	function getHeaderButtons(index, name, internalName) {
 		return (
 			<div className='d-flex flex-row align-items-center  headerRender'>
 				<div className='me-auto'>{name}</div>
-					<React.Fragment>
-						<div disabled className='removeButton'>
-							<svg
-								onClick={() =>
-									setSelectedIndices(
-										selectedIndices.filter((indexFromArray) => {
-											if (index === indexFromArray) {
-												return false;
-											}
-											return true;
-										})
-									)
-								}
-								xmlns='http://www.w3.org/2000/svg'
-								width='16'
-								height='16'
-								fill='currentColor'
-								className='bi bi-x-circle removeButtonSVG'
-								viewBox='0 0 16 16'
-							>
-								<path d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z' />
-								<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
-							</svg>
-						</div>
-						<div className='tableHeaderSpacer'></div>
-					</React.Fragment>
+				<React.Fragment>
+					<div disabled className='removeButton'>
+						<svg
+							onClick={() =>
+								setSelectedIndices(
+									selectedIndices.filter((indexFromArray) => {
+										if (index === indexFromArray) {
+											return false;
+										}
+										return true;
+									})
+								)
+							}
+							xmlns='http://www.w3.org/2000/svg'
+							width='16'
+							height='16'
+							fill='currentColor'
+							className='bi bi-x-circle removeButtonSVG'
+							viewBox='0 0 16 16'
+						>
+							<path d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z' />
+							<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
+						</svg>
+					</div>
+					<div className='tableHeaderSpacer'></div>
+				</React.Fragment>
 			</div>
 		);
 	}
@@ -119,7 +117,7 @@ export function JobTable(props) {
 							className='form-check-intput'
 							type='checkbox'
 							checked={selectedJobs.includes(param.row.id)}
-                            onChange={() => toggleSelectedJob(param.row.id)}
+							onChange={() => toggleSelectedJob(param.row.id)}
 							value=''
 						></input>
 					</div>
@@ -166,14 +164,16 @@ export function JobTable(props) {
 
 	return (
 		<div className='dataGridContainer'>
-			<div className='controlBar d-flex flex-row align-content-end'>
+			<div className='controlBar d-flex flex-row align-items-end'>
 				<DropdownComponent
 					title={'Pick shown attributes'}
 					items={paramDropdownItems}
 				></DropdownComponent>
 				{isAdmin && (
 					<React.Fragment>
+						<div className='tableHeaderSpacer'></div>
 						<div className='showJobsLabel'>Show all jobs</div>
+						<div className='tableHeaderSpacer'></div>
 						<input
 							className='form-check-input'
 							type='checkbox'
@@ -181,6 +181,11 @@ export function JobTable(props) {
 							checked={!filterUser}
 							onChange={() => setFilterUser(!filterUser)}
 						></input>
+						<div className='tableHeaderSpacer'></div>
+
+						<button className='btn btn-primary' onClick={() => props.refresh()}>
+							refresh
+						</button>
 					</React.Fragment>
 				)}
 			</div>
