@@ -21,6 +21,9 @@ export function StatusLabel(props) {
 			color = '#0d6efd';
 			text = 'in progress';
 			break;
+        default:
+            color = 'red';
+            text= 'undefined'
 	}
 	return (
 		<div className='statusLabel' style={{ backgroundColor: color }}>

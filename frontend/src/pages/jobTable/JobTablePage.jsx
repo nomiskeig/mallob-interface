@@ -1,6 +1,6 @@
 import './JobTablePage.scss';
 import { JobTable } from './JobTable';
-import {JobPage} from '../jobPage/JobPage'
+import { JobPage } from '../jobPage/JobPage';
 import { JobContext } from '../../context/JobContextProvider';
 import { UserContext } from '../../context/UserContextProvider';
 
@@ -9,13 +9,10 @@ import { useEffect, useContext, useState } from 'react';
 export function JobTablePage(props) {
 	let jobContext = useContext(JobContext);
 	let userContext = useContext(UserContext);
-    console.log('should update')
-    console.log(jobContext.jobs)
 
 	useEffect(() => {
-        console.log('fetching')
-
 		jobContext.fetchMostJobsPossible();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	let jobs = jobContext.jobs;
 	let [displayedJobID, setDisplayedJobID] = useState(null);
@@ -29,10 +26,9 @@ export function JobTablePage(props) {
 							jobs={jobs}
 							user={userContext.user}
 							setClickedJob={(id) => {
-                                console.log(id);
 								setDisplayedJobID(id);
 							}}
-                            refresh={() => jobContext.loadAllJobsOfUser()}
+							refresh={() => jobContext.loadAllJobsOfUser()}
 						></JobTable>
 					</div>
 				</div>

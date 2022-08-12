@@ -1,18 +1,16 @@
 import './JobTable.scss';
 import { configParameters } from '../jobPage/Parameters';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
 import { ROLE_ADMIN } from '../../context/UserContextProvider';
 import { StatusLabel } from '../../global/statusLabel/StatusLabel';
 export function JobTable(props) {
-	let [rows, setRows] = useState([]);
-	let [columns, setColumns] = useState([]);
 	let [selectedIndices, setSelectedIndices] = useState([]);
 	let [selectedJobs, setSelectedJobs] = useState([]);
 	let [filterUser, setFilterUser] = useState(false);
 
-	let isAdmin = props.user.role == ROLE_ADMIN;
+	let isAdmin = props.user.role === ROLE_ADMIN;
 
 	let filteredConfigParams = configParameters.filter((param) => {
 		if (!selectedIndices.includes(param.index)) {
@@ -81,86 +79,73 @@ export function JobTable(props) {
 			</div>
 		);
 	}
-	useEffect(() => {
-		// create columns
-		let columns = [
-			{
-				field: 'id',
-				width: 100,
-				headerName: 'Job-ID',
-			},
-		];
-		columns = columns.concat(
-			filteredConfigParams.map((param) => {
-				return {
-					field: param.internalName,
-					width: param.width,
-					renderHeader: (params) => {
-						return getHeaderButtons(
-							param.index,
-							param.name,
-							param.internalName
-						);
-					},
-				};
-			})
-		);
-		columns.push({
-			field: 'status',
-			width: 200,
-			headerName: 'Status',
-			renderCell: (param) => {
-				return (
-					<div className='d-flex justify-content-around statusCell'>
-						<StatusLabel status={param.row.status} />
-						<input
-							className='form-check-intput'
-							type='checkbox'
-							checked={selectedJobs.includes(param.row.id)}
-							onChange={() => toggleSelectedJob(param.row.id)}
-							value=''
-						></input>
-					</div>
-				);
-			},
+	// create columns
+	let columns = [
+		{
+			field: 'id',
+			width: 100,
+			headerName: 'Job-ID',
+		},
+	];
+	columns = columns.concat(
+		filteredConfigParams.map((param) => {
+			return {
+				field: param.internalName,
+				width: param.width,
+				renderHeader: (params) => {
+					return getHeaderButtons(param.index, param.name, param.internalName);
+				},
+			};
+		})
+	);
+	columns.push({
+		field: 'status',
+		width: 200,
+		headerName: 'Status',
+		renderCell: (param) => {
+			return (
+				<div className='d-flex justify-content-around statusCell'>
+					<StatusLabel status={param.row.status} />
+					<input
+						className='form-check-intput'
+						type='checkbox'
+						checked={selectedJobs.includes(param.row.id)}
+						onChange={() => toggleSelectedJob(param.row.id)}
+						value=''
+					></input>
+				</div>
+			);
+		},
+	});
+
+	// calculate rows
+	if (!props.jobs) {
+		return;
+	}
+	let jobs = props.jobs;
+	if (filterUser) {
+		jobs = jobs.filter((job) => {
+			if (job.user === props.user.username) {
+				return true;
+			}
+			return false;
 		});
-
-		//columns[columns.length-2]['flex'] = 1;
-
-		setColumns(columns);
-	}, [selectedIndices, selectedJobs]);
-
-	useEffect(() => {
-		// calculate rows
-		if (!props.jobs) {
-			return;
-		}
-		let jobs = props.jobs;
-		if (filterUser) {
-			jobs = jobs.filter((job) => {
-				if (job.user === props.user.username) {
-					return true;
+	}
+	let rows = jobs.map((job) => {
+		let row = { id: job.jobID, status: job.status };
+		filteredConfigParams.forEach((param) => {
+			let value = job;
+			param.path.forEach((path) => {
+				value = value[path];
+				if (!value) {
+					return;
 				}
-				return false;
 			});
-		}
-		let rows = jobs.map((job) => {
-			let row = { id: job.jobID, status: job.status };
-			filteredConfigParams.forEach((param) => {
-				let value = job;
-				param.path.forEach((path) => {
-					value = value[path];
-					if (!value) {
-						return;
-					}
-				});
 
-				row[param.internalName] = value ? value : '';
-			});
-			return row;
+			row[param.internalName] = value ? value : '';
 		});
-		setRows(rows);
-	}, [props.jobs, selectedIndices, filterUser, selectedJobs]);
+		return row;
+	});
 
 	return (
 		<div className='dataGridContainer'>
@@ -200,7 +185,6 @@ export function JobTable(props) {
 						if (event.target.type === 'checkbox') {
 							return;
 						}
-						console.log(params, event);
 						props.setClickedJob(params.id);
 					}}
 					sx={{

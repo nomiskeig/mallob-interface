@@ -26,6 +26,9 @@ function getStatus(job) {
 		case 'cancelled':
 			status = JOB_STATUS_CANCELLED;
 			break;
+		default:
+			status = 'undefined';
+			break;
 	}
 	return status;
 }
@@ -40,7 +43,7 @@ export function JobPage(props) {
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 
-	let job = jobContext.jobs.find((job) => job.jobID == jobID);
+	let job = jobContext.jobs.find((job) => job.jobID === jobID);
 	useEffect(() => {
 		if (!loaded) {
 			jobContext.loadSingleJob(jobID);
@@ -54,35 +57,35 @@ export function JobPage(props) {
 		}
 	}, [loaded, loadedDependencies, jobContext, jobID, job]);
 
-	let parameterDisplayList = configParameters.filter(param => param.showOnJobPage).map((param) => {
-		if (!job) {
-			return;
-		}
-		let value = job;
-        console.log(param)
-		param.path.forEach((path) => {
-			value = value[path];
-			if (!value) {
-				return;
-			}
-		});
-		if (value) {
-			return (
-				<div className='singleParamDisplay'>
-					<InputWithLabel
-						disabled={true}
-						value={value}
-						labelText={param.name}
-					/>
-				</div>
-			);
-		}
-	});
-
+	let parameterDisplayList = [];
+	if (job) {
+		configParameters
+			.filter((param) => param.showOnJobPage)
+			.forEach((param) => {
+				let value = job;
+				param.path.forEach((path) => {
+					value = value[path];
+					if (!value) {
+						return;
+					}
+				});
+				if (value) {
+					parameterDisplayList.push(
+						<div className='singleParamDisplay'>
+							<InputWithLabel
+								disabled={true}
+								value={value}
+								labelText={param.name}
+							/>
+						</div>
+					);
+				}
+			});
+	}
 	let dependencies = [];
 	if (job && job.config.dependencies) {
 		job.config.dependencies.forEach((dep) => {
-			let depJob = jobContext.jobs.find((job) => job.jobID == dep);
+			let depJob = jobContext.jobs.find((job) => job.jobID === dep);
 			if (!depJob) {
 				return;
 			}
@@ -94,14 +97,18 @@ export function JobPage(props) {
 	let submitted = job ? job.submitTime : '';
 	let status = job ? getStatus(job) : null;
 
-
-    
 	return (
 		<div className={embedded ? 'embeddedPageContainer' : 'jobPageContainer'}>
 			<div className={embedded ? '' : 'marginContainer'}>
-				<div className={embedded ? '': 'row jobPageRow g-0'}>
+				<div className={embedded ? '' : 'row jobPageRow g-0'}>
 					<div className={embedded ? '' : 'col jobPageColumn'}>
-						<div className={embedded ? '': 'jobPagePanel upperPanel infoPanel d-flex flex-column'}>
+						<div
+							className={
+								embedded
+									? ''
+									: 'jobPagePanel upperPanel infoPanel d-flex flex-column'
+							}
+						>
 							<Header title={name}>
 								{embedded && <JobPageButton jobID={jobID}></JobPageButton>}
 							</Header>
@@ -122,14 +129,32 @@ export function JobPage(props) {
 						</div>
 					</div>
 				</div>
-				<div className={embedded ? 'd-flex flex-column-reverse' : 'lowerPanelContainer row jobPageRow g-0'}>
+				<div
+					className={
+						embedded
+							? 'd-flex flex-column-reverse'
+							: 'lowerPanelContainer row jobPageRow g-0'
+					}
+				>
 					<div className={embedded ? '' : 'col-12 col-md-6'}>
-						<div className={embedded ? '': 'jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel'}>
+						<div
+							className={
+								embedded
+									? ''
+									: 'jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel'
+							}
+						>
 							<Header title={'Description'} />
 						</div>
 					</div>
-					<div className={embedded ? '' :'col-12 col-md-6'}>
-						<div className={embedded ? '' :'jobPagePanel lowerPanel lowerPanelRight dependencyPanel'}>
+					<div className={embedded ? '' : 'col-12 col-md-6'}>
+						<div
+							className={
+								embedded
+									? ''
+									: 'jobPagePanel lowerPanel lowerPanelRight dependencyPanel'
+							}
+						>
 							<Header title={'Dependencies'} />
 							<DependencyTable dependencies={dependencies} />
 						</div>

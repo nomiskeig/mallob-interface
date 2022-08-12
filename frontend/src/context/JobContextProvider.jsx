@@ -1,10 +1,4 @@
-import React, {
-	useContext,
-	useState,
-	createContext,
-	useEffect,
-	useReducer,
-} from 'react';
+import React, { useContext, createContext, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
 import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import axios from 'axios';
@@ -41,6 +35,7 @@ const dep1Job = {
 		name: 'dep1name',
 	},
 	jobID: 2,
+    status: 'inProgress'
 };
 
 const dep2Job = {
@@ -61,18 +56,19 @@ function reducer(jobs, action) {
 		case 'addJob':
 			return [...jobs, action.newJob];
 		case 'addOrReplaceJob':
-			let index = jobs.findIndex((job) => job.jobID == action.newJob.jobID);
-            console.log('index from addOrReplace', index)
-			if (index != undefined) {
+			let index = jobs.findIndex((job) => job.jobID === action.newJob.jobID);
+			console.log('index from addOrReplace', index);
+			if (index !== undefined) {
 				let newJobs = [...jobs];
 				newJobs.splice(index, 1, action.newJob);
-                console.log(newJobs)
+				console.log(newJobs);
 				return newJobs;
 			}
 			return [...jobs, action.newJob];
 		case 'setJobs':
 			// TODO: maybe keep jobs wich  are not in new jobs
 			return action.jobs;
+        default: return jobs
 	}
 }
 export const JobContext = createContext({});
@@ -114,30 +110,29 @@ export function JobContextProvider({ children }) {
 				)
 			);
 	}
-    function loadAllJobsOfUser() {
-        console.log('load all jobs of user');
-        this.fetchMostJobsPossible(true);
-
-    }
+	function loadAllJobsOfUser() {
+		console.log('load all jobs of user');
+		this.fetchMostJobsPossible(true);
+	}
 
 	// loads a single job from the backend and stores it into state;
 	// replaces the information in state if its currently in there
 	// TODO: does not actually replace the job if its there
 	function loadSingleJob(jobID) {
 		if (process.env.NODE_ENV === 'development') {
-			if (jobID == 1) {
+			if (jobID === 1) {
 				dispatch({ type: 'addOrReplaceJob', newJob: testJob });
 				return;
 			}
-			if (jobID == 2) {
+			if (jobID === 2) {
 				dispatch({ type: 'addOrReplaceJob', newJob: dep1Job });
 				return;
 			}
-			if (jobID == 3) {
+			if (jobID === 3) {
 				dispatch({ type: 'addOrReplaceJob', newJob: dep2Job });
 				return;
 			}
-			if (jobID == 4) {
+			if (jobID === 4) {
 				dispatch({ type: 'addOrReplaceJob', newJob: dep3Job });
 				return;
 			}
@@ -179,7 +174,7 @@ export function JobContextProvider({ children }) {
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,
 				loadSingleJob: loadSingleJob,
-                loadAllJobsOfUser: loadAllJobsOfUser
+				loadAllJobsOfUser: loadAllJobsOfUser,
 			}}
 		>
 			{children}

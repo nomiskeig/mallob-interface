@@ -18,7 +18,6 @@ export function TextFieldDescription(props) {
         setDescriptions(newDescriptions);
         
     }
-	console.log(descriptions);
 	let textFieldPickerButtons = descriptions.map((description, index) => {
 		return (
 			<button

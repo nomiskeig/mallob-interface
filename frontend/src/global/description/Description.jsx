@@ -1,7 +1,7 @@
 import { DropdownComponent } from '../dropdown/DropdownComponent';
 import { TextFieldDescription } from './TextFieldDescription';
 import { FileDescription } from './FileDescription';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './Description.scss';
 export const DESCRIPTION_TEXT_FIELD = 'textFieldDescription';
 export const DESCRIPTION_FILE = 'fileDescription';
@@ -37,6 +37,8 @@ export function Description(props) {
 				<FileDescription setDescriptions={props.setDescriptions} />
 			);
 			break;
+        default:
+            specificDescription = <React.Fragment></React.Fragment>
 	}
 	return (
 		<div className='descriptionContainer d-flex flex-column'>

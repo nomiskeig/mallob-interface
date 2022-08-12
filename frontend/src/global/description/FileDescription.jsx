@@ -15,7 +15,7 @@ export function FileDescription(props) {
 		plainFiles.forEach((file) => newFiles.push(file));
 		setFiles(newFiles);
 		clear();
-	}, [plainFiles]);
+	}, [plainFiles, clear, files]);
 	let selectedFilesDisplay = files.map((file) => {
 		return <div className='selectedFileDisplay'>{file.name}</div>;
 	});

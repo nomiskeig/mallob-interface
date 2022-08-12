@@ -51,6 +51,7 @@ export function SubmitPage(props) {
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
 	useEffect(() => {
 		jobContext.loadAllJobsOfUser();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	let ownJobs = jobContext.jobs.filter(
 		(job) => job.user === userContext.user.username
@@ -120,6 +121,10 @@ export function SubmitPage(props) {
 						displaySelectedValue={true}
 					></DropdownComponent>
 				);
+			case INPUT_TYPE_BOOLEAN:
+				return <div>Boolean input</div>;
+			default:
+				return <div></div>;
 		}
 	}
 	let requiredParamsInputs = configParameters
@@ -198,14 +203,11 @@ export function SubmitPage(props) {
 						<div className='submitButtonContainer flex-grow-1 d-flex flex-row-reverse'>
 							<button
 								className='btn btn-success submitButton'
-								onClick={() =>
-									submitJobInclusive(
-										jobToSubmit,
-										descriptions,
-										dependencies,
-										infoContext
-									)
-								}
+								onClick={() => {
+									if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
+										submitJobInclusive();
+									}
+								}}
 							>
 								Submit job
 							</button>
