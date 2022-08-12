@@ -2,6 +2,7 @@ import {useContext} from 'react';
 import {UserContext} from '../../context/UserContextProvider'
 import {useNavigate} from 'react-router-dom';
 import './AdminPage.scss'
+import { Button } from '../../global/buttons/Button';
 
 
 export function AdminPage(props) {
@@ -58,16 +59,68 @@ export function AdminPage(props) {
         );
     }
 
+    function startMallob(){
+        //not yet implemented
+    }
+
+    function stopMallob(){
+        //not yet implemented
+    }
+
+    function restartMallob(){
+        //not yet implemented
+    }
+
+    function getMallobButtons(){
+        return(
+            <div>
+                <div>
+                <Button onClick={startMallob} color="#A5C9CA" text="Start Mallob" className="mallobButton"></Button>
+                </div>
+                <div>
+                <Button onClick={stopMallob} text="Stop Mallob" className="mallobButton"></Button>
+
+                </div>
+                <div>
+                <Button onClick={restartMallob} text="Restart Mallob" className="mallobButton"></Button>
+
+                </div>
+            </div>
+        );
+    }
+
+    function getContainerTitle(title){
+        return(
+            <div className="diagnosticsTitle">
+                <h3>{title}</h3>
+                <hr className="separator"></hr>
+            </div>
+        );
+    }
+
+    function getDiagnosticsContainer(title, content, specialClassName){
+        if (specialClassName == null){
+            //return ordinary diagnostics container
+            return(
+                <div className="diagnosticsContainer">
+                    {getContainerTitle(title)}
+                    {content}
+                </div>
+            );
+        }
+        return(
+            <div className={specialClassName}>
+                {getContainerTitle(title)}
+                {content}
+            </div>
+        );
+    }
+
 	return (
 		<div className="py-5 registerPage">
             <div className="pageContent">
-                <div className="warnings">
-                    <div className="warningsTitle">
-                        <h3>Warnings</h3>
-                        <hr className="separator"></hr>
-                    </div>
-                    {getWarningsElement()}
-                </div>
+                {getDiagnosticsContainer("Warnings", getWarningsElement(), "warnings")}
+                {getDiagnosticsContainer("Mallob", getMallobButtons(), "mallobButtons")}
             </div>
 
         </div>

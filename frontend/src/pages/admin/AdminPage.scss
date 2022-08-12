@@ -12,6 +12,8 @@
 .pageContent{
     background-color: #555564;
     padding: 3%;
+    margin: 2%;
+    border-radius: 10px;
 }
 
 .separator{
@@ -22,13 +24,33 @@
 .warnings{
     background-color:white;
     width: 50%;
-    border-radius:2%;
+    border-radius:10px;
     padding: 1%;
     background-color: orange;
 }
 
+.diagnosticsContainer{
+    background-color:white;
+    width: 50%;
+    border-radius: 10px;
+    padding: 1%;
+}
+
 .navbar{
     width: 100%;
+}
+
+.mallobButton{
+    font-size: 100%;
+    margin: 1%;
+    width: 80%;
+}
+
+.mallobButtons{
+    width: 20%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 1%;
 }
 
 .warningsElement{
