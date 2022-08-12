@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Changed the register command">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Added claims to jwt token and fixed user verification">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/UserRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/UserRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/FallobCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/FallobCommands.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobSubmitCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobSubmitCommands.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +87,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.BackendApplication (1)">
+  <component name="RunManager" selected="JUnit.WebLayerTest">
     <configuration name="WebLayerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -227,7 +221,7 @@
       <workItem from="1660076928799" duration="18305000" />
       <workItem from="1660139741526" duration="481000" />
       <workItem from="1660143345914" duration="27000" />
-      <workItem from="1660303843976" duration="12003000" />
+      <workItem from="1660303843976" duration="12600000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -397,7 +391,14 @@
       <option name="project" value="LOCAL" />
       <updated>1660139945147</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Added claims to jwt token and fixed user verification">
+      <created>1660318721871</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1660318721871</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -455,7 +456,8 @@
     <MESSAGE value="General fixes and made sure the server runs with the implemented by mike commands" />
     <MESSAGE value="Implemented register command, added LocalDateTime parsing to MallobEventsController and refined the WebLayerTest class" />
     <MESSAGE value="Changed the register command" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed the register command" />
+    <MESSAGE value="Added claims to jwt token and fixed user verification" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added claims to jwt token and fixed user verification" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
