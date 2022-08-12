@@ -348,8 +348,8 @@ public class WebLayerTest {
     @Test
     public void registerSuccessfully() throws Exception {
         
-        when(fallobCommands.register(EMAIL, USERNAME, PASSWORD)).thenReturn(true);
-        UserRequest userRequest = new UserRequest(EMAIL, USERNAME, PASSWORD);
+        when(fallobCommands.register(USERNAME, PASSWORD, EMAIL)).thenReturn(true);
+        UserRequest userRequest = new UserRequest(USERNAME, PASSWORD, EMAIL);
 
         this.mockMvc.perform(post("/api/v1/users/register").content(objectMapper.writeValueAsString(userRequest))
                         .contentType("application/json")).andDo(print())

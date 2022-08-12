@@ -13,7 +13,7 @@ public class UserRequest {
     }
 
 
-    public UserRequest(String email, String username, String password) {
+    public UserRequest(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;

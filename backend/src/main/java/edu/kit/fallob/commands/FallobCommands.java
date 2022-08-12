@@ -29,8 +29,6 @@ public class FallobCommands implements UserDetailsService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	private static final String USER_NOT_VERIFIED = "User not verified";
-
 	private static final String DUPLICATE_USERNAME = "Username already exists";
 
 	private static final String DUPLICATE_EMAIL = "Email already exists";
@@ -67,11 +65,13 @@ public class FallobCommands implements UserDetailsService {
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 
-		if (!user.isVerified()) {
-			throw new UsernameNotFoundException(USER_NOT_VERIFIED);
-		}
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    	authorities.add(new SimpleGrantedAuthority(user.toString()));
+    	authorities.add(new SimpleGrantedAuthority(user.getUserType().getAuthority()));
+		String isVerified = "Not verified";
+		if (user.isVerified()) {
+			isVerified = "Verified";
+		}
+		authorities.add(new SimpleGrantedAuthority(isVerified));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
     
