@@ -72,10 +72,12 @@ public class WarningDaoTests {
     }
 
     @Test
-    public void testRemovalSingle() throws FallobException {
+    public void testRemovalSingle() throws FallobException, InterruptedException {
         Warning testWarning = new Warning(TEST_LOG_LINE);
 
         this.warningDao.save(testWarning);
+
+        Thread.sleep(1000);
 
         List<Warning> warningsBeforeDeletion = this.warningDao.getAllWarnings();
         Assertions.assertEquals(1, warningsBeforeDeletion.size());
