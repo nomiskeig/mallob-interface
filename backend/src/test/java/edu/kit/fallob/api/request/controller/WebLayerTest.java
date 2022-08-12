@@ -359,8 +359,8 @@ public class WebLayerTest {
     @Test
     public void registerException() throws Exception {
         String message = "Username already registered";
-        when(fallobCommands.register(EMAIL, USERNAME, PASSWORD)).thenThrow(new FallobException(HttpStatus.CONFLICT, message));
-        UserRequest userRequest = new UserRequest(EMAIL, USERNAME, PASSWORD);
+        when(fallobCommands.register(USERNAME, PASSWORD, EMAIL)).thenThrow(new FallobException(HttpStatus.CONFLICT, message));
+        UserRequest userRequest = new UserRequest(USERNAME, PASSWORD, EMAIL);
 
         this.mockMvc.perform(post("/api/v1/users/register").content(objectMapper.writeValueAsString(userRequest))
                         .contentType("application/json")).andDo(print()).andExpect(status().isConflict())
