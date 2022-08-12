@@ -37,7 +37,6 @@ export function JobTable(props) {
 		};
 	});
 	function toggleSelectedJob(jobID) {
-        console.log('toggle', jobID)
         let newSelectedJobs = [...selectedJobs];
         if (selectedJobs.includes(jobID)) {
             // remove job
@@ -55,7 +54,6 @@ export function JobTable(props) {
 		return (
 			<div className='d-flex flex-row align-items-center  headerRender'>
 				<div className='me-auto'>{name}</div>
-				{index && (
 					<React.Fragment>
 						<div disabled className='removeButton'>
 							<svg
@@ -82,7 +80,6 @@ export function JobTable(props) {
 						</div>
 						<div className='tableHeaderSpacer'></div>
 					</React.Fragment>
-				)}{' '}
 			</div>
 		);
 	}
