@@ -78,15 +78,18 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 		if (validJobMatcher.find()) {
 			jobStatus = JOB_IS_VALID;
 			jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1, line.length()));
+			synchronized(monitor) {
+				monitor.notify();
+			}
 		}
 		Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
 		if (notValidJobMatcher.find()) {
 			jobStatus = JOB_IS_NOT_VALID;
+			synchronized(monitor) {
+				monitor.notify();
+			}
 		}
 		
-		synchronized(monitor) {
-			monitor.notify();
-		}
 	}
 	
 	
