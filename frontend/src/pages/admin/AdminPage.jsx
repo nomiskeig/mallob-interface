@@ -1,34 +1,62 @@
-import {useContext} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {UserContext} from '../../context/UserContextProvider'
 import {useNavigate} from 'react-router-dom';
 import './AdminPage.scss'
 import { Button } from '../../global/buttons/Button';
+import axios from 'axios';
 
 
 export function AdminPage(props) {
-    //let userContext = useContext(UserContext)
+    let userContext = useContext(UserContext)
     //let navigate = useNavigate();
+
+
+    let warnings = useRef([]);
+
+    //contact API to get Warnings
+    useEffect(() => {
+        axios({
+            method: 'get',
+            url : process.env.REACT_APP_API_BASE_PATH + '/api/v1/system/mallobInfo',
+            headers: {
+                Authorisation : 'Bearer ' + userContext.user.token,
+            },
+        })
+            .then((res) => {
+                warnings.current = res.data.warnings;   //see warning-specification in API
+            })
+            .catch((res) => {
+                //something went wrong with the request
+            })
+    }, [])
 
     /**
      * This function has to actually gather the warning.
      * @param {*} i 
-     * @returns all warnings from API as array or null, if no warnings available
+     * @returns all warnings from API as array or null, if zero warning have been fetched (warnings is empty)
      */
     function getWarnings(){
+        if (warnings.current.length === 0){return null;}
+        return warnings;
+        /* testing purpouses
         return ["warning 1", "warning 2", "warning 3", "warning 3", "warning 3", "warning 3", "warning 3", "warning 3", "warning 3"];
-        return null; //if no warnings available 
+        return null;  
+        */
     }
 
+
+
+    //---------------------------------------functions necessary for warnings-container 
+    
     function createWarning(warning, i){
         if (i % 2 === 1){
             return(
-                <li className="warningsElement warningsElementOne">{warning}</li>
+                <li className="warningsElement warningsElementOne">{warning.message}</li>
             );
         }
         return(
-            <li className="warningsElement warningsElementTwo">{warning}</li>
+            <li className="warningsElement warningsElementTwo">{warning.message}</li>
         );
-
     }
 
     function getIndividualWarnings(){
@@ -58,6 +86,8 @@ export function AdminPage(props) {
             </nav>
         );
     }
+
+    //----------------------------------------------------------functions for other containers (windows - e.g. mallob start-button) on the site 
 
     function startMallob(){
         //not yet implemented
@@ -119,8 +149,10 @@ export function AdminPage(props) {
 	return (
 		<div className="py-5 registerPage">
             <div className="pageContent">
+                {/**
+                 * This adds the buttons to start, stop or restart mallob to the admin-site. Do not use until button-functions are implemented.
+                 * {getDiagnosticsContainer("Mallob", getMallobButtons(), "mallobButtons")} */}
                 {getDiagnosticsContainer("Warnings", getWarningsElement(), "warnings")}
-                {getDiagnosticsContainer("Mallob", getMallobButtons(), "mallobButtons")}
             </div>
 
         </div>
