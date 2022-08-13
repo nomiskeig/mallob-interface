@@ -58,7 +58,7 @@ function reducer(jobs, action) {
 		case 'addOrReplaceJob':
 			let index = jobs.findIndex((job) => job.jobID === action.newJob.jobID);
 			console.log('index from addOrReplace', index);
-			if (index !== undefined) {
+			if (index !== -1) {
 				let newJobs = [...jobs];
 				newJobs.splice(index, 1, action.newJob);
 				console.log(newJobs);
@@ -120,19 +120,19 @@ export function JobContextProvider({ children }) {
 	// TODO: does not actually replace the job if its there
 	function loadSingleJob(jobID) {
 		if (process.env.NODE_ENV === 'development') {
-			if (jobID === 1) {
+			if (jobID == 1) {
 				dispatch({ type: 'addOrReplaceJob', newJob: testJob });
 				return;
 			}
-			if (jobID === 2) {
+			if (jobID == 2) {
 				dispatch({ type: 'addOrReplaceJob', newJob: dep1Job });
 				return;
 			}
-			if (jobID === 3) {
+			if (jobID == 3) {
 				dispatch({ type: 'addOrReplaceJob', newJob: dep2Job });
 				return;
 			}
-			if (jobID === 4) {
+			if (jobID == 4) {
 				dispatch({ type: 'addOrReplaceJob', newJob: dep3Job });
 				return;
 			}

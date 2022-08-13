@@ -13,14 +13,14 @@ export function Description(props) {
 		{
 			onClick: () => {
 				setDescriptionType(DESCRIPTION_TEXT_FIELD);
-				props.setDescriptionType(DESCRIPTION_TEXT_FIELD);
+				props.setDescriptionKind(DESCRIPTION_TEXT_FIELD);
 			},
 			name: 'Input-Field',
 		},
 		{
 			onClick: () => {
 				setDescriptionType(DESCRIPTION_FILE);
-				props.setDescriptionType(DESCRIPTION_FILE);
+				props.setDescriptionKind(DESCRIPTION_FILE);
 			},
 			name: 'File',
 		},

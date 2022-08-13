@@ -5,7 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
-import { Description } from '../../global/description/Description';
+import {
+	Description,
+	DESCRIPTION_FILE,
+} from '../../global/description/Description';
 import { Header } from '../../global/header/Header';
 import { JobContext } from '../../context/JobContextProvider';
 import { UserContext } from '../../context/UserContextProvider';
@@ -22,6 +25,7 @@ import {
 	INPUT_TYPE_BOOLEAN,
 } from '../jobPage/Parameters';
 import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
+const FormData = require('form-data');
 
 /**
  * Validates the given paramters.
@@ -80,6 +84,57 @@ export function SubmitPage(props) {
 			method: 'post',
 			url:
 				process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/submit/inclusive',
+			data: job,
+		}).then((res) => {
+			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
+			navigate('/job/' + res.data.jobID);
+		});
+	}
+
+	function submitJobExclusiveDescription() {
+		let errors = validateInput(jobToSubmit);
+		if (errors.length > 0) {
+			errors.forEach((error) =>
+				infoContext.handleInformation(error, TYPE_WARNING)
+			);
+		}
+
+		if (descriptions.length === 0) {
+			infoContext.handleInformation('Description is required.', TYPE_WARNING);
+			return;
+		}
+
+		console.log(descriptions);
+		// submit description
+		let formData = new FormData();
+		descriptions.forEach((file, index) => {
+			formData.append('file' + (index + 1), file);
+		});
+
+		axios({
+			method: 'post',
+			url:
+				process.env.REACT_APP_API_BASE_PATH +
+				'/api/v1/jobs/submit/exclusive/description',
+			data: formData,
+			headers: {
+				'Content-Type': 'multipart/form-data',
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
+		}).then((res) => {
+                submitJobExclusiveConfig(res.data.descriptionID);
+            });
+	}
+
+	function submitJobExclusiveConfig(descriptionID) {
+		let job = { ...jobToSubmit };
+		job['descriptionID'] = descriptionID;
+
+		axios({
+			method: 'post',
+			url:
+				process.env.REACT_APP_API_BASE_PATH +
+				'/api/v1/jobs/submit/exclusive/config',
 			data: job,
 		}).then((res) => {
 			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
@@ -205,7 +260,11 @@ export function SubmitPage(props) {
 								className='btn btn-success submitButton'
 								onClick={() => {
 									if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
+										console.log('submit inclusive job');
 										submitJobInclusive();
+									} else if (descriptionKind === DESCRIPTION_FILE) {
+										console.log('submit exclusive job');
+										submitJobExclusiveDescription();
 									}
 								}}
 							>

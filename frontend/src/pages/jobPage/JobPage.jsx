@@ -43,7 +43,7 @@ export function JobPage(props) {
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 
-	let job = jobContext.jobs.find((job) => job.jobID === jobID);
+	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
 		if (!loaded) {
 			jobContext.loadSingleJob(jobID);

@@ -14,6 +14,7 @@ export function FileDescription(props) {
 		let newFiles = [...files];
 		plainFiles.forEach((file) => newFiles.push(file));
 		setFiles(newFiles);
+        props.setDescriptions(newFiles)
 		clear();
 	}, [plainFiles, clear, files]);
 	let selectedFilesDisplay = files.map((file) => {
