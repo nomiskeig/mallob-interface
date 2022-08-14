@@ -1,6 +1,6 @@
 package edu.kit.fallob.mallobio;
 
-import edu.kit.fallob.mallobio.output.MallobClientOutputWatcher;
+import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
 import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
@@ -18,11 +18,10 @@ import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
  */
 public class MallobReaderStarter {
 	
-
-
-
+	protected String pathToMallobDirectory;
 	
-	protected String pathToMallobLogDirectory;
+	
+
 	
 	
 	private Thread[] readerThreadPool;
@@ -37,6 +36,24 @@ public class MallobReaderStarter {
 	private ResultObjectDistributor resultDistributor;
 	
 	
+	public MallobReaderStarter(String pathToMallobDirectory) {
+		this.pathToMallobDirectory = pathToMallobDirectory;
+	}
+	
+	/**
+	 * Initialize the input-module to communicate with mallob 
+	 * 
+	 * @param amountProcesses
+	 * @param clientProcesses
+	 */
+	public void initInput(int amountProcesses, int[] clientProcesses) {
+		MallobInputImplementation mii = MallobInputImplementation.getInstance();
+		if (clientProcesses == null || clientProcesses.length == amountProcesses) {
+			mii.setupInputAllProcesses(pathToMallobDirectory, amountProcesses);
+		} else {
+			mii.setupInput(pathToMallobDirectory, clientProcesses);
+		}
+	}
 	
 	/**
 	 * 
@@ -55,38 +72,33 @@ public class MallobReaderStarter {
 	 * 
 	 * 3.Initialize MallobOutputWatchers - works like starting the readers
 	 * 
-	 * @param mallbLogDirectory
 	 * @param amountProcesses
 	 * @param amountReaderThreads Amount of threads that each hold MallobOutputReader
 	 * @param readingIntervalPerReadingThread Inteval between read of every MallobOutputReader
 	 */
-	public void initParsingModule(String mallbLogDirectory, 
+	public void initOutput( 
 			int amountProcesses,
-			int amountWatcherThreads,
-			int watchingIntervalPerWatcherThread,
 			int amountReaderThreads,
 			int readingIntervalPerReadingThread) throws IllegalArgumentException
 	{
-		
-		
+	
 		if (amountReaderThreads > amountProcesses) {
-			throw new IllegalArgumentException("Cant have more threads than watchers/readers");
+			throw new IllegalArgumentException("Cant have more threads than readers");
 		}
 		
 		watcherManager = MallobOutputWatcherManager.getInstance();
-		watcherManager.setup(mallbLogDirectory, amountWatcherThreads, watchingIntervalPerWatcherThread);
+		watcherManager.setResultDistributor(resultDistributor);
 		
 		initializeMallobOuptut();
 		
 		
-		initializeReaders(mallbLogDirectory, 
+		initializeReaders(pathToMallobDirectory, 
 				 amountProcesses,
 				 amountReaderThreads,
 				 readingIntervalPerReadingThread);
 		
 
 		//after this mallobio can be started 
-			
 	}
 	
 	
@@ -153,9 +165,7 @@ public class MallobReaderStarter {
 	 * Starts the reading of the log-files and the watching of the output directories 
 	 */
 	public void startMallobio() {
-
 		MallobOutputRunnerThread.startThreadPoolExecution(readerThreadPool);
-		this.watcherManager.startThreads();
 	}
 
 
@@ -166,7 +176,6 @@ public class MallobReaderStarter {
 	 */
 	public void stopMallobio() throws InterruptedException {
 		MallobOutputRunnerThread.stopThreadPoolExecution(readerThreadPool, readerRunners);
-		this.watcherManager.stopThreads();
 	}
 	
 	public MallobOutput getMallobOutput() throws NullPointerException {
