@@ -1,6 +1,7 @@
 package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.JobSubmitCommands;
+import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.SubmitType;
 import edu.kit.fallob.springConfig.FallobException;
@@ -36,6 +37,10 @@ public class JobSubmitController {
     private static final String FILE_ERROR = "An error occurred while creating a file with the job description.";
 
     private static final String FILE_NAME = "jobDescription.cnf";
+
+    private static final FallobConfiguration configuration = FallobConfiguration.getInstance();
+
+    private static final String DIRECTORY_SEPARATOR = "/";
     @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
@@ -131,14 +136,14 @@ public class JobSubmitController {
 
     }
     @PostMapping("/exclusive/description")
-    public ResponseEntity<Object> saveDescription(MultipartFile file, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> saveDescription(@RequestParam("file1") MultipartFile file, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         if (file.isEmpty()) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         int descriptionId;
-        File file1 = new File(file.getName());
+        File file1 = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + file.getOriginalFilename());
         try {
             file.transferTo(file1);
         } catch (IOException ioException) {
