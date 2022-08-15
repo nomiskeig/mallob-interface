@@ -83,8 +83,7 @@ export function JobPage(props) {
 						);
 					};
 					fr.readAsText(res.data);
-				}
-                else if (res.headers['content-type'].startsWith('application/zip')) {
+				} else if (res.headers['content-type'].startsWith('application/zip')) {
 					// https://stackoverflow.com/questions/41938718/how-to-download-files-using-axios
 					let url = window.URL.createObjectURL(new Blob([res.data]));
 					let link = document.createElement('a');
@@ -178,7 +177,7 @@ export function JobPage(props) {
 				<div
 					className={
 						embedded
-							? 'd-flex flex-column-reverse'
+							? 'd-flex flex-column-reverse '
 							: 'lowerPanelContainer row jobPageRow g-0'
 					}
 				>
@@ -186,7 +185,7 @@ export function JobPage(props) {
 						<div
 							className={
 								embedded
-									? ''
+									? 'embeddedDescriptionContainer'
 									: 'jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel d-flex flex-column'
 							}
 						>
