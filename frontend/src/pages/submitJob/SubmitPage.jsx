@@ -170,8 +170,9 @@ export function SubmitPage(props) {
 						title={param.name}
 						items={param.selectValues.map((value) => ({
 							onClick: () => {
-								jobToSubmit[param.internalName] = value;
-								setJobToSubmit(jobToSubmit);
+                                let newJobToSubmit = {...jobToSubmit};
+                                newJobToSubmit[param.internalName] = value;
+								setJobToSubmit(newJobToSubmit);
 							},
 							name: value,
 						}))}
@@ -179,7 +180,11 @@ export function SubmitPage(props) {
 					></DropdownComponent>
 				);
 			case INPUT_TYPE_BOOLEAN:
-				jobToSubmit[param.internalName] = false;
+                if (jobToSubmit[param.internalName] === undefined) {
+                    let newJobToSubmit = {...jobToSubmit}
+                    newJobToSubmit[param.internalName] = false;
+                    setJobToSubmit(newJobToSubmit);
+                }
 				return (
 					<div
 						key={getIndexByParam}
@@ -189,6 +194,12 @@ export function SubmitPage(props) {
 						<input
 							type='checkbox'
 							className='form-check-input booleanInputCheckbox'
+                            checked={jobToSubmit[param.internalName]}
+                            onChange={() =>{ 
+                                let newJobToSubmit = {...jobToSubmit};
+                                newJobToSubmit[param.internalName] = !jobToSubmit[param.internalName];
+                                setJobToSubmit(newJobToSubmit);
+                            }}
 						></input>
 					</div>
 				);
