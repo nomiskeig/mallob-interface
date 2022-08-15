@@ -168,11 +168,12 @@ export function JobTable(props) {
 						></input>
 						<div className='tableHeaderSpacer'></div>
 
+					</React.Fragment>
+				)}
+                <div className='tableHeaderSpacer'></div>
 						<button className='btn btn-primary' onClick={() => props.refresh()}>
 							refresh
 						</button>
-					</React.Fragment>
-				)}
 			</div>
 			<div className='dataGridWrapper'>
 				<DataGrid
