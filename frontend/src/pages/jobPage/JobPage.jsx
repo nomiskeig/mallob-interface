@@ -6,7 +6,7 @@ import { TextFieldDescription } from '../../global/description/TextFieldDescript
 import { Header } from '../../global/header/Header';
 import { JobPageButton } from '../../global/buttons/JobPageButton';
 import { useParams } from 'react-router-dom';
-import { configParameters } from './Parameters';
+import { configParameters,getIndexByParam } from './Parameters';
 import {
 	JOB_STATUS_DONE,
 	JOB_STATUS_INPROGRESS,
@@ -41,7 +41,6 @@ export function JobPage(props) {
 	}
 	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
-	//	let [job, setJob] = useState(null);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
@@ -116,7 +115,7 @@ export function JobPage(props) {
 				});
 				if (value) {
 					parameterDisplayList.push(
-						<div className='singleParamDisplay'>
+						<div key={getIndexByParam(param)} className='singleParamDisplay'>
 							<InputWithLabel
 								disabled={true}
 								value={value}

@@ -7,7 +7,7 @@ export function InputWithLabel(props) {
 			<input
 				className='form-control'
 				disabled={props.disabled ? true : false}
-				value={props.value}
+				value={props.value ? props.value : ''}
 				onChange={(e) => props.onChange(e.target.value)}
 			></input>
 		</div>
