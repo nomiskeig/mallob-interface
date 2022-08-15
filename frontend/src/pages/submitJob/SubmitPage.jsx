@@ -260,10 +260,8 @@ export function SubmitPage(props) {
 								className='btn btn-success submitButton'
 								onClick={() => {
 									if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
-										console.log('submit inclusive job');
 										submitJobInclusive();
 									} else if (descriptionKind === DESCRIPTION_FILE) {
-										console.log('submit exclusive job');
 										submitJobExclusiveDescription();
 									}
 								}}

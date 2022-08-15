@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { JobContext } from '../../context/JobContextProvider';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
+import {TextFieldDescription} from '../../global/description/TextFieldDescription';
 import { Header } from '../../global/header/Header';
 import { JobPageButton } from '../../global/buttons/JobPageButton';
 import { useParams } from 'react-router-dom';
@@ -13,6 +14,7 @@ import {
 	StatusLabel,
 } from '../../global/statusLabel/StatusLabel';
 import './JobPage.scss';
+import axios from 'axios'
 function getStatus(job) {
 	let status;
 	switch (job.status) {
@@ -42,6 +44,7 @@ export function JobPage(props) {
 	//	let [job, setJob] = useState(null);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
+    let [descriptionDisplay, setDescriptionDisplay] = useState([]);
 
 	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
@@ -56,6 +59,34 @@ export function JobPage(props) {
 			}
 		}
 	}, [loaded, loadedDependencies, jobContext, jobID, job]);
+
+    // load description
+    useEffect(() => {
+        axios({
+            method: 'get',
+            url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/description/single/' + jobID,
+            responseType: 'blob'
+            
+        }).then(res => {
+                if (res.headers['content-type'].startsWith('application/json')) {
+                   setDescriptionDisplay( 
+                            <TextFieldDescription displayOnly={true} descriptions={res.data.description}></TextFieldDescription>)
+                    return;
+                }
+                if (res.headers['content-type'].startsWith('application/zip')) {
+                    // https://stackoverflow.com/questions/41938718/how-to-download-files-using-axios
+                    let url = window.URL.createObjectURL(new Blob([res.data]));
+                    let link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'description.zip');
+                    document.body.appendChild(link);
+                    setDescriptionDisplay(<button className='btn btn-primary' onClick={() => link.click()}>Download description</button>)
+                }
+            }).catch(err => {
+                console.log(err.message)
+            })
+        
+    }, [jobID])
 
 	let parameterDisplayList = [];
 	if (job) {
@@ -141,10 +172,11 @@ export function JobPage(props) {
 							className={
 								embedded
 									? ''
-									: 'jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel'
+									: 'jobPagePanel lowerPanel  lowerPanelLeft descriptionPanel d-flex flex-column'
 							}
 						>
 							<Header title={'Description'} />
+                            {descriptionDisplay}
 						</div>
 					</div>
 					<div className={embedded ? '' : 'col-12 col-md-6'}>

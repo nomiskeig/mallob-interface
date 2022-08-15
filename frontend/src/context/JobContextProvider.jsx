@@ -43,12 +43,14 @@ const dep2Job = {
 		name: 'dep2name',
 	},
 	jobID: 3,
+    status: 'done'
 };
 const dep3Job = {
 	config: {
 		name: 'dep3name',
 	},
 	jobID: 4,
+    status: 'done'
 };
 
 function reducer(jobs, action) {
