@@ -31,8 +31,9 @@ $submitButtonContainerHeight: 40px;
 	margin-right: 20px;
 }
 
-.test {
-	height: 100%;
+.requiredParamsFlex {
+    gap: 20px;
+    height: 100%
 }
 
 .submitPagePanelContainer {
@@ -47,4 +48,15 @@ $submitButtonContainerHeight: 40px;
 	margin-top: auto;
     margin-bottom: auto;
     margin-right: 0px;
+}
+
+.booleanInputContainer {
+    width: 200px;
+}
+.booleanInputLabel {
+    margin-bottom: 0.5rem;
+}
+
+.booleanInputCheckbox {
+    margin-top: 0px;
 }

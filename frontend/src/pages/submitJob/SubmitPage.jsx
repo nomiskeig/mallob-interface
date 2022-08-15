@@ -122,8 +122,8 @@ export function SubmitPage(props) {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		}).then((res) => {
-                submitJobExclusiveConfig(res.data.descriptionID);
-            });
+			submitJobExclusiveConfig(res.data.descriptionID);
+		});
 	}
 
 	function submitJobExclusiveConfig(descriptionID) {
@@ -147,6 +147,7 @@ export function SubmitPage(props) {
 			case INPUT_TYPE_TEXT:
 				return (
 					<InputWithLabel
+						key={getIndexByParam(param)}
 						labelText={param.name}
 						value={
 							jobToSubmit[param.internalName]
@@ -165,6 +166,7 @@ export function SubmitPage(props) {
 			case INPUT_TYPE_SELECT:
 				return (
 					<DropdownComponent
+						key={getIndexByParam(param)}
 						title={param.name}
 						items={param.selectValues.map((value) => ({
 							onClick: () => {
@@ -177,7 +179,19 @@ export function SubmitPage(props) {
 					></DropdownComponent>
 				);
 			case INPUT_TYPE_BOOLEAN:
-				return <div>Boolean input</div>;
+				jobToSubmit[param.internalName] = false;
+				return (
+					<div
+						key={getIndexByParam}
+						className='d-flex flex-column align-items-start booleanInputContainer'
+					>
+						<label className='booleanInputLabel'>{param.name}</label>
+						<input
+							type='checkbox'
+							className='form-check-input booleanInputCheckbox'
+						></input>
+					</div>
+				);
 			default:
 				return <div></div>;
 		}
@@ -213,7 +227,7 @@ export function SubmitPage(props) {
 						<div className='submitPagePanel row g-0 upperPanel'>
 							<div className='requiredParamsContainer col-md-3'>
 								<Header title={'Required'} />
-								{requiredParamsInputs}
+								<div className='requiredParamsFlex d-flex flex-column'>{requiredParamsInputs}</div>
 							</div>
 							<div className='optionalParamsContainer col-md-9'>
 								<Header title={'Optional'} />

@@ -12,7 +12,7 @@ export function DropdownComponent(props) {
 
 	return (
 		<div className='dropdown dropdownComponentContainer'>
-			<div style={{ textAlign: 'left' }}>{props.title}</div>
+			<div className='dropdownLabel'>{props.title}</div>
 			<div className='dropdown'>
 				<button
 					className='btn btn-secondary dropdown-toggle dropdownButton'
@@ -28,9 +28,9 @@ export function DropdownComponent(props) {
 					{displayedText}
 				</button>
 				<ul className='dropdown-menu' aria-labelledby='dropdownMenu'>
-					{props.items.map((item) => {
+					{props.items.map((item, index) => {
 						return (
-							<li>
+							<li key={index}>
 								<button
 									className='dropdown-item'
 									type='button'

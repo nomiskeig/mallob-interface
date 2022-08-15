@@ -25,6 +25,7 @@ export function TextFieldDescription(props) {
 	let textFieldPickerButtons = descriptions.map((description, index) => {
 		return (
 			<button
+                key={index}
 				className={`btn ${
 					index === currentDescription
 						? 'btn-primary disabled'
