@@ -36,8 +36,16 @@
 		"extends": [
 			"react-app",
 			"react-app/jest"
-		]
-	},
+		],
+        "rules": {
+            "eqeqeq": "off",
+            "react-hooks/exhaustive-deps": "off"
+        }
+        
+
+    },
+
+
 	"browserslist": {
 		"production": [
 			">0.2%",

@@ -14,7 +14,7 @@ $panelMargin: 50px;
     padding: $panelPadding;
     box-shadow: $panelShadow;
     border-radius: $panelBorderRadius;
-    margin: $panelMargin /2;
+    margin: calc($panelMargin /2);
 
 
 }
