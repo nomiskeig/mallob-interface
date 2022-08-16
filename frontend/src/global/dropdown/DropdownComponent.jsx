@@ -32,6 +32,7 @@ export function DropdownComponent(props) {
 						return (
 							<li key={index}>
 								<button
+									disabled={item.disabled ? true : false}
 									className='dropdown-item'
 									type='button'
 									onClick={() => {
