@@ -3,10 +3,8 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 public class MallobTimeListener implements OutputLogLineListener {
 	
 	
-<<<<<<< HEAD
+
 	private static final String LOGLINE_SEPARATOR = " ";
-	private double secondsSinceMallobStart;
-=======
 	private double secondsSinceMallobStart;
 	
 	private static MallobTimeListener instance;
@@ -23,7 +21,7 @@ public class MallobTimeListener implements OutputLogLineListener {
 		
 	}
 	
->>>>>>> MallobIOIntegration
+
 
 	
 	public double getAmountOfSecondsSinceStart() {

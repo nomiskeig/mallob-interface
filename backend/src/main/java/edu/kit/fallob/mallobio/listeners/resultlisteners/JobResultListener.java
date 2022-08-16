@@ -24,7 +24,7 @@ import edu.kit.fallob.springConfig.FallobException;
  */
 public class JobResultListener implements ResultObjectListener {
 	
-<<<<<<< HEAD
+
 	private static final String INTERNAL_ID_KEY = "internal_id";
 	private static final String PARSING_KEY = "parsing";
 	private static final String SCHEDULING_KEY = "scheduling";
@@ -37,14 +37,11 @@ public class JobResultListener implements ResultObjectListener {
     private static final String TIME_KEY = "time";
 	
 	
-	
-	
-=======
 	private JobDao jobDao;
 	
 	public JobResultListener(JobDao dao) {
 		this.jobDao = dao;
->>>>>>> MallobIOIntegration
+
 	}
 
 	@Override
