@@ -12,11 +12,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.springConfig.FallobException;
 
 @SpringBootApplication
 public class BackendApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FallobException {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
@@ -48,6 +50,10 @@ public class BackendApplication {
 		MallobReaderStarter mallobio = new MallobReaderStarter(config.getMallobBasePath());	
 		mallobio.initOutput(config.getAmountProcesses(), amountReaderThreads, readingIntervalPerReadingThread);
 		mallobio.initInput(config.getAmountProcesses(), config.getClientProcesses());
+		
+		//add all listeners to mallobio
+		MallobTimeListener mtl = new MallobTimeListener();
+		mallobio.addStaticListeners(mtl);
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}

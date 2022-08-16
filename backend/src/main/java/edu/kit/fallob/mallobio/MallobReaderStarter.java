@@ -1,12 +1,20 @@
 package edu.kit.fallob.mallobio;
 
+import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.EventListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobStatusListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.WarningListener;
+import edu.kit.fallob.mallobio.listeners.resultlisteners.JobResultListener;
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
 import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.output.distributors.OutputLogLineDistributor;
 import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
+import edu.kit.fallob.springConfig.FallobException;
 
 /**
  * 
@@ -153,8 +161,26 @@ public class MallobReaderStarter {
 		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
 		
 		this.watcherManager.setResultDistributor(resultDistributor);
+		
 	}
 	
+	
+	/**
+	 * Adds all listeners the mallob-output 
+	 * @param mtl - Listener for current mallob time (holds time in seconds since mallob start)
+	 * @throws FallobException, if connection to database could not be established (eventListener, ...)
+	 */
+	public void addStaticListeners(MallobTimeListener mtl) throws FallobException {
+		
+		DaoFactory dao = new DaoFactory();
+		
+		this.mallobOutput.addResultObjectListener(new JobResultListener(dao.getJobDao()));
+
+		this.mallobOutput.addOutputLogLineListener(new EventListener(dao.getEventDao()));
+		this.mallobOutput.addOutputLogLineListener(new JobStatusListener());
+		this.mallobOutput.addOutputLogLineListener(mtl);
+		this.mallobOutput.addOutputLogLineListener(new WarningListener(dao.getWarningDao()));
+	}
 	
 	
 	
