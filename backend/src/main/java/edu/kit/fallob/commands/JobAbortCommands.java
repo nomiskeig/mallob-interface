@@ -90,8 +90,12 @@ public class JobAbortCommands {
 		if (!uaa.isAdmin(username)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
-		int[] allGlobalJobIDs = new int[1]; //provisorisch
-		return abortMultipleJobs(username, allGlobalJobIDs);
+		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); 
+		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];
+		for (int i = 0; i < allGlobalJobIDs.size(); i++) {
+			allGlobalJobIDsArray[i] = allGlobalJobIDs.get(i);
+		}
+		return abortMultipleJobs(username, allGlobalJobIDsArray);
 	}
 
 }

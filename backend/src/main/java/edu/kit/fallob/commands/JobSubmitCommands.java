@@ -2,6 +2,9 @@ package edu.kit.fallob.commands;
 
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import org.springframework.http.HttpStatus;
 
@@ -10,6 +13,8 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.PriorityConverter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.stereotype.Service;
@@ -62,7 +67,7 @@ public class JobSubmitCommands {
 	
 	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
-		formatConfiguration(jobConfiguration);
+		formatConfiguration(username, jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		JobDao jobDao = daoFactory.getJobDao();
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
@@ -77,7 +82,7 @@ public class JobSubmitCommands {
 		}
 		JobDao jobDao = daoFactory.getJobDao();
 		JobDescription jobDescription = jobDao.getJobDescription(jobdescriptionID);
-		formatConfiguration(jobConfiguration);
+		formatConfiguration(username, jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		jobConfiguration.setDescriptionID(jobdescriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
@@ -99,10 +104,9 @@ public class JobSubmitCommands {
 		return jobDao.saveJobDescription(jobDescription, username);
 	}
 	
-	private void formatConfiguration(JobConfiguration jobConfiguration) throws FallobException {
+	private void formatConfiguration(String username, JobConfiguration jobConfiguration) throws FallobException {
 		JobDao jobDao = daoFactory.getJobDao();
-		//int[] dependencies = jobConfiguration.getDependencies();
-        int[] dependencies = {1,2};
+	    Integer[] dependencies = jobConfiguration.getDependencies();
 		int precursor = jobConfiguration.getPrecursor();
 		if (dependencies != null) {
 			String[] jobNames = new String[dependencies.length];
@@ -111,9 +115,22 @@ public class JobSubmitCommands {
 			}
 			jobConfiguration.setDependenciesStrings(jobNames);
 		}
-		//if (precursor != JobConfiguration.NOT_SET) {
-	//		jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
-	//	}
+		if (precursor != JobConfiguration.INT_NOT_SET) {
+			jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
+		}
+		/*if (jobConfiguration.getArrival() != JobConfiguration.DOUBLE_NOT_SET) {
+			LocalDateTime arrivalTime = LocalDateTime.parse(jobConfiguration.getArrival());
+			MallobTimeListener timeListener = new MallobTimeListener();
+			double secondsSinceMallobStart = timeListener.getAmountOfSecondsSinceStart();
+			LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+			Duration duration = Duration.between(arrivalTime, now);
+			double arrivalTimeSeconds = secondsSinceMallobStart + duration.getSeconds();
+			jobConfiguration.setArrivalInSeconds(arrivalTimeSeconds);
+		}*/
+		if (jobConfiguration.getPriority() != JobConfiguration.DOUBLE_NOT_SET) {
+			PriorityConverter prioConverter = new PriorityConverter(daoFactory);
+			jobConfiguration.setPriority(prioConverter.getPriorityForMallob(username, jobConfiguration.getPriority()));
+		}
 		
 	}
 
