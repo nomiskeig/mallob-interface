@@ -1,14 +1,22 @@
 import './JobTable.scss';
 import { configParameters } from '../jobPage/Parameters';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
 import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
 import { ROLE_ADMIN } from '../../context/UserContextProvider';
 import { StatusLabel } from '../../global/statusLabel/StatusLabel';
+import { UserContext } from '../../context/UserContextProvider';
+import { InfoContext, TYPE_INFO } from '../../context/InfoContextProvider';
 export function JobTable(props) {
 	let [selectedIndices, setSelectedIndices] = useState([]);
 	let [selectedJobs, setSelectedJobs] = useState([]);
 	let [filterUser, setFilterUser] = useState(false);
+	let [canCancelJobs, setCanCancelJobs] = useState(false);
+    let [canDownloadResults, setCanDownloadsResults] = useState(false);
+
+	let userContext = useContext(UserContext);
+	let infoContext = useContext(InfoContext);
 
 	let isAdmin = props.user.role === ROLE_ADMIN;
 
@@ -45,6 +53,60 @@ export function JobTable(props) {
 			newSelectedJobs.push(jobID);
 			setSelectedJobs(newSelectedJobs);
 		}
+		updateActionPossibilities(newSelectedJobs);
+	}
+	function updateActionPossibilities(selectedJobs) {
+		if (selectedJobs.length === 0) {
+			setCanCancelJobs(false);
+            setCanDownloadsResults(false);
+			return;
+		}
+        setCanDownloadsResults(true);
+
+		setCanCancelJobs(true);
+	}
+
+	function cancelSelectedJobs() {
+		axios({
+			method: 'post',
+			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/cancel',
+			data: {
+				jobs: [...selectedJobs],
+			},
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
+		})
+			.then((res) => {
+				console.log(res);
+				infoContext.handleInformation(
+					'Successfully cancelled the selected jobs.',
+					TYPE_INFO
+				);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	}
+	function downloadSelectedResults() {
+		axios({
+			method: 'get',
+			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/solution',
+			params: {
+				jobs: [...selectedJobs],
+			},
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
+            responseType: 'blob'
+		}).then((res) => {
+            let url = window.URL.createObjectURL(new Blob([res.data]));
+                let link = document.createElement('a');
+                link.href= url;
+                link.setAttribute('download', 'descriptions.zip');
+                document.body.appendChild(link);
+                link.click();
+            });
 	}
 	function getHeaderButtons(index, name, internalName) {
 		return (
@@ -149,14 +211,13 @@ export function JobTable(props) {
 
 	return (
 		<div className='dataGridContainer'>
-			<div className='controlBar d-flex flex-row align-items-end'>
+			<div className='controlBar d-flex flex-row align-items-end justify-content-between'>
 				<DropdownComponent
 					title={'Pick shown attributes'}
 					items={paramDropdownItems}
 				></DropdownComponent>
 				{isAdmin && (
-					<React.Fragment>
-						<div className='tableHeaderSpacer'></div>
+					<div className='d-flex flex-row'>
 						<div className='showJobsLabel'>Show all jobs</div>
 						<div className='tableHeaderSpacer'></div>
 						<input
@@ -166,14 +227,26 @@ export function JobTable(props) {
 							checked={!filterUser}
 							onChange={() => setFilterUser(!filterUser)}
 						></input>
-						<div className='tableHeaderSpacer'></div>
-
-					</React.Fragment>
+					</div>
 				)}
-                <div className='tableHeaderSpacer'></div>
-						<button className='btn btn-primary' onClick={() => props.refresh()}>
-							refresh
-						</button>
+				<button className='btn btn-primary' onClick={() => props.refresh()}>
+					refresh
+				</button>
+				<DropdownComponent
+					title={'Choose action'}
+					items={[
+						{
+							name: 'Download results of selected Jobs',
+							onClick: () => downloadSelectedResults(),
+                            disabled: !canDownloadResults
+						},
+						{
+							name: 'Cancel selected jobs',
+							onClick: () => cancelSelectedJobs(),
+							disabled: !canCancelJobs,
+						},
+					]}
+				></DropdownComponent>
 			</div>
 			<div className='dataGridWrapper'>
 				<DataGrid
