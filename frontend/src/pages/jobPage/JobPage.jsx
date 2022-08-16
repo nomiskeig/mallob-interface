@@ -68,8 +68,6 @@ export function JobPage(props) {
             return;
         }
 
-        console.log('loading description')
-        console.log(job)
         if (job.user !== userContext.user.username) {
             setDescriptionDisplay([])
             return;

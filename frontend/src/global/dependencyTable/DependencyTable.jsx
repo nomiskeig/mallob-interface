@@ -20,7 +20,6 @@ export function DependencyTable(props) {
 						value={selectedIDs.includes(job.jobID)}
 						onClick={() => {
 							let newSelectedIDs = selectedIDs;
-							console.log(job);
 							if (newSelectedIDs.includes(job.jobID)) {
 								let index = newSelectedIDs.findIndex(
 									(jobID) => jobID === job.jobID
@@ -38,7 +37,6 @@ export function DependencyTable(props) {
 		</tr>
 	));
 
-    console.log(props['input'])
 	return (
 		<div className='dependencyTable'>
 			<table className='table table-sm table-striped'>

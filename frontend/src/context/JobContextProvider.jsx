@@ -59,11 +59,9 @@ function reducer(jobs, action) {
 			return [...jobs, action.newJob];
 		case 'addOrReplaceJob':
 			let index = jobs.findIndex((job) => job.jobID === action.newJob.jobID);
-			console.log('index from addOrReplace', index);
 			if (index !== -1) {
 				let newJobs = [...jobs];
 				newJobs.splice(index, 1, action.newJob);
-				console.log(newJobs);
 				return newJobs;
 			}
 			return [...jobs, action.newJob];
@@ -118,7 +116,6 @@ export function JobContextProvider({ children }) {
 			});
 	}
 	function loadAllJobsOfUser() {
-		console.log('load all jobs of user');
 		this.fetchMostJobsPossible(true);
 	}
 
@@ -136,7 +133,6 @@ export function JobContextProvider({ children }) {
 			},
 		}).then((res) => {
 			dispatch({ type: 'addOrReplaceJob', newJob: res.data });
-                console.log(res.data)
 		});
 	}
 	// returns a promise which resolves to the job information

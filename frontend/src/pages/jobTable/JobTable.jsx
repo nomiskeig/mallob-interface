@@ -78,7 +78,6 @@ export function JobTable(props) {
 			},
 		})
 			.then((res) => {
-				console.log(res);
 				infoContext.handleInformation(
 					'Successfully cancelled the selected jobs.',
 					TYPE_INFO
