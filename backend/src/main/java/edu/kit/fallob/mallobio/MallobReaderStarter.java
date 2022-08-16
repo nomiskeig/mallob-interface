@@ -167,10 +167,9 @@ public class MallobReaderStarter {
 	
 	/**
 	 * Adds all listeners the mallob-output 
-	 * @param mtl - Listener for current mallob time (holds time in seconds since mallob start)
 	 * @throws FallobException, if connection to database could not be established (eventListener, ...)
 	 */
-	public void addStaticListeners(MallobTimeListener mtl) throws FallobException {
+	public void addStaticListener() throws FallobException {
 		
 		DaoFactory dao = new DaoFactory();
 		
@@ -178,7 +177,7 @@ public class MallobReaderStarter {
 
 		this.mallobOutput.addOutputLogLineListener(new EventListener(dao.getEventDao()));
 		this.mallobOutput.addOutputLogLineListener(new JobStatusListener());
-		this.mallobOutput.addOutputLogLineListener(mtl);
+		this.mallobOutput.addOutputLogLineListener(MallobTimeListener.getInstance());
 		this.mallobOutput.addOutputLogLineListener(new WarningListener(dao.getWarningDao()));
 	}
 	

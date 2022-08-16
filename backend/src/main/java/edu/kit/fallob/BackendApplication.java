@@ -52,8 +52,7 @@ public class BackendApplication {
 		mallobio.initInput(config.getAmountProcesses(), config.getClientProcesses());
 		
 		//add all listeners to mallobio
-		MallobTimeListener mtl = new MallobTimeListener();
-		mallobio.addStaticListeners(mtl);
+		mallobio.addStaticListeners();
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}
