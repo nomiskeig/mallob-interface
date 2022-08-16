@@ -106,7 +106,6 @@ export function JobContextProvider({ children }) {
 			.then((res) => {
 				dispatch({ type: 'setJobs', jobs: res.data.information });
 				if (callback) {
-                    
 					callback(res.data.information);
 				}
 			})
@@ -125,26 +124,20 @@ export function JobContextProvider({ children }) {
 
 	// loads a single job from the backend and stores it into state;
 	// replaces the information in state if its currently in there
-	// TODO: does not actually replace the job if its there
 	function loadSingleJob(jobID) {
-		if (process.env.NODE_ENV === 'development') {
-			if (jobID == 1) {
-				dispatch({ type: 'addOrReplaceJob', newJob: testJob });
-				return;
-			}
-			if (jobID == 2) {
-				dispatch({ type: 'addOrReplaceJob', newJob: dep1Job });
-				return;
-			}
-			if (jobID == 3) {
-				dispatch({ type: 'addOrReplaceJob', newJob: dep2Job });
-				return;
-			}
-			if (jobID == 4) {
-				dispatch({ type: 'addOrReplaceJob', newJob: dep3Job });
-				return;
-			}
-		}
+		axios({
+			method: 'get',
+			url:
+				process.env.REACT_APP_API_BASE_PATH +
+				'/api/v1/jobs/info/single/' +
+				jobID,
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
+		}).then((res) => {
+			dispatch({ type: 'addOrReplaceJob', newJob: res.data });
+                console.log(res.data)
+		});
 	}
 	// returns a promise which resolves to the job information
 	function getSingleJobInfo(jobID) {

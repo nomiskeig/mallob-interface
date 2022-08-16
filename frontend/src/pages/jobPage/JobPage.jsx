@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { JobContext } from '../../context/JobContextProvider';
+import {UserContext} from '../../context/UserContextProvider';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { TextFieldDescription } from '../../global/description/TextFieldDescription';
@@ -41,9 +42,11 @@ export function JobPage(props) {
 	}
 	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
+    let userContext = useContext(UserContext);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
+    
 
 	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
@@ -61,6 +64,16 @@ export function JobPage(props) {
 
 	// load description
 	useEffect(() => {
+        if (!loaded) {
+            return;
+        }
+
+        console.log('loading description')
+        console.log(job)
+        if (job.user !== userContext.user.username) {
+            setDescriptionDisplay([])
+            return;
+        }
 		axios({
 			method: 'get',
 			url:
@@ -99,7 +112,7 @@ export function JobPage(props) {
 			.catch((err) => {
 				console.log(err.message);
 			});
-	}, [jobID]);
+	}, [jobID, loaded]);
 
 	let parameterDisplayList = [];
 	if (job) {
