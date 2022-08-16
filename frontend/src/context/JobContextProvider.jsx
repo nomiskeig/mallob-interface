@@ -35,7 +35,7 @@ const dep1Job = {
 		name: 'dep1name',
 	},
 	jobID: 2,
-    status: 'inProgress'
+	status: 'inProgress',
 };
 
 const dep2Job = {
@@ -43,14 +43,14 @@ const dep2Job = {
 		name: 'dep2name',
 	},
 	jobID: 3,
-    status: 'done'
+	status: 'done',
 };
 const dep3Job = {
 	config: {
 		name: 'dep3name',
 	},
 	jobID: 4,
-    status: 'done'
+	status: 'done',
 };
 
 function reducer(jobs, action) {
@@ -70,7 +70,8 @@ function reducer(jobs, action) {
 		case 'setJobs':
 			// TODO: maybe keep jobs wich  are not in new jobs
 			return action.jobs;
-        default: return jobs
+		default:
+			return jobs;
 	}
 }
 export const JobContext = createContext({});
@@ -88,7 +89,7 @@ export function JobContextProvider({ children }) {
 			.catch((err) => console.log(err));
 	}
 
-	function fetchMostJobsPossible(restrictToOwnJobs) {
+	function fetchMostJobsPossible(restrictToOwnJobs, callback) {
 		let apiAddress;
 		if (userContext.user.role === ROLE_USER || restrictToOwnJobs) {
 			apiAddress = '/api/v1/jobs/info/all';
@@ -104,13 +105,18 @@ export function JobContextProvider({ children }) {
 		})
 			.then((res) => {
 				dispatch({ type: 'setJobs', jobs: res.data.information });
+				if (callback) {
+                    
+					callback(res.data.information);
+				}
 			})
-			.catch((err) =>
+			.catch((err) => {
+				console.log(err);
 				infoContext.handleInformation(
 					'Could not load any of the jobs.',
 					TYPE_ERROR
-				)
-			);
+				);
+			});
 	}
 	function loadAllJobsOfUser() {
 		console.log('load all jobs of user');

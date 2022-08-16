@@ -42,7 +42,6 @@ export function UserContextProvider({ children }) {
 			username: payload.username,
 			isLoaded: true,
 		});
-        console.log(user.username);
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);
