@@ -12,6 +12,8 @@ import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -284,8 +286,6 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
     }
 
-    //TODO Test endpoints with user not verified - Only IntegrationTest possible?
-
     @Test
     @WithMockUser
     public void submitJobWithUrl() throws Exception {
@@ -509,14 +509,19 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getFallobConfig() throws Exception {
-        FallobConfiguration fallobConfiguration = FallobConfiguration.getInstance();
-        fallobConfiguration.setStartTime(LocalDateTime.parse("2020-04-13T17:53:12.840"));
+        FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class);
+        when(fallobConfiguration.getAmountProcesses()).thenReturn(1);
+        when(fallobConfiguration.getStartTime()).thenReturn(LocalDateTime.parse("2020-04-13T17:53:12.840"));
+        when(fallobConfiguration.getDefaultJobPriority()).thenReturn(1F);
+        when(fallobConfiguration.getDefaultWallClockLimit()).thenReturn("1");
+        when(fallobConfiguration.getDefaultContentMode()).thenReturn("content");
+
         when(fallobCommands.getFallobConfiguration()).thenReturn(fallobConfiguration);
 
         this.mockMvc.perform(get("/api/v1/system/config")).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"amountProcesses\":0," +
-                        "\"startTime\":\"2020-04-13T17:53:12.840\",\"defaults\":{\"priority\":0.0,\"wallClockLimit\":null," +
-                        "\"contentMode\":null}}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"amountProcesses\":1," +
+                        "\"startTime\":\"2020-04-13T17:53:12.840\",\"defaults\":{\"priority\":1.0,\"wallClockLimit\":\"1\"," +
+                        "\"contentMode\":\"content\"}}"));
     }
 
     @Test
