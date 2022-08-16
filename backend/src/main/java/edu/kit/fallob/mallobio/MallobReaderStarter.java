@@ -169,7 +169,7 @@ public class MallobReaderStarter {
 	 * Adds all listeners the mallob-output 
 	 * @throws FallobException, if connection to database could not be established (eventListener, ...)
 	 */
-	public void addStaticListener() throws FallobException {
+	public void addStaticListeners() throws FallobException {
 		
 		DaoFactory dao = new DaoFactory();
 		
