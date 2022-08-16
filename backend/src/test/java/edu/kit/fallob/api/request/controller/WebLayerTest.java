@@ -476,13 +476,16 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void getFallobConfig() throws Exception {
-        when(fallobCommands.getFallobConfiguration()).thenReturn(FallobConfiguration.getInstance());
+    	FallobConfiguration.resetConfig();
+    	FallobConfiguration config = FallobConfiguration.getInstance();
+        when(fallobCommands.getFallobConfiguration()).thenReturn(config);
 
         this.mockMvc.perform(get("/api/v1/system/config", 1)).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string("{\"amountProcesses\":0,\"startTime\":null," +
                         "\"defaults\":{\"priority\":0.0,\"wallClockLimit\":null,\"contentMode\":null}}"));
     }
 
+    
     @Test
     @WithMockUser
     public void getSingleJobInformationSuccessfully() throws Exception {

@@ -1,5 +1,6 @@
 package edu.kit.fallob;
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -7,17 +8,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import edu.kit.fallob.configuration.FallobConfigReader;
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.springConfig.FallobException;
 
 @SpringBootApplication
 public class BackendApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FallobException {
 		
-		/*
-		 * -----------------------Production code.Ddo not use until integration-tests begin--------------------------
+		
+		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
+		//initialize mallob-config
 		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {
@@ -33,7 +38,21 @@ public class BackendApplication {
 			e.printStackTrace();
 			return;
 		}
-		*/
+		
+		
+		//initialize mallobio
+		int amountReaderThreads = 20;
+		int readingIntervalPerReadingThread = 50; 
+		
+		FallobConfiguration config = FallobConfiguration.getInstance();
+
+		
+		MallobReaderStarter mallobio = new MallobReaderStarter(config.getMallobBasePath());	
+		mallobio.initOutput(config.getAmountProcesses(), amountReaderThreads, readingIntervalPerReadingThread);
+		mallobio.initInput(config.getAmountProcesses(), config.getClientProcesses());
+		
+		//add all listeners to mallobio
+		mallobio.addStaticListeners();
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}

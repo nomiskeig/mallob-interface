@@ -53,7 +53,12 @@ public class FallobConfiguration {
 		}
 		return instance;
 	}
-	
+	/**
+	 * ONLY USE THIS METhOD IF YOU WANT TO USE A FRESH CONFIG 
+	 */
+	public static void resetConfig() {
+		instance = null;
+	}
 	
 	
 	public int getAmountProcesses() {
