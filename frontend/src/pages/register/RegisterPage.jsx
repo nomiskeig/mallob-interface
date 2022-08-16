@@ -34,11 +34,24 @@ export function RegisterPage(props) {
   }
 
   
+  const registerURL = process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/register';
   function register(){
       if (passwordContent !== confirmPasswordContent){
             alert("Password does not match confirmation");
       }
-      alert("register!");
+      const axios = require('axios');
+        const response = axios.post(registerURL, {
+            "username" : {usernameContent},
+            "password" : {passwordContent},
+            "email" : {emailContent}
+        });
+        if (response.status === 200){ //register was successful
+            alert("Account created successfully.");
+            navigate('/jobs');
+        }
+        if (response.status !== 200){ 
+            alert("Username not available.");
+        }
   }
 
 

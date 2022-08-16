@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {UserContext} from '../../context/UserContextProvider'
 import {useNavigate} from 'react-router-dom';
 import {Button} from '../../global/buttons/Button';
@@ -11,18 +11,11 @@ import './LoginPage.scss'
 export function LoginPage(props) {
     let userContext = useContext(UserContext)
     let navigate = useNavigate();
-    function loginAdmin() {
-        userContext.login('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIn0.1C4B-OmDfkegwoyCPmciXvk8G-TyS7Suv5f09nBJ5_A')
-        navigate('/jobs');
-         
-    }
-    function loginUser() {
-        userContext.login('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6InVzZXIifQ.lOw9NWomYJcsJrsLJdYbbS-14sEAe06WCKbkY3TbO6U');
-        navigate('/jobs');
-    }
+
+    
 
 
-    let btext = "Login";
+    const btext = "Login";
     const username = "username";
     const password = "password";
 
@@ -39,15 +32,13 @@ export function LoginPage(props) {
     }
 
 
-    const loginURL = '/login';
+    const loginURL = process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/login';
     function login(){
         //alert("Logging in with : username=" + usernameContent + ", password=" + passwordContent);
         if (usernameContent === username || passwordContent === password){
             alert("Please enter a valid username and/or password.");
             return;
         }
-        navigate('/jobs');
-
 
         const axios = require('axios');
         const response = axios.post(loginURL, {
@@ -57,14 +48,15 @@ export function LoginPage(props) {
         
         if (response.status === 200){ //request went through and username + password were accepted 
             userContext.login(response.data);
+            navigate('/jobs');
         } 
 
         if (response.status === 404){ //user not found 
-
+            alert("Username not found.");
         }
         
         else{
-
+            alert("Username or password wrong.");
         }
         //TODO : testing, error handling if pw was wrong, forward user onto job-page, tidy up login page (make it look nice )
     }
@@ -75,7 +67,6 @@ export function LoginPage(props) {
                 <InputLabel placeholder={placeholder} id={id} onChange={changeHandler} type={inputType} className="form-control form-control-lg"></InputLabel>
             </div>
         );
-
     }
 
     return (
