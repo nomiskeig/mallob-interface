@@ -21,7 +21,7 @@ import { LoginPage } from './pages/login/LoginPage';
 import { JobPage } from './pages/jobPage/JobPage';
 import { JobTablePage } from './pages/jobTable/JobTablePage';
 import { SubmitPage } from './pages/submitJob/SubmitPage';
-import {JobPageRedirect } from './pages/jobPage/jobPageRedirect'
+import { JobPageRedirect } from './pages/jobPage/jobPageRedirect';
 
 class App extends React.Component {
 	constructor(props) {
@@ -41,62 +41,76 @@ class App extends React.Component {
 										<Route
 											path='/visualization'
 											element={
-												<AllContextProvider>
-													<Navbar highlight={PAGE_VIZ} />
-													<AllContext.Consumer>
-														{(context) => (
-															<RequireAuth>
-																{context.settingsContext.isLoaded && (
-																	<VisualizationPageManager
-																		vpmref={this.vpmref}
-																		ref={this.vpmref}
-																		context={context}
-																	></VisualizationPageManager>
-																)}
-															</RequireAuth>
-														)}
-													</AllContext.Consumer>
-												</AllContextProvider>
+												<RequireAuth>
+													<AllContextProvider>
+														<Navbar highlight={PAGE_VIZ} />
+														<AllContext.Consumer>
+															{(context) => (
+																<RequireAuth>
+																	{context.settingsContext.isLoaded && (
+																		<VisualizationPageManager
+																			vpmref={this.vpmref}
+																			ref={this.vpmref}
+																			context={context}
+																		></VisualizationPageManager>
+																	)}
+																</RequireAuth>
+															)}
+														</AllContext.Consumer>
+													</AllContextProvider>
+												</RequireAuth>
 											}
 										/>
 										<Route
 											path='/submit'
 											element={
-												<div className='heightContainer'>
-													<Navbar highlight={PAGE_SUBMIT} />
-													<SubmitPage />
-												</div>
+												<RequireAuth>
+													<div className='heightContainer'>
+														<Navbar highlight={PAGE_SUBMIT} />
+														<SubmitPage />
+													</div>
+												</RequireAuth>
 											}
 										/>
 										<Route
 											path='/admin'
 											element={
-												<div className='heightContainer'>
-													<Navbar highlight={PAGE_ADMIN} />
-												</div>
+												<RequireAuth>
+													<div className='heightContainer'>
+														<Navbar highlight={PAGE_ADMIN} />
+													</div>
+												</RequireAuth>
 											}
 										/>
 										<Route
 											path='/jobs'
 											element={
-												<div className='heightContainer'>
-													<Navbar highlight={PAGE_JOBS} />
-													<JobTablePage />
-												</div>
+												<RequireAuth>
+													<div className='heightContainer'>
+														<Navbar highlight={PAGE_JOBS} />
+														<JobTablePage />
+													</div>
+												</RequireAuth>
 											}
 										/>
 										<Route
 											path='/job/:jobID'
 											element={
-												<div className='heightContainer'>
-													<Navbar highlight={PAGE_JOBS} />
-													<JobPage />
-												</div>
+												<RequireAuth>
+													<div className='heightContainer'>
+														<Navbar highlight={PAGE_JOBS} />
+														<JobPage />
+													</div>
+												</RequireAuth>
 											}
 										/>
 										<Route
 											path='/job/:username/:jobname'
-											element={<JobPageRedirect></JobPageRedirect>}
+											element={
+												<RequireAuth>
+													<JobPageRedirect></JobPageRedirect>
+												</RequireAuth>
+											}
 										/>
 										<Route path='*' element={<NotFoundPage />} />
 									</Routes>

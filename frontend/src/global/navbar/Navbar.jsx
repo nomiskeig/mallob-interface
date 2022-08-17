@@ -15,7 +15,6 @@ export function Navbar(props) {
 		userContext.logout();
 		navigate('/login');
 	}
-    console.log(userContext.user)
 	return (
 		<div className='navbarContainer d-flex flex-row  align-items-center'>
 			<div className='logo'></div>

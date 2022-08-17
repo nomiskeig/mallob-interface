@@ -111,7 +111,6 @@ export function SubmitPage(props) {
 			return;
 		}
 
-		console.log(descriptions);
 		// submit description
 		let formData = new FormData();
 		descriptions.forEach((file, index) => {
@@ -178,7 +177,6 @@ export function SubmitPage(props) {
 						}
 						onChange={(newValue) => {
 							let newJobToSubmit = { ...jobToSubmit };
-							console.log(newJobToSubmit);
 							newJobToSubmit[param.internalName] = newValue;
 
 							setJobToSubmit(newJobToSubmit);
