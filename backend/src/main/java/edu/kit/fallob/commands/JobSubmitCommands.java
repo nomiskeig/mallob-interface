@@ -49,6 +49,7 @@ public class JobSubmitCommands {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+		mallobOutput = MallobOutput.getInstance();
 
 	}
 	
