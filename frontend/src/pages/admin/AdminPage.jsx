@@ -1,15 +1,13 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect,  useState } from 'react';
 import { UserContext } from '../../context/UserContextProvider';
-import { useNavigate } from 'react-router-dom';
 import './AdminPage.scss';
 import { Button } from '../../global/buttons/Button';
 import axios from 'axios';
 
 export function AdminPage(props) {
 	let userContext = useContext(UserContext);
-	//let navigate = useNavigate();
+    let [warnings, setWarnings ] = useState([])
 
-	let warnings = useRef([]);
 
 	//contact API to get Warnings
 	useEffect(() => {
@@ -21,7 +19,8 @@ export function AdminPage(props) {
 			},
 		})
 			.then((res) => {
-				warnings.current = res.data.warnings; //see warning-specification in API
+                setWarnings(res.data.warnings)
+
 			})
 			.catch((res) => {
 				//something went wrong with the request
@@ -34,14 +33,10 @@ export function AdminPage(props) {
 	 * @returns all warnings from API as array or null, if zero warning have been fetched (warnings is empty)
 	 */
 	function getWarnings() {
-		if (warnings.current.length === 0) {
+		if (warnings.length === 0) {
 			return null;
 		}
 		return warnings;
-		/* testing purpouses
-        return ["warning 1", "warning 2", "warning 3", "warning 3", "warning 3", "warning 3", "warning 3", "warning 3", "warning 3"];
-        return null;  
-        */
 	}
 
 	//---------------------------------------functions necessary for warnings-container

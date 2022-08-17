@@ -43,7 +43,6 @@ class App extends React.Component {
 										<Route
 											path='/visualization'
 											element={
-												<RequireAuth>
 													<AllContextProvider>
 														<Navbar highlight={PAGE_VIZ} />
 														<AllContext.Consumer>
@@ -60,7 +59,6 @@ class App extends React.Component {
 															)}
 														</AllContext.Consumer>
 													</AllContextProvider>
-												</RequireAuth>
 											}
 										/>
 										<Route
@@ -73,16 +71,15 @@ class App extends React.Component {
 													</div>
 												</RequireAuth>
 											}
-											
 										/>
 
 										<Route
 											path='/admin'
 											element={
-													<AdminPage />
 												<RequireAuth>
 													<div className='heightContainer'>
 														<Navbar highlight={PAGE_ADMIN} />
+														<AdminPage />
 													</div>
 												</RequireAuth>
 											}
