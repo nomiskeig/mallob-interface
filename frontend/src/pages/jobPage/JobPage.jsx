@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { JobContext } from '../../context/JobContextProvider';
-import {UserContext} from '../../context/UserContextProvider';
+import { UserContext } from '../../context/UserContextProvider';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { TextFieldDescription } from '../../global/description/TextFieldDescription';
 import { Header } from '../../global/header/Header';
 import { JobPageButton } from '../../global/buttons/JobPageButton';
+import {Button} from '../../global/buttons/Button'
 import { useParams } from 'react-router-dom';
-import { configParameters,getIndexByParam } from './Parameters';
+import { configParameters, getIndexByParam } from './Parameters';
 import {
 	JOB_STATUS_DONE,
 	JOB_STATUS_INPROGRESS,
@@ -16,6 +17,7 @@ import {
 } from '../../global/statusLabel/StatusLabel';
 import './JobPage.scss';
 import axios from 'axios';
+import { InfoContext, TYPE_INFO } from '../../context/InfoContextProvider';
 function getStatus(job) {
 	let status;
 	switch (job.status) {
@@ -42,11 +44,11 @@ export function JobPage(props) {
 	}
 	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
-    let userContext = useContext(UserContext);
+	let userContext = useContext(UserContext);
+	let infoContext = useContext(InfoContext);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
-    
 
 	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
@@ -64,14 +66,14 @@ export function JobPage(props) {
 
 	// load description
 	useEffect(() => {
-        if (!loaded) {
-            return;
-        }
+		if (!loaded) {
+			return;
+		}
 
-        if (job.user !== userContext.user.username) {
-            setDescriptionDisplay([])
-            return;
-        }
+		if (job.user !== userContext.user.username) {
+			setDescriptionDisplay([]);
+			return;
+		}
 		axios({
 			method: 'get',
 			url:
@@ -111,6 +113,40 @@ export function JobPage(props) {
 				console.log(err.message);
 			});
 	}, [jobID, loaded]);
+
+	function downloadResult() {
+		axios({
+			method: 'get',
+			url:
+				process.env.REACT_APP_API_BASE_PATH +
+				'/api/v1/jobs/solution/single/' +
+				jobID,
+			responseType: 'blob',
+		}).then((res) => {
+			let url = window.URL.createObjectURL(new Blob([res.data]));
+			let link = document.createElement('a');
+			link.href = url;
+			link.setAttribute('download', 'description.zip');
+			document.body.appendChild(link);
+			link.click();
+		});
+	}
+
+	function cancelJob() {
+		axios({
+			method: 'post',
+			url:
+				process.env.REACT_APP_API_BASE_PATH +
+				'/api/v1/jobs/cancel/single/' +
+				jobID,
+		}).then((res) => {
+                console.log(res.data)
+			infoContext.handleInformation(
+				'Sucessesfully cancelled the job.',
+				TYPE_INFO
+			);
+		});
+	}
 
 	let parameterDisplayList = [];
 	if (job) {
@@ -165,6 +201,19 @@ export function JobPage(props) {
 							}
 						>
 							<Header title={name}>
+								{status === JOB_STATUS_INPROGRESS && (
+									<Button
+										onClick={() => cancelJob()}
+										text={'Cancel job'}
+									></Button>
+								)}
+								{status === JOB_STATUS_DONE &&
+									job.user === userContext.user.username && (
+										<Button
+											onClick={() => downloadResult()}
+											text={'Download result'}
+										></Button>
+									)}
 								{embedded && <JobPageButton jobID={jobID}></JobPageButton>}
 							</Header>
 							<div className='infoPanelContainer d-flex flex-row justify-content-between'>
