@@ -120,7 +120,7 @@ public class JobSubmitCommands {
 		}
 		/*if (jobConfiguration.getArrival() != JobConfiguration.DOUBLE_NOT_SET) {
 			LocalDateTime arrivalTime = LocalDateTime.parse(jobConfiguration.getArrival());
-			MallobTimeListener timeListener = new MallobTimeListener();
+			MallobTimeListener timeListener = MallobTimeListener.getInstance();
 			double secondsSinceMallobStart = timeListener.getAmountOfSecondsSinceStart();
 			LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 			Duration duration = Duration.between(arrivalTime, now);

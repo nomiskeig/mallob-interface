@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.UserDao;
+import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
 
 import java.util.ArrayList;
@@ -52,20 +53,28 @@ public class FallobCommands implements UserDetailsService {
 //
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
-		User user = null;
+    	User user;
 		try {
 			user = userDao.getUserByUsername(username);
 		} catch (FallobException e) {
 			throw new UsernameNotFoundException(e.getMessage());
 		}
+
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    	authorities.add(new SimpleGrantedAuthority(user.toString()));
+    	authorities.add(new SimpleGrantedAuthority(user.getUserType().getAuthority()));
+		String isVerified = "Not verified";
+		if (user.isVerified()) {
+			isVerified = "Verified";
+		}
+		authorities.add(new SimpleGrantedAuthority(isVerified));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
     
     
     public boolean register(String username, String password, String email) throws FallobException {
-    	return false;
+    	User user = new NormalUser(username, password, email);
+    	userDao.save(user);
+    	return true;
     }
     
     

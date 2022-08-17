@@ -23,7 +23,7 @@ public class BackendApplication {
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		//initialize mallob-config
-		String pathToFallobConfigFile = args[0];
+		String pathToFallobConfigFile = "C:/Users/maiks/git/mallob-interface/backend/src/main/java/edu/kit/fallob/configuration/Fallob_configuration.json";
 		FallobConfigReader reader;
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
@@ -41,7 +41,7 @@ public class BackendApplication {
 		
 		
 		//initialize mallobio
-		int amountReaderThreads = 20;
+		int amountReaderThreads = 4;
 		int readingIntervalPerReadingThread = 50; 
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
