@@ -67,9 +67,9 @@ public class JobSubmitCommands {
 	
 	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
-		if (!userDao.getUserByUsername(username).isVerified()) {
-			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-		}
+//		if (!userDao.getUserByUsername(username).isVerified()) {
+//			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+//		}
 		formatConfiguration(jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		JobDao jobDao = daoFactory.getJobDao();
@@ -80,9 +80,9 @@ public class JobSubmitCommands {
 	}
 	
 	public int submitJobWithDescriptionID(String username, int jobdescriptionID, JobConfiguration jobConfiguration) throws FallobException {
-		if (!userDao.getUserByUsername(username).isVerified()) {
-			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-		}
+//		if (!userDao.getUserByUsername(username).isVerified()) {
+//			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+//		}
 		if (!uaa.hasDescriptionAccessViaDescriptionID(username, jobdescriptionID)) {
 			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
 		}
@@ -106,9 +106,9 @@ public class JobSubmitCommands {
 	}
 	
 	public int saveJobDescription(String username, JobDescription jobDescription) throws FallobException {
-		if (!userDao.getUserByUsername(username).isVerified()) {
-			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-		}
+//		if (!userDao.getUserByUsername(username).isVerified()) {
+//			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+//		}
 		JobDao jobDao = daoFactory.getJobDao();
 		return jobDao.saveJobDescription(jobDescription, username);
 	}
