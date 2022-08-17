@@ -18,6 +18,7 @@ import {
 } from './global/navbar/Navbar';
 import { NotFoundPage } from './pages/notFound/NotFoundPage';
 import { LoginPage } from './pages/login/LoginPage';
+import { AdminPage } from './pages/admin/AdminPage';
 import { JobPage } from './pages/jobPage/JobPage';
 import { JobTablePage } from './pages/jobTable/JobTablePage';
 import { SubmitPage } from './pages/submitJob/SubmitPage';
@@ -38,6 +39,7 @@ class App extends React.Component {
 								<BrowserRouter>
 									<Routes>
 										<Route path='/login' element={<LoginPage />} />
+
 										<Route
 											path='/visualization'
 											element={
@@ -71,10 +73,13 @@ class App extends React.Component {
 													</div>
 												</RequireAuth>
 											}
+											
 										/>
+
 										<Route
 											path='/admin'
 											element={
+													<AdminPage />
 												<RequireAuth>
 													<div className='heightContainer'>
 														<Navbar highlight={PAGE_ADMIN} />
