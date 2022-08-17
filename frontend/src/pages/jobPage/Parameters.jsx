@@ -218,7 +218,7 @@ export const configParameters = [
     {
         name: 'Used CPU Seconds',
         internalName: 'usedCPUSeconds',
-        path: ['resultData', 'usedCPUSeconds'],
+        path: ['resultData', 'usedCpuSeconds'],
         index: 14,
         width: 200,
         inputType: INPUT_TYPE_NONE,
