@@ -1,56 +1,72 @@
 import { useContext, useState } from 'react';
-import {InfoContext} from '../../context/Info'
+import { InfoContext } from '../../context/InfoContextProvider';
+import { UserContext } from '../../context/UserContextProvider';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../global/buttons/Button';
 import { InputLabel } from '../../global/textfields/Textfield';
-import { Link } from 'react-router-dom';
 import './LoginPage.scss';
+import { TYPE_ERROR } from '../../context/InfoContextProvider';
+import axios from 'axios';
 
 export function LoginPage(props) {
 	let userContext = useContext(UserContext);
+	let infoContext = useContext(InfoContext);
 	let navigate = useNavigate();
 
 	const btext = 'Login';
 	const username = 'username';
 	const password = 'password';
 
-	let usernameContent = username;
-	let passwordContent = password;
+    let [usernameContent, setUsernameContext] = useState('');
+    let [passwordContent, setPasswordContent] = useState('');
+	//let usernameContent = '';
+	//let passwordContent = '';
 
 	const handleChangeUsername = (event) => {
-		usernameContent = event.target.value;
+	//	usernameContent = event.target.value;J
+        setUsernameContext(event.target.value);
 	};
 
 	const handleChangePassword = (event) => {
-		passwordContent = event.target.value;
+		//passwordContent = event.target.value;
+        setPasswordContent(event.target.value)
 	};
 
 	const loginURL = process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/login';
 	function login() {
 		//alert("Logging in with : username=" + usernameContent + ", password=" + passwordContent);
-		if (usernameContent === username || passwordContent === password) {
-			alert('Please enter a valid username and/or password.');
+		if (usernameContent == '' || passwordContent == '') {
+			infoContext.handleInformation(
+				'Please enter a valid username and/or password.',
+				TYPE_ERROR
+			);
 			return;
 		}
 
-		const axios = require('axios');
-		const response = axios.post(loginURL, {
-			username: { usernameContent },
-			password: { passwordContent },
-		});
+		axios
+			.post(loginURL, {
+				username: { usernameContent },
+				password: { passwordContent },
+			})
+			.then((res) => {
 
-		if (response.status === 200) {
-			//request went through and username + password were accepted
-			userContext.login(response.data);
-			navigate('/jobs');
-		}
+				//request went through and username + password were accepted
+				userContext.login(res.data.token);
+				navigate('/jobs');
+				return;
+			})
+			.catch((err) => {
+				if (err.response.status === 404) {
+					//user not found
+					infoContext.handleInformation('Username not found', TYPE_ERROR);
+				} else {
+					infoContext.handleInformation(
+						'Username or password wrong',
+						TYPE_ERROR
+					);
+				}
+			});
 
-		if (response.status === 404) {
-			//user not found
-			alert('Username not found.');
-		} else {
-			alert('Username or password wrong.');
-		}
 		//TODO : testing, error handling if pw was wrong, forward user onto job-page, tidy up login page (make it look nice )
 	}
 
@@ -71,14 +87,14 @@ export function LoginPage(props) {
 	return (
 		<div className='py-5 loginPage'>
 			<div>
-				<div class='text-center'>
-					<h1 class='mt-1 mb-5 pb-1 loginSlogan'>Welcome to Mallob!</h1>
+				<div className='text-center'>
+					<h1 className='mt-1 mb-5 pb-1 loginSlogan'>Welcome to Mallob!</h1>
 				</div>
 				<div
 					className='d-flex align-items-center justify-content-center container h-100 formContainer'
 					id='logindiv'
 				>
-					<form>
+					<div>
 						{getInputLabel(username, username, handleChangeUsername, 'text')}
 						{getInputLabel(
 							password,
@@ -87,28 +103,29 @@ export function LoginPage(props) {
 							'password'
 						)}
 
-						<div>
+						<div></div>
+
+						<div class='d-flex justify-content-between align-items-center '>
 							<Button
 								text={btext}
 								onClick={login}
 								className='btn btn-primary btn-lg btn-block'
 							/>
+							<Button
+								className='btn btn-primary btn-lg btn-block'
+								text={'Register'}
+								onClick={() => navigate('/register/')}
+							></Button>
 						</div>
-
-						<div class='d-flex justify-content-around align-items-center mb-4'>
-							<Link to='/register' onClick={navigate('/register/')}>
-								Register
-							</Link>
-						</div>
-					</form>
-				</div>
-					<div>
-						<button onClick={loginAdmin}>Log in as admin</button>
-						<button onClick={loginUser}>Login in as user</button>
-						<button onClick={loginUnverifiedUser}>
-							Login as unverified user
-						</button>
 					</div>
+				</div>
+				<div>
+					<button onClick={loginAdmin}>Log in as admin</button>
+					<button onClick={loginUser}>Login in as user</button>
+					<button onClick={loginUnverifiedUser}>
+						Login as unverified user
+					</button>
+				</div>
 			</div>
 		</div>
 	);
