@@ -23,6 +23,7 @@ import { JobPage } from './pages/jobPage/JobPage';
 import { JobTablePage } from './pages/jobTable/JobTablePage';
 import { SubmitPage } from './pages/submitJob/SubmitPage';
 import { JobPageRedirect } from './pages/jobPage/jobPageRedirect';
+import { RegisterPage } from './pages/register/RegisterPage'
 
 class App extends React.Component {
 	constructor(props) {
@@ -39,7 +40,7 @@ class App extends React.Component {
 								<BrowserRouter>
 									<Routes>
 										<Route path='/login' element={<LoginPage />} />
-
+										<Route path='/register' element={<RegisterPage />} />
 										<Route
 											path='/visualization'
 											element={
