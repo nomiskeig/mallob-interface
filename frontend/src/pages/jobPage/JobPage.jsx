@@ -171,6 +171,19 @@ export function JobPage(props) {
 					);
 				}
 			});
+		if (job.config.additionalConfig) {
+			for (let [key, value] of Object.entries(job.config.additionalConfig)) {
+				parameterDisplayList.push(
+					<div key={key} className='singleParamDisplay'>
+						<InputWithLabel
+							disabled={true}
+							value={value}
+							labelText={key}
+						></InputWithLabel>
+					</div>
+				);
+			}
+		}
 	}
 	let dependencies = [];
 	if (job && job.config.dependencies) {
