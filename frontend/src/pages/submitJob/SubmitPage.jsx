@@ -24,6 +24,7 @@ import {
 	INPUT_TYPE_TEXT,
 	INPUT_TYPE_SELECT,
 	INPUT_TYPE_BOOLEAN,
+    INPUT_TYPE_NONE,
 } from '../jobPage/Parameters';
 import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
 const FormData = require('form-data');
@@ -259,7 +260,7 @@ export function SubmitPage(props) {
 		);
 	});
 	let selectAdditionalParamsItems = configParameters
-		.filter((param) => !param.required)
+		.filter((param) => (!param.required && param.inputType !== INPUT_TYPE_NONE))
 		.filter(
 			(param) => !selectedOptionalIndices.includes(getIndexByParam(param))
 		)
@@ -267,7 +268,6 @@ export function SubmitPage(props) {
 			onClick: () => {
 				let newSelectionOptionalIndices = [...selectedOptionalIndices];
 				newSelectionOptionalIndices.push(getIndexByParam(param));
-				console.log(newSelectionOptionalIndices);
 				setSelectedOptionalIndices(newSelectionOptionalIndices);
 			},
 			name: param.name,
@@ -293,7 +293,7 @@ export function SubmitPage(props) {
 						<div className='submitPagePanel row g-0 upperPanel'>
 							<div className='requiredParamsContainer col-md-3'>
 								<Header title={'Required'} />
-								<div className='requiredParamsFlex d-flex flex-column'>
+								<div className='requiredParamsFlex d-flex flex-column-reverse justify-content-end'>
 									{requiredParamsInputs}
 								</div>
 							</div>

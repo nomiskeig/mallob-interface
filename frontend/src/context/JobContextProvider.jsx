@@ -2,56 +2,6 @@ import React, { useContext, createContext, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
 import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import axios from 'axios';
-const testJob = {
-	config: {
-		name: 'jobName',
-		priority: 4.3,
-		application: 'SAT',
-		maxDemand: 100,
-		wallclockLimit: '100s',
-		cpuLimit: '100ms',
-		arrival: new Date().toISOString(),
-		dependencies: [2, 3, 4],
-		incremental: true,
-		precursor: 4,
-		contentMode: 'text',
-	},
-	jobID: 1,
-	submitTime: new Date().toISOString(),
-	status: 'inProgress',
-	resultData: {
-		time: {
-			parsing: 0.72,
-			processing: 2.67,
-			scheduling: 0.0023,
-			total: 3.4,
-		},
-		usedCpuSecods: 5.34,
-		usedWallclockSeconds: 5.8,
-	},
-};
-const dep1Job = {
-	config: {
-		name: 'dep1name',
-	},
-	jobID: 2,
-	status: 'inProgress',
-};
-
-const dep2Job = {
-	config: {
-		name: 'dep2name',
-	},
-	jobID: 3,
-	status: 'done',
-};
-const dep3Job = {
-	config: {
-		name: 'dep3name',
-	},
-	jobID: 4,
-	status: 'done',
-};
 
 function reducer(jobs, action) {
 	switch (action.type) {
