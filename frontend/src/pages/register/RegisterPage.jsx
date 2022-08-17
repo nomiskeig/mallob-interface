@@ -1,55 +1,56 @@
-import { useContext } from 'react';
-import { UserContext } from '../../context/UserContextProvider';
+import { useContext, useState } from 'react';
+import {InfoContext, TYPE_ERROR, TYPE_INFO} from '../../context/InfoContextProvider';
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../global/buttons/Button';
 import { InputLabel } from '../../global/textfields/Textfield';
 import './../login/LoginPage.scss';
+import axios from 'axios'
 
 export function RegisterPage(props) {
-	let userContext = useContext(UserContext);
+    let infoContext = useContext(InfoContext);
 	let navigate = useNavigate();
 
-	let emailContent = '';
-	let usernameContent = '';
-	let passwordContent = '';
-	let confirmPasswordContent = '';
+    let [emailContent, setEmailContent] = useState('')
+    let [usernameContent, setUsernameContent] = useState('');
+    let [passwordContent, setPasswordContent] = useState('');
+    let [confirmPasswordContent, setConfirmPasswordContent] = useState('')
 
 	const handleChangeEmail = (event) => {
-		emailContent = event.target.value;
+        setEmailContent(event.target.value);
 	};
 
 	const handleChangeUsername = (event) => {
-		usernameContent = event.target.value;
+        setUsernameContent(event.target.value);
 	};
 
 	const handleChangePassword = (event) => {
-		passwordContent = event.target.value;
+        setPasswordContent(event.target.value);
 	};
 
 	const handleChangeConfirmPassword = (event) => {
-		confirmPasswordContent = event.target.value;
+        setConfirmPasswordContent(event.target.value)
 	};
 
 	const registerURL =
 		process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/register';
 	function register() {
 		if (passwordContent !== confirmPasswordContent) {
-			alert('Password does not match confirmation');
+            infoContext.handleInformation('The passwords do not match.', TYPE_ERROR);
+            return;
 		}
-		const axios = require('axios');
-		const response = axios.post(registerURL, {
+		axios.post(registerURL, {
 			username: { usernameContent },
 			password: { passwordContent },
 			email: { emailContent },
-		});
-		if (response.status === 200) {
+		}).then((res) => {
+
 			//register was successful
-			alert('Account created successfully.');
-			navigate('/jobs');
-		}
-		if (response.status !== 200) {
-			alert('Username not available.');
-		}
+            infoContext.handleInformation('Account successfully created.', TYPE_INFO);
+			navigate('/login');
+        }).catch((err) => {
+           infoContext.handleInformation('Username not available', TYPE_ERROR);
+        })
 	}
 
 	function getInputLabel(placeholder, changeHandler, inputType) {
@@ -79,7 +80,7 @@ export function RegisterPage(props) {
 					className='d-flex align-items-center justify-content-center container h-100 formContainer'
 					id='logindiv'
 				>
-					<form>
+					<div>
 						{getInputLabel('youremail@bsp.exmpl', handleChangeEmail, 'email')}
 						{getInputLabel('username', handleChangeUsername, 'text')}
 						{getInputLabel('password', handleChangePassword, 'password')}
@@ -97,10 +98,10 @@ export function RegisterPage(props) {
 							<Button
 								text={'Back to Login'}
 								onClick={goBackToLogin}
-								className='btn-link btn btn-primary btn-lg btn-block'
+								className='btn btn-primary btn-lg btn-block'
 							/>
 						</div>
-					</form>
+					</div>
 				</div>
 			</div>
 		</div>
