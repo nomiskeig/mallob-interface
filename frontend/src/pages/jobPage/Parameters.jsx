@@ -16,7 +16,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 	},
 	{
 		name: 'Application',
@@ -39,7 +40,8 @@ export const configParameters = [
                 isValid: true
             }
 
-        }
+        },
+        transformOutput: (value) => value
 
 	},
 	{
@@ -55,7 +57,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 
 	},
 	{
@@ -71,7 +74,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 	},
 	{
 		name: 'CPU-Limit',
@@ -86,7 +90,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 	},
 	{
 		name: 'Arrival',
@@ -101,8 +106,19 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 	},
+    {
+        name: 'Dependencies',
+        path: ['config', 'dependencies'],
+        internalName: 'dependencies',
+        width: 200,
+        index: 6.4,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: false,
+        transformOutput: (value) => value
+    },
 	{
 		name: 'Incremental',
 		path: ['config, incremental'],
@@ -116,7 +132,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 
 	},
 	{
@@ -132,7 +149,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 	},
 	{
 		name: 'Content-Mode',
@@ -148,7 +166,8 @@ export const configParameters = [
             return {
                 isValid: true
             }
-        }
+        },
+        transformOutput: (value) => value
 	},
     {
         name: 'Name',
@@ -170,10 +189,21 @@ export const configParameters = [
         },
         required: true,
         inputType: INPUT_TYPE_TEXT,
-        showOnJobPage: false
+        showOnJobPage: false,
+        transformOutput: (value) => value
 
 
         
+    },
+    {
+        name: 'Additional config',
+        internalName: 'additionalConfig',
+        path: ['config', 'additionalConfig'],
+        index: 9.5,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: false,
+        transformOutput: (value) =>JSON.stringify(value)
     },
     {
         name: 'Parsing Time',
@@ -182,7 +212,8 @@ export const configParameters = [
         index: 10,
         width: 200,
         inputType: INPUT_TYPE_NONE,
-        showOnJobPage: true
+        showOnJobPage: true,
+        transformOutput: (value) => value
 
     },
     {
@@ -192,7 +223,8 @@ export const configParameters = [
         index: 11,
         width: 200,
         inputType: INPUT_TYPE_NONE,
-        showOnJobPage: true
+        showOnJobPage: true,
+        transformOutput: (value) => value
 
     },
     {
@@ -202,7 +234,8 @@ export const configParameters = [
         index: 12,
         width: 200,
         inputType: INPUT_TYPE_NONE,
-        showOnJobPage: true
+        showOnJobPage: true,
+        transformOutput: (value) => value
 
     },
     {
@@ -212,7 +245,8 @@ export const configParameters = [
         index: 13,
         width: 200,
         inputType: INPUT_TYPE_NONE,
-        showOnJobPage: true
+        showOnJobPage: true,
+        transformOutput: (value) => value
 
     },
     {
@@ -222,7 +256,8 @@ export const configParameters = [
         index: 14,
         width: 200,
         inputType: INPUT_TYPE_NONE,
-        showOnJobPage: true
+        showOnJobPage: true,
+        transformOutput: (value) => value
 
     },
     {
@@ -232,7 +267,8 @@ export const configParameters = [
         index: 15,
         width: 200,
         inputType: INPUT_TYPE_NONE,
-        showOnJobPage: true
+        showOnJobPage: true,
+        transformOutput: (value) => value
 
     }
 ];

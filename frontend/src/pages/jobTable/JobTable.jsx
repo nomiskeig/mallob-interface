@@ -214,7 +214,7 @@ export function JobTable(props) {
 				value = value[path];
 			});
 
-			row[param.internalName] = value ? value : '';
+			row[param.internalName] = value ? param.transformOutput(value) : '';
 		});
 		return row;
 	});
