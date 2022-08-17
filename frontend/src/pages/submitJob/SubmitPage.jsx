@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
+import { AdditionalParam } from '../../global/input/AdditionalParam';
 import {
 	Description,
 	DESCRIPTION_FILE,
@@ -53,9 +54,9 @@ export function SubmitPage(props) {
 	let [selectedOptionalIndices, setSelectedOptionalIndices] = useState([]);
 	let [descriptions, setDescriptions] = useState([]);
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
+	let [additionalConfig, setAdditionalConfig] = useState([]);
 	useEffect(() => {
 		jobContext.loadAllJobsOfUser();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	let ownJobs = jobContext.jobs.filter(
 		(job) => job.user === userContext.user.username
@@ -79,7 +80,7 @@ export function SubmitPage(props) {
 		if (dependencies.length > 0) {
 			job['dependencies'] = [...dependencies];
 		}
-
+		job = addAddtionalParametersToJob(job);
 		axios({
 			method: 'post',
 			url:
@@ -129,6 +130,7 @@ export function SubmitPage(props) {
 	function submitJobExclusiveConfig(descriptionID) {
 		let job = { ...jobToSubmit };
 		job['descriptionID'] = descriptionID;
+		job = addAddtionalParametersToJob(job);
 
 		axios({
 			method: 'post',
@@ -140,6 +142,20 @@ export function SubmitPage(props) {
 			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
 			navigate('/job/' + res.data.jobID);
 		});
+	}
+	function addAddtionalParametersToJob(job) {
+		if (additionalConfig.length === 0) {
+			return;
+		}
+		additionalConfig.forEach((config) => {
+			if (job['additionalConfig'] === undefined) {
+				job['additionalConfig'] = {};
+			}
+			if (config.key !== '' && config.value !== '') {
+				job['additionalConfig'][config.key] = config.value;
+			}
+		});
+		return job;
 	}
 
 	function getInputBasedOnParam(param) {
@@ -170,8 +186,8 @@ export function SubmitPage(props) {
 						title={param.name}
 						items={param.selectValues.map((value) => ({
 							onClick: () => {
-                                let newJobToSubmit = {...jobToSubmit};
-                                newJobToSubmit[param.internalName] = value;
+								let newJobToSubmit = { ...jobToSubmit };
+								newJobToSubmit[param.internalName] = value;
 								setJobToSubmit(newJobToSubmit);
 							},
 							name: value,
@@ -180,11 +196,11 @@ export function SubmitPage(props) {
 					></DropdownComponent>
 				);
 			case INPUT_TYPE_BOOLEAN:
-                if (jobToSubmit[param.internalName] === undefined) {
-                    let newJobToSubmit = {...jobToSubmit}
-                    newJobToSubmit[param.internalName] = false;
-                    setJobToSubmit(newJobToSubmit);
-                }
+				if (jobToSubmit[param.internalName] === undefined) {
+					let newJobToSubmit = { ...jobToSubmit };
+					newJobToSubmit[param.internalName] = false;
+					setJobToSubmit(newJobToSubmit);
+				}
 				return (
 					<div
 						key={getIndexByParam}
@@ -194,12 +210,13 @@ export function SubmitPage(props) {
 						<input
 							type='checkbox'
 							className='form-check-input booleanInputCheckbox'
-                            checked={jobToSubmit[param.internalName]}
-                            onChange={() =>{ 
-                                let newJobToSubmit = {...jobToSubmit};
-                                newJobToSubmit[param.internalName] = !jobToSubmit[param.internalName];
-                                setJobToSubmit(newJobToSubmit);
-                            }}
+							checked={jobToSubmit[param.internalName]}
+							onChange={() => {
+								let newJobToSubmit = { ...jobToSubmit };
+								newJobToSubmit[param.internalName] =
+									!jobToSubmit[param.internalName];
+								setJobToSubmit(newJobToSubmit);
+							}}
 						></input>
 					</div>
 				);
@@ -215,6 +232,32 @@ export function SubmitPage(props) {
 	let optionalParamInputs = selectedOptionalIndices.map((index) =>
 		getInputBasedOnParam(configParameters[index])
 	);
+	additionalConfig.forEach((config) => {
+		optionalParamInputs.push(
+			<AdditionalParam
+				keyValue={config.key}
+				valueValue={config.value}
+				onKeyChange={(newKey) => {
+					let newAdditionalConfig = [...additionalConfig];
+					newAdditionalConfig[config.index] = {
+						index: config.index,
+						key: newKey,
+						value: config.value,
+					};
+					setAdditionalConfig(newAdditionalConfig);
+				}}
+				onValueChange={(newValue) => {
+					let newAdditionalConfig = [...additionalConfig];
+					newAdditionalConfig[config.index] = {
+						index: config.index,
+						key: config.key,
+						value: newValue,
+					};
+					setAdditionalConfig(newAdditionalConfig);
+				}}
+			></AdditionalParam>
+		);
+	});
 	let selectAdditionalParamsItems = configParameters
 		.filter((param) => !param.required)
 		.filter(
@@ -229,6 +272,18 @@ export function SubmitPage(props) {
 			},
 			name: param.name,
 		}));
+	selectAdditionalParamsItems.push({
+		onClick: () => {
+			let newAdditionalConfig = [...additionalConfig];
+			newAdditionalConfig.push({
+				index: newAdditionalConfig.length,
+				key: '',
+				value: '',
+			});
+			setAdditionalConfig(newAdditionalConfig);
+		},
+		name: 'Key-Value-Parameter',
+	});
 
 	return (
 		<div className='submitPageContainer'>
@@ -238,7 +293,9 @@ export function SubmitPage(props) {
 						<div className='submitPagePanel row g-0 upperPanel'>
 							<div className='requiredParamsContainer col-md-3'>
 								<Header title={'Required'} />
-								<div className='requiredParamsFlex d-flex flex-column'>{requiredParamsInputs}</div>
+								<div className='requiredParamsFlex d-flex flex-column'>
+									{requiredParamsInputs}
+								</div>
 							</div>
 							<div className='optionalParamsContainer col-md-9'>
 								<Header title={'Optional'} />

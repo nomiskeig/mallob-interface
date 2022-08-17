@@ -65,8 +65,8 @@ export function JobPage(props) {
 	}, [loaded, loadedDependencies, jobContext, jobID, job]);
 
 	// load description
-	useEffect(() => {
-		if (!loaded) {
+	useEffect(() =>{
+		if (!loaded || !job) {
 			return;
 		}
 
@@ -112,7 +112,7 @@ export function JobPage(props) {
 			.catch((err) => {
 				console.log(err.message);
 			});
-	}, [jobID, loaded]);
+	}, [jobID, loaded, job]);
 
 	function downloadResult() {
 		axios({
