@@ -1,6 +1,7 @@
 export const INPUT_TYPE_TEXT = 'text';
 export const INPUT_TYPE_SELECT = 'select';
 export const INPUT_TYPE_BOOLEAN = 'boolean'
+export const INPUT_TYPE_NONE  ='none';
 export const configParameters = [
 	{
 		name: 'Priority',
@@ -173,6 +174,66 @@ export const configParameters = [
 
 
         
+    },
+    {
+        name: 'Parsing Time',
+        internalName: 'parsing',
+        path: ['resultData', 'time', 'parsing'],
+        index: 10,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: true
+
+    },
+    {
+        name: 'Processing Time',
+        internalName: 'processing',
+        path: ['resultData', 'time', 'processing'],
+        index: 11,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: true
+
+    },
+    {
+        name: 'Scheduling Time',
+        internalName: 'scheduling',
+        path: ['resultData', 'time', 'scheduling'],
+        index: 12,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: true
+
+    },
+    {
+        name: 'Total Time',
+        internalName: 'totalTime',
+        path: ['resultData', 'time', 'total'],
+        index: 13,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: true
+
+    },
+    {
+        name: 'Used CPU Seconds',
+        internalName: 'usedCPUSeconds',
+        path: ['resultData', 'usedCPUSeconds'],
+        index: 14,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: true
+
+    },
+    {
+        name: 'Used Wallclock Seconds',
+        internalName: 'usedWallclockSeconds',
+        path: ['resultData', 'usedWallclockSeconds'],
+        index: 15,
+        width: 200,
+        inputType: INPUT_TYPE_NONE,
+        showOnJobPage: true
+
     }
 ];
 export function getIndexByParam(paramToFind) {

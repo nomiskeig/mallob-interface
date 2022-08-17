@@ -6,7 +6,7 @@ import { InputWithLabel } from '../../global/input/InputWithLabel';
 import { TextFieldDescription } from '../../global/description/TextFieldDescription';
 import { Header } from '../../global/header/Header';
 import { JobPageButton } from '../../global/buttons/JobPageButton';
-import {Button} from '../../global/buttons/Button'
+import { Button } from '../../global/buttons/Button';
 import { useParams } from 'react-router-dom';
 import { configParameters, getIndexByParam } from './Parameters';
 import {
@@ -65,7 +65,7 @@ export function JobPage(props) {
 	}, [loaded, loadedDependencies, jobContext, jobID, job]);
 
 	// load description
-	useEffect(() =>{
+	useEffect(() => {
 		if (!loaded || !job) {
 			return;
 		}
@@ -140,7 +140,6 @@ export function JobPage(props) {
 				'/api/v1/jobs/cancel/single/' +
 				jobID,
 		}).then((res) => {
-                console.log(res.data)
 			infoContext.handleInformation(
 				'Sucessesfully cancelled the job.',
 				TYPE_INFO
@@ -155,10 +154,10 @@ export function JobPage(props) {
 			.forEach((param) => {
 				let value = job;
 				param.path.forEach((path) => {
-					value = value[path];
 					if (!value) {
 						return;
 					}
+					value = value[path];
 				});
 				if (value) {
 					parameterDisplayList.push(

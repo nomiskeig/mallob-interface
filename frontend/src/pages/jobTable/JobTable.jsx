@@ -197,10 +197,10 @@ export function JobTable(props) {
 		filteredConfigParams.forEach((param) => {
 			let value = job;
 			param.path.forEach((path) => {
-				value = value[path];
 				if (!value) {
 					return;
 				}
+				value = value[path];
 			});
 
 			row[param.internalName] = value ? value : '';
