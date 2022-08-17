@@ -59,28 +59,39 @@ public class FallobConfigReader {
 		}
 		
 		c.setClientProcesses(clientProcesses);
-		
-		JSONObject storage = (JSONObject) json.get("storage");
-		c.setGarbageCollectorInterval(storage.getInt("garbageCollectorInterval"));
-		c.setJobStorageTime(storage.getInt("jobStorageTime"));
-		c.setEventStorageTime(storage.getInt("eventStorageTime"));
-		c.setWarningStorageTime(storage.getInt("warningStorageTime"));
-		c.setMaxDescriptionStorageSize(storage.getInt("maxDescriptionStorageSize"));
-		
-		JSONObject defaults = (JSONObject) json.get("defaults");
-		c.setDefaultJobPriority((float) defaults.getDouble("priority"));
-		c.setDefaultWallClockLimit(defaults.getString("wallclockLimit"));
-		c.setDefaultContentMode(defaults.getString("contentMode"));
-		
-		JSONObject paths = (JSONObject) json.get("paths");
-		c.setDescriptionsbasePath(paths.getString("descriptionsBasePath"));
-		c.setDatabaseBasePath(paths.getString("databaseBasePath"));
-		c.setMallobBasePath(paths.getString("mallobBasePath"));
-		c.setResultBasePath(paths.getString("resultBasePath"));
-		
-		JSONObject database = (JSONObject) json.get("database");
-		c.setDataBaseUsername(database.getString("databaseUsername"));
-		c.setDatabasePassword(database.getString("databasePassword"));
+
+
+		//get json object for the storage values
+		JSONObject storageJson = json.getJSONObject("storage");
+
+		c.setGarbageCollectorInterval(storageJson.getInt("garbageCollectorInterval"));
+		c.setJobStorageTime(storageJson.getInt("jobStorageTime"));
+		c.setEventStorageTime(storageJson.getInt("eventStorageTime"));
+		c.setWarningStorageTime(storageJson.getInt("warningStorageTime"));
+		c.setMaxDescriptionStorageSize(storageJson.getInt("maxDescriptionStorageSize"));
+
+
+		//get the json object for the default values
+		JSONObject defaultsJson = json.getJSONObject("defaults");
+
+		c.setDefaultJobPriority((float) defaultsJson.getDouble("priority"));
+		c.setDefaultWallClockLimit(defaultsJson.getString("wallclockLimit"));
+		c.setDefaultContentMode(defaultsJson.getString("contentMode"));
+
+		//get the json object for the path values
+		JSONObject pathsJson = json.getJSONObject("paths");
+
+		c.setDescriptionsbasePath(pathsJson.getString("descriptionsBasePath"));
+		c.setDatabaseBasePath(pathsJson.getString("databaseBasePath"));
+		c.setMallobBasePath(pathsJson.getString("mallobBasePath"));
+		c.setResultBasePath(pathsJson.getString("resultBasePath"));
+
+		//get the json object for the database values
+		JSONObject databaseJson = json.getJSONObject("database");
+
+		c.setDataBaseUsername(databaseJson.getString("databaseUsername"));
+		c.setDatabasePassword(databaseJson.getString("databasePassword"));
+
 	}
 
 	

@@ -18,12 +18,14 @@ import edu.kit.fallob.springConfig.FallobException;
 @SpringBootApplication
 public class BackendApplication {
 
+
 	public static void main(String[] args) throws FallobException {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		//initialize mallob-config
 		String pathToFallobConfigFile = "C:/Users/maiks/git/mallob-interface/backend/src/main/java/edu/kit/fallob/configuration/Fallob_configuration.json";
+
 		FallobConfigReader reader;
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
@@ -38,6 +40,7 @@ public class BackendApplication {
 			e.printStackTrace();
 			return;
 		}
+
 		
 		
 		//initialize mallobio
@@ -53,6 +56,7 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
+
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}

@@ -1,25 +1,24 @@
 package edu.kit.fallob.commands;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.springConfig.FallobException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
-import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.UserDao;
 import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,6 +26,13 @@ public class FallobCommands implements UserDetailsService {
 	
 	private DaoFactory daoFactory;
 	private UserDao userDao;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
+	private static final String DUPLICATE_USERNAME = "Username already exists";
+
+	private static final String DUPLICATE_EMAIL = "Email already exists";
 	
 	
 	public FallobCommands() throws FallobException {
@@ -53,7 +59,9 @@ public class FallobCommands implements UserDetailsService {
 //
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
-    	User user;
+
+		User user;
+
 		try {
 			user = userDao.getUserByUsername(username);
 		} catch (FallobException e) {
@@ -72,9 +80,11 @@ public class FallobCommands implements UserDetailsService {
     
     
     public boolean register(String username, String password, String email) throws FallobException {
-    	User user = new NormalUser(username, password, email);
-    	userDao.save(user);
-    	return true;
+
+		String encodedPassword = passwordEncoder.encode(password);
+		userDao.save(new NormalUser(username, encodedPassword, email));
+		return true;
+
     }
     
     
