@@ -7,7 +7,7 @@ import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
 import { ROLE_ADMIN } from '../../context/UserContextProvider';
 import { StatusLabel } from '../../global/statusLabel/StatusLabel';
 import { UserContext } from '../../context/UserContextProvider';
-import { InfoContext, TYPE_INFO } from '../../context/InfoContextProvider';
+import { InfoContext, TYPE_INFO, TYPE_WARNING } from '../../context/InfoContextProvider';
 export function JobTable(props) {
 	let [selectedIndices, setSelectedIndices] = useState([]);
 	let [selectedJobs, setSelectedJobs] = useState([]);
@@ -67,21 +67,32 @@ export function JobTable(props) {
 	}
 
 	function cancelSelectedJobs() {
+        let jobsToCancel = selectedJobs;
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/cancel',
 			data: {
-				jobs: [...selectedJobs],
+				jobs: [...jobsToCancel],
 			},
 			headers: {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		})
 			.then((res) => {
+                console.log(res.data)
+                if (res.data.cancelled.length === jobsToCancel.length ) {
 				infoContext.handleInformation(
 					'Successfully cancelled the selected jobs.',
 					TYPE_INFO
 				);
+                } else {
+                    let notCancelled = jobsToCancel.filter((id) => !res.data.cancelled.includes(id));
+                    let message = 'Successfully cancelled some of the selected jobs. \nThe jobs with the following IDs could not be cancelled: '
+                    notCancelled.forEach((id) => message += id + ', ');
+                    message = message.slice(0, message.length-2);
+                    infoContext.handleInformation(message, TYPE_WARNING);
+                }
+
 			})
 			.catch((e) => {
 				console.log(e);
