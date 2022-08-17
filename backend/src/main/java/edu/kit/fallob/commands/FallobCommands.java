@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.UserDao;
+import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
 
 import java.util.ArrayList;
@@ -58,7 +59,9 @@ public class FallobCommands implements UserDetailsService {
 //
 //            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 //        }
+
 		User user;
+
 		try {
 			user = userDao.getUserByUsername(username);
 		} catch (FallobException e) {
@@ -77,9 +80,11 @@ public class FallobCommands implements UserDetailsService {
     
     
     public boolean register(String username, String password, String email) throws FallobException {
+
 		String encodedPassword = passwordEncoder.encode(password);
 		userDao.save(new NormalUser(username, encodedPassword, email));
 		return true;
+
     }
     
     

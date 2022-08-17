@@ -7,7 +7,11 @@ public class MallobFilePathGenerator {
 	
 	public static final String LOG_FILE_PATH_BEFROE_ID = File.separator + "jobs.";
 	
-	public static final String LOG_FILE_EXTENSION = ".txt";
+	public static final String LOG_FILE_EXTENSION = ".log";
+	
+	public static final String JSON_EXTENSION = ".json";
+	
+	
 	
 	
 	
@@ -22,7 +26,7 @@ public class MallobFilePathGenerator {
 	 * @return The generated path as described above
 	 */
 	public static String generateLogFilePath(int processID, String basePath) {
-		return generateLogDirectoryPath(processID, basePath) + File.separator + generateLogName(processID) + File.separator + LOG_FILE_EXTENSION;
+		return generateOutDirectoryPath(processID, basePath) + File.separator + generateLogName(processID) + File.separator + LOG_FILE_EXTENSION;
 	}
 	
 	
@@ -30,7 +34,7 @@ public class MallobFilePathGenerator {
 	 * Create the path to the out-directory (the directory in which the log-file lies) of the process with processID
 	 * @return
 	 */
-	public static String generateLogDirectoryPath(int processID, String basePath) {
+	public static String generateOutDirectoryPath(int processID, String basePath) {
 		return basePath + LOG_FILE_PATH_BEFROE_ID + Integer.toString(processID) + ".out";
 	}
 	
@@ -64,4 +68,16 @@ public class MallobFilePathGenerator {
 		//return basePath += ".api"+File.separator+"jobs." + clientProcessID + File.separator + "in" + File.separator;
 		return generatePathToMallobSubmitDirectory(basePath, clientProcessID);
 	}
+	
+	/**
+	 * generates the file-name of a result file depending on the job name (for the result) and the user, who submitted the result
+	 * @param jobName
+	 * @param username
+	 * @return
+	 */
+	public static String generateResultName(String jobName, String username) {
+		 return username + "." + jobName + JSON_EXTENSION;
+	}
+
+
 }

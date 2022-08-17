@@ -2,12 +2,29 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 public class MallobTimeListener implements OutputLogLineListener {
 	
-	//public static final Strin
 	
-	private float secondsSinceMallobStart;
+
+	private static final String LOGLINE_SEPARATOR = " ";
+	private double secondsSinceMallobStart;
+	
+	private static MallobTimeListener instance;
+	
+	
+	public static MallobTimeListener getInstance(){
+		if (instance == null) {
+			instance = new MallobTimeListener();
+		}
+		return instance;
+	}
+	
+	private MallobTimeListener() {
+		
+	}
+	
+
 
 	
-	public float getAmountOfSecondsSinceStart() {
+	public double getAmountOfSecondsSinceStart() {
 		return this.secondsSinceMallobStart;
 	}
 
@@ -15,5 +32,10 @@ public class MallobTimeListener implements OutputLogLineListener {
 	@Override
 	public void processLine(String line) {
 		//TODO : Parse line and get time, override float sinceMallobStart 
+		String[] splittedLogLine = line.split(LOGLINE_SEPARATOR);
+		double updatedSecondsSinceMallobStart = Double.parseDouble(splittedLogLine[0]);
+		if (updatedSecondsSinceMallobStart != secondsSinceMallobStart) {
+			secondsSinceMallobStart = updatedSecondsSinceMallobStart;
+		}
 	}
 }

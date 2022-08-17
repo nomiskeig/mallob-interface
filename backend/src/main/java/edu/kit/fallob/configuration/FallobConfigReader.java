@@ -60,6 +60,7 @@ public class FallobConfigReader {
 		
 		c.setClientProcesses(clientProcesses);
 
+
 		//get json object for the storage values
 		JSONObject storageJson = json.getJSONObject("storage");
 
@@ -90,6 +91,7 @@ public class FallobConfigReader {
 
 		c.setDataBaseUsername(databaseJson.getString("databaseUsername"));
 		c.setDatabasePassword(databaseJson.getString("databasePassword"));
+
 	}
 
 	

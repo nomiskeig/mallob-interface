@@ -21,6 +21,8 @@ public class MallobReaderStarterTests {
 
 	
 	public static final int TEST_AMOUNT_PROCESSES = 100;
+	
+	public static final int[] TEST_CLIENT_PROCESSES = {2,3,4,5,6,7};
 		
 	public static final int TEST_AMOUNT_READERTHREADS = 10;
 	public static final int TEST_AMOUNT_WATCHERTHREADS = 1;
@@ -54,13 +56,12 @@ public class MallobReaderStarterTests {
 	
 	@BeforeEach
 	public void setupBeforeEach() {
-		starter = new MallobReaderStarter();
-		starter.initParsingModule(TEST_DIRECTORY_PATH, 
+		starter = new MallobReaderStarter(TEST_DIRECTORY_PATH);
+		starter.initOutput(
 				TEST_AMOUNT_PROCESSES, 
-				TEST_AMOUNT_WATCHERTHREADS, 
-				TEST_WATCHINGINTERVAL, 
 				TEST_AMOUNT_READERTHREADS, 
 				TEST_READINGINTERVAL);
+		starter.initInput(TEST_AMOUNT_PROCESSES, TEST_CLIENT_PROCESSES);
 		
 					
 	}

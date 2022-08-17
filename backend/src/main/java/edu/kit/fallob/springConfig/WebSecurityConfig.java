@@ -21,8 +21,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration @EnableWebSecurity @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserDetailsService userDetailsService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    
+	@Autowired
+	private UserDetailsService userDetailsService;
+	@Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
