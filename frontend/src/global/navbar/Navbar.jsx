@@ -15,33 +15,38 @@ export function Navbar(props) {
 		userContext.logout();
 		navigate('/login');
 	}
+    console.log(userContext.user)
 	return (
 		<div className='navbarContainer d-flex flex-row  align-items-center'>
-            <div className='logo'></div>
-				<NavbarLink
-					link='/jobs'
-					name='Jobs'
-					highlight={props.highlight === PAGE_JOBS}
-				/>
+			<div className='logo'></div>
+			<NavbarLink
+				link='/jobs'
+				name='Jobs'
+				highlight={props.highlight === PAGE_JOBS}
+			/>
 
-				<NavbarLink
-					link='/visualization'
-					name='Visualization'
-					highlight={props.highlight === PAGE_VIZ}
-				/>
+			<NavbarLink
+				link='/visualization'
+				name='Visualization'
+				highlight={props.highlight === PAGE_VIZ}
+			/>
+			{userContext.user.isLoaded && userContext.user.isVerified && (
 				<NavbarLink
 					link='/submit'
 					name='Submit job'
 					highlight={props.highlight === PAGE_SUBMIT}
 				/>
-				{userContext.user.role === 'admin' && (
-					<NavbarLink
-						link='/admin'
-						name='Administration'
-						highlight={props.highlight === PAGE_ADMIN}
-					/>
-				)}
-			<button className='logoutButton ms-auto' onClick={logout}>Logout</button>
+			)}
+			{userContext.user.role === 'admin' && (
+				<NavbarLink
+					link='/admin'
+					name='Administration'
+					highlight={props.highlight === PAGE_ADMIN}
+				/>
+			)}
+			<button className='logoutButton ms-auto' onClick={logout}>
+				Logout
+			</button>
 		</div>
 	);
 }

@@ -15,6 +15,7 @@ import { JobContext } from '../../context/JobContextProvider';
 import { UserContext } from '../../context/UserContextProvider';
 import {
 	InfoContext,
+	TYPE_ERROR,
 	TYPE_INFO,
 	TYPE_WARNING,
 } from '../../context/InfoContextProvider';
@@ -57,6 +58,10 @@ export function SubmitPage(props) {
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
 	let [additionalConfig, setAdditionalConfig] = useState([]);
 	useEffect(() => {
+        if (!userContext.user.isVerified) {
+            navigate('/jobs');
+            infoContext.handleInformation('You can not submit a job as an unverified user.', TYPE_ERROR)
+        }
 		jobContext.loadAllJobsOfUser();
 	}, []);
 	let ownJobs = jobContext.jobs.filter(

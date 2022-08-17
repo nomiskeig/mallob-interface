@@ -19,6 +19,7 @@ export function UserContextProvider({ children }) {
 		role: token ? payload.role : '',
 		username: token ? payload.username : '',
 		isLoaded: token ? true : false,
+        isVerified: token ? payload.verified : false,
 	});
 
 	async function logout() {
@@ -28,6 +29,7 @@ export function UserContextProvider({ children }) {
 			role: '',
 			username: '',
 			isLoaded: false,
+            isVerified: false
 		});
 	}
 
@@ -41,10 +43,19 @@ export function UserContextProvider({ children }) {
 			role: payload.role,
 			username: payload.username,
 			isLoaded: true,
+            isVerified: payload.verified
 		});
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);
+        if (!decoded) {
+            return null;
+        }
+        if (decoded.verified == 'true') {
+            decoded.verified = true;
+        } else {
+            decoded.verified = false;
+        }
 		return decoded;
 	}
 
