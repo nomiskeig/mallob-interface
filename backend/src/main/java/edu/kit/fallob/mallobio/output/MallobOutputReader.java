@@ -29,7 +29,9 @@ public class MallobOutputReader implements Runnable {
 	private String pathToDirectory;
 	private String logFileName;
 	private String absoluteLogFilePath;
+	
 	private boolean stopWatchingLogFile;
+	
 	private List<OutputProcessor> processors;
 	
 	private int lastReadLine;

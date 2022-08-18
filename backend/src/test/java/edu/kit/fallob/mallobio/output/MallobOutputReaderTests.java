@@ -56,7 +56,7 @@ public class MallobOutputReaderTests {
 	@BeforeEach
 	public void setupReader() {
 		reader = new MallobOutputReader(DIRECTORY_PATH, FILE_NAME);
-		TestOutputProcessor lineProcessor = new TestOutputProcessor();
+		lineProcessor = new TestOutputProcessor();
 		reader.addProcessor(lineProcessor);
 	}
 	
