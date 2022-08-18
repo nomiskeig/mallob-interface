@@ -46,6 +46,10 @@ public class BackendApplication {
 		mallobio.initOutput(config.getAmountProcesses());
 		mallobio.initInput(config.getAmountProcesses(), config.getClientProcesses());
 		
+		//------------------------add your irregular readers here-----------------------
+		//mallobio.addIrregularReaders(directoryPath, fileName);
+		
+		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		mallobio.startMallobio();

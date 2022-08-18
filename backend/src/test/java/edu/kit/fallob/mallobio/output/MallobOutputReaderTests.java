@@ -47,6 +47,11 @@ public class MallobOutputReaderTests {
 		assertTrue(lineProcessor.lines.size() == TEST_FILE_LINES);
 	}
 	
+	@Test
+	public void testReadingMultipleTimes() {
+		//test, if reading is correct if reader is called multiple times
+	}
+	
 	
 	
 	@BeforeEach
