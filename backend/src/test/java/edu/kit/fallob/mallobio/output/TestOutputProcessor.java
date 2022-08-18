@@ -17,9 +17,4 @@ public class TestOutputProcessor implements OutputProcessor {
 	public void processLogLine(String logLine) {
 		lines.add(logLine);
 	}
-	
-	public void getSize() {
-		System.out.println(lines.size());
-	}
-
 }

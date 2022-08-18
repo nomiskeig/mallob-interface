@@ -19,6 +19,10 @@ public class MallobOutputReaderTests {
 	 */
 	public static final int TEST_FILE_LINES = 100;
 	
+	private static int linesInFile = 0;
+	private static String currentFileContent = "";
+	
+	
 	public static final String DIRECTORY_PATH = System.getProperty("user.dir");
 	
 	public static final String FILE_NAME = "testFile.txt";
@@ -31,25 +35,41 @@ public class MallobOutputReaderTests {
 	private static MallobOutputReader reader;
 	private static TestOutputProcessor lineProcessor;
 	
-	
 
 	@Test
 	public void readFirstLineTest() {
 		reader.readNextLine();
 		assertTrue(lineProcessor.lines.get(0).equals(getFileLine(0)));	
 	}
-	
+
 	
 	@Test
-	public void readMultipleAddedLines(){
+	public void testReadingSingleIncrement() throws IOException {
+		//test, if reading is correct if reader is called multiple times
 		reader.readNextLine();
-		lineProcessor.getSize();
-		assertTrue(lineProcessor.lines.size() == TEST_FILE_LINES);
+		
+		
+		int increment = 1;
+		addToFile(increment);
+		reader.readNextLine();
+		
+		//check that last logline looks like expected 
+		assertTrue(lineProcessor.lines.get(lineProcessor.lines.size() - 1).equals(getFileLine(linesInFile - 1)));
 	}
 	
 	@Test
-	public void testReadingMultipleTimes() {
-		//test, if reading is correct if reader is called multiple times
+	public void testReadingMultipleIncrement() throws IOException {
+		reader.readNextLine();
+		
+		int beforeIncrement = linesInFile;
+		assertTrue(lineProcessor.lines.size() == beforeIncrement);
+		
+		int increment = 4;
+		addToFile(increment);
+		reader.readNextLine();
+		
+		assertTrue(beforeIncrement + increment == linesInFile);
+		assertTrue(lineProcessor.lines.size() == linesInFile);
 	}
 	
 	
@@ -60,26 +80,29 @@ public class MallobOutputReaderTests {
 		lineProcessor = new TestOutputProcessor();
 		reader.addProcessor(lineProcessor);
 	}
-	
+
 
 	
 	@BeforeAll
 	public static void setupFile() throws IOException {
 		//createFile
 		testFile = new File(FILE_PATH);
+		addToFile(TEST_FILE_LINES);
+	}
+	
+	
+	public static void addToFile(int amountLines) throws IOException {
 		
-		//cerate File-content
-		String fileContent = "";
-		for (int i = 0; i < TEST_FILE_LINES; i++) {
-			fileContent += getFileLine(i) + System.lineSeparator();
+		for (int i = 0; i < amountLines; i++) {
+			currentFileContent += getFileLine(linesInFile) + System.lineSeparator();
+			linesInFile++;
 		}
 		
 		//write to file
 		FileWriter writer = new FileWriter(testFile.getAbsolutePath());
-		writer.write(fileContent);
+		writer.write(currentFileContent);
 		writer.close();
 	}
-	
 	
 	private static String getFileLine(int lineIndex) {
 		return "Line" + lineIndex;
