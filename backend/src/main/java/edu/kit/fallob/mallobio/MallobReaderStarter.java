@@ -9,7 +9,6 @@ import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.WarningListener;
 import edu.kit.fallob.mallobio.listeners.resultlisteners.JobResultListener;
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
-import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.output.distributors.OutputLogLineDistributor;
@@ -28,12 +27,7 @@ public class MallobReaderStarter {
 	
 	protected String pathToMallobDirectory;
 	
-	
-
-	
-	
 	private Thread[] readerThreadPool;
-	private MallobOutputRunnerThread[] readerRunners;
 	private MallobOutputReader[] readers;
 
 	
@@ -65,103 +59,48 @@ public class MallobReaderStarter {
 	
 	/**
 	 * 
-	 * 0. Initialize MallobOuptut and all required distributor-classe
+	 * 0. Initialize MallobOuptut and all required distributor-classes
 	 * 
-	 * 
-	 * 1. Calls initializeRunnerThreadPool() to initialize the MallobOutputReaderRunner.
-	 * Each ReaderRunner is a thread. The method furthermore initializes a fiexed number of threads
-	 * (amntReaderThreads).
-	 * 
-	 * 2. Initlaize MallobOutputReader - as many as there are processes - and map them to the 
-	 * MallobOutputReaderRunner. A round-robin procedure is used, to ensure a uniform
-	 * distribution of mallobOutputReader to MallbOutputReaderRunner
-	 * 
-	 * 2.5 give every MallobOutputReader the same LogLineDistributor (initialized in step 0)
-	 * 
-	 * 3.Initialize MallobOutputWatchers - works like starting the readers
+	 * 1. Sets result-distributor for watcher-manager
+	 * 2. Initializes readers for log-lines
 	 * 
 	 * @param amountProcesses
 	 * @param amountReaderThreads Amount of threads that each hold MallobOutputReader
 	 * @param readingIntervalPerReadingThread Inteval between read of every MallobOutputReader
 	 */
-	public void initOutput( 
-			int amountProcesses,
-			int amountReaderThreads,
-			int readingIntervalPerReadingThread) throws IllegalArgumentException
+	public void initOutput(int amountProcesses) throws IllegalArgumentException
 	{
 	
-		if (amountReaderThreads > amountProcesses) {
-			throw new IllegalArgumentException("Cant have more threads than readers");
-		}
-		
 		watcherManager = MallobOutputWatcherManager.getInstance();
-		watcherManager.setResultDistributor(resultDistributor);
 		
-		initializeMallobOuptut();
-		
-		
-		initializeReaders(pathToMallobDirectory, 
-				 amountProcesses,
-				 amountReaderThreads,
-				 readingIntervalPerReadingThread);
-		
-
-		//after this mallobio can be started 
-	}
-	
-	
-
-	/**
-	 * See Description of initParsingMdule, This Method does step 1-2.5
-	 * 
-	 * 
-	 * @param mallbLogDirectory
-	 * @param amountProcesses
-	 * @param amountReaderThreads
-	 * @param readingIntervalPerReadingThread
-	 */
-	private void initializeReaders(String mallbLogDirectory, 
-			int amountProcesses,
-			int amountReaderThreads,
-			int readingIntervalPerReadingThread) 
-	{
-		
-		readerRunners = new MallobOutputRunnerThread[amountReaderThreads];
-		readerThreadPool = MallobOutputRunnerThread.initializeThreadPool(readerRunners, readingIntervalPerReadingThread);
-				
-		//create MallobReader and map them to a readerThread
-		int roundRobinCounter = 0;
-		readers = new MallobOutputReader[amountProcesses];
-		for (int i = 0; i < amountProcesses; i++) {
-			
-			//initialize MallobOutputreader
-			readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateLogFilePath(i, mallbLogDirectory));
-			
-			//give output-reader the correct distributor :
-			readers[i].addProcessor(logDistributor);
-			
-			//add outputreader-to readerRunner
-			readerRunners[roundRobinCounter].addActionChecker(readers[i]);
-			roundRobinCounter++;
-			if (roundRobinCounter >= readerRunners.length) {
-				roundRobinCounter = 0;
-			}
-		}
-	}
-	
-	
-	/**
-	 * Initialize mallobOuptut, logDistributor and resultDistributor
-	 * mallobOutput is going to hold a reference of both the log and resultDistributor
-	 */
-	private void initializeMallobOuptut() {
 		this.mallobOutput = MallobOutput.getInstance();
-
 		this.logDistributor = this.mallobOutput.getOutputLogLineDistributor();
 		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
-		
 		this.watcherManager.setResultDistributor(resultDistributor);
 		
+		
+		
+		initializeReaders(amountProcesses);
+		
+	}
+	
+	
+
+	/**
+	 * Initializes an array of readers (length === amountProcesses)
+	 * Then, it inintializes a new MallobOutputReader for every index of the array
+	 * Every Reader gets the same 
+	 * 
+	 * @param amountProcesses
+	 */
+	private void initializeReaders(int amountProcesses) 
+	{
+		this.readers = new MallobOutputReader[amountProcesses];
+		for (int i = 0; i < amountProcesses; i++) {
+			this.readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateOutDirectoryPath(amountProcesses, pathToMallobDirectory), 
+					MallobFilePathGenerator.generateLogName(i));
+			this.readers[i].addProcessor(logDistributor);
+		}
 	}
 	
 	
@@ -190,7 +129,11 @@ public class MallobReaderStarter {
 	 * Starts the reading of the log-files and the watching of the output directories 
 	 */
 	public void startMallobio() {
-		MallobOutputRunnerThread.startThreadPoolExecution(readerThreadPool);
+		readerThreadPool = new Thread[readers.length];
+		for (int i = 0; i < readers.length; i++) {
+			readerThreadPool[i] = new Thread(readers[i]);
+			readerThreadPool[i].start();
+		}
 	}
 
 
@@ -200,13 +143,12 @@ public class MallobReaderStarter {
 	 * @throws InterruptedException
 	 */
 	public void stopMallobio() throws InterruptedException {
-		MallobOutputRunnerThread.stopThreadPoolExecution(readerThreadPool, readerRunners);
+		for (MallobOutputReader r : readers) {
+			r.stopWatchingLogFile();
+		}
+		for (Thread t : readerThreadPool) {
+			t.join();
+		}
 	}
 	
-	public MallobOutput getMallobOutput() throws NullPointerException {
-		if (mallobOutput == null) {
-			throw new NullPointerException("Not yet initialized. Please initialize Module first.");
-		}
-		return mallobOutput;
-	}
 }

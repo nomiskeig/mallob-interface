@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -18,24 +19,22 @@ public class MallobOutputReaderTests {
 	 */
 	public static final int TEST_FILE_LINES = 100;
 	
+	public static final String DIRECTORY_PATH = System.getProperty("user.dir");
+	
+	public static final String FILE_NAME = "testFile.txt";
+	
 	//for test on windows 
-	public static final String FILE_PATH = System.getProperty("user.dir") + File.separator + "testFile.txt";
-	
-	//for test on linux
-	//public static final String FILE_PATH = "/testFile.txt";
-
-	
+	public static final String FILE_PATH = DIRECTORY_PATH + File.separator + FILE_NAME;
+		
 	private static File testFile;
 	
+	private static MallobOutputReader reader;
+	private static TestOutputProcessor lineProcessor;
 	
-	/**
-	 * 
-	 */
+	
+
 	@Test
-	public void readFirstLineTest() {
-		MallobOutputReader reader = new MallobOutputReader(testFile.getAbsolutePath());
-		TestOutputProcessor lineProcessor = new TestOutputProcessor();
-		reader.addProcessor(lineProcessor);
+	public void readFirstLineTest() {	
 		
 		reader.readNextLine();
 		assertTrue(lineProcessor.lines.size() == 1);
@@ -46,16 +45,19 @@ public class MallobOutputReaderTests {
 	
 	@Test
 	public void readMultipleLines() {
-		MallobOutputReader reader = new MallobOutputReader(testFile.getAbsolutePath());
-		TestOutputProcessor lineProcessor = new TestOutputProcessor();
-		reader.addProcessor(lineProcessor);
-		
-		
 		for (int i = 0; i < TEST_FILE_LINES; i++) {
 			reader.readNextLine();
 			assertTrue(lineProcessor.lines.size() == (i + 1));
 			assertTrue(lineProcessor.lines.get(i).equals(getFileLine(i)));
 		}
+	}
+	
+	
+	@BeforeEach
+	public void setupReader() {
+		reader = new MallobOutputReader(DIRECTORY_PATH, FILE_NAME);
+		TestOutputProcessor lineProcessor = new TestOutputProcessor();
+		reader.addProcessor(lineProcessor);
 	}
 	
 
