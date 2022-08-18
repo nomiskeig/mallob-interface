@@ -1,5 +1,8 @@
 package edu.kit.fallob.mallobio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.EventListener;
@@ -36,6 +39,8 @@ public class MallobReaderStarter {
 	private MallobOutput mallobOutput;
 	private OutputLogLineDistributor logDistributor;
 	private ResultObjectDistributor resultDistributor;
+	
+	private List<MallobOutputReader> irregularFilesReaders;
 	
 	
 	public MallobReaderStarter(String pathToMallobDirectory) {
@@ -84,6 +89,21 @@ public class MallobReaderStarter {
 		
 	}
 	
+	/**
+	 * Add file-readers, to watch specific files. Files that are being watched, are the regular log-files of each process.
+	 * 
+	 * All added Readers are also being started, when startMallobIO() is called
+	 * 
+	 * @param directoryPath of the file which is supposed to be watched 
+	 * @param fileName name of the file which is supposed to be watched
+	 */
+	public void addIrregularReaders(String directoryPath, String fileName) {
+		if (irregularFilesReaders == null) {
+			irregularFilesReaders = new ArrayList<>();
+		}
+		irregularFilesReaders.add(new MallobOutputReader(directoryPath, fileName));	
+	}
+	
 	
 
 	/**
@@ -129,6 +149,24 @@ public class MallobReaderStarter {
 	 * Starts the reading of the log-files and the watching of the output directories 
 	 */
 	public void startMallobio() {
+		
+		
+		//collect all irregular readers into one array
+		if (irregularFilesReaders != null) {
+			MallobOutputReader[] allReaders = new MallobOutputReader[irregularFilesReaders.size() + readers.length];
+			
+			//copy regular readers
+			for (int i = 0; i < readers.length; i++) {
+				allReaders[i] = readers[i];
+			}
+			
+			for (int i = 0; i < irregularFilesReaders.size(); i++) {
+				allReaders[readers.length + i] = irregularFilesReaders.get(i);
+			}
+			readers = allReaders;
+		} 
+		
+		
 		readerThreadPool = new Thread[readers.length];
 		for (int i = 0; i < readers.length; i++) {
 			readerThreadPool[i] = new Thread(readers[i]);

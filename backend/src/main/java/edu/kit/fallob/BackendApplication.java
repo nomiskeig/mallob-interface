@@ -39,8 +39,6 @@ public class BackendApplication {
 			return;
 		}
 		
-		
-		
 		FallobConfiguration config = FallobConfiguration.getInstance();
 
 		
@@ -50,7 +48,7 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
-		//mallobio.startMallobio();
+		mallobio.startMallobio();
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}

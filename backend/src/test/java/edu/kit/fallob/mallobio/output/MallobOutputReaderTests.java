@@ -34,23 +34,19 @@ public class MallobOutputReaderTests {
 	
 
 	@Test
-	public void readFirstLineTest() {	
-		
+	public void readFirstLineTest() {
 		reader.readNextLine();
-		assertTrue(lineProcessor.lines.size() == 1);
-		assertTrue(lineProcessor.lines.get(0).equals(getFileLine(0)));
-		
+		assertTrue(lineProcessor.lines.get(0).equals(getFileLine(0)));	
 	}
 	
 	
 	@Test
-	public void readMultipleLines() {
-		for (int i = 0; i < TEST_FILE_LINES; i++) {
-			reader.readNextLine();
-			assertTrue(lineProcessor.lines.size() == (i + 1));
-			assertTrue(lineProcessor.lines.get(i).equals(getFileLine(i)));
-		}
+	public void readMultipleAddedLines(){
+		reader.readNextLine();
+		lineProcessor.getSize();
+		assertTrue(lineProcessor.lines.size() == TEST_FILE_LINES);
 	}
+	
 	
 	
 	@BeforeEach

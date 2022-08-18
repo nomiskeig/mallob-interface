@@ -55,7 +55,7 @@ public class MallobFilePathGenerator {
 	 * @return
 	 */
 	public static String generatePathToMallobSubmitDirectory(String basePath, int clientProcessID) {
-		return basePath += ".api"+File.separator+"jobs." + clientProcessID + File.separator + "in" + File.separator;
+		return basePath += ".api" + File.separator + "jobs." + clientProcessID + File.separator + "in" + File.separator;
 	}
 	
 	/**

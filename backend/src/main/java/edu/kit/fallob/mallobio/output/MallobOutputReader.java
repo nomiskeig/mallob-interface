@@ -24,8 +24,6 @@ import java.util.stream.Stream;
 public class MallobOutputReader implements Runnable {
 
 	
-	
-	
 	private String pathToDirectory;
 	private String logFileName;
 	private String absoluteLogFilePath;
@@ -34,10 +32,10 @@ public class MallobOutputReader implements Runnable {
 	
 	private List<OutputProcessor> processors;
 	
-	private int lastReadLine;
+	private long lastReadLine;
 	
 
-	
+
 	/**
 	 * 
 	 * @param pathToDirectory path, in which the log-file is going to be
@@ -56,14 +54,20 @@ public class MallobOutputReader implements Runnable {
 	 * Read the next Line(s) of the file, which path is sepcified in pathToMallobOutputLog
 	 */
 	public void readNextLine() {
-		String line = null;
+		List<String> newLines = null;
 		try (Stream<String> lines = Files.lines(Paths.get(absoluteLogFilePath))){
-			line = lines.skip(lastReadLine).findFirst().get();
+			newLines = lines.skip(lastReadLine).toList();
+			
 		} catch(IOException e) {
 			System.out.println(e.getMessage());
 		}
-		this.giveLineToProcessors(line);
-		lastReadLine++;
+		
+		if (newLines == null || newLines.size() == 0) {
+			return;
+		} else {
+			this.giveLineToProcessors(newLines);
+			lastReadLine += newLines.size();
+		}
 	}
 	
 	/**
@@ -88,7 +92,7 @@ public class MallobOutputReader implements Runnable {
 								
 				WatchEvent<Path> ev = (WatchEvent<Path>)event;
 		        Path filename = ev.context();
-		        		        
+		        
 				if (logFileWasChanged(filename.toString())){
 					readNextLine();
 				}
@@ -127,12 +131,14 @@ public class MallobOutputReader implements Runnable {
 	
 	/**
 	 * 
-	 * @param line
+	 * @param list
 	 */
-	private void giveLineToProcessors(String line) {
-		if (line == null) {return;}
+	private void giveLineToProcessors(List<String> list) {
+		if (list == null) {return;}
 		for(OutputProcessor p : processors) {
-			p.processLogLine(line);
+			for (String s : list) {
+				p.processLogLine(s);
+			}
 		}
 	}
 	
