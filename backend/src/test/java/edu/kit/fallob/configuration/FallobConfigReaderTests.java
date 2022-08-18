@@ -27,6 +27,7 @@ public class FallobConfigReaderTests {
 	public static final int[] CLIENT_PROCESSES = {3,1,4,5,9};
 	public static final int GARBAGECOLLECTINTERVAL = 5000;
 	
+	
 	/*used for job, event and warning_storage time*/
 	public static final int STORAGETIME = 20000;
 	
