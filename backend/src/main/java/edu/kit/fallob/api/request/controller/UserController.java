@@ -27,11 +27,13 @@ public class UserController {
     @Autowired
     private FallobCommands fallobCommand;
 
+    private static final String REGISTER_UNSUCCESSFUL = "Registering was unsuccessful";
+
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {
         boolean successful;
         try {
-            successful = fallobCommand.register(request.getEmail(), request.getUsername(), request.getPassword());
+            successful = fallobCommand.register(request.getUsername(), request.getPassword(), request.getEmail());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -41,7 +43,7 @@ public class UserController {
         }
 
         if (!successful) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registering was unsuccessful");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(REGISTER_UNSUCCESSFUL);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }

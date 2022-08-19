@@ -3,6 +3,7 @@ package edu.kit.fallob.commands;
 
 import java.io.IOException;
 
+import edu.kit.fallob.database.UserDao;
 import org.springframework.http.HttpStatus;
 
 import edu.kit.fallob.database.DaoFactory;
@@ -23,18 +24,22 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class JobSubmitCommands {
-	
-	
+
+
 	private DaoFactory daoFactory;
+
+	private UserDao userDao;
 	private MallobOutput mallobOutput;
 	private UserActionAuthentificater uaa;
+
+	private static final String USER_NOT_VERIFIED = "User not verified";
 	
 	
 	public JobSubmitCommands() throws FallobException{
 		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
 			daoFactory = new DaoFactory();
-
+			this.userDao = daoFactory.getUserDao();
 			uaa = new UserActionAuthentificater(daoFactory);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -43,7 +48,7 @@ public class JobSubmitCommands {
 	}
 	
 	
-	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException { 
+	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID;
@@ -62,6 +67,9 @@ public class JobSubmitCommands {
 	
 	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
+		if (!userDao.getUserByUsername(username).isVerified()) {
+			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		}
 		formatConfiguration(jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		JobDao jobDao = daoFactory.getJobDao();
@@ -72,6 +80,9 @@ public class JobSubmitCommands {
 	}
 	
 	public int submitJobWithDescriptionID(String username, int jobdescriptionID, JobConfiguration jobConfiguration) throws FallobException {
+		if (!userDao.getUserByUsername(username).isVerified()) {
+			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		}
 		if (!uaa.hasDescriptionAccessViaDescriptionID(username, jobdescriptionID)) {
 			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
 		}
@@ -95,6 +106,9 @@ public class JobSubmitCommands {
 	}
 	
 	public int saveJobDescription(String username, JobDescription jobDescription) throws FallobException {
+		if (!userDao.getUserByUsername(username).isVerified()) {
+			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		}
 		JobDao jobDao = daoFactory.getJobDao();
 		return jobDao.saveJobDescription(jobDescription, username);
 	}

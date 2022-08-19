@@ -12,11 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.springConfig.FallobException;
 
 @SpringBootApplication
 public class BackendApplication {
+
 
 	public static void main(String[] args) throws FallobException {
 		
@@ -38,6 +38,7 @@ public class BackendApplication {
 			e.printStackTrace();
 			return;
 		}
+
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
 
@@ -53,7 +54,6 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		mallobio.startMallobio();
-		
 		SpringApplication.run(BackendApplication.class, args);
 	}
 

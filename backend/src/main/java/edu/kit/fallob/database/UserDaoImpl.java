@@ -52,7 +52,8 @@ public class UserDaoImpl implements UserDao{
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getUserType().toString());
             statement.setDouble(4, user.getPriority());
-            statement.setBoolean(5, user.isVerified());
+            //temporary change for integration testing. Has to removed after testing!!!
+            statement.setBoolean(5, true);
             statement.setString(6, user.getEmail());
 
             statement.executeUpdate();

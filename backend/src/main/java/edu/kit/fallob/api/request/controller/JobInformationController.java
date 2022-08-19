@@ -37,9 +37,13 @@ public class JobInformationController {
     @Autowired
     private JobPendingCommand jobPendingCommmand;
 
+    private static final String USERNAME = "username";
+
+    private static final String FILE_CORRUPT = "Job is not active";
+
     @GetMapping("/info/single/{jobId}")
     public ResponseEntity<Object> getSingleJobInformation(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         JobInformation jobInformation;
         try {
             jobInformation = jobInformationCommand.getSingleJobInformation(username, jobId);
@@ -52,7 +56,7 @@ public class JobInformationController {
     }
     @GetMapping("/info")
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobIds());
@@ -72,7 +76,7 @@ public class JobInformationController {
     }
     @GetMapping("/info/all")
     public ResponseEntity<Object> getAllJobInformation(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getAllJobInformation(username);
@@ -89,7 +93,7 @@ public class JobInformationController {
     }
     @GetMapping("/info/global")
     public ResponseEntity<Object> getAllGlobalJobInformation(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getAllGlobalJobInformation(username);
@@ -106,7 +110,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/description/single/{jobId}")
     public ResponseEntity<Object> getSingleJobDescription(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         JobDescription jobDescriptions;
         try {
             jobDescriptions = jobDescriptionCommand.getSingleJobDescription(username, jobId);
@@ -126,7 +130,7 @@ public class JobInformationController {
                     }
                     myReader.close();
                 } catch (FileNotFoundException e) {
-                    FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, "File does not exist or is corrupt");
+                    FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, FILE_CORRUPT);
                     return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
                 }
             }
@@ -138,7 +142,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/description")
     public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
         try {
             jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobIds());
@@ -154,7 +158,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/description/all")
     public ResponseEntity<Object> getAllJobDescriptions(HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
         try {
             jobDescriptions = jobDescriptionCommand.getAllJobDescription(username);
@@ -167,7 +171,7 @@ public class JobInformationController {
 
     @GetMapping(value ="/solution/single/{jobId}")
     public ResponseEntity<Object> getSingleJobResult(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         JobResult jobResult;
         try {
             jobResult = jobResultCommand.getSingleJobResult(username, jobId);
@@ -180,7 +184,7 @@ public class JobInformationController {
 
     @GetMapping("/solution")
     public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
         try {
             jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobIds());
@@ -196,7 +200,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/solution/all")
     public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
         try {
             jobResults = jobResultCommand.getAllJobResult(username);
@@ -208,7 +212,7 @@ public class JobInformationController {
     }
     @GetMapping("/waitFor/{jobId}")
     public ResponseEntity<Object> waitForJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         ResultMetaData jobResult;
         try {
             jobResult = jobPendingCommmand.waitForJob(username, jobId);
