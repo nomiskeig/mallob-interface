@@ -1,0 +1,32 @@
+{
+    "amountProcesses" : 6,
+    "maxJobsTotal" : 100,
+    "maxJobsUser": 10,
+    "client-processes" : [0],
+    "storage": {
+    "garbageCollectorInterval": 10,
+    "jobStorageTime": 10,
+    "eventStorageTime": 10,
+    "warningStorageTime": 10,
+    "maxDescriptionStorageSize": 10
+    },
+    "defaults": {
+        "priority": 1.0,
+        "wallclockLimit": "1",
+        "contentMode": "raw"
+        },
+    "paths": {
+        "databaseBasePath": "C:/Users/maiks/git/mallob-interface/backend/src/main/java/edu/kit/fallob/fallobDatabase",
+        "mallobBasePath": "\\\\wsl.localhost\\Ubuntu\\home\\maiksept\\mallob\\",
+        "resultBasePath": "",
+        "descriptionsBasePath": "\\\\wsl.localhost\\Ubuntu\\home\\maiksept\\mallob"
+        },
+    "database": {
+        "databaseUsername": "fallob",
+        "databasePassword": ""
+        },
+    "readerSetup" : {
+        "readingIntervalPerReadingThread" : 50,
+        "amountReaderThreads" : 5
+    }
+}
