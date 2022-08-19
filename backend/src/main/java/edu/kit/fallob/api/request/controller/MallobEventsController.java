@@ -7,9 +7,12 @@ import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +26,18 @@ public class MallobEventsController {
     @GetMapping("/events")
     public ResponseEntity<Object> getMallobUpdates(@RequestParam String startTime, @RequestParam String endTime) {
         List<Event> events;
+        LocalDateTime timeLowerBound;
+        LocalDateTime timeUpperBound;
         try {
-            events = mallobCommands.getEvents(startTime, endTime);
+            timeLowerBound = LocalDateTime.parse(startTime);
+            timeUpperBound = LocalDateTime.parse(endTime);
+        } catch (DateTimeParseException e) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, e.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        try {
+            events = mallobCommands.getEvents(timeLowerBound, timeUpperBound);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -39,8 +52,16 @@ public class MallobEventsController {
     @GetMapping("/state")
     public ResponseEntity<Object> getSystemState(@RequestParam String time) {
         SystemState state;
+        LocalDateTime formattedTime;
         try {
-            state = mallobCommands.getSystemState(time);
+            formattedTime = LocalDateTime.parse(time);
+        } catch (DateTimeParseException e) {
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, e.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        }
+
+        try {
+            state = mallobCommands.getSystemState(formattedTime);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
