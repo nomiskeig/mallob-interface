@@ -37,27 +37,36 @@ public class MallobOutputReader implements MallobOutputActionChecker {
 	
 	
 	/**
-	 * Read the next Line of the file, which path is sepcified in pathToMallobOutputLog
+	 * read all lines form the file which have not been read up until this point
+	 * Give all lines to registered processors
 	 */
-	public void readNextLine() {
-		String line = null;
+	public void readNextLine() {		
+		List<String> newLines = null;
 		try (Stream<String> lines = Files.lines(Paths.get(pathToMallobOutputLog))){
-			line = lines.skip(lastReadLine).findFirst().get();
+			newLines = lines.skip(lastReadLine).toList();
+			
 		} catch(IOException e) {
 			System.out.println(e.getMessage());
 		}
-		this.giveLineToProcessors(line);
-		lastReadLine++;
+		
+		if (newLines == null || newLines.size() == 0) {
+			return;
+		} else {
+			this.giveLineToProcessors(newLines);
+			lastReadLine += newLines.size();
+		}
 	}
 	
 	/**
 	 * 
-	 * @param line
+	 * @param newLines
 	 */
-	private void giveLineToProcessors(String line) {
-		if (line == null) {return;}
+	private void giveLineToProcessors(List<String> newLines) {
+		if (newLines == null) {return;}
 		for(OutputProcessor p : processors) {
-			p.processLogLine(line);
+			for (String line : newLines) {
+				p.processLogLine(line);
+			}
 		}
 	}
 	
