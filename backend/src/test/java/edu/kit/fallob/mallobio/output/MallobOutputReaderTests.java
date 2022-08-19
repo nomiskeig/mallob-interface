@@ -72,6 +72,14 @@ public class MallobOutputReaderTests {
 		assertTrue(lineProcessor.lines.size() == linesInFile);
 	}
 	
+	@Test
+	public void testNoNewLine() {
+		reader.readNextLine();
+		assertTrue(lineProcessor.lines.size() == linesInFile);
+		reader.readNextLine();
+		assertTrue(lineProcessor.lines.size() == linesInFile);
+	}
+	
 	
 	
 	@BeforeEach
