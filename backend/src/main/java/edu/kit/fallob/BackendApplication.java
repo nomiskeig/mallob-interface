@@ -44,7 +44,7 @@ public class BackendApplication {
 		
 		
 		//initialize mallobio
-		int amountReaderThreads = 4;
+		int amountReaderThreads = 6;
 		int readingIntervalPerReadingThread = 50; 
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
@@ -56,6 +56,8 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
+		
+		mallobio.startMallobio();
 
 		
 		SpringApplication.run(BackendApplication.class, args);

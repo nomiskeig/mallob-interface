@@ -5,11 +5,17 @@ import java.io.File;
 public class MallobFilePathGenerator {
 	
 	
-	public static final String LOG_FILE_PATH_BEFROE_ID = File.separator + "jobs.";
+	public static final String API_DIRECTORY = ".api";
 	
-	public static final String LOG_FILE_EXTENSION = ".log";
+	public static final String LOG_FILE_NAME = "log.";
 	
 	public static final String JSON_EXTENSION = ".json";
+	
+	public static final String JOB_INPUT_DIRECTORY = "jobs.";
+	
+	public static final String IN_DIRECTORY = "in";
+	
+	public static final String OUT_DIRECTORY = "out";
 	
 	
 	
@@ -26,16 +32,16 @@ public class MallobFilePathGenerator {
 	 * @return The generated path as described above
 	 */
 	public static String generateLogFilePath(int processID, String basePath) {
-		return generateOutDirectoryPath(processID, basePath) + File.separator + generateLogName(processID) + File.separator + LOG_FILE_EXTENSION;
+		return basePath + API_DIRECTORY + File.separator + Integer.toString(processID) + File.separator + LOG_FILE_NAME + generateLogName(processID);
 	}
 	
 	
 	/**
-	 * Create the path to the out-directory (the directory in which the log-file lies) of the process with processID
+	 * Create the path to the out-directory (the directory in which the solution lies) of the process with processID
 	 * @return
 	 */
 	public static String generateOutDirectoryPath(int processID, String basePath) {
-		return basePath + LOG_FILE_PATH_BEFROE_ID + Integer.toString(processID) + ".out";
+		return basePath + API_DIRECTORY + File.separator + JOB_INPUT_DIRECTORY + Integer.toString(processID) + File.separator + OUT_DIRECTORY;
 	}
 	
 	/**
@@ -55,7 +61,7 @@ public class MallobFilePathGenerator {
 	 * @return
 	 */
 	public static String generatePathToMallobSubmitDirectory(String basePath, int clientProcessID) {
-		return basePath += ".api"+File.separator+"jobs." + clientProcessID + File.separator + "in" + File.separator;
+		return basePath += API_DIRECTORY + File.separator + JOB_INPUT_DIRECTORY + clientProcessID + File.separator + IN_DIRECTORY + File.separator;
 	}
 	
 	/**
@@ -77,6 +83,11 @@ public class MallobFilePathGenerator {
 	 */
 	public static String generateResultName(String jobName, String username) {
 		 return username + "." + jobName + JSON_EXTENSION;
+	}
+	
+	
+	public static String generatePathToJobMappingsLogFile(String basePath, int clientProcessID) {
+		return generateLogFilePath(clientProcessID, basePath) + ".i";
 	}
 
 

@@ -95,7 +95,7 @@ public class MallobReaderStarter {
 		}
 		
 		watcherManager = MallobOutputWatcherManager.getInstance();
-		watcherManager.setResultDistributor(resultDistributor);
+		
 		
 		initializeMallobOuptut();
 		
@@ -126,7 +126,7 @@ public class MallobReaderStarter {
 			int readingIntervalPerReadingThread) 
 	{
 		
-		readerRunners = new MallobOutputRunnerThread[amountReaderThreads];
+		readerRunners = new MallobOutputRunnerThread[amountReaderThreads + 1];
 		readerThreadPool = MallobOutputRunnerThread.initializeThreadPool(readerRunners, readingIntervalPerReadingThread);
 				
 		//create MallobReader and map them to a readerThread
@@ -143,10 +143,13 @@ public class MallobReaderStarter {
 			//add outputreader-to readerRunner
 			readerRunners[roundRobinCounter].addActionChecker(readers[i]);
 			roundRobinCounter++;
-			if (roundRobinCounter >= readerRunners.length) {
+			if (roundRobinCounter >= readerRunners.length - 1) {
 				roundRobinCounter = 0;
 			}
 		}
+		MallobOutputReader jobMappingFileReader = new MallobOutputReader(MallobFilePathGenerator.generatePathToJobMappingsLogFile(mallbLogDirectory, amountProcesses - 1));
+		jobMappingFileReader.addProcessor(logDistributor);
+		readerRunners[amountReaderThreads].addActionChecker(jobMappingFileReader);
 	}
 	
 	

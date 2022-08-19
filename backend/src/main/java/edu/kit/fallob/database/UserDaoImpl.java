@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * class that is responsible for storing all the user data
@@ -108,7 +110,12 @@ public class UserDaoImpl implements UserDao{
                 } else {
                     returnUser = new NormalUser(username, password, email);
                 }
-
+                JobDao jobDao = new JobDaoImpl();
+                List<Integer> jobIDs = new ArrayList<>();
+                for (Integer i : jobDao.getAllJobIds(username)) {
+                	jobIDs.add(i);
+                }
+                returnUser.setJobIDs(jobIDs);
                 returnUser.setPriority(priority);
                 returnUser.setVerified(isVerified);
 
