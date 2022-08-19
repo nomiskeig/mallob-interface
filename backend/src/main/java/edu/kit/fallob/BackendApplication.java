@@ -41,12 +41,14 @@ public class BackendApplication {
 		}
 
 		
+		FallobConfiguration config = FallobConfiguration.getInstance();
+
+		
 		
 		//initialize mallobio
-		int amountReaderThreads = 20;
-		int readingIntervalPerReadingThread = 50; 
+		int amountReaderThreads = config.getAmountReaderThreads();
+		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 
 		
-		FallobConfiguration config = FallobConfiguration.getInstance();
 
 		
 		MallobReaderStarter mallobio = new MallobReaderStarter(config.getMallobBasePath());	
