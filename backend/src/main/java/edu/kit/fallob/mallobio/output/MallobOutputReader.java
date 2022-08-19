@@ -37,6 +37,19 @@ public class MallobOutputReader implements MallobOutputActionChecker {
 	
 	
 	/**
+	 * Constructor for convenience of MallobOutputReader 
+	 * This way you can insert a processor right when calling the constructor instead of having to call an extra method
+	 * 
+	 * @param pathToMallobOutputLog log-file which this reader is reading
+	 * @param initialProcessor 
+	 */
+	public MallobOutputReader(String pathToMallobOutputLog, OutputProcessor initialProcessor) {
+		this(pathToMallobOutputLog);
+		processors.add(initialProcessor);
+	}
+	
+	
+	/**
 	 * read all lines form the file which have not been read up until this point
 	 * Give all lines to registered processors
 	 */

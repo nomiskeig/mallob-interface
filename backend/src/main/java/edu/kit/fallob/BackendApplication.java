@@ -57,6 +57,11 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
+		
+		//-----------------------add additional file-readers here 
+		//mallobio.addIrregularReaders(<yourfilepath>);
+		
+		mallobio.startMallobio();
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
