@@ -66,24 +66,5 @@ public class MallobReaderStarterTests {
 					
 	}
 
-	@BeforeAll
-	public static void setupFiles() {
-		/*
-		//create directory
-		new File(TEST_MALLOB_API_PATH).mkdirs();
-		
-		//Create directory of logs 
-		for (int i = 0; i < TEST_AMOUNT_PROCESSES; i++) {
-			new File(MallobFilePathGenerator.generateLogDirectoryPath(i, TEST_MALLOB_API_PATH)).mkdirs();
-			new File(MallobFilePathGenerator.generateLogFilePath(i, TEST_MALLOB_API_PATH));
-		}
-		*/
-	}
-	
-	@AfterAll
-	public static void deleteFile() throws IOException {
-		//FileUtils.deleteDirectory(new File(TEST_MALLOB_API_PATH));
-	}
-	
 	
 }

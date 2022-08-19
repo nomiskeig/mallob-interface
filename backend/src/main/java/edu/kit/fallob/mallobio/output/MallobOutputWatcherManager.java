@@ -28,7 +28,7 @@ public class MallobOutputWatcherManager {
 
 	
 	/**
-	 * Sets the result distributor to resultDistributor for all watchers being created from this point out
+	 * Sets the result distributor to resultDistributor for all watchers being created from this point 
 	 * @param resultDistributor
 	 */
 	public void setResultDistributor(ResultObjectDistributor resultDistributor) {

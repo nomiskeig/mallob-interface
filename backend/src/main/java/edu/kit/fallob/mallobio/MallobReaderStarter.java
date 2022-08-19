@@ -196,9 +196,7 @@ public class MallobReaderStarter {
 
 		this.logDistributor = this.mallobOutput.getOutputLogLineDistributor();
 		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
-		
-		this.watcherManager.setResultDistributor(resultDistributor);
-	}
+		}
 	
 	
 	/**
@@ -226,6 +224,9 @@ public class MallobReaderStarter {
 	 * Starts the reading of the log-files and the watching of the output directories 
 	 */
 	public void startMallobio() {
+		if (readerThreadPool == null || readerRunners == null || readers == null) {
+			throw new NullPointerException("Cannot start mallobio. Module has not been initialized properly. Threadpool, Threads or Readeres missing.");
+		}
 		//add irregular readers to the current threads 
 		if (irregularFilesReaders != null) {
 			this.mapReaderToThread((MallobOutputReader[]) irregularFilesReaders.toArray(), this.readerRunners);
