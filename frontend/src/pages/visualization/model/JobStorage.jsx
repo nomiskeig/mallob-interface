@@ -90,16 +90,18 @@ export class JobStorage {
 				}
 				if (job === undefined) {
 					console.log('non existant job');
-					throw new AppError('Can not stop working on a non-existent job');
+                    return;
+					//throw new AppError('Can not stop working on a non-existent job');
 				}
 				if (!job.getVertex(event.getTreeIndex())) {
 					console.log('trying to remove a vertex which is not part of the job');
 					console.log('rank: ' + event.getRank());
 					console.log('treeIndex: ' + event.getTreeIndex());
-					throw new AppError(
-						'trying to remove a vertex which is not part of the job.',
-						TYPE_UNRECOVERABLE
-					);
+                    return;
+					//throw new AppError(
+					//	'trying to remove a vertex which is not part of the job.',
+					//	TYPE_UNRECOVERABLE
+					//);
 				}
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() - 1
@@ -157,10 +159,10 @@ export class JobStorage {
 					console.log('trying to add a vertex which is already existent');
 					console.log('rank: ' + rank);
 					console.log('treeIndex ' + treeIndex);
-					throw new AppError(
-						'trying to add a vertex where there is already a vertex existent.',
-						TYPE_UNRECOVERABLE
-					);
+					//throw new AppError(
+					//	'trying to add a vertex where there is already a vertex existent.',
+					//	TYPE_UNRECOVERABLE
+					//);
 				}
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);
