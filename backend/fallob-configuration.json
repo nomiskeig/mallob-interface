@@ -16,10 +16,10 @@
         "contentMode": "raw"
         },
     "paths": {
-        "databaseBasePath": "C:/Users/maiks/git/mallob-interface/backend/src/main/java/edu/kit/fallob/fallobDatabase",
-        "mallobBasePath": "\\\\wsl.localhost\\Ubuntu\\home\\maiksept\\mallob\\",
+        "databaseBasePath": "",
+        "mallobBasePath": "",
         "resultBasePath": "",
-        "descriptionsBasePath": "\\\\wsl.localhost\\Ubuntu\\home\\maiksept\\mallob"
+        "descriptionsBasePath": ""
         },
     "database": {
         "databaseUsername": "fallob",
