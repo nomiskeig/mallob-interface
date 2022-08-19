@@ -28,7 +28,7 @@ public class BackendApplication {
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Fallob-Configuration file not found at specified location.");
 			return;
 		}
 		
