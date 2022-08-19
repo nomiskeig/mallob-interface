@@ -1,7 +1,7 @@
 import { useContext, useEffect,  useState } from 'react';
 import { UserContext } from '../../context/UserContextProvider';
 import './AdminPage.scss';
-import { Button } from '../../global/buttons/Button';
+//import { Button } from '../../global/buttons/Button';
 import axios from 'axios';
 
 export function AdminPage(props) {
@@ -73,7 +73,7 @@ export function AdminPage(props) {
 	function getWarningsElement() {
 		return <nav className='navbar'>{getWarningsAsList()}</nav>;
 	}
-
+    /*
 	//----------------------------------------------------------functions for other containers (windows - e.g. mallob start-button) on the site
 
 	function startMallob() {
@@ -116,6 +116,7 @@ export function AdminPage(props) {
 			</div>
 		);
 	}
+    */
 
 	function getContainerTitle(title) {
 		return (
