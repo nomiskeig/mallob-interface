@@ -117,7 +117,8 @@ public class MallobReaderStarter {
 	{
 		this.readers = new MallobOutputReader[amountProcesses];
 		for (int i = 0; i < amountProcesses; i++) {
-			this.readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateOutDirectoryPath(amountProcesses, pathToMallobDirectory), 
+			this.readers[i] = new MallobOutputReader(
+					MallobFilePathGenerator.generateOutDirectoryPath(amountProcesses, pathToMallobDirectory), 
 					MallobFilePathGenerator.generateLogName(i));
 			this.readers[i].addProcessor(logDistributor);
 		}
