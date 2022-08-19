@@ -14,7 +14,6 @@ Execute the following steps:
 git clone https://github.com/nomiskeig/mallob-interface.git
 cd mallob-interface
 docker compose build
-
 ```
 
 #### Start
