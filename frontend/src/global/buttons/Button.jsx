@@ -5,5 +5,5 @@ export function Button(props) {
     let style = props.color ? {
         'backgroundColor': props.color 
     } : {}
-    return <button className={`button ${bgClass}`} onClick={props.onClick} style={style}>{props.text}</button>
+    return <button className={`button ${bgClass} ${props.className}`} onClick={props.onClick} style={style}>{props.text}</button>
 }

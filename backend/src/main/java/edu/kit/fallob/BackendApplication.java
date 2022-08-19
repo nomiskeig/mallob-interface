@@ -18,6 +18,7 @@ import edu.kit.fallob.springConfig.FallobException;
 @SpringBootApplication
 public class BackendApplication {
 
+
 	public static void main(String[] args) throws FallobException {
 		
 		
@@ -38,6 +39,7 @@ public class BackendApplication {
 			e.printStackTrace();
 			return;
 		}
+
 		
 		
 		//initialize mallobio
@@ -53,7 +55,6 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
-		
 		SpringApplication.run(BackendApplication.class, args);
 	}
 

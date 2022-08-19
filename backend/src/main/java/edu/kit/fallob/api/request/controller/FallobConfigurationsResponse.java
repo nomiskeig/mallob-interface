@@ -1,5 +1,7 @@
 package edu.kit.fallob.api.request.controller;
 
+import java.time.LocalDateTime;
+
 public class FallobConfigurationsResponse {
     private final int amountProcesses;
     private final String startTime;
@@ -16,7 +18,7 @@ public class FallobConfigurationsResponse {
     }
 
     public String getStartTime() {
-        return startTime;
+        return startTime.toString();
     }
 
     public Defaults getDefaults() {
