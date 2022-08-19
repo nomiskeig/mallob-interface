@@ -115,7 +115,8 @@ public class MallobInputTests {
 	
 	@BeforeEach
 	public void setupBeforeEach() {
-		mInput = new MallobInputImplementation(TEST_DIRECTORY_PATH, CLIENT_PROCESSES);
+		mInput = MallobInputImplementation.getInstance();
+		((MallobInputImplementation) mInput).setupInput(TEST_DIRECTORY_PATH, CLIENT_PROCESSES);
 	}
 	
 	

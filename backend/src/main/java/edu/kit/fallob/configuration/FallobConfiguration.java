@@ -1,5 +1,6 @@
 package edu.kit.fallob.configuration;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class FallobConfiguration {
 	private String databasePassword;
 
 
-	private String startTime;
+	private LocalDateTime startTime;
 
 	private FallobConfiguration() {
 		
@@ -53,7 +54,12 @@ public class FallobConfiguration {
 		}
 		return instance;
 	}
-	
+	/**
+	 * ONLY USE THIS METhOD IF YOU WANT TO USE A FRESH CONFIG 
+	 */
+	public static void resetConfig() {
+		instance = null;
+	}
 	
 	
 	public int getAmountProcesses() {
@@ -183,11 +189,11 @@ public class FallobConfiguration {
 		this.resultBasePath = resultBasePath;
 	}
 
-	public String getStartTime() {
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(String startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
