@@ -1,18 +1,15 @@
 package edu.kit.fallob.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.input.MallobInput;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class provides methods to abort running jobs.
@@ -90,8 +87,12 @@ public class JobAbortCommands {
 		if (!uaa.isAdmin(username)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
-		int[] allGlobalJobIDs = new int[1]; //provisorisch
-		return abortMultipleJobs(username, allGlobalJobIDs);
+		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); 
+		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];
+		for (int i = 0; i < allGlobalJobIDs.size(); i++) {
+			allGlobalJobIDsArray[i] = allGlobalJobIDs.get(i);
+		}
+		return abortMultipleJobs(username, allGlobalJobIDsArray);
 	}
 
 }

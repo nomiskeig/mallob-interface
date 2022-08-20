@@ -1,6 +1,8 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
 import org.springframework.http.HttpStatus;
@@ -24,19 +26,25 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 	private final static int JOB_IS_SUBMITTING = 0;
 	private final static int JOB_IS_VALID = 1;
 	private final static int JOB_IS_NOT_VALID = 2;
-	
+	private final static String VALID_JOB_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
+	private final static String NOT_VALID_JOB_REGEX = "I [WARN] Job file missing essential field(s). Ignoring this file.";
 	
 	private String username;
 	private int jobID;
 	private MallobInput mallobInput;
 	private Object monitor;
 	private int jobStatus = JOB_IS_SUBMITTING;
-	
+	private Pattern validJobPattern;
+	private Pattern notValidJobPattern;
 	
 	public JobToMallobSubmitter(String username) {
 		this.username = username;
 		this.mallobInput = MallobInputImplementation.getInstance();
 		this.monitor = new Object();
+		
+		String formattedValidJobRegex = String.format(VALID_JOB_REGEX, username);
+		validJobPattern = Pattern.compile(formattedValidJobRegex);
+		notValidJobPattern = Pattern.compile(NOT_VALID_JOB_REGEX);
 	}
 	
 	
@@ -69,11 +77,22 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
 	@Override
 	public void processLine(String line) {
-		//control the logline and set job status and jobID
-		
-		synchronized(monitor) {
-			monitor.notify();
+		Matcher validJobMatcher = validJobPattern.matcher(line);
+		if (validJobMatcher.find()) {
+			jobStatus = JOB_IS_VALID;
+			jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1, line.length()));
+			synchronized(monitor) {
+				monitor.notify();
+			}
 		}
+		Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
+		if (notValidJobMatcher.find()) {
+			jobStatus = JOB_IS_NOT_VALID;
+			synchronized(monitor) {
+				monitor.notify();
+			}
+		}
+		
 	}
 	
 	

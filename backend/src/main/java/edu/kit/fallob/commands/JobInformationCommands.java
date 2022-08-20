@@ -51,9 +51,6 @@ public class JobInformationCommands {
 				continue;
 			}
 		}
-		if (jobInformations.isEmpty()) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
-		}
 		return jobInformations;
 	}
 	
@@ -67,8 +64,12 @@ public class JobInformationCommands {
 		if (!uaa.isAdmin(username)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
-		int[] allGlobalJobIDs = new int[1]; //provisorisch
-		return getMultipleJobInformation(username, allGlobalJobIDs);
+		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); //provisorisch
+		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];
+		for (int i = 0; i < allGlobalJobIDs.size(); i++) {
+			allGlobalJobIDsArray[i] = allGlobalJobIDs.get(i);
+		}
+		return getMultipleJobInformation(username, allGlobalJobIDsArray);
 	}
 
 }
