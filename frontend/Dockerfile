@@ -3,6 +3,7 @@
 FROM node:16.17.0 as build
 ENV NODE_ENV=production
 ENV PATH /app/node_modules/.bin:$PATH
+ENV REACT_APP_API_BASE_PATH="http://localhost:8080"
 WORKDIR /app
 RUN rm -rf *
 COPY ["package.json","package-lock.json*", "./app"]

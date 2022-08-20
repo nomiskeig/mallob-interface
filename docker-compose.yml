@@ -5,13 +5,18 @@ services:
     ports:
       - '1337:80'
     environment:
-      - REACT_APP_API_BASE_PATH=http://localhost:8080
+      REACT_APP_API_BASE_PATH: "http://localhost:8080"
 
   backend:
     build: ./backend
     ports: 
       - "8080:8080"
+    expose:
+      - "8080"
     volumes:
         - type: bind
           source: ${CONFIG_FILE} 
           target: /app/config.json
+        - type: bind
+          source: ${WORKING_DIR}
+          target: /app/workingDir
