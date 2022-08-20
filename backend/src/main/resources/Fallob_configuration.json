@@ -16,10 +16,10 @@
     "contentMode": "raw"
   },
   "paths": {
-    "databaseBasePath": "",
-    "mallobBasePath": "",
-    "resultBasePath": "",
-    "descriptionsBasePath": ""
+    "databaseBasePath": "C:\\Users\\kaloy\\Downloads\\Fallob\\backend\\src\\main\\resources\\database\\fallobDatabase",
+    "mallobBasePath": "\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg\\mallob\\",
+    "resultBasePath": "\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg",
+    "descriptionsBasePath": "\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg"
   },
   "database": {
     "databaseUsername": "fallob",
