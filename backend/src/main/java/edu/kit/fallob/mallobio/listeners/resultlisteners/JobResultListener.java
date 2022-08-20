@@ -15,6 +15,10 @@ import edu.kit.fallob.mallobio.outputupdates.ResultAvailableObject;
 public class JobResultListener implements ResultObjectListener {
 	
 	private JobDao dao;
+	
+	public JobResultListener(JobDao dao) {
+		this.dao = dao;
+	}
 
 	@Override
 	public void processResultObject(ResultAvailableObject rao) {

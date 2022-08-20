@@ -11,6 +11,7 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.mallobio.input.MallobInput;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
+import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
 import edu.kit.fallob.springConfig.FallobException;
 
 /**
@@ -38,10 +39,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 	
 	public JobToMallobSubmitter(String username) {
 		this.username = username;
-
-		//TODO Implemented by kalo - not sure if correct (compiler was showing an error)
-		FallobConfiguration fallobConfiguration = FallobConfiguration.getInstance();
-		this.mallobInput = new MallobInputImplementation(fallobConfiguration.getMallobBasePath(), fallobConfiguration.getAmountProcesses());
+		this.mallobInput = MallobInputImplementation.getInstance();
 		this.monitor = new Object();
 		
 		String formattedValidJobRegex = String.format(VALID_JOB_REGEX, username);
@@ -51,7 +49,8 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 	
 	
 	public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription) throws IOException, FallobException {
-		mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
+		
+		int clientProcessID = mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
 		
 		synchronized(monitor) {
 			while (jobStatus == JOB_IS_SUBMITTING) {
@@ -66,6 +65,10 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 		if (jobStatus == JOB_IS_NOT_VALID) {
 			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
 		}
+		
+		//job is valid and result can be detected
+		MallobOutputWatcherManager watcherManager = MallobOutputWatcherManager.getInstance();
+		watcherManager.addNewWatcher(username, jobConfiguration.getName(), clientProcessID);
 		
 		return jobID;
 		

@@ -1,5 +1,6 @@
 package edu.kit.fallob.configuration;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -34,8 +35,10 @@ public class FallobConfiguration {
 	private String dataBaseUsername;
 	private String databasePassword;
 
+	private int amountReaderThreads;
+	private int  readingIntervalPerReadingThread;
 
-	private String startTime;
+	private LocalDateTime startTime;
 
 	private FallobConfiguration() {
 		
@@ -53,7 +56,28 @@ public class FallobConfiguration {
 		}
 		return instance;
 	}
+	/**
+	 * ONLY USE THIS METhOD IF YOU WANT TO USE A FRESH CONFIG 
+	 */
+	public static void resetConfig() {
+		instance = null;
+	}
 	
+	public void setAmountReaderThreads(int amountReaderThreads) {
+		this.amountReaderThreads = amountReaderThreads;
+	}
+	
+	public int getAmountReaderThreads() {
+		return this.amountReaderThreads;
+	}
+	
+	public void setReadingIntervalPerReadingThread(int readingInterval) {
+		this.readingIntervalPerReadingThread = readingInterval;
+	}
+	
+	public int getReadingIntervalPerReadingThread() {
+		return this.readingIntervalPerReadingThread;
+	}
 	
 	
 	public int getAmountProcesses() {
@@ -183,11 +207,11 @@ public class FallobConfiguration {
 		this.resultBasePath = resultBasePath;
 	}
 
-	public String getStartTime() {
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(String startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
