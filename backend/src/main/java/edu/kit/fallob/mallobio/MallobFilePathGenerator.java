@@ -41,7 +41,7 @@ public class MallobFilePathGenerator {
 	 * @return
 	 */
 	public static String generateOutDirectoryPath(int processID, String basePath) {
-		return basePath + API_DIRECTORY + File.separator + JOB_INPUT_DIRECTORY + Integer.toString(processID) + File.separator + OUT_DIRECTORY;
+		return basePath + API_DIRECTORY + File.separator + JOB_INPUT_DIRECTORY + Integer.toString(processID) + File.separator + OUT_DIRECTORY + File.separator;
 	}
 	
 	/**

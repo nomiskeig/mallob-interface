@@ -21,6 +21,7 @@ public class ResultAvailableObject extends OutputUpdate {
 	public ResultAvailableObject(String filePathToResult) {
 		super(null);		//has no log line
 		this.filePathToResult = filePathToResult;
+		result = new File(filePathToResult);
 	}
 	
 	public ResultAvailableObject(File result) {
