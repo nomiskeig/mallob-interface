@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Fixed tests and did some cleanup">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Deleted the duplicate Fallob_configuration.json">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/Fallob_configuration.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/Fallob_configuration.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,6 +73,9 @@
       <recent name="C:\Users\kaloy\Downloads\Fallob\backend\src\main\resources" />
       <recent name="C:\Users\kaloy\Downloads\Fallob\backend\src\main\java\edu\kit\fallob\springConfig" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kaloy\Downloads\Fallob\backend\src\main\resources" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="edu.kit.fallob" />
       <recent name="edu.kit.fallob.backend" />
@@ -90,22 +94,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.BackendApplication (1)">
-    <configuration name="AuthenticationTest.JwtTokenTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.springConfig.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.springConfig" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.springConfig.AuthenticationTest" />
-      <option name="METHOD_NAME" value="JwtTokenTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="SmokeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -137,32 +125,49 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WebLayerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserDaoTests.testGetUsernameByDescriptionId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
+          <option name="PATTERN" value="edu.kit.fallob.backend.database.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.WebLayerTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.backend.database" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.backend.database.UserDaoTests" />
+      <option name="METHOD_NAME" value="testGetUsernameByDescriptionId" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WebLayerTest.JwtTokenTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="UserDaoTests.testSaveAndGetMultiple" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
+          <option name="PATTERN" value="edu.kit.fallob.backend.database.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.WebLayerTest" />
-      <option name="METHOD_NAME" value="JwtTokenTest" />
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.backend.database" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.backend.database.UserDaoTests" />
+      <option name="METHOD_NAME" value="testSaveAndGetMultiple" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserDaoTests.testSaveAndGetSingle" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="edu.kit.fallob.backend.database.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.backend.database" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.backend.database.UserDaoTests" />
+      <option name="METHOD_NAME" value="testSaveAndGetSingle" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -187,19 +192,19 @@
     <list>
       <item itemvalue="JUnit.SmokeTest" />
       <item itemvalue="JUnit.SmokeTest.contextLoads" />
-      <item itemvalue="JUnit.WebLayerTest.JwtTokenTest" />
-      <item itemvalue="JUnit.AuthenticationTest.JwtTokenTest" />
-      <item itemvalue="JUnit.WebLayerTest" />
+      <item itemvalue="JUnit.UserDaoTests.testGetUsernameByDescriptionId" />
+      <item itemvalue="JUnit.UserDaoTests.testSaveAndGetMultiple" />
+      <item itemvalue="JUnit.UserDaoTests.testSaveAndGetSingle" />
       <item itemvalue="Spring Boot.BackendApplication" />
       <item itemvalue="Spring Boot.BackendApplication (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.UserDaoTests.testSaveAndGetMultiple" />
+        <item itemvalue="JUnit.UserDaoTests.testGetUsernameByDescriptionId" />
+        <item itemvalue="JUnit.UserDaoTests.testSaveAndGetSingle" />
         <item itemvalue="JUnit.SmokeTest.contextLoads" />
         <item itemvalue="JUnit.SmokeTest" />
-        <item itemvalue="JUnit.AuthenticationTest.JwtTokenTest" />
-        <item itemvalue="JUnit.WebLayerTest" />
-        <item itemvalue="JUnit.WebLayerTest.JwtTokenTest" />
       </list>
     </recent_temporary>
   </component>
@@ -226,7 +231,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="28881000" />
+      <workItem from="1660777082728" duration="34249000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -438,7 +443,21 @@
       <option name="project" value="LOCAL" />
       <updated>1661013503214</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Deleted the duplicate Fallob_configuration.json">
+      <created>1661014524528</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1661014524528</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Deleted the duplicate Fallob_configuration.json">
+      <created>1661014770125</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1661014770125</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -473,7 +492,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Handled general Compiler Errors, added imports and merged with the main version that has the command classes" />
     <MESSAGE value="Implemented Exception Handling for the requests" />
     <MESSAGE value="Implemented Jwt Authorization and tried to RestExceptionHandling unsuccessfully, decided it will be tested after controller implementation." />
     <MESSAGE value="Implemented SubmitJobWithUrl, AbortJobController, FallobConfigurationController and general fixes" />
@@ -498,7 +516,8 @@
     <MESSAGE value="Fixed bugs in Controllers and DaoImpl and added a new unit test" />
     <MESSAGE value="Fixed magic Strings" />
     <MESSAGE value="Fixed tests and did some cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed tests and did some cleanup" />
+    <MESSAGE value="Deleted the duplicate Fallob_configuration.json" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deleted the duplicate Fallob_configuration.json" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1132,6 +1151,33 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="112" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java</url>
+          <line>61</line>
+          <properties class="edu.kit.fallob.backend.database.UserDaoTests" method="testSaveAndGetMultiple">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="115" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java</url>
+          <line>51</line>
+          <properties class="edu.kit.fallob.backend.database.UserDaoTests" method="testSaveAndGetSingle">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="116" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
+          <line>248</line>
+          <properties class="edu.kit.fallob.database.JobDaoImpl" method="getAllJobIds">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java</url>
