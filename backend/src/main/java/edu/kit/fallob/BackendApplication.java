@@ -1,31 +1,28 @@
 package edu.kit.fallob;
 
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
+import edu.kit.fallob.configuration.FallobConfigReader;
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import edu.kit.fallob.configuration.FallobConfigReader;
-import edu.kit.fallob.configuration.FallobConfiguration;
-import edu.kit.fallob.mallobio.MallobReaderStarter;
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
-import edu.kit.fallob.springConfig.FallobException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @SpringBootApplication
 public class BackendApplication {
 
 
-	public static void main(String[] args) throws FallobException {
+	public static void main(String[] args) throws FallobException, IOException {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		//initialize mallob-config
-		String pathToFallobConfigFile = "C:/Users/maiks/git/mallob-interface/backend/src/main/java/edu/kit/fallob/configuration/Fallob_configuration.json";
-
+		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
@@ -56,7 +53,6 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
-
 		
 		SpringApplication.run(BackendApplication.class, args);
 	}

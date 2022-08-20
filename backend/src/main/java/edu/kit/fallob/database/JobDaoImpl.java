@@ -36,7 +36,7 @@ public class JobDaoImpl implements JobDao{
     private final FallobConfiguration configuration;
 
     //constants for different regex and strings that are required for handling file paths
-    private static final String SINGLE_FILE_REGEX = "%o\\..*";
+    private static final String SINGLE_FILE_REGEX = "%o.*";
     private static final String DESCRIPTION_FILES_REGEX = "%s\\d+\\..*";
     private static final String FILE_EXTENSION_REGEX = "\\.";
     private static final String DIRECTORY_SEPARATOR = "/";
