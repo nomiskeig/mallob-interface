@@ -19,4 +19,7 @@ services:
           target: /app/config.json
         - type: bind
           source: ${WORKING_DIR}
-          target: /app/workingDir
+          target: /app/workingDir/
+        - type: bind
+          source: ${MALLOB_DIR}
+          target: /app/mallobDir/
