@@ -3,6 +3,7 @@ package edu.kit.fallob.springConfig;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -97,6 +98,13 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         ex.getSupportedMediaTypes().forEach(t -> message.append(t).append(", "));
 
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, message.substring(0, message.length() - 2));
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        StringBuilder message = new StringBuilder(ex.getLocalizedMessage() + "\n");
+
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message.substring(0, message.length() - 2));
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
