@@ -100,6 +100,7 @@ public class MallobReaderStarter {
 		initializeMallobOuptut();
 		
 		watcherManager = MallobOutputWatcherManager.getInstance();
+		watcherManager.setResultDistributor(resultDistributor);
 		
 		
 		
