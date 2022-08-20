@@ -94,7 +94,7 @@ public class MallobReaderStarter {
 	{
 	
 		if (amountReaderThreads > amountProcesses) {
-			throw new IllegalArgumentException("Cant have more threads than readers");
+			throw new IllegalArgumentException("Cannot have more threads than readers. Ensure, that you have at max. as many threads as processes.");
 		}
 		
 		initializeMallobOuptut();
@@ -246,10 +246,11 @@ public class MallobReaderStarter {
 		MallobOutputRunnerThread.stopThreadPoolExecution(readerThreadPool, readerRunners);
 	}
 	
-	public MallobOutput getMallobOutput() throws NullPointerException {
-		if (mallobOutput == null) {
-			throw new NullPointerException("Not yet initialized. Please initialize Module first.");
-		}
-		return mallobOutput;
+	public MallobOutputReader[] getReaders() {
+		return this.readers;
+	}
+	
+	public MallobOutputRunnerThread[] getReaderThreads() {
+		return this.readerRunners;
 	}
 }
