@@ -78,7 +78,6 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
 	@Override
 	public void processLine(String line) {
-		System.out.println(line);
 		Matcher validJobMatcher = validJobPattern.matcher(line);
 		if (validJobMatcher.find()) {
 			jobStatus = JOB_IS_VALID;

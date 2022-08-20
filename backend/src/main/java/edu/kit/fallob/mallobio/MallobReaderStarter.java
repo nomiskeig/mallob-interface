@@ -231,7 +231,9 @@ public class MallobReaderStarter {
 		}
 		//add irregular readers to the current threads 
 		if (irregularFilesReaders != null) {
-			this.mapReaderToThread((MallobOutputReader[]) irregularFilesReaders.toArray(), this.readerRunners);
+            MallobOutputReader[] outputReaders = new MallobOutputReader[irregularFilesReaders.size()];
+            irregularFilesReaders.toArray(outputReaders);
+			this.mapReaderToThread(outputReaders, this.readerRunners);
 		}
 		
 		//start reader-execution

@@ -9,6 +9,7 @@ import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
