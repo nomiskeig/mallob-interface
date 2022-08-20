@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Deleted the duplicate Fallob_configuration.json">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Fixed a bug in JobInformationCommands and disabled 2 UserDaoTests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/SubmitJobRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/SubmitJobRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +29,17 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/backend/fallob-configuration.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationController.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobInformationCommands.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDao.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/UserDaoImpl.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/listeners/outputloglisteners/JobToMallobSubmitter.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/WebSecurityConfig.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/backend/database/UserDaoTests.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -231,7 +242,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="34249000" />
+      <workItem from="1660777082728" duration="39756000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -457,7 +468,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661014770125</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Fixed a bug in JobInformationCommands and disabled 2 UserDaoTests">
+      <created>1661020160524</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1661020160524</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -492,7 +510,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented Exception Handling for the requests" />
     <MESSAGE value="Implemented Jwt Authorization and tried to RestExceptionHandling unsuccessfully, decided it will be tested after controller implementation." />
     <MESSAGE value="Implemented SubmitJobWithUrl, AbortJobController, FallobConfigurationController and general fixes" />
     <MESSAGE value="Implemented WarningController, JobSubmitController and MallobEventsController." />
@@ -517,7 +534,8 @@
     <MESSAGE value="Fixed magic Strings" />
     <MESSAGE value="Fixed tests and did some cleanup" />
     <MESSAGE value="Deleted the duplicate Fallob_configuration.json" />
-    <option name="LAST_COMMIT_MESSAGE" value="Deleted the duplicate Fallob_configuration.json" />
+    <MESSAGE value="Fixed a bug in JobInformationCommands and disabled 2 UserDaoTests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug in JobInformationCommands and disabled 2 UserDaoTests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

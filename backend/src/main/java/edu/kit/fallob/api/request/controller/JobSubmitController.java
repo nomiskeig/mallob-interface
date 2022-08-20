@@ -97,7 +97,7 @@ public class JobSubmitController {
         File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME);
         try {
             FileWriter myWriter = new FileWriter(file.getAbsolutePath());
-            List<String> lines = request.getJobDescription();
+            List<String> lines = request.getDescription();
 //            int counter = 0;
             for (String line : lines) {
                 myWriter.write(line);
