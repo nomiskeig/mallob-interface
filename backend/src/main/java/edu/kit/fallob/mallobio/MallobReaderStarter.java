@@ -103,6 +103,7 @@ public class MallobReaderStarter {
 		watcherManager.setResultDistributor(resultDistributor);
 		
 		
+		
 		readerRunners = new MallobOutputRunnerThread[amountReaderThreads];
 		readerThreadPool = MallobOutputRunnerThread.initializeThreadPool(readerRunners, readingIntervalPerReadingThread);
 		initializeReaders(amountProcesses, readingIntervalPerReadingThread);
@@ -131,7 +132,6 @@ public class MallobReaderStarter {
 			throw new NullPointerException("No log-distributor instance present at initialisation of readers.");
 		}
 		
-
 				
 		//create MallobReader for the log file of all processes 
 		readers = new MallobOutputReader[amountProcesses];
@@ -161,7 +161,9 @@ public class MallobReaderStarter {
 			//add outputreader-to readerRunner
 			readerThreads[roundRobinCounter].addActionChecker(readersToMap[i]);
 			roundRobinCounter++;
+			
 			if (roundRobinCounter >= readerThreads.length) {
+
 				roundRobinCounter = 0;
 			}
 		}
@@ -229,7 +231,9 @@ public class MallobReaderStarter {
 		}
 		//add irregular readers to the current threads 
 		if (irregularFilesReaders != null) {
-			this.mapReaderToThread((MallobOutputReader[]) irregularFilesReaders.toArray(), this.readerRunners);
+            MallobOutputReader[] outputReaders = new MallobOutputReader[irregularFilesReaders.size()];
+            irregularFilesReaders.toArray(outputReaders);
+			this.mapReaderToThread(outputReaders, this.readerRunners);
 		}
 		
 		//start reader-execution

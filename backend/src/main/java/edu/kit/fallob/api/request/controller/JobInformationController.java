@@ -54,7 +54,7 @@ public class JobInformationController {
         JobInformationProxy proxy = new JobInformationProxy(jobInformation);
         return ResponseEntity.ok(new JobInformationResponse(Collections.singletonList(proxy)));
     }
-    @GetMapping("/info")
+    @PostMapping("/info")
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
@@ -140,7 +140,7 @@ public class JobInformationController {
            return getDescriptionsZip(response, Collections.singletonList(jobDescriptions));
         }
     }
-    @GetMapping(value = "/description")
+    @PostMapping(value = "/description")
     public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
@@ -182,7 +182,7 @@ public class JobInformationController {
         return getResultsZip(response, Collections.singletonList(jobResult));
     }
 
-    @GetMapping("/solution")
+    @PostMapping("/solution")
     public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
@@ -226,6 +226,7 @@ public class JobInformationController {
     private ResponseEntity<Object> getDescriptionsZip(HttpServletResponse response, List<JobDescription> jobDescriptions) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
+        response.setHeader("Content-disposition", "attachment; filename=description.zip");
 
         // Creating byteArray stream, make it bufferable and passing this buffer to ZipOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -261,6 +262,7 @@ public class JobInformationController {
     private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
+        response.setHeader("Content-disposition", "attachment; filename=description.zip");
 
         // Creating byteArray stream, making it bufferable and passing this buffer to ZipOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

@@ -45,8 +45,8 @@ export function LoginPage(props) {
 
 		axios
 			.post(loginURL, {
-				username: { usernameContent },
-				password: { passwordContent },
+				username:  usernameContent ,
+				password:  passwordContent ,
 			})
 			.then((res) => {
 

@@ -94,9 +94,9 @@ public class JobSubmitController {
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<File> files = new ArrayList<>();
-        File file = new File(FILE_NAME);
+        File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME);
         try {
-            FileWriter myWriter = new FileWriter(file);
+            FileWriter myWriter = new FileWriter(file.getAbsolutePath());
             List<String> lines = request.getJobDescription();
 //            int counter = 0;
             for (String line : lines) {
