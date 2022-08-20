@@ -2,12 +2,14 @@ package edu.kit.fallob.commands;
 
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.dataobjects.JobInformation;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.input.MallobInput;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +53,13 @@ public class JobAbortCommands {
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
 			throw new FallobException(HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
 		}
-        /*
+		JobInformation jobInfo = jobDao.getJobInformation(jobID);
 		try {
-			mallobInput.abortJob(jobID);
+			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
 		} catch (IOException e) {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		}
-        */
+        
 		return true;
 	}
 	

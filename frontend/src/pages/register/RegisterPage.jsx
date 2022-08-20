@@ -40,9 +40,9 @@ export function RegisterPage(props) {
             return;
 		}
 		axios.post(registerURL, {
-			username: { usernameContent },
-			password: { passwordContent },
-			email: { emailContent },
+			username:  usernameContent ,
+			password:  passwordContent ,
+			email:  emailContent ,
 		}).then((res) => {
 
 			//register was successful

@@ -111,12 +111,11 @@ public class UserDaoImpl implements UserDao{
                     returnUser = new NormalUser(username, password, email);
                 }
                 JobDao jobDao = new JobDaoImpl();
-                List<Integer> jobIds = new ArrayList<>();
-                for (Integer id : jobDao.getAllJobIds(username)) {
-                    jobIds.add(id);
+                List<Integer> jobIDs = new ArrayList<>();
+                for (Integer i : jobDao.getAllJobIds(username)) {
+                	jobIDs.add(i);
                 }
-
-                returnUser.setJobIDs(jobIds);
+                returnUser.setJobIDs(jobIDs);
                 returnUser.setPriority(priority);
                 returnUser.setVerified(isVerified);
 

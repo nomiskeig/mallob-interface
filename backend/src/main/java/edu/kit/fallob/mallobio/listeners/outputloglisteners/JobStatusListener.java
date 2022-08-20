@@ -32,7 +32,7 @@ public class JobStatusListener implements OutputLogLineListener {
 		if (StatusUpdate.isJobStatus(line)) {
 			StatusUpdate statusUpdate = new StatusUpdate(line);
 			try {
-				jobDao.updateJobStatus(statusUpdate.getJobID(), statusUpdate.getJobStatus());
+				jobDao.updateJobStatus(jobDao.getJobIdByMallobId(statusUpdate.getJobID()), statusUpdate.getJobStatus());
 			} catch (FallobException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

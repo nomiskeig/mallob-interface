@@ -95,7 +95,6 @@ public class FallobConfigReader {
 		JSONObject readerSetup = json.getJSONObject("readerSetup");
 		c.setReadingIntervalPerReadingThread(readerSetup.getInt("readingIntervalPerReadingThread"));
 		c.setAmountReaderThreads(readerSetup.getInt("amountReaderThreads"));
-		
 	}
 
 	
