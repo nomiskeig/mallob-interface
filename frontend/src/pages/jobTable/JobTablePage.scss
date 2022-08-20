@@ -1,0 +1,36 @@
+@use 'src/global/global' as *;
+$panelMargin: 50px;
+.jobTablePageContainer {
+	height: $pageHeight;
+	background-color: $backgroundColorPage; 
+	color: white;
+}
+
+
+.jobTablePagePanel {
+    height: calc(100% - $panelMargin);
+    width: calc(100% - $panelMargin);
+    background-color: $backgroundColorPanel;
+    padding: $panelPadding;
+    box-shadow: $panelShadow;
+    border-radius: $panelBorderRadius;
+    margin: calc($panelMargin /2);
+
+
+}
+
+.jobPageHalfPanel {
+    padding: 0px
+}
+
+.jobTablePageCol {
+    height: 100%
+}
+
+.jobTablePageRow {
+    height: 100%
+}
+
+
+
+

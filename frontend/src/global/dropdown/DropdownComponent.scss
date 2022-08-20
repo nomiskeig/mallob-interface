@@ -1,0 +1,18 @@
+$dropdownWidth:  200px;
+
+.dropdownComponentContainer {
+    width: $dropdownWidth;
+}
+
+.dropdown {
+    width: $dropdownWidth;
+}
+
+.dropdownButton {
+    width: $dropdownWidth;
+}
+.dropdownLabel {
+    text-align: left;
+    margin-bottom: 0.5rem
+}
+

@@ -40,7 +40,7 @@ public class FallobConfigReader {
 	 * Read config-file and set parameters in FallobConfiguration
 	 * 
 	 * @throws IOException if reading of file-contents was not successful 
-	 * @throws org.json.JSONException if a value was not found in the json. For required values, see Fallob-API
+	 * @throws org.json.JSONException if a value was not found in the .json For required values, see Fallob-API
 	 */
 	public void setupFallobConfig() throws IOException, org.json.JSONException {
 		String jsonString = getFileContent();
@@ -91,7 +91,11 @@ public class FallobConfigReader {
 
 		c.setDataBaseUsername(databaseJson.getString("databaseUsername"));
 		c.setDatabasePassword(databaseJson.getString("databasePassword"));
-
+		
+		//get informations for readers
+		JSONObject readerSetup = json.getJSONObject("readerSetup");
+		c.setReadingIntervalPerReadingThread(readerSetup.getInt("readingIntervalPerReadingThread"));
+		c.setAmountReaderThreads(readerSetup.getInt("amountReaderThreads"));
 	}
 
 	

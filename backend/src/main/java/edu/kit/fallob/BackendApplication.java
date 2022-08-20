@@ -24,30 +24,36 @@ public class BackendApplication {
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		//initialize mallob-config
-		String pathToFallobConfigFile = "C:/Users/maiks/git/mallob-interface/backend/src/main/java/edu/kit/fallob/configuration/Fallob_configuration.json";
+
+		String pathToFallobConfigFile = args[0];
 
 		FallobConfigReader reader;
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Fallob-Configuration file not found at specified location.");
 			return;
 		}
 		
 		try {
 			reader.setupFallobConfig();
 		} catch (IOException e) {
+			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
 			return;
 		}
 
+
+		
+		FallobConfiguration config = FallobConfiguration.getInstance();
+
 		
 		
 		//initialize mallobio
-		int amountReaderThreads = 6;
-		int readingIntervalPerReadingThread = 50; 
+		int amountReaderThreads = config.getAmountReaderThreads();
+		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 
+
 		
-		FallobConfiguration config = FallobConfiguration.getInstance();
 
 		
 		MallobReaderStarter mallobio = new MallobReaderStarter(config.getMallobBasePath());	
@@ -56,10 +62,16 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
+
 		
 		mallobio.startMallobio();
 
+
 		
+		//-----------------------add additional file-readers here 
+		//mallobio.addIrregularReaders(<yourfilepath>);
+		
+		mallobio.startMallobio();
 		SpringApplication.run(BackendApplication.class, args);
 	}
 

@@ -28,8 +28,14 @@ public class MallobOutputWatcherManager {
 	private MallobOutputWatcherManager() {}
 
 	
-
+	/**
+	 * Sets the result distributor to resultDistributor for all watchers being created from this point 
+	 * @param resultDistributor
+	 */
 	public void setResultDistributor(ResultObjectDistributor resultDistributor) {
+		if (resultDistributor == null) {
+			throw new NullPointerException("Cannot set result distributor to null.");
+		}
 		this.resultDistributor = resultDistributor;
 	}
 	
