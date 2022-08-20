@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -56,6 +57,7 @@ public class MallobOutputReader implements MallobOutputActionChecker {
 	public void readNextLine() {		
 		List<String> newLines = null;
 		try (Stream<String> lines = Files.lines(Paths.get(pathToMallobOutputLog))){
+
 			newLines = lines.skip(lastReadLine).toList();
 			
 		} catch(IOException e) {

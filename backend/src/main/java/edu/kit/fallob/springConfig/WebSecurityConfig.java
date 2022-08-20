@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/api/v1/jobs/info/global", "/api/v1/system/mallobInfo").
                 hasAnyAuthority("ADMIN");
         // all other requests need to be authenticated
-        http.authorizeRequests().anyRequest().authenticated().and().
+        http.cors().and().authorizeRequests().anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
                         exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()

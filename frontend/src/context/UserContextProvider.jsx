@@ -48,15 +48,33 @@ export function UserContextProvider({ children }) {
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);
+        console.log('decoded', decoded)
+
+
         if (!decoded) {
             return null;
         }
-        if (decoded.verified == 'true') {
+
+        let payload = {
+            username: decoded.sub
+        }
+        let authorities = decoded.authorities;
+        authorities = authorities.substring(1, authorities.length -1);
+        authorities = authorities.split(', ')
+        if (authorities[1] === 'Verified') {
+            payload['verified'] = true;
             decoded.verified = true;
         } else {
             decoded.verified = false;
+            payload['verified'] = false;
         }
-		return decoded;
+        if (authorities[0] === 'NORMAL_USER') {
+            payload['role'] = ROLE_USER;
+        } else {
+            payload['role'] = ROLE_ADMIN
+        }
+
+		return payload;
 	}
 
 	return (

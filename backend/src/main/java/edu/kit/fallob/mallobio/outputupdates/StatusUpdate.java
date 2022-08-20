@@ -13,15 +13,14 @@ import edu.kit.fallob.dataobjects.JobStatus;
  */
 public class StatusUpdate extends OutputUpdate  {
 	
-	private static final String STATUSUPDTATE_RUNNING_REGEX = "I Mapping job .* to internal ID #[0-9]+";
+	
 	private static final String STATUSUPDTATE_CANCELLED_REGEX = "Interrupt #[0-9]+";
 	private static final String STATUSUPDTATE_DONE_REGEX = "SOLUTION #[0-9]+";
-	public static final String STATUSUPDATE_REGEX = STATUSUPDTATE_DONE_REGEX + "|" + STATUSUPDTATE_CANCELLED_REGEX + "|" + STATUSUPDTATE_RUNNING_REGEX;
+	public static final String STATUSUPDATE_REGEX = STATUSUPDTATE_DONE_REGEX + "|" + STATUSUPDTATE_CANCELLED_REGEX;
 	
 	private static final Pattern STATUSUPDATE_PATTERN = Pattern.compile(STATUSUPDATE_REGEX);
 	private static final Pattern DONE_PATTERN = Pattern.compile(STATUSUPDTATE_DONE_REGEX);
 	private static final Pattern CANCELLED_PATTERN = Pattern.compile(STATUSUPDTATE_CANCELLED_REGEX);
-	private static final Pattern RUNNING_PATTERN = Pattern.compile(STATUSUPDTATE_RUNNING_REGEX);
 	
 	private int jobID;
 	private JobStatus jobStatus;
@@ -45,12 +44,6 @@ public class StatusUpdate extends OutputUpdate  {
 			String jobIDString = splittedLogLine[3];
 			jobID = Integer.parseInt(jobIDString.substring(1));
 			jobStatus = JobStatus.CANCELLED;
-		}
-		Matcher runningMatcher = RUNNING_PATTERN.matcher(logLine);
-		if (runningMatcher.find()) {
-			String jobIDString = splittedLogLine[9];
-			jobID = Integer.parseInt(jobIDString.substring(1));
-			jobStatus = JobStatus.RUNNING;
 		}
 	}
 	
