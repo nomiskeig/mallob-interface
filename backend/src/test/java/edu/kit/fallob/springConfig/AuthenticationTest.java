@@ -1,11 +1,14 @@
 package edu.kit.fallob.springConfig;
 
+import edu.kit.fallob.commands.*;
 import edu.kit.fallob.dataobjects.UserType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,6 +21,36 @@ import java.util.List;
 public class AuthenticationTest {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @MockBean
+    private FallobCommands fallobCommands;
+
+    @MockBean
+    private MallobCommands mallobCommands;
+
+    @MockBean
+    private JobAbortCommands jobAbortCommands;
+
+    @MockBean
+    private JobResultCommand jobResultCommand;
+
+    @MockBean
+    private JobPendingCommand jobPendingCommand;
+
+    @MockBean
+    private JobDescriptionCommands jobDescriptionCommands;
+
+    @MockBean
+    private JobInformationCommands jobInformationCommands;
+
+    @MockBean
+    private JobSubmitCommands jobSubmitCommands;
+
+    @MockBean
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
 
     @Test

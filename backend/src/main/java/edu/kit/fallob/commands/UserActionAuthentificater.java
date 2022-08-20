@@ -1,9 +1,7 @@
 package edu.kit.fallob.commands;
 
 import edu.kit.fallob.database.DaoFactory;
-import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.database.UserDao;
-import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
 
 /**

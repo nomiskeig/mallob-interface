@@ -12,7 +12,6 @@ import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -197,6 +195,7 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":0}"));
     }
      */
+
 
     @Test
     @WithMockUser

@@ -1,24 +1,19 @@
 package edu.kit.fallob.commands;
 
 
-import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
-import edu.kit.fallob.database.UserDao;
-import org.springframework.http.HttpStatus;
-
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.database.UserDao;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.PriorityConverter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 /**
  * This class provides methods which submit a new Job, restart a canceled Job or save a new Jobdescription.
