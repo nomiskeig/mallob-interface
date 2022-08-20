@@ -29,24 +29,27 @@ public class BackendApplication {
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Fallob-Configuration file not found at specified location.");
 			return;
 		}
 		
 		try {
 			reader.setupFallobConfig();
 		} catch (IOException e) {
+			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
 			return;
 		}
 
 		
+		FallobConfiguration config = FallobConfiguration.getInstance();
+
+		
 		
 		//initialize mallobio
-		int amountReaderThreads = 20;
-		int readingIntervalPerReadingThread = 50; 
+		int amountReaderThreads = config.getAmountReaderThreads();
+		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 
 		
-		FallobConfiguration config = FallobConfiguration.getInstance();
 
 		
 		MallobReaderStarter mallobio = new MallobReaderStarter(config.getMallobBasePath());	
@@ -55,6 +58,11 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
+		
+		//-----------------------add additional file-readers here 
+		//mallobio.addIrregularReaders(<yourfilepath>);
+		
+		mallobio.startMallobio();
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
