@@ -1,8 +1,6 @@
-import { AppError } from '../../../context/AppError';
 import { Job } from './Job';
 import { JobTreeVertex } from './JobTreeVertex';
 import { GlobalStats } from './GlobalStats';
-import { TYPE_UNRECOVERABLE } from '../../../context/InfoContextProvider';
 export class JobStorage {
 	#jobUpdateListeners;
 	#jobs;
