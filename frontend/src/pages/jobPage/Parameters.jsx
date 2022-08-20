@@ -117,6 +117,11 @@ export const configParameters = [
         index: 6.4,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: false,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
     },
 	{
@@ -203,6 +208,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: false,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) =>JSON.stringify(value)
     },
     {
@@ -213,6 +223,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
 
     },
@@ -224,6 +239,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
 
     },
@@ -235,6 +255,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
 
     },
@@ -246,6 +271,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
 
     },
@@ -257,6 +287,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
 
     },
@@ -268,6 +303,11 @@ export const configParameters = [
         width: 200,
         inputType: INPUT_TYPE_NONE,
         showOnJobPage: true,
+        validateValue: (value) => {
+            return {
+                isValid: true
+            }
+        },
         transformOutput: (value) => value
 
     }

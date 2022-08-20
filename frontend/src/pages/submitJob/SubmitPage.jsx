@@ -25,7 +25,7 @@ import {
 	INPUT_TYPE_TEXT,
 	INPUT_TYPE_SELECT,
 	INPUT_TYPE_BOOLEAN,
-    INPUT_TYPE_NONE,
+	INPUT_TYPE_NONE,
 } from '../jobPage/Parameters';
 import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
 const FormData = require('form-data');
@@ -38,12 +38,14 @@ const FormData = require('form-data');
  */
 function validateInput(parameters) {
 	let validateErrors = [];
-	configParameters.forEach((param) => {
-		let result = param.validateValue(parameters[param.internalName]);
-		if (!result.isValid) {
-			validateErrors.push(result.reason);
-		}
-	});
+	configParameters
+		.filter((param) => !param.inputType === INPUT_TYPE_NONE)
+		.forEach((param) => {
+			let result = param.validateValue(parameters[param.internalName]);
+			if (!result.isValid) {
+				validateErrors.push(result.reason);
+			}
+		});
 	return validateErrors;
 }
 export function SubmitPage(props) {
@@ -58,10 +60,13 @@ export function SubmitPage(props) {
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
 	let [additionalConfig, setAdditionalConfig] = useState([]);
 	useEffect(() => {
-        if (!userContext.user.isVerified) {
-            navigate('/jobs');
-            infoContext.handleInformation('You can not submit a job as an unverified user.', TYPE_ERROR)
-        }
+		if (!userContext.user.isVerified) {
+			navigate('/jobs');
+			infoContext.handleInformation(
+				'You can not submit a job as an unverified user.',
+				TYPE_ERROR
+			);
+		}
 		jobContext.loadAllJobsOfUser();
 	}, []);
 	let ownJobs = jobContext.jobs.filter(
@@ -92,10 +97,17 @@ export function SubmitPage(props) {
 			url:
 				process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/submit/inclusive',
 			data: job,
-		}).then((res) => {
-			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
-			navigate('/job/' + res.data.jobID);
-		});
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
+		})
+			.then((res) => {
+				infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
+				navigate('/job/' + res.data.jobID);
+			})
+			.catch((err) => {
+				infoContext.handleInformation('Job could not be submitted', TYPE_ERROR);
+			});
 	}
 
 	function submitJobExclusiveDescription() {
@@ -143,6 +155,9 @@ export function SubmitPage(props) {
 				process.env.REACT_APP_API_BASE_PATH +
 				'/api/v1/jobs/submit/exclusive/config',
 			data: job,
+			header: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
 		}).then((res) => {
 			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
 			navigate('/job/' + res.data.jobID);
@@ -263,7 +278,7 @@ export function SubmitPage(props) {
 		);
 	});
 	let selectAdditionalParamsItems = configParameters
-		.filter((param) => (!param.required && param.inputType !== INPUT_TYPE_NONE))
+		.filter((param) => !param.required && param.inputType !== INPUT_TYPE_NONE)
 		.filter(
 			(param) => !selectedOptionalIndices.includes(getIndexByParam(param))
 		)
