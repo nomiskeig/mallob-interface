@@ -36,6 +36,7 @@ public class BackendApplication {
 		try {
 			reader.setupFallobConfig();
 		} catch (IOException e) {
+			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
 			return;
 		}
