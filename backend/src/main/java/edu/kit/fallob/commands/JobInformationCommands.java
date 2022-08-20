@@ -51,9 +51,6 @@ public class JobInformationCommands {
 				continue;
 			}
 		}
-		if (jobInformations.isEmpty()) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
-		}
 		return jobInformations;
 	}
 	
