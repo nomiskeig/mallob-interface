@@ -60,7 +60,6 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
-		mallobio.startMallobio();
 
 
 		
