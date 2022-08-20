@@ -550,6 +550,7 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string("{\"amountProcesses\":1," +
                         "\"startTime\":\"2020-04-13T17:53:12.840\",\"defaults\":{\"priority\":1.0,\"wallClockLimit\":\"1\"," +
                         "\"contentMode\":\"content\"}}"));
+
     }
 
     @Test

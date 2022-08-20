@@ -8,7 +8,6 @@ export function SettingsContextProvider({ children }) {
 	const [isLoaded, setLoaded] = useState(false);
     const infoContext = useContext(InfoContext)
 	useEffect(() => {
-        console.log('fetching settings')
 		async function fetchSettings() {
 
 			await axios
@@ -23,7 +22,7 @@ export function SettingsContextProvider({ children }) {
 		//	setSettings(devSettings);
 		//	setLoaded(true);
 		//} else {
-			fetchSettings();
+		fetchSettings();
 		//}
 	}, [infoContext] );
 

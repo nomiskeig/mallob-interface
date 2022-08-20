@@ -1,23 +1,25 @@
 package edu.kit.fallob;
 
 
-import edu.kit.fallob.configuration.FallobConfigReader;
-import edu.kit.fallob.configuration.FallobConfiguration;
-import edu.kit.fallob.mallobio.MallobReaderStarter;
-import edu.kit.fallob.springConfig.FallobException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import edu.kit.fallob.configuration.FallobConfigReader;
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.springConfig.FallobException;
 
 @SpringBootApplication
 public class BackendApplication {
 
 
-	public static void main(String[] args) throws FallobException, IOException {
+	public static void main(String[] args) throws FallobException {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
@@ -27,24 +29,27 @@ public class BackendApplication {
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Fallob-Configuration file not found at specified location.");
 			return;
 		}
 		
 		try {
 			reader.setupFallobConfig();
 		} catch (IOException e) {
+			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
 			return;
 		}
 
 		
+		FallobConfiguration config = FallobConfiguration.getInstance();
+
+		
 		
 		//initialize mallobio
-		int amountReaderThreads = 4;
-		int readingIntervalPerReadingThread = 50; 
+		int amountReaderThreads = config.getAmountReaderThreads();
+		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 
 		
-		FallobConfiguration config = FallobConfiguration.getInstance();
 
 		
 		MallobReaderStarter mallobio = new MallobReaderStarter(config.getMallobBasePath());	
@@ -54,6 +59,10 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
+		//-----------------------add additional file-readers here 
+		//mallobio.addIrregularReaders(<yourfilepath>);
+		
+		mallobio.startMallobio();
 		SpringApplication.run(BackendApplication.class, args);
 	}
 

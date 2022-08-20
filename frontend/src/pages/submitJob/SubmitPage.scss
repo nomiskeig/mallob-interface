@@ -1,0 +1,62 @@
+@use 'src/global/global' as *;
+
+$submitButtonContainerHeight: 40px;
+.submitPageContainer {
+	height: calc(100% - 40px);
+	background-color: $backgroundColorPage;
+	color: white;
+}
+
+.submitPageRow {
+	height: 50%;
+}
+
+.submitPageColumn {
+	height: 100%;
+}
+.submitPageCol {
+	height: 100%;
+}
+
+.optionalParamsContainer {
+	height: 100%;
+}
+
+.optionalParamInputsContainer {
+	gap: 20px;
+}
+
+.requiredParamsContainer {
+	height: 100%;
+	margin-right: 20px;
+}
+
+.requiredParamsFlex {
+    gap: 20px;
+    height: 100%
+}
+
+.submitPagePanelContainer {
+	height: calc(100% - $submitButtonContainerHeight);
+}
+
+.submitButtonContainer {
+	height: $submitButtonContainerHeight;
+}
+
+.submitButton {
+	margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 0px;
+}
+
+.booleanInputContainer {
+    width: 200px;
+}
+.booleanInputLabel {
+    margin-bottom: 0.5rem;
+}
+
+.booleanInputCheckbox {
+    margin-top: 0px;
+}

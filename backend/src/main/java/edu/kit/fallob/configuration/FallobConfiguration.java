@@ -35,6 +35,8 @@ public class FallobConfiguration {
 	private String dataBaseUsername;
 	private String databasePassword;
 
+	private int amountReaderThreads;
+	private int  readingIntervalPerReadingThread;
 
 	private LocalDateTime startTime;
 
@@ -59,6 +61,22 @@ public class FallobConfiguration {
 	 */
 	public static void resetConfig() {
 		instance = null;
+	}
+	
+	public void setAmountReaderThreads(int amountReaderThreads) {
+		this.amountReaderThreads = amountReaderThreads;
+	}
+	
+	public int getAmountReaderThreads() {
+		return this.amountReaderThreads;
+	}
+	
+	public void setReadingIntervalPerReadingThread(int readingInterval) {
+		this.readingIntervalPerReadingThread = readingInterval;
+	}
+	
+	public int getReadingIntervalPerReadingThread() {
+		return this.readingIntervalPerReadingThread;
 	}
 	
 	
