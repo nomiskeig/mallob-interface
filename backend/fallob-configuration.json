@@ -1,0 +1,32 @@
+{
+    "amountProcesses" : 6,
+    "maxJobsTotal" : 100,
+    "maxJobsUser": 10,
+    "client-processes" : [0],
+    "storage": {
+    "garbageCollectorInterval": 10,
+    "jobStorageTime": 10,
+    "eventStorageTime": 10,
+    "warningStorageTime": 10,
+    "maxDescriptionStorageSize": 10
+    },
+    "defaults": {
+        "priority": 1.0,
+        "wallclockLimit": "1",
+        "contentMode": "raw"
+        },
+    "paths": {
+        "databaseBasePath": "",
+        "mallobBasePath": "",
+        "resultBasePath": "",
+        "descriptionsBasePath": ""
+        },
+    "database": {
+        "databaseUsername": "fallob",
+        "databasePassword": ""
+        },
+    "readerSetup" : {
+        "readingIntervalPerReadingThread" : 50,
+        "amountReaderThreads" : 5
+    }
+}
