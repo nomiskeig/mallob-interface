@@ -15,6 +15,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     private static final long serialVersionUID = -7858869558953243875L;
 
+    private static final String STATUS_401 = "401 Unauthorized";
+    private static final String STATUS_403 = "403 Forbidden";
+
+    private static final String NOT_VERIFIED_OR_CORRUPT_TOKEN = "User not verified or corrupt token";
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
@@ -22,12 +27,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         String status = "Status: ";
 
         if (response.getStatus() == 403) {
-            status += "403 Forbidden";
-            message += "User not verified or corrupt token";
+            status += STATUS_403;
+            message += NOT_VERIFIED_OR_CORRUPT_TOKEN;
 
         }
         else {
-            status += "401 Unauthorized";
+            status += STATUS_401;
             response.setStatus(401);
             message += authException.getMessage();
         }
