@@ -38,6 +38,7 @@ export function JobContextProvider({ children }) {
 	}
 
 	function fetchMostJobsPossible(restrictToOwnJobs, callback) {
+        console.log(userContext.user.token)
 		let apiAddress;
 		if (userContext.user.role === ROLE_USER || restrictToOwnJobs) {
 			apiAddress = '/api/v1/jobs/info/all';
