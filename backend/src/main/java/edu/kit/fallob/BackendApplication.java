@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.springConfig.FallobException;
@@ -59,8 +60,14 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
+		mallobio.startMallobio();
+
+
+		
 		//-----------------------add additional file-readers here 
 		//mallobio.addIrregularReaders(<yourfilepath>);
+		//file-reader for 
+		mallobio.addIrregularReaders(MallobFilePathGenerator.generatePathToJobMappingsLogFile(config.getMallobBasePath(), config.getAmountProcesses() - 1));
 		
 		mallobio.startMallobio();
 		SpringApplication.run(BackendApplication.class, args);

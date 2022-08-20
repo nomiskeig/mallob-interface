@@ -33,7 +33,13 @@ public class MallobTimeListener implements OutputLogLineListener {
 	public void processLine(String line) {
 		//TODO : Parse line and get time, override float sinceMallobStart 
 		String[] splittedLogLine = line.split(LOGLINE_SEPARATOR);
-		double updatedSecondsSinceMallobStart = Double.parseDouble(splittedLogLine[0]);
+		double updatedSecondsSinceMallobStart = 0;
+		try {
+			updatedSecondsSinceMallobStart = Double.parseDouble(splittedLogLine[0]);
+		} catch (NumberFormatException e) {
+			return;
+		}
+		
 		if (updatedSecondsSinceMallobStart != secondsSinceMallobStart) {
 			secondsSinceMallobStart = updatedSecondsSinceMallobStart;
 		}
