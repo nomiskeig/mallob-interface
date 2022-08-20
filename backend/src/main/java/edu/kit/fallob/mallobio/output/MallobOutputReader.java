@@ -63,7 +63,7 @@ public class MallobOutputReader implements MallobOutputActionChecker {
 		} catch(IOException e) {
 			System.out.println(e.getMessage());
 		}
-		
+	
 		if (newLines == null || newLines.size() == 0) {
 			return;
 		} else {
