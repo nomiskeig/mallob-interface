@@ -12,7 +12,6 @@ import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +116,11 @@ public class WebLayerTest {
     private static final String NOT_FOUND_EXCEPTION = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND + "\"}";
     private static final String NOT_FOUND_EXCEPTION_MULTIPLE = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND_MULTIPLE + "\"}";
 
+    private static final String USER_DOES_NOT_OWN_JOB = "Job does not belong to this user";
+
+    private static final String LOG_LINE_PLACE = "Here would be a log line";
+
+    private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
     private static final String JSON_JOB_INFORMATION = "{\"jobInformation\":[{\"configuration\":{\"name\":\"Job1\",\"priority\":1.0," +
             "\"application\":\"application\",\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":1.0," +
             "\"dependencies\":[1,2],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":true," +
@@ -192,6 +196,7 @@ public class WebLayerTest {
     }
      */
 
+
     @Test
     @WithMockUser
     public void saveEmptyDescriptionFile() throws Exception {
@@ -207,7 +212,9 @@ public class WebLayerTest {
                         ",\"message\":\"Job description can not be empty\"}"));
     }
 
-
+    //is commented out because it is not possible to build a running test for this because the fallob config can't be mocked
+    //due to the dependency injection of the mockMvc
+    /**
     @Test
     @WithMockUser
     public void submitJobInclusiveSuccessfully() throws Exception {
@@ -223,6 +230,8 @@ public class WebLayerTest {
         List<File> filesList = new ArrayList<>();
         filesList.add(file);
         JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
+        FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class);
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
 
         // Using InvocationOnMock as mockito does not use the equals method of jobDescription
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), (any(JobDescription.class)), any(JobConfiguration.class)))
@@ -252,6 +261,7 @@ public class WebLayerTest {
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
     }
+     **/
 
     @Test
     @WithMockUser
@@ -419,11 +429,10 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortSingleJobException() throws Exception {
-        String message = "Job does not belong to this user";
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenThrow(new FallobException(HttpStatus.CONFLICT, message));
+        when(jobAbortCommands.abortSingleJob(null, 1)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isConflict()).andExpect(content().string("{\"status\":\"CONFLICT\",\"message\":\"" + message + "\"}"));
+                .andExpect(status().isForbidden()).andExpect(content().string(JSON_DOES_NOT_OWN_JOB));
     }
 
     @Test
@@ -508,6 +517,24 @@ public class WebLayerTest {
 
     @Test
     @WithMockUser
+    public void restartJobSuccessfully() throws Exception {
+        when(jobSubmitCommands.restartCanceledJob(null, 1)).thenReturn(1);
+
+        this.mockMvc.perform(post("/api/v1/jobs/submit/restart/{jobId}", 1)).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
+    }
+
+    @Test
+    @WithMockUser
+    public void restartJobException() throws Exception {
+        when(jobSubmitCommands.restartCanceledJob(null, 1)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
+
+        this.mockMvc.perform(post("/api/v1/jobs/submit/restart/{jobId}", 1)).andDo(print())
+                .andExpect(status().isForbidden()).andExpect(content().string(JSON_DOES_NOT_OWN_JOB));
+    }
+
+    @Test
+    @WithMockUser
     public void getFallobConfig() throws Exception {
         FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class);
         when(fallobConfiguration.getAmountProcesses()).thenReturn(1);
@@ -525,7 +552,6 @@ public class WebLayerTest {
 
     }
 
-    
     @Test
     @WithMockUser
     public void getSingleJobInformationSuccessfully() throws Exception {
@@ -552,7 +578,7 @@ public class WebLayerTest {
         when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenReturn(jobInformationList);
 
         JobInformationRequest abortJobRequest = new JobInformationRequest(jobIds);
-        this.mockMvc.perform(get("/api/v1/jobs/info").content(objectMapper.writeValueAsString(abortJobRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/info").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JSON_JOB_INFORMATION));
     }
@@ -563,7 +589,7 @@ public class WebLayerTest {
         when(jobInformationCommands.getMultipleJobInformation(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         JobInformationRequest abortJobRequest = new JobInformationRequest(jobIds);
-        this.mockMvc.perform(get("/api/v1/jobs/info").content(objectMapper.writeValueAsString(abortJobRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/info").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
@@ -663,7 +689,7 @@ public class WebLayerTest {
         when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenReturn(jobDescriptionList);
         JobInformationRequest jobDescriptionRequest = new JobInformationRequest(jobIds);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
                 .contentType("application/json")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
         Assertions.assertEquals(368, result.getResponse().getContentAsByteArray().length);
@@ -676,7 +702,7 @@ public class WebLayerTest {
         JobInformationRequest jobDescriptionRequest = new JobInformationRequest(jobIds);
         when(jobDescriptionCommands.getMultipleJobDescription(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
-        this.mockMvc.perform(get("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/description").content(objectMapper.writeValueAsString(jobDescriptionRequest))
                 .contentType("application/json")).andDo(print()).andExpect(status().isNotFound()).andExpect(content()
                 .string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
@@ -756,7 +782,7 @@ public class WebLayerTest {
         when(jobResultCommand.getMultipleJobResult(null, jobIds)).thenReturn(jobResultList);
         JobInformationRequest jobResultRequest = new JobInformationRequest(jobIds);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/jobs/solution").content(objectMapper.writeValueAsString(jobResultRequest))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/jobs/solution").content(objectMapper.writeValueAsString(jobResultRequest))
                 .contentType("application/json")).andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
         Assertions.assertEquals(356, result.getResponse().getContentAsByteArray().length);
@@ -769,7 +795,7 @@ public class WebLayerTest {
         JobInformationRequest jobResultRequest = new JobInformationRequest(jobIds);
         when(jobResultCommand.getMultipleJobResult(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
-        this.mockMvc.perform(get("/api/v1/jobs/solution").content(objectMapper.writeValueAsString(jobResultRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/solution").content(objectMapper.writeValueAsString(jobResultRequest))
                 .contentType("application/json")).andDo(print()).andExpect(status().isNotFound()).andExpect(content()
                 .string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
@@ -822,18 +848,17 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
     public void getWarnings() throws Exception {
-        String message = "Here would be a log line";
-        Warning warning = new Warning(message);
+        Warning warning = new Warning(LOG_LINE_PLACE);
         when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
 
         this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"logLine\":\"" + message + "\"}]}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"logLine\":\"" + LOG_LINE_PLACE + "\"}]}"));
     }
 
     @Test
     @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
     public void getWarningsForbidden() throws Exception {
-        Warning warning = new Warning("Here would be a log line");
+        Warning warning = new Warning(LOG_LINE_PLACE);
         when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
 
         this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
@@ -1032,5 +1057,7 @@ public class WebLayerTest {
                         "\"message\":\"Failed to convert value of type 'java.lang.String' to required type 'int'; nested" +
                         " exception is java.lang.NumberFormatException: For input string: \\\"kalo\\\"\\njobId should be of type int\"}"));
     }
+
+
 
 }
