@@ -37,6 +37,7 @@ public class JobAbortCommands {
 			daoFactory = new DaoFactory();
 			jobDao = daoFactory.getJobDao();
 			uaa = new UserActionAuthentificater(daoFactory);
+			mallobInput = MallobInputImplementation.getInstance();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

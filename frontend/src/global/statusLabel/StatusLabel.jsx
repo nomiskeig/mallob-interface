@@ -1,8 +1,8 @@
 import './StatusLabel.scss';
 
-export const JOB_STATUS_DONE = 'done';
-export const JOB_STATUS_INPROGRESS = 'inProgress';
-export const JOB_STATUS_CANCELLED = 'cancelled';
+export const JOB_STATUS_DONE = 'DONE';
+export const JOB_STATUS_INPROGRESS = 'RUNNING';
+export const JOB_STATUS_CANCELLED = 'CANCELLED';
 
 export function StatusLabel(props) {
 	let color;

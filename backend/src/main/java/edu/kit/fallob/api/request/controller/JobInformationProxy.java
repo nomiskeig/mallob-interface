@@ -1,47 +1,51 @@
 package edu.kit.fallob.api.request.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import edu.kit.fallob.dataobjects.*;
 
 public class JobInformationProxy {
 
-    private final JobConfiguration configuration;
-    private final ResultMetaData rmd;
+    private final JobConfiguration config;
+    @JsonInclude(Include.NON_NULL)
+    private final ResultMetaData resultData;
     private final String email;
-    private final String username;
+    private final String user;
     private final String submitTime;
-    private final JobStatus jobStatus;
+    private final JobStatus status;
     private final int jobID;
 
     public JobInformationProxy(JobInformation jobInformation) {
-        this.configuration = jobInformation.getJobConfiguration();
+        this.config = jobInformation.getJobConfiguration();
         this.jobID = jobInformation.getJobID();
-        this.jobStatus = jobInformation.getJobStatus();
+        this.status = jobInformation.getJobStatus();
         this.submitTime = jobInformation.getSubmitTime();
-        this.rmd = jobInformation.getResultMetaData();
+        this.resultData = jobInformation.getResultMetaData();
         this.email = jobInformation.getUser().getEmail();
-        this.username = jobInformation.getUser().getUsername();
+        this.user = jobInformation.getUser().getUsername();
     }
 
-    public JobConfiguration getConfiguration() {
-        return configuration;
+    public JobConfiguration getConfig() {
+        return config;
     }
-    public int getId() {
+    public int getJobID() {
         return jobID;
     }
     public String getEmail() {
         return email;
     }
-    public String getUsername() {
-        return username;
+    public String getUser() {
+        return user;
     }
     public String getSubmitTime() {
         return submitTime;
     }
-    public JobStatus getJobStatus() {
-        return jobStatus;
+    public JobStatus getStatus() {
+        return status;
     }
-    public ResultMetaData getResultMetaData() {
-        return rmd;
+    public ResultMetaData getResultData() {
+        return resultData;
     }
 }
