@@ -1,7 +1,7 @@
 package edu.kit.fallob.mallobio.output.distributors;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import edu.kit.fallob.mallobio.listeners.resultlisteners.ResultObjectListener;
 import edu.kit.fallob.mallobio.outputupdates.ResultAvailableObject;
@@ -12,7 +12,7 @@ public class ResultObjectDistributor {
 	
 	
 	public ResultObjectDistributor() {
-		this.listeners = new ArrayList<>();
+		this.listeners = new CopyOnWriteArrayList<>();
 	}
 	
 

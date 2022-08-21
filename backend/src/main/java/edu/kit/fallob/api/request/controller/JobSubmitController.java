@@ -122,7 +122,7 @@ public class JobSubmitController {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-
+        
         JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
         return getInclusiveCommandResponse(request, username, jobDescription);
     }
