@@ -1,22 +1,20 @@
 package edu.kit.fallob.api.request.controller;
 
-import java.util.List;
-
 public class AbortJobRequest {
 
-    private int[] jobIds;
+    private int[] jobs;
 
     public AbortJobRequest(){}
 
-    public AbortJobRequest(int[] jobIds) {
-        this.jobIds = jobIds;
+    public AbortJobRequest(int[] jobs) {
+        this.jobs = jobs;
     }
 
-    public int[] getJobIds() {
-        return jobIds;
+    public int[] getJobs() {
+        return jobs;
     }
 
-    public void setJobIds(int[] jobIds) {
-        this.jobIds = jobIds;
+    public void setJobs(int[] jobs) {
+        this.jobs = jobs;
     }
 }
