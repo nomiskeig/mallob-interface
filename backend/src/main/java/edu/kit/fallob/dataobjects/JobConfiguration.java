@@ -16,13 +16,14 @@ public class JobConfiguration {
 	private String name;
 	private double priority;
 	private String application;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationIntFilter.class)
 	private int maxDemand;
     @JsonInclude(Include.NON_NULL)
 	private String wallClockLimit;
     @JsonInclude(Include.NON_NULL)
 	private String cpuLimit;
 	private double arrival;
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationDependencyFilter.class)
 	private Integer[] dependencies;
     @JsonInclude(value = Include.CUSTOM, valueFilter= JobConfigurationNeverFilter.class)
 	private String[] dependenciesStrings;
@@ -32,6 +33,7 @@ public class JobConfiguration {
 	private boolean incremental;
     @JsonInclude(Include.NON_EMPTY)
 	private int[] literals;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationIntFilter.class)
 	private int precursor;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private String precursorString;
