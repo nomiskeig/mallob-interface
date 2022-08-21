@@ -127,7 +127,7 @@ public class WebLayerTest {
             "\"dependencies\":[1,2],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":true," +
             "\"literals\":null,\"precursor\":-2147483647,\"precursorString\":null,\"assumptions\":null,\"done\":false," +
             "\"descriptionID\":1,\"additionalParameter\":\"parameter\"},\"email\":\"kalo@student.kit.edu\",\"user\":\"kalo\"," +
-            "\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"id\":1,\"resultMetaData\":{\"parsingTime\":1.0," +
+            "\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1,\"resultMetaData\":{\"parsingTime\":1.0," +
             "\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
 

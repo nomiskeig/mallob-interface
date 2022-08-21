@@ -26,7 +26,7 @@ public class JobInformationProxy {
     public JobConfiguration getConfig() {
         return config;
     }
-    public int getId() {
+    public int getJobID() {
         return jobID;
     }
     public String getEmail() {
