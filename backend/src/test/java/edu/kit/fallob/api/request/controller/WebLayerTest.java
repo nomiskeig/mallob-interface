@@ -122,13 +122,11 @@ public class WebLayerTest {
 
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
-    private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0," +
-            "\"application\":\"application\",\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":1.0," +
-            "\"dependencies\":[1,2],\"dependenciesStrings\":null,\"contentMode\":null,\"interrupt\":false,\"incremental\":true," +
-            "\"literals\":null,\"precursor\":-2147483647,\"precursorString\":null,\"assumptions\":null,\"done\":false," +
-            "\"descriptionID\":1,\"additionalParameter\":\"parameter\"},\"email\":\"kalo@student.kit.edu\",\"user\":\"kalo\"," +
-            "\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1,\"resultMetaData\":{\"parsingTime\":1.0," +
-            "\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}";
+    private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
+            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":1.0,\"dependencies\":[1,2],\"interrupt\":false," +
+            "\"incremental\":true,\"done\":false,\"additionalParameter\":\"parameter\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
+            "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
+            "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
 
     private static final String JOB_ID_JSON = "{\"jobID\":1}";

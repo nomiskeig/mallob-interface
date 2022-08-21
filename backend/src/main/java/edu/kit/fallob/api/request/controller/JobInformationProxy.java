@@ -1,11 +1,15 @@
 package edu.kit.fallob.api.request.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import edu.kit.fallob.dataobjects.*;
 
 public class JobInformationProxy {
 
     private final JobConfiguration config;
+    @JsonInclude(Include.NON_NULL)
     private final ResultMetaData resultData;
     private final String email;
     private final String user;
@@ -41,7 +45,7 @@ public class JobInformationProxy {
     public JobStatus getStatus() {
         return status;
     }
-    public ResultMetaData getResultMetaData() {
+    public ResultMetaData getResultData() {
         return resultData;
     }
 }
