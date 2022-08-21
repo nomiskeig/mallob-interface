@@ -165,7 +165,7 @@ export function SubmitPage(props) {
 	}
 	function addAddtionalParametersToJob(job) {
 		if (additionalConfig.length === 0) {
-			return;
+			return job;
 		}
 		additionalConfig.forEach((config) => {
 			if (job['additionalConfig'] === undefined) {
