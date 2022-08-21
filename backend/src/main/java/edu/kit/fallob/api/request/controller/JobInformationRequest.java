@@ -1,22 +1,20 @@
 package edu.kit.fallob.api.request.controller;
 
-import java.util.List;
-
 public class JobInformationRequest {
 
-    private int[] jobIds;
+    private int[] jobs;
 
     public JobInformationRequest(){}
 
-    public JobInformationRequest(int[] jobIds) {
-        this.jobIds = jobIds;
+    public JobInformationRequest(int[] jobs) {
+        this.jobs = jobs;
     }
 
-    public int[] getJobIds() {
-        return jobIds;
+    public int[] getJobs() {
+        return jobs;
     }
 
-    public void setJobIds(int[] jobIds) {
-        this.jobIds = jobIds;
+    public void setJobs(int[] jobs) {
+        this.jobs = jobs;
     }
 }
