@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Changed names so they match the specification">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Made the token expiry time longer">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,18 +102,19 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.BackendApplication (1)">
-    <configuration name="SmokeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.AuthenticationTest.JwtTokenTest">
+    <configuration name="AuthenticationTest.JwtTokenTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.kit.fallob.api.request.controller.*" />
+          <option name="PATTERN" value="edu.kit.fallob.springConfig.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="edu.kit.fallob.api.request.controller" />
-      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.api.request.controller.SmokeTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="edu.kit.fallob.springConfig" />
+      <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.springConfig.AuthenticationTest" />
+      <option name="METHOD_NAME" value="JwtTokenTest" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -200,21 +200,21 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="JUnit.SmokeTest" />
       <item itemvalue="JUnit.SmokeTest.contextLoads" />
       <item itemvalue="JUnit.UserDaoTests.testGetUsernameByDescriptionId" />
       <item itemvalue="JUnit.UserDaoTests.testSaveAndGetMultiple" />
       <item itemvalue="JUnit.UserDaoTests.testSaveAndGetSingle" />
+      <item itemvalue="JUnit.AuthenticationTest.JwtTokenTest" />
       <item itemvalue="Spring Boot.BackendApplication" />
       <item itemvalue="Spring Boot.BackendApplication (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AuthenticationTest.JwtTokenTest" />
         <item itemvalue="JUnit.UserDaoTests.testSaveAndGetMultiple" />
         <item itemvalue="JUnit.UserDaoTests.testGetUsernameByDescriptionId" />
         <item itemvalue="JUnit.UserDaoTests.testSaveAndGetSingle" />
         <item itemvalue="JUnit.SmokeTest.contextLoads" />
-        <item itemvalue="JUnit.SmokeTest" />
       </list>
     </recent_temporary>
   </component>
@@ -241,7 +241,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="46156000" />
+      <workItem from="1660777082728" duration="48178000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -495,7 +495,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661068190426</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Made the token expiry time longer">
+      <created>1661069813633</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1661069813633</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -530,7 +537,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented MallobStartStopController and the register Endpoint." />
     <MESSAGE value="Implemented getJobDescription methods in InformationController." />
     <MESSAGE value="Implemented the rest of the controllers (JobResult methods and getSingleJobDescription method) and fixed some general errors/warnings" />
     <MESSAGE value="Mapped the endpoints to the controller methods" />
@@ -555,7 +561,8 @@
     <MESSAGE value="Fixed SubmitJobRequest" />
     <MESSAGE value="Changed a variable name in JobInformationResponse" />
     <MESSAGE value="Changed names so they match the specification" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed names so they match the specification" />
+    <MESSAGE value="Made the token expiry time longer" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made the token expiry time longer" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -563,7 +570,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>26</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleMethodArgumentNotValid">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -572,7 +579,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>42</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleMissingServletRequestParameter">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -581,7 +588,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>51</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleConstraintViolation">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -590,7 +597,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>64</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleMethodArgumentTypeMismatch">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -599,7 +606,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>73</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleNoHandlerFoundException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -608,7 +615,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>82</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleHttpRequestMethodNotSupported">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -617,7 +624,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>93</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleHttpMediaTypeNotSupported">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -626,7 +633,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/RestExceptionHandling.java</url>
           <line>111</line>
-          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling">
+          <properties class="edu.kit.fallob.springConfig.RestExceptionHandling" method="handleAll">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -986,7 +993,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/listeners/outputloglisteners/JobToMallobSubmitter.java</url>
           <line>51</line>
-          <properties class="edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter">
+          <properties class="edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter" method="submitJobToMallob">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -1216,6 +1223,42 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="118" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobOutputReader.java</url>
+          <line>56</line>
+          <properties class="edu.kit.fallob.mallobio.output.MallobOutputReader" method="readNextLine">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="119" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobOutputReader.java</url>
+          <line>78</line>
+          <properties class="edu.kit.fallob.mallobio.output.MallobOutputReader" method="giveLineToProcessors">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobOutputWatcherManager.java</url>
+          <line>52</line>
+          <properties class="edu.kit.fallob.mallobio.output.MallobOutputWatcherManager" method="addNewWatcher">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="121" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobOutputWatcherManager.java</url>
+          <line>74</line>
+          <properties class="edu.kit.fallob.mallobio.output.MallobOutputWatcherManager" method="startWatcherThread">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="122" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java</url>
