@@ -4,17 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Changed a variable name in JobInformationResponse">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Changed names so they match the specification">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobDescriptionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobDescriptionResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/SubmitDescriptionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/SubmitDescriptionResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/SubmitJobResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/SubmitJobResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtTokenUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -249,7 +241,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="44531000" />
+      <workItem from="1660777082728" duration="46156000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -496,7 +488,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661066200522</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Changed names so they match the specification">
+      <created>1661068190426</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1661068190426</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -531,7 +530,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented WarningController, JobSubmitController and MallobEventsController." />
     <MESSAGE value="Implemented MallobStartStopController and the register Endpoint." />
     <MESSAGE value="Implemented getJobDescription methods in InformationController." />
     <MESSAGE value="Implemented the rest of the controllers (JobResult methods and getSingleJobDescription method) and fixed some general errors/warnings" />
@@ -556,7 +554,8 @@
     <MESSAGE value="Fixed a bug in JobInformationCommands and disabled 2 UserDaoTests" />
     <MESSAGE value="Fixed SubmitJobRequest" />
     <MESSAGE value="Changed a variable name in JobInformationResponse" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed a variable name in JobInformationResponse" />
+    <MESSAGE value="Changed names so they match the specification" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed names so they match the specification" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
