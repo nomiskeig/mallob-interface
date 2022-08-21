@@ -41,7 +41,7 @@ public class JobInformationProxy {
     public JobStatus getStatus() {
         return status;
     }
-    public ResultMetaData getResultMetaData() {
+    public ResultMetaData resultData() {
         return resultData;
     }
 }
