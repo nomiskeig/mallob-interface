@@ -52,14 +52,14 @@ public class JobInformationController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         JobInformationProxy proxy = new JobInformationProxy(jobInformation);
-        return ResponseEntity.ok(new JobInformationResponse(Collections.singletonList(proxy)));
+        return ResponseEntity.ok(proxy);
     }
     @PostMapping("/info")
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
-            jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobIds());
+            jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -145,7 +145,7 @@ public class JobInformationController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
         try {
-            jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobIds());
+            jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -187,7 +187,7 @@ public class JobInformationController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
         try {
-            jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobIds());
+            jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
