@@ -22,6 +22,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,9 @@ public class JobDaoImpl implements JobDao{
 
     private final Connection conn;
     private final FallobConfiguration configuration;
+
+    //string that defines the return format for the submission time
+    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
 
     //constants for different regex and strings that are required for handling file paths
     private static final String SINGLE_FILE_REGEX = "%o.*";
@@ -409,6 +415,10 @@ public class JobDaoImpl implements JobDao{
             if (result.next()) {
                 String username = result.getString(1);
                 LocalDateTime submissionTime = result.getTimestamp(2).toLocalDateTime();
+                //add the utc time zone
+                ZonedDateTime timeWithZone = submissionTime.atZone(ZoneOffset.UTC);
+                //formatter to get the right output format
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
                 //get a UserDao object to get the user object
                 DaoFactory daoFactory = new DaoFactory();
@@ -416,7 +426,7 @@ public class JobDaoImpl implements JobDao{
 
                 User user = userDao.getUserByUsername(username);
 
-                return new JobInformation(configuration, metaData, user, submissionTime.toString(), status, jobId);
+                return new JobInformation(configuration, metaData, user, timeWithZone.format(formatter), status, jobId);
             } else {
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
