@@ -58,11 +58,8 @@ public class MallobOutputWatcherManager {
 		String pathToOutputDirectpory = 
 				MallobFilePathGenerator.generateOutDirectoryPath(clientProcessID, (FallobConfiguration.getInstance()).getMallobBasePath());
 		String expectedResultName = MallobFilePathGenerator.generateResultName(jobName, userName);
-		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName);
-		watcher.setDistributor(resultDistributor);
+		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName, resultDistributor);
 		watchers.add(watcher);
-		
-		
 		startWatcherThread(watcher);
 	}
 
