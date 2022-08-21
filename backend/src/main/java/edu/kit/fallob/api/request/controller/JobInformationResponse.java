@@ -4,13 +4,13 @@ import java.util.List;
 
 public class JobInformationResponse {
 
-    private final List<JobInformationProxy> jobInformation;
+    private final List<JobInformationProxy> information;
 
-    public JobInformationResponse(List<JobInformationProxy> jobInformation) {
-        this.jobInformation = jobInformation;
+    public JobInformationResponse(List<JobInformationProxy> information) {
+        this.information = information;
     }
 
-    public List<JobInformationProxy> getJobInformation() {
-        return jobInformation;
+    public List<JobInformationProxy> getInformation() {
+        return information;
     }
 }
