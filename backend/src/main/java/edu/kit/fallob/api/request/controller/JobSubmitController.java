@@ -33,11 +33,14 @@ public class JobSubmitController {
 
     private static final String FILE_ERROR = "An error occurred while creating a file with the job description.";
 
-    private static final String FILE_NAME = "jobDescription.cnf";
+    private static final String FILE_NAME = "jobDescription";
+
+    private static final String FILE_EXTENSION = ".cnf";
 
     private static final FallobConfiguration configuration = FallobConfiguration.getInstance();
 
     private static final String DIRECTORY_SEPARATOR = "/";
+
     @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
@@ -96,25 +99,22 @@ public class JobSubmitController {
 
         return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
     }
+
     @PostMapping("/inclusive")
     public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<File> files = new ArrayList<>();
-        File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME);
         try {
-            FileWriter myWriter = new FileWriter(file.getAbsolutePath());
+            int counter = 0;
             List<String> lines = request.getDescription();
-//            int counter = 0;
             for (String line : lines) {
+                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME + counter + FILE_EXTENSION);
+                FileWriter myWriter = new FileWriter(file.getAbsolutePath());
                 myWriter.write(line);
-//                if (file.getTotalSpace() > Math.pow(10, 8)) {
-//                    files.add(file);
-//                    file = new File("jobDescription" + counter + ".cnf");
-//                    counter++;
-//                }
+                counter++;
+                files.add(file);
+                myWriter.close();
             }
-            files.add(file);
-            myWriter.close();
         } catch (IOException e) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, FILE_ERROR);
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -141,6 +141,7 @@ public class JobSubmitController {
         return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
 
     }
+
     @PostMapping("/exclusive/description")
     public ResponseEntity<Object> saveDescription(@RequestParam("file1") MultipartFile file, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
@@ -153,8 +154,8 @@ public class JobSubmitController {
         try {
             file.transferTo(file1);
         } catch (IOException ioException) {
-        FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
-        return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file1), SubmitType.EXCLUSIVE);
