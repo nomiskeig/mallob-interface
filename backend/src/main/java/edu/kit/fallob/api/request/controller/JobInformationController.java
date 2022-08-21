@@ -52,7 +52,7 @@ public class JobInformationController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         JobInformationProxy proxy = new JobInformationProxy(jobInformation);
-        return ResponseEntity.ok(new JobInformationResponse(Collections.singletonList(proxy)));
+        return ResponseEntity.ok(proxy);
     }
     @PostMapping("/info")
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
