@@ -280,7 +280,7 @@ export function JobPage(props) {
 							className={
 								embedded
 									? ''
-									: 'jobPagePanel lowerPanel lowerPanelRight dependencyPanel'
+									: 'jobPagePanel lowerPanel lowerPanelRight dependencyPanel d-flex flex-column'
 							}
 						>
 							<Header title={'Dependencies'} />
