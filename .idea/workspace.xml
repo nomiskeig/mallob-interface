@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Fixed variables">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Fixed test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/description.cnf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/description.cnf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobInformationProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +104,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.WebLayerTest">
+  <component name="RunManager" selected="Spring Boot.BackendApplication (1)">
     <configuration name="AuthenticationTest.JwtTokenTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -243,7 +242,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="55316000" />
+      <workItem from="1660777082728" duration="56189000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -532,7 +531,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661078497064</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Fixed test">
+      <created>1661079092634</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1661079092634</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -567,7 +573,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented mockmvc tests." />
     <MESSAGE value="Implemented more mockMvc tests." />
     <MESSAGE value="Implemented the rest of the mockMvc tests plus general bug fixes." />
     <MESSAGE value="General bug fixes/merge resolves" />
@@ -592,7 +597,8 @@
     <MESSAGE value="Fixed the tests and changed variable names" />
     <MESSAGE value="Fixed variable names" />
     <MESSAGE value="Fixed variables" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed variables" />
+    <MESSAGE value="Fixed test" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed test" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -806,7 +812,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>99</line>
+          <line>101</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithIncludedDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -815,7 +821,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>67</line>
+          <line>69</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="getInclusiveCommandResponse">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -869,7 +875,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>41</line>
+          <line>43</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithUrlDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -932,7 +938,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>144</line>
+          <line>142</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="saveDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -941,7 +947,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>83</line>
+          <line>85</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithSeparateDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1211,7 +1217,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>130</line>
+          <line>128</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="restartJob">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
