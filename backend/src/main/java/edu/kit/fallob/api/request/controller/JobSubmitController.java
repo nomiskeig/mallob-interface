@@ -6,7 +6,6 @@ import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.SubmitType;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,8 +45,17 @@ public class JobSubmitController {
         File file;
         try {
             url = new URL(request.getUrl());
-            file = new File(url.getFile());
-            FileUtils.copyURLToFile(url, file);
+            file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + url.getFile());
+            try (InputStream in = url.openStream();
+                 BufferedInputStream bis = new BufferedInputStream(in);
+                 FileOutputStream fos = new FileOutputStream(file.getName())) {
+
+                byte[] data = new byte[1024];
+                int count;
+                while ((count = bis.read(data, 0, 1024)) != -1) {
+                    fos.write(data, 0, count);
+                }
+            }
         } catch (IOException | NullPointerException ioException) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -97,7 +103,7 @@ public class JobSubmitController {
         File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME);
         try {
             FileWriter myWriter = new FileWriter(file.getAbsolutePath());
-            List<String> lines = request.getJobDescription();
+            List<String> lines = request.getDescription();
 //            int counter = 0;
             for (String line : lines) {
                 myWriter.write(line);

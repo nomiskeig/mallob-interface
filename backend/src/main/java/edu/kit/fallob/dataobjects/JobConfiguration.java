@@ -1,8 +1,7 @@
 package edu.kit.fallob.dataobjects;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class JobConfiguration {
 	
@@ -18,20 +17,30 @@ public class JobConfiguration {
 	private double priority;
 	private String application;
 	private int maxDemand;
+    @JsonInclude(Include.NON_NULL)
 	private String wallClockLimit;
+    @JsonInclude(Include.NON_NULL)
 	private String cpuLimit;
 	private double arrival;
+    @JsonInclude(Include.NON_EMPTY)
 	private Integer[] dependencies;
+    @JsonInclude(value = Include.CUSTOM, valueFilter= JobConfigurationNeverFilter.class)
 	private String[] dependenciesStrings;
+    @JsonInclude(Include.NON_EMPTY)
 	private String contentMode;
 	private boolean interrupt;
 	private boolean incremental;
+    @JsonInclude(Include.NON_EMPTY)
 	private int[] literals;
 	private int precursor;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private String precursorString;
+    @JsonInclude(Include.NON_EMPTY)
 	private String assumptions;
 	private boolean done;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private int descriptionID;
+    @JsonInclude(Include.NON_NULL)
 	private String additionalParameter;
 
 	public JobConfiguration(String name, double priority,
@@ -73,6 +82,7 @@ public class JobConfiguration {
 	public void setMaxDemand(int maxDemand) {
 		this.maxDemand = maxDemand;
 	}
+
 	public String getWallClockLimit() {
 		return wallClockLimit;
 	}
