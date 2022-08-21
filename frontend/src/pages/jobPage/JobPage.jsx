@@ -147,6 +147,9 @@ export function JobPage(props) {
 				process.env.REACT_APP_API_BASE_PATH +
 				'/api/v1/jobs/cancel/single/' +
 				jobID,
+            headers: {
+                Authorization: "Bearer " + userContext.user.token
+            }
 		}).then((res) => {
 			infoContext.handleInformation(
 				'Sucessesfully cancelled the job.',
