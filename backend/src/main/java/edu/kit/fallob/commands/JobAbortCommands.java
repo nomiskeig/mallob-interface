@@ -5,6 +5,7 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.dataobjects.JobInformation;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.input.MallobInput;
+import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class JobAbortCommands {
 			System.out.println(e.getMessage());
 		}
 
-		
+		mallobInput = MallobInputImplementation.getInstance();
 	}
 	
 	
