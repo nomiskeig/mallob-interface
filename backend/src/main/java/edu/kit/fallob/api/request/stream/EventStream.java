@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -18,7 +20,8 @@ import java.time.format.DateTimeFormatter;
  * it implements the OutputLogLineListener interface and gets registered as listener for the mallob log lines
  */
 public class EventStream implements OutputLogLineListener {
-    private static final String EVENT_REGEX = "";
+    //output format for the time
+    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
     private static final String RANK_KEY = "rank";
     private static final String TREE_INDEX_KEY = "treeIndex";
     private static final String TIME_KEY = "time";
@@ -64,10 +67,14 @@ public class EventStream implements OutputLogLineListener {
             //convert the load boolean into an integer for the json object
             int loadInt = event.isLoad() ? 1 : 0;
 
+            //convert the time into the right format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+            ZonedDateTime timeWithZone = event.getTime().atZone(ZoneOffset.UTC);
+
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(RANK_KEY, event.getProcessID());
             jsonObject.put(TREE_INDEX_KEY, event.getTreeIndex());
-            jsonObject.put(TIME_KEY, event.getTime().format(DateTimeFormatter.ISO_DATE_TIME));
+            jsonObject.put(TIME_KEY, timeWithZone.format(formatter));
             jsonObject.put(JOB_ID_KEY, jobId);
             jsonObject.put(LOAD_KEY, loadInt);
 

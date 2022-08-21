@@ -4,8 +4,13 @@ import edu.kit.fallob.mallobio.outputupdates.Event;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class EventProxy {
+    //the return format for the time
+    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
 
     //event-attributes
     private final int processID;
@@ -43,8 +48,11 @@ public class EventProxy {
         return processID;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public String getTime() {
+        //format the time to the right format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        ZonedDateTime timeWithZone = this.time.atZone(ZoneOffset.UTC);
+        return timeWithZone.format(formatter);
     }
 
 }
