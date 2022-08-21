@@ -179,6 +179,9 @@ public class MallobReaderStarter {
 	 * @param fileName name of the file which is supposed to be watched
 	 */
 	public void addIrregularReaders(String filePath) {
+		if (logDistributor == null) {
+			throw new NullPointerException("Cannot assign Distributor that is null to reader. Initialize output first.");
+		}
 		if (irregularFilesReaders == null) {
 			irregularFilesReaders = new ArrayList<>();
 		}
