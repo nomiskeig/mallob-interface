@@ -60,6 +60,41 @@ export function SubmitPage(props) {
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
 	let [additionalConfig, setAdditionalConfig] = useState([]);
 	useEffect(() => {
+		if (jobContext.jobToRestart === null) {
+			return;
+		}
+		let submittedJob = jobContext.jobs.filter(
+			(job) => job.jobID == jobContext.jobToRestart
+		)[0];
+		if (submittedJob.config.dependencies) {
+			setDependencies(submittedJob.config.dependencies);
+			delete submittedJob.config.dependencies;
+		}
+		setJobToSubmit(submittedJob.config);
+		let newSelectionOptionalIndices = selectedOptionalIndices;
+		configParameters
+			.filter((param) => !param.required)
+			.forEach((param) => {
+				if (submittedJob.config[param.internalName]) {
+					newSelectionOptionalIndices.push(getIndexByParam(param));
+				}
+			});
+		if (submittedJob.config.additionalConfig) {
+			let index = 0;
+			let newAdditionalConfig = additionalConfig;
+			for (let [key, value] of Object.entries(
+				submittedJob.config.additionalConfig
+			)) {
+				newAdditionalConfig.push({ index: index, key: key, value: value });
+				index += 1;
+			}
+            setAdditionalConfig([...newAdditionalConfig]);
+		}
+
+		setSelectedOptionalIndices([...newSelectionOptionalIndices]);
+		jobContext.setJobToRestart(null);
+	}, []);
+	useEffect(() => {
 		if (!userContext.user.isVerified) {
 			navigate('/jobs');
 			infoContext.handleInformation(
@@ -211,6 +246,7 @@ export function SubmitPage(props) {
 							},
 							name: value,
 						}))}
+						default={jobToSubmit[param.internalName]}
 						displaySelectedValue={true}
 					></DropdownComponent>
 				);
@@ -349,9 +385,10 @@ export function SubmitPage(props) {
 							<Header title={'Dependencies'} />
 							<DependencyTable
 								dependencies={ownJobs}
+								selectedIDs={dependencies}
 								input={true}
 								onChange={(selectedJobIDs) => {
-									setDependencies(selectedJobIDs);
+									setDependencies([...selectedJobIDs]);
 								}}
 							/>
 						</div>

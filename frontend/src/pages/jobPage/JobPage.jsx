@@ -7,7 +7,7 @@ import { TextFieldDescription } from '../../global/description/TextFieldDescript
 import { Header } from '../../global/header/Header';
 import { JobPageButton } from '../../global/buttons/JobPageButton';
 import { Button } from '../../global/buttons/Button';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { configParameters, getIndexByParam } from './Parameters';
 import {
 	JOB_STATUS_DONE,
@@ -50,6 +50,8 @@ export function JobPage(props) {
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
 
+	let navigate = useNavigate();
+
 	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
 		if (!loaded) {
@@ -81,10 +83,10 @@ export function JobPage(props) {
 				'/api/v1/jobs/description/single/' +
 				jobID,
 			responseType: 'blob',
-            headers: {
-                Authorization: "Bearer "  + userContext.user.token,
-                Accept: "application/zip, application/json" 
-            }
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+				Accept: 'application/zip, application/json',
+			},
 		})
 			.then((res) => {
 				if (res.headers['content-type'].startsWith('application/json')) {
@@ -126,10 +128,10 @@ export function JobPage(props) {
 				'/api/v1/jobs/solution/single/' +
 				jobID,
 			responseType: 'blob',
-            headers: {
-                Authorization: "Bearer "  + userContext.user.token,
-                Accept: "application/zip, application/json" 
-            }
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+				Accept: 'application/zip, application/json',
+			},
 		}).then((res) => {
 			let url = window.URL.createObjectURL(new Blob([res.data]));
 			let link = document.createElement('a');
@@ -147,9 +149,9 @@ export function JobPage(props) {
 				process.env.REACT_APP_API_BASE_PATH +
 				'/api/v1/jobs/cancel/single/' +
 				jobID,
-            headers: {
-                Authorization: "Bearer " + userContext.user.token
-            }
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
 		}).then((res) => {
 			infoContext.handleInformation(
 				'Sucessesfully cancelled the job.',
@@ -235,6 +237,17 @@ export function JobPage(props) {
 										<Button
 											onClick={() => downloadResult()}
 											text={'Download result'}
+										></Button>
+									)}
+								{status === JOB_STATUS_CANCELLED &&
+									job.user === userContext.user.username && (
+										<Button
+											onClick={() => {
+                                                console.log(jobID)
+												jobContext.setJobToRestart(jobID);
+												navigate('/submit');
+											}}
+											text={'Restart job'}
 										></Button>
 									)}
 								{embedded && <JobPageButton jobID={jobID}></JobPageButton>}
