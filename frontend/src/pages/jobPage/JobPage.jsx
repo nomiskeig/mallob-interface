@@ -21,14 +21,14 @@ import { InfoContext, TYPE_INFO } from '../../context/InfoContextProvider';
 function getStatus(job) {
 	let status;
 	switch (job.status) {
-		case 'done':
+		case 'DONE':
 			status = JOB_STATUS_DONE;
 			break;
-		case 'inProgress':
+		case 'RUNNING':
 			status = JOB_STATUS_INPROGRESS;
 			break;
 
-		case 'cancelled':
+		case 'CANCELLED':
 			status = JOB_STATUS_CANCELLED;
 			break;
 		default:
@@ -81,6 +81,10 @@ export function JobPage(props) {
 				'/api/v1/jobs/description/single/' +
 				jobID,
 			responseType: 'blob',
+            headers: {
+                Authorization: "Bearer "  + userContext.user.token,
+                Accept: "application/zip, application/json" 
+            }
 		})
 			.then((res) => {
 				if (res.headers['content-type'].startsWith('application/json')) {
@@ -122,6 +126,10 @@ export function JobPage(props) {
 				'/api/v1/jobs/solution/single/' +
 				jobID,
 			responseType: 'blob',
+            headers: {
+                Authorization: "Bearer "  + userContext.user.token,
+                Accept: "application/zip, application/json" 
+            }
 		}).then((res) => {
 			let url = window.URL.createObjectURL(new Blob([res.data]));
 			let link = document.createElement('a');
