@@ -51,7 +51,7 @@ public class JobDaoImpl implements JobDao{
     private static final String ARRAY_TYPE_INT = "INT";
     private static final String ARRAY_TYPE_STRING = "VARCHAR(255)";
 
-    //error messages that get returned if an error occurs in the databas
+    //error messages that get returned if an error occurs in the database
     private static final String DATABASE_ERROR = "An error occurred while accessing the database";
     private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found";
 
@@ -74,7 +74,7 @@ public class JobDaoImpl implements JobDao{
     private static final String GET_JOB_INFORMATION = "SELECT username, submissionTime FROM job WHERE jobId=?";
     private static final String UPDATE_JOB_STATUS = "UPDATE job SET jobStatus=? WHERE jobId=?";
     private static final String INSERT_RESULT_META_DATA = "INSERT INTO resultMetaData (jobId, usedWallclockSeconds, usedCpuSeconds, timeParsing, timeProcessing, timeScheduling, timeTotal) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String JOB_ID_BY_MALLOB_ID = "SELECT jobId FROM job WHERE mallobId=?";
+    private static final String JOB_ID_BY_MALLOB_ID = "SELECT jobId FROM job WHERE mallobId=? ORDER BY submissionTime DESC";
     private static final String MALLOB_ID_BY_JOB_ID = "SELECT mallobId FROM job WHERE jobId=?";
     private static final String GET_JOBS_WITH_STATUS = "SELECT jobId FROM job WHERE jobStatus=?";
 
