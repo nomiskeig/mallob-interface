@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Fixed test">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Changed submit job with inclusive description">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/description.cnf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/description.cnf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobAbortCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/JobAbortCommands.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -242,7 +242,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="56189000" />
+      <workItem from="1660777082728" duration="59767000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -538,7 +538,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661079092634</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Changed submit job with inclusive description">
+      <created>1661080187720</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1661080187720</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -573,7 +580,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented more mockMvc tests." />
     <MESSAGE value="Implemented the rest of the mockMvc tests plus general bug fixes." />
     <MESSAGE value="General bug fixes/merge resolves" />
     <MESSAGE value="Resolved merge conflicts" />
@@ -598,7 +604,8 @@
     <MESSAGE value="Fixed variable names" />
     <MESSAGE value="Fixed variables" />
     <MESSAGE value="Fixed test" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed test" />
+    <MESSAGE value="Changed submit job with inclusive description" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed submit job with inclusive description" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -812,7 +819,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>101</line>
+          <line>103</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithIncludedDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -821,7 +828,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>69</line>
+          <line>70</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="getInclusiveCommandResponse">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -875,7 +882,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>43</line>
+          <line>44</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithUrlDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -938,7 +945,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>142</line>
+          <line>145</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="saveDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -947,7 +954,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>85</line>
+          <line>86</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="submitJobWithSeparateDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1217,7 +1224,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/JobSubmitController.java</url>
-          <line>128</line>
+          <line>130</line>
           <properties class="edu.kit.fallob.api.request.controller.JobSubmitController" method="restartJob">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
