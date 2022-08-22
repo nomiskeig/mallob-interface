@@ -5,11 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-<<<<<<< HEAD
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
-=======
-import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
->>>>>>> main
 
 
 
@@ -34,39 +30,10 @@ public class MallobReaderStarterTests {
 	private static MallobReaderStarter starter;
 	
 	@Test
-<<<<<<< HEAD
 	public void testInitializationMallobOutput() {
 		assertTrue(MallobOutput.getInstance() != null);
 	}
-=======
-	public void testLength() {
-		assertTrue(starter.getReaders().length == TEST_AMOUNT_PROCESSES);
-		assertTrue(starter.getReaderThreads().length == TEST_AMOUNT_READERTHREADS);
-	}
-	
-	
-	@Test
-	public void testDistributionOfReaders() {
-		MallobOutputRunnerThread[] runners = starter.getReaderThreads();
-		assertTrue(runners.length == TEST_AMOUNT_READERTHREADS);
 
-		int lowerBound = (int) Math.floor(TEST_AMOUNT_PROCESSES / TEST_AMOUNT_READERTHREADS);
-		int upperBound = lowerBound + 1;
-		for (int i = 0; i < runners.length; i++) {
-			int amountReadersPerThread = runners[i].getAmountActionCheckers();
-			assertTrue(amountReadersPerThread >= lowerBound);
-			assertTrue(amountReadersPerThread <= upperBound);
-		}
-	}
-	
-	@Test
-	public void addIrregularReader() {
-		starter.addIrregularReaders(null);
-	}
->>>>>>> main
-
-
-	
 	@BeforeEach
 	public void setupBeforeEach() {
 		starter = new MallobReaderStarter(TEST_DIRECTORY_PATH);
@@ -76,9 +43,5 @@ public class MallobReaderStarterTests {
 		
 					
 	}
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 	
 }
