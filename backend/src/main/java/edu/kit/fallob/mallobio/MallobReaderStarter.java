@@ -3,10 +3,10 @@ package edu.kit.fallob.mallobio;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.EventListener;
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobStatusListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.WarningListener;
@@ -65,7 +65,6 @@ public class MallobReaderStarter {
 	/**
 	 * 
 	 * 0. Initialize MallobOuptut and all required distributor-classes
-	 * 
 	 * 1. Sets result-distributor for watcher-manager
 	 * 2. Initializes readers for log-lines
 	 * 
@@ -75,18 +74,27 @@ public class MallobReaderStarter {
 	 */
 	public void initOutput(int amountProcesses) throws IllegalArgumentException
 	{
-	
-		watcherManager = MallobOutputWatcherManager.getInstance();
 		
-		this.mallobOutput = MallobOutput.getInstance();
-		this.logDistributor = this.mallobOutput.getOutputLogLineDistributor();
-		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
+		initializeMallobOuptut();
+		
+		watcherManager = MallobOutputWatcherManager.getInstance();
 		this.watcherManager.setResultDistributor(resultDistributor);
 		
 		
-		
 		initializeReaders(amountProcesses);
-		
+	}
+	
+	
+	
+	/**
+	 * Initialize mallobOuptut, logDistributor and resultDistributor
+	 * mallobOutput is going to hold a reference of both the log and resultDistributor
+	 * set log-distributor and result-distributor
+	 */
+	private void initializeMallobOuptut() {
+		this.mallobOutput = MallobOutput.getInstance();
+		this.logDistributor = this.mallobOutput.getOutputLogLineDistributor();
+		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
 	}
 	
 	/**
@@ -149,8 +157,7 @@ public class MallobReaderStarter {
 	/**
 	 * Starts the reading of the log-files and the watching of the output directories 
 	 */
-	public void startMallobio() {
-		
+	public void startMallobio() {		
 		
 		//collect all irregular readers into one array
 		if (irregularFilesReaders != null) {
@@ -190,4 +197,9 @@ public class MallobReaderStarter {
 		}
 	}
 	
+	public MallobOutputReader[] getReaders() {
+		return this.readers;
+	}
+	
+
 }

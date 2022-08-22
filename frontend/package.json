@@ -6,6 +6,7 @@
 		"@emotion/react": "^11.9.3",
 		"@emotion/styled": "^11.9.3",
 		"@mui/material": "^5.8.7",
+		"@mui/x-data-grid": "^5.15.1",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.3.0",
 		"@testing-library/user-event": "^13.5.0",
@@ -22,7 +23,17 @@
 		"sass": "^1.53.0",
 		"two.js": "^0.8.10",
 		"use-file-picker": "^1.4.2",
-		"web-vitals": "^2.1.4"
+		"web-vitals": "^2.1.4",
+		"assert": "^2.0.0",
+		"buffer": "^6.0.3",
+		"crypto-browserify": "^3.12.0",
+		"https-browserify": "^1.0.0",
+		"os-browserify": "^0.3.0",
+		"process": "^0.11.10",
+		"react-app-rewired": "^2.2.1",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
+		"url": "^0.11.0"
 	},
 	"scripts": {
 		"start": "react-app-rewired start",
@@ -35,8 +46,16 @@
 		"extends": [
 			"react-app",
 			"react-app/jest"
-		]
-	},
+		],
+        "rules": {
+            "eqeqeq": "off",
+            "react-hooks/exhaustive-deps": "off"
+        }
+        
+
+    },
+
+
 	"browserslist": {
 		"production": [
 			">0.2%",
@@ -48,18 +67,6 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	},
-	"devDependencies": {
-		"assert": "^2.0.0",
-		"buffer": "^6.0.3",
-		"crypto-browserify": "^3.12.0",
-		"https-browserify": "^1.0.0",
-		"os-browserify": "^0.3.0",
-		"process": "^0.11.10",
-		"react-app-rewired": "^2.2.1",
-		"stream-browserify": "^3.0.0",
-		"stream-http": "^3.2.0",
-		"url": "^0.11.0"
 	},
     "jest": {
         "collectCoverage": true,

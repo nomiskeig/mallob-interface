@@ -4,13 +4,13 @@ import java.util.List;
 
 public class JobDescriptionResponse {
 
-    private final List<String> jobDescription;
+    private final List<String> description;
 
-    public JobDescriptionResponse(List<String> jobDescription) {
-        this.jobDescription = jobDescription;
+    public JobDescriptionResponse(List<String> description) {
+        this.description = description;
     }
 
-    public List<String> getJobDescription() {
-        return jobDescription;
+    public List<String> getDescription() {
+        return description;
     }
 }

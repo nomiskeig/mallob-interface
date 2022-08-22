@@ -12,6 +12,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -49,8 +50,24 @@ public class MallobOutputReader implements Runnable {
 		this.processors = new ArrayList<>();
 	}
 	
+	/**
+	 * 
+	 * @param pathToDirectory path, in which the log-file is going to be
+	 * @param logFileName name of the file
+	 * @param processor Initial output-processor for this reader
+	 */
+	public MallobOutputReader(String pathToDirectory, String logFileName, OutputProcessor processor) {
+		this.pathToDirectory = pathToDirectory;
+		this.logFileName = logFileName;
+		this.stopWatchingLogFile = false;
+		this.absoluteLogFilePath = pathToDirectory + File.separator + logFileName;
+		this.processors = new ArrayList<>();
+		this.processors.add(processor);
+	}
+	
 	
 	/**
+<<<<<<< HEAD
 	 * Read the next Line(s) of the file, which path is sepcified in pathToMallobOutputLog
 	 */
 	public void readNextLine() {

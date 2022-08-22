@@ -43,8 +43,8 @@ public class EventProxy {
         return processID;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public String getTime() {
+        return time.toString();
     }
 
 }

@@ -4,14 +4,14 @@ import java.util.List;
 
 public class AbortJobResponse {
 
-    private final List<Integer> jobIds;
+    private final List<Integer> jobs;
 
-    public List<Integer> getJobIds() {
-        return jobIds;
+    public List<Integer> getJobs() {
+        return jobs;
     }
 
-    public AbortJobResponse(List<Integer> jobIds) {
-        this.jobIds = jobIds;
+    public AbortJobResponse(List<Integer> jobs) {
+        this.jobs = jobs;
     }
 
 }

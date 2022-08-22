@@ -59,37 +59,7 @@ test('removes a single job correctly', () => {
 	expect(jobStorage.getAllJobs().length).toBe(0);
 });
 
-test('throws error when trying to apply an event with load 1 on a treeIndex whihc is already there', () => {
-	let jobStorage = new JobStorage(mockContext);
-	let event = new Event('a time', 4, 3, 2, 1);
-	expect(() => {
-		jobStorage.addEvents([event, event]);
-	}).toThrow(AppError);
-});
-test('throws error when trying to apply an event with load 0 on a treeIndex which does not exist after the initial load', () => {
-	let event = new Event('a time', 5, 4, 1, 1);
-	let event2 = new Event('a second time', 6, 7, 1, 0);
-    
-	let jobStorage = new JobStorage(mockContext);
-	jobStorage.addEvents([event]);
-    expect(GlobalStats.mock.instances[0].setUsedProcesses).toHaveBeenCalledTimes(2);
-	expect(() => {
-		jobStorage.addEvents([event2]);
-	}).toThrow(AppError);
-    expect(GlobalStats.mock.instances[0].setUsedProcesses).toHaveBeenCalledTimes(2);
-});
 
-test('throws error when trying to apply an event with load 0 on a job which is not existent  (after initial load)', () => {
-	let jobStorage = new JobStorage(mockContext);
-	let event = new Event('a time', 4, 3, 2, 1);
-	let event2 = new Event('a time', 4, 4, 4, 0);
-	jobStorage.addEvents([event]);
-    expect(GlobalStats.mock.instances[0].setUsedProcesses).toHaveBeenCalledTimes(2);
-	expect(() => {
-		jobStorage.addEvents([event2]);
-	}).toThrow(AppError);
-    expect(GlobalStats.mock.instances[0].setUsedProcesses).toHaveBeenCalledTimes(2)
-});
 
 test('getjob returns a created job', () => {
 	let jobStorage = new JobStorage(mockContext);

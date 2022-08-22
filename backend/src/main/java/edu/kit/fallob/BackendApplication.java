@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
 import edu.kit.fallob.springConfig.FallobException;
 
@@ -29,13 +30,14 @@ public class BackendApplication {
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Fallob-Configuration file not found at specified location.");
 			return;
 		}
 		
 		try {
 			reader.setupFallobConfig();
 		} catch (IOException e) {
+			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
 			return;
 		}
@@ -54,6 +56,16 @@ public class BackendApplication {
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
+
+
+		
+		//-----------------------add additional file-readers here 
+		//mallobio.addIrregularReaders(<yourfilepath>);
+		//file-reader for 
+		int processID = config.getAmountProcesses() - 1;
+		mallobio.addIrregularReaders(
+				MallobFilePathGenerator.generateLogDirectoryPath(config.getMallobBasePath(), processID),
+				MallobFilePathGenerator.generateLogMappingFileName(processID));
 		mallobio.startMallobio();
 		SpringApplication.run(BackendApplication.class, args);
 	}

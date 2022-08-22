@@ -146,7 +146,7 @@ export class VisualizationPageManager extends React.Component {
 
 	render() {
 		return (
-			<div className='pageContainer'>
+			<div className='visPageContainer'>
 				<div className='row g-0'>
 					<div
 						className={`col-12 col-md-${
