@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useReducer } from 'react';
+import React, { useState, useContext, createContext, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
 import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import axios from 'axios';
@@ -29,6 +29,7 @@ export function JobContextProvider({ children }) {
 	//	const [jobs, setJobs] = useState([]);
 
 	const [jobs, dispatch] = useReducer(reducer, []);
+    let [jobToRestart, setJobToRestart] = useState(null);
 
 	async function fetchJobs() {
 		await axios
@@ -118,6 +119,8 @@ export function JobContextProvider({ children }) {
 		<JobContext.Provider
 			value={{
 				jobs: jobs,
+                setJobToRestart: setJobToRestart,
+                jobToRestart: jobToRestart,
 				fetchJobs: fetchJobs,
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,

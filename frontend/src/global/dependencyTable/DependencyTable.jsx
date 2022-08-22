@@ -1,8 +1,5 @@
 import './DependencyTable.scss';
-import React, { useState } from 'react';
-
 export function DependencyTable(props) {
-	let [selectedIDs, setSelectedIDs] = useState([]);
 
 	let rows = props.dependencies.map((job, i) => (
 		<tr key={i}>
@@ -17,9 +14,9 @@ export function DependencyTable(props) {
 					<input
 						className='form-check-input'
 						type='checkbox'
-						value={selectedIDs.includes(job.jobID)}
-						onClick={() => {
-							let newSelectedIDs = selectedIDs;
+						checked={props.selectedIDs.includes(job.jobID)}
+						onChange={() => {
+							let newSelectedIDs = props.selectedIDs;
 							if (newSelectedIDs.includes(job.jobID)) {
 								let index = newSelectedIDs.findIndex(
 									(jobID) => jobID === job.jobID
@@ -28,7 +25,6 @@ export function DependencyTable(props) {
 							} else {
 								newSelectedIDs.push(job.jobID);
 							}
-							setSelectedIDs(newSelectedIDs);
 							props.onChange(newSelectedIDs);
 						}}
 					></input>
