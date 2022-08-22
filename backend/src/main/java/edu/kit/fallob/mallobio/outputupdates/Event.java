@@ -1,5 +1,9 @@
 package edu.kit.fallob.mallobio.outputupdates;
 
+import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.springConfig.FallobException;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -69,8 +73,16 @@ public class Event extends OutputUpdate {
 		
 		int jobIDBegin = jobIDandTreeIndexInfo.indexOf('#') + 1;
 		int jobIDEnd = treeIndexBegin - 1;
-		jobID = Integer.parseInt(jobIDandTreeIndexInfo.substring(jobIDBegin, jobIDEnd));
-		
+		int mallobID = Integer.parseInt(jobIDandTreeIndexInfo.substring(jobIDBegin, jobIDEnd));
+
+		//convert the mallob Id into the correct job id
+		try {
+			JobDao jobDao = new DaoFactory().getJobDao();
+			jobID = jobDao.getJobIdByMallobId(mallobID);
+		} catch (FallobException e) {
+			throw new RuntimeException(e);
+		}
+
 		load = Integer.parseInt(splittedLogLine[3]) == 1;
 	}
 	
