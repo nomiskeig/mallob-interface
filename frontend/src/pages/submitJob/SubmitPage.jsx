@@ -283,7 +283,7 @@ export function SubmitPage(props) {
 			case INPUT_TYPE_DATETIME:
 				return (
 					<InputWithLabel
-                        lablelText={"Arrival"}
+                        labelText={"Arrival"}
 						datetime={true}
 						onChange={(newValue) => {
                             let newJobToSubmit = {...jobToSubmit}
