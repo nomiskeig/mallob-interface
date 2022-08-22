@@ -22,6 +22,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +38,9 @@ public class JobDaoImpl implements JobDao{
     private final Connection conn;
     private final FallobConfiguration configuration;
 
+    //string that defines the return format for the submission time
+    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+
     //constants for different regex and strings that are required for handling file paths
     private static final String SINGLE_FILE_REGEX = "%o.*";
     private static final String DESCRIPTION_FILES_REGEX = "%s\\d+\\..*";
@@ -45,14 +51,13 @@ public class JobDaoImpl implements JobDao{
     private static final String ARRAY_TYPE_INT = "INT";
     private static final String ARRAY_TYPE_STRING = "VARCHAR(255)";
 
-    //error messages that get returned if an error occurs in the databas
+    //error messages that get returned if an error occurs in the database
     private static final String DATABASE_ERROR = "An error occurred while accessing the database";
     private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found";
 
     //the sql queries that are required for the database interaction
-    private static final String JOB_INSERT = "INSERT INTO job (username, submissionTime, jobStatus, mallobId) VALUES (?, ?, ?, ?)";
+    private static final String JOB_INSERT = "INSERT INTO job (username, submissionTime, jobStatus, mallobId, descriptionId) VALUES (?, ?, ?, ?, ?)";
     private static final String CONFIGURATION_INSERT = "INSERT INTO jobConfiguration (jobId, name, priority, application, maxDemand, wallclockLimit, cpuLimit, arrival, dependencies, incremental, precursor, contentMode, additionalConfig, dependenciesStrings, precursorString) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_JOB_ID = "UPDATE jobDescription SET jobId=? WHERE descriptionId=?";
     private static final String DESCRIPTION_INSERT = "INSERT INTO jobDescription (username, submitType, uploadTime) VALUES (?, ?, ?)";
     private static final String GET_OLDEST_JOB_DESCRIPTION = "SELECT descriptionId FROM jobDescription ORDER BY uploadTime ASC";
     private static final String GET_JOBS_BEFORE_TIME = "SELECT jobId FROM job WHERE submissionTime < ?";
@@ -63,13 +68,13 @@ public class JobDaoImpl implements JobDao{
     private static final String GET_ALL_JOBIDS = "SELECT jobId FROM job WHERE username=?";
     private static final String GET_SUBMIT_TYPE = "SELECT submitType FROM jobDescription WHERE descriptionId=?";
     private static final String GET_JOB_CONFIGURATION = "SELECT * FROM jobConfiguration WHERE jobId=?";
-    private static final String GET_DESCRIPTION_ID = "SELECT descriptionId FROM jobDescription WHERE jobId=?";
+    private static final String GET_DESCRIPTION_ID = "SELECT descriptionId FROM job WHERE jobId=?";
     private static final String GET_JOB_STATUS = "SELECT jobStatus FROM job WHERE jobId=?";
     private static final String GET_RESULT_META_DATA = "SELECT * FROM resultMetaData WHERE jobId=?";
     private static final String GET_JOB_INFORMATION = "SELECT username, submissionTime FROM job WHERE jobId=?";
     private static final String UPDATE_JOB_STATUS = "UPDATE job SET jobStatus=? WHERE jobId=?";
     private static final String INSERT_RESULT_META_DATA = "INSERT INTO resultMetaData (jobId, usedWallclockSeconds, usedCpuSeconds, timeParsing, timeProcessing, timeScheduling, timeTotal) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String JOB_ID_BY_MALLOB_ID = "SELECT jobId FROM job WHERE mallobId=?";
+    private static final String JOB_ID_BY_MALLOB_ID = "SELECT jobId FROM job WHERE mallobId=? ORDER BY submissionTime DESC";
     private static final String MALLOB_ID_BY_JOB_ID = "SELECT mallobId FROM job WHERE jobId=?";
     private static final String GET_JOBS_WITH_STATUS = "SELECT jobId FROM job WHERE jobStatus=?";
 
@@ -101,6 +106,7 @@ public class JobDaoImpl implements JobDao{
             //set the current job status to running
             jobStatement.setString(3, JobStatus.RUNNING.name());
             jobStatement.setInt(4, mallobId);
+            jobStatement.setInt(5, configuration.getDescriptionID());
 
             jobStatement.executeUpdate();
 
@@ -110,15 +116,10 @@ public class JobDaoImpl implements JobDao{
             //this method is separate because otherwise the method would be too long
             this.saveInJobConfiguration(configuration, jobId);
 
-            //update the entry in the jobDescription table to set the jobId
-            PreparedStatement updateStatement = this.conn.prepareStatement(UPDATE_JOB_ID);
-            updateStatement.setInt(1, jobId);
-            updateStatement.setInt(2, configuration.getDescriptionID());
-
-            updateStatement.executeUpdate();
-
             return jobId;
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
@@ -208,11 +209,6 @@ public class JobDaoImpl implements JobDao{
             //delete every job from the database
             while (result.next()) {
                 int jobId = result.getInt(1);
-                //set jobId value in jobDescription table entries to null to prevent errors from the database
-                PreparedStatement updateStatement = this.conn.prepareStatement(UPDATE_JOB_ID);
-                updateStatement.setNull(1, Types.INTEGER);
-                updateStatement.setInt(2, jobId);
-                updateStatement.executeUpdate();
 
                 //delete the entry from the jobConfiguration table
                 PreparedStatement deleteConfig = this.conn.prepareStatement(DELETE_FROM_JOB_CONFIGURATION);
@@ -409,6 +405,10 @@ public class JobDaoImpl implements JobDao{
             if (result.next()) {
                 String username = result.getString(1);
                 LocalDateTime submissionTime = result.getTimestamp(2).toLocalDateTime();
+                //add the utc time zone
+                ZonedDateTime timeWithZone = submissionTime.atZone(ZoneOffset.UTC);
+                //formatter to get the right output format
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
                 //get a UserDao object to get the user object
                 DaoFactory daoFactory = new DaoFactory();
@@ -416,7 +416,7 @@ public class JobDaoImpl implements JobDao{
 
                 User user = userDao.getUserByUsername(username);
 
-                return new JobInformation(configuration, metaData, user, submissionTime.toString(), status, jobId);
+                return new JobInformation(configuration, metaData, user, timeWithZone.format(formatter), status, jobId);
             } else {
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
