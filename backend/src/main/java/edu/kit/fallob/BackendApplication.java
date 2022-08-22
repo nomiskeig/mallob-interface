@@ -62,7 +62,11 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
-		MallobOutput.getInstance().addOutputLogLineListener(new CentralOutputLogListener());
+		if (args.length > 1 && args[0] == "printMallobLogsToConsole") {
+			CentralOutputLogListener consolePrinter = new CentralOutputLogListener();
+			MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
+			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
+		}
 
 		
 		//-----------------------add additional file-readers here 
