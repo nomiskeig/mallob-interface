@@ -102,7 +102,7 @@ public class JobDaoImpl implements JobDao{
             PreparedStatement jobStatement = conn.prepareStatement(JOB_INSERT, Statement.RETURN_GENERATED_KEYS);
             jobStatement.setString(1, username);
             //set the current time as submission time
-            jobStatement.setObject(2, LocalDateTime.now());
+            jobStatement.setObject(2, LocalDateTime.now(ZoneOffset.UTC));
             //set the current job status to running
             jobStatement.setString(3, JobStatus.RUNNING.name());
             jobStatement.setInt(4, mallobId);
@@ -138,7 +138,7 @@ public class JobDaoImpl implements JobDao{
             PreparedStatement statement = this.conn.prepareStatement(DESCRIPTION_INSERT, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, username);
             statement.setString(2, description.getSubmitType().name());
-            statement.setObject(3, LocalDateTime.now());
+            statement.setObject(3, LocalDateTime.now(ZoneOffset.UTC));
 
             statement.executeUpdate();
 

@@ -13,7 +13,9 @@ import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.CentralOutputLogListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
 
 @SpringBootApplication
@@ -60,7 +62,11 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
-
+		if (args.length > 1 && args[0] == "printMallobLogsToConsole") {
+			CentralOutputLogListener consolePrinter = new CentralOutputLogListener();
+			MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
+			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
+		}
 
 		
 		//-----------------------add additional file-readers here 

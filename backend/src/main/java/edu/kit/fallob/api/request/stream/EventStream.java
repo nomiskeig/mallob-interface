@@ -51,18 +51,6 @@ public class EventStream implements OutputLogLineListener {
         System.out.println("got new event");
         if (Event.isEvent(line)) {
             Event event = new Event(line);
-            int jobId = 0;
-            try {
-                jobId = this.jobDao.getJobIdByMallobId(event.getJobID());
-            } catch (FallobException e) {
-                FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
-                try {
-                    emitter.send(warning);
-                    return;
-                } catch (IOException ex) {
-                    return;
-                }
-            }
 
             //convert the load boolean into an integer for the json object
             int loadInt = event.isLoad() ? 1 : 0;
@@ -75,7 +63,7 @@ public class EventStream implements OutputLogLineListener {
             jsonObject.put(RANK_KEY, event.getProcessID());
             jsonObject.put(TREE_INDEX_KEY, event.getTreeIndex());
             jsonObject.put(TIME_KEY, timeWithZone.format(formatter));
-            jsonObject.put(JOB_ID_KEY, jobId);
+            jsonObject.put(JOB_ID_KEY, event.getJobID());
             jsonObject.put(LOAD_KEY, loadInt);
 
             try {
