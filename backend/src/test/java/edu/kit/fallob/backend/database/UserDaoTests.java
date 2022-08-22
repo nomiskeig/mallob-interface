@@ -88,8 +88,13 @@ public class UserDaoTests {
     public void testGetUsernameByJobId() throws FallobException {
         this.userDao.save(TEST_USER);
 
+        //create a test job description
+        JobDescription testDescription = new JobDescription(new ArrayList<>(), SubmitType.EXCLUSIVE);
+        int descriptionId = this.jobDao.saveJobDescription(testDescription, TEST_USERNAME);
+
         //create a test job configuration
         JobConfiguration testConfiguration = new JobConfiguration("testJob", 1.0, "SAT");
+        testConfiguration.setDescriptionID(descriptionId);
 
         int jobId = jobDao.saveJobConfiguration(testConfiguration, TEST_USERNAME, 1);
 
