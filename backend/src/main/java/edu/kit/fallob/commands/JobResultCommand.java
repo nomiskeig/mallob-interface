@@ -34,7 +34,7 @@ public class JobResultCommand {
 		if (!uaa.hasResultAccess(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
-		if (jobDao.getJobStatus(jobID) != JobStatus.DONE) {
+		if (jobDao.getJobStatus(jobID) == JobStatus.RUNNING) {
 			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
 		}
 		return jobDao.getJobResult(jobID);
