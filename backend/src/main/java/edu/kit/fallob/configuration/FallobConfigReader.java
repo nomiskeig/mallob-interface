@@ -91,10 +91,6 @@ public class FallobConfigReader {
 		c.setDataBaseUsername(databaseJson.getString("databaseUsername"));
 		c.setDatabasePassword(databaseJson.getString("databasePassword"));
 		
-		//get informations for readers
-		JSONObject readerSetup = json.getJSONObject("readerSetup");
-		c.setReadingIntervalPerReadingThread(readerSetup.getInt("readingIntervalPerReadingThread"));
-		c.setAmountReaderThreads(readerSetup.getInt("amountReaderThreads"));
 	}
 
 	
