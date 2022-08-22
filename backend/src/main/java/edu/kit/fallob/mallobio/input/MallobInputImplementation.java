@@ -89,7 +89,7 @@ public class MallobInputImplementation implements MallobInput {
 		
 		int processID = this.getNextProcess();
 		String filePath = MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID) 
-				+ File.separator + ABORT_FILENAME + JSON_FILE_EXTENSION;
+				+ ABORT_FILENAME + JSON_FILE_EXTENSION;
 		
 		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(), filePath);
 		return processID;
@@ -115,7 +115,7 @@ public class MallobInputImplementation implements MallobInput {
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
-				+ File.separator + NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
+				+ NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
 
 		this.writeJsonInDirectory(json, absoluteFilePath);
 		System.out.println("Wrote Job-Json in directory : " + absoluteFilePath);

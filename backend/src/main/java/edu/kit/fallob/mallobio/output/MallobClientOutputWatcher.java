@@ -108,7 +108,7 @@ public class MallobClientOutputWatcher implements Runnable {
 	}
 	
 	private ResultAvailableObject generateResultObject() {
-		return new ResultAvailableObject(this.pathToOutputDirectory + File.separator + this.expectedResultName);
+		return new ResultAvailableObject(this.pathToOutputDirectory + this.expectedResultName);
 	}
 	
 	
