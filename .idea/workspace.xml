@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Fixed tests">
+    <list default="true" id="c68633f0-fae3-42c8-b307-733617813460" name="Changes" comment="Reverted an update that added absolute paths for the description files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/description.cnf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/description.cnf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/input/MallobInputImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/input/MallobInputImplementation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/EventProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/EventProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/configuration/FallobConfigReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/configuration/FallobConfigReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtAuthenticationEntryPoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtAuthenticationEntryPoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/database/fallobDatabase.mv.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,29 +62,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Git.Branch.Popup.ShowAllRemotes&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/kaloy/Downloads/Fallob/backend/src/main/resources&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;b43fdd98b1fd705ae4c3a10cf25aad8a&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Git.Branch.Popup.ShowAllRemotes": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "extract.method.default.visibility": "private",
+    "last_opened_file_path": "C:/Users/kaloy/Downloads/Fallob/backend/src/main/resources/database",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.runner",
+    "spring.configuration.checksum": "b43fdd98b1fd705ae4c3a10cf25aad8a"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\kaloy\Downloads\Fallob\backend\src\main\resources\database" />
       <recent name="C:\Users\kaloy\Downloads\Fallob\backend\src\main\resources" />
       <recent name="C:\Users\kaloy\Downloads\Fallob\backend\src\main\java\edu\kit\fallob\springConfig" />
     </key>
@@ -104,11 +109,13 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Spring boot run">
+  <component name="RunManager" selected="Spring Boot.BackendApplication (1)">
     <configuration name="Spring boot run" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="edu.kit.fallob.BackendApplication" />
       <module name="backend" />
       <option name="PROGRAM_PARAMETERS" value="C:\Users\kaloy\Downloads\Fallob\backend\src\main\resources\Fallob_configuration.json" />
+      <projectPathOnTarget name="projectPathOnTarget" value="/mnt/c/Program Files/JetBrains/IntelliJ IDEA 2022.1.2/jbr/bin /Fallob" />
+      <target name="@@@LOCAL@@@" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -242,7 +249,7 @@
       <workItem from="1660597570256" duration="198000" />
       <workItem from="1660669192103" duration="1855000" />
       <workItem from="1660732533932" duration="3828000" />
-      <workItem from="1660777082728" duration="70488000" />
+      <workItem from="1660777082728" duration="84940000" />
     </task>
     <task id="LOCAL-00001" summary="Added a few Dependencies in the pom.xml, added the jwt authentication prototype as well as some controller and request/response classes to the project">
       <created>1657436427571</created>
@@ -559,7 +566,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661089077703</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Reverted an update that added absolute paths for the description files">
+      <created>1661099399256</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1661099399256</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -594,8 +608,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Resolved merge conflicts" />
-    <MESSAGE value="General fixes and more tests" />
     <MESSAGE value="General fixes and made sure the server runs with the implemented by mike commands" />
     <MESSAGE value="Implemented register command, added LocalDateTime parsing to MallobEventsController and refined the WebLayerTest class" />
     <MESSAGE value="Changed the register command" />
@@ -619,7 +631,9 @@
     <MESSAGE value="Changed submit job with inclusive description" />
     <MESSAGE value="Fixed bug in AbortJobCommands" />
     <MESSAGE value="Fixed tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed tests" />
+    <MESSAGE value="Reverted an update to the absolute paths" />
+    <MESSAGE value="Reverted an update that added absolute paths for the description files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reverted an update that added absolute paths for the description files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -707,7 +721,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>446</line>
+          <line>451</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortSingleJobUnsuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -725,7 +739,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>455</line>
+          <line>460</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortMultipleJobsSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -734,7 +748,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>437</line>
+          <line>442</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortSingleJobException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -743,7 +757,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>428</line>
+          <line>433</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortSingleJobSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -752,7 +766,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>467</line>
+          <line>472</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortMultipleJobsException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -761,7 +775,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>478</line>
+          <line>483</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="abortMultipleJobsUnsuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -770,7 +784,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>653</line>
+          <line>658</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getSingleJobDescriptionFile">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -797,7 +811,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>671</line>
+          <line>676</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getSingleJobDescriptionException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -806,7 +820,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>853</line>
+          <line>858</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -815,7 +829,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>973</line>
+          <line>978</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getMallobEventsSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -851,7 +865,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>380</line>
+          <line>385</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="registerException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -860,7 +874,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>410</line>
+          <line>415</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="loginException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -869,7 +883,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>391</line>
+          <line>396</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="loginSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -887,7 +901,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/springConfig/JwtAuthenticationEntryPoint.java</url>
-          <line>23</line>
+          <line>30</line>
           <properties class="edu.kit.fallob.springConfig.JwtAuthenticationEntryPoint" method="commence">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -932,7 +946,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>1003</line>
+          <line>1011</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="getSystemStateSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1004,7 +1018,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>391</line>
+          <line>387</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="getJobInformation">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1013,7 +1027,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>309</line>
+          <line>305</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="getJobConfiguration">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1067,7 +1081,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/input/MallobInputImplementation.java</url>
-          <line>130</line>
+          <line>131</line>
           <properties class="edu.kit.fallob.mallobio.input.MallobInputImplementation" method="writeJsonInDirectory">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1094,7 +1108,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>366</line>
+          <line>362</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="getJobStatus">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1103,7 +1117,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>275</line>
+          <line>271</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="getJobDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1130,7 +1144,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>133</line>
+          <line>134</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="saveJobDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1139,7 +1153,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>93</line>
+          <line>98</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="saveJobConfiguration">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1220,7 +1234,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>219</line>
+          <line>224</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="submitJobConfigurationSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1229,7 +1243,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>535</line>
+          <line>540</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="restartJobException">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1247,7 +1261,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/configuration/FallobConfigReader.java</url>
-          <line>44</line>
+          <line>45</line>
           <properties class="edu.kit.fallob.configuration.FallobConfigReader" method="setupFallobConfig">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1274,7 +1288,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/JobDaoImpl.java</url>
-          <line>248</line>
+          <line>244</line>
           <properties class="edu.kit.fallob.database.JobDaoImpl" method="getAllJobIds">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1292,7 +1306,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobOutputWatcherManager.java</url>
-          <line>74</line>
+          <line>71</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobOutputWatcherManager" method="startWatcherThread">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1301,7 +1315,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/test/java/edu/kit/fallob/api/request/controller/WebLayerTest.java</url>
-          <line>304</line>
+          <line>309</line>
           <properties class="edu.kit.fallob.api.request.controller.WebLayerTest" method="registerSuccessfully">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1337,7 +1351,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/input/MallobInputImplementation.java</url>
-          <line>232</line>
+          <line>233</line>
           <properties class="edu.kit.fallob.mallobio.input.MallobInputImplementation" method="addJobDescription">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1364,7 +1378,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>40</line>
+          <line>45</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="&lt;init&gt;">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1373,7 +1387,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>46</line>
+          <line>52</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="setupClientOutputWatcher">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1382,7 +1396,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>58</line>
+          <line>81</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="watchDirectory">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1391,7 +1405,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>93</line>
+          <line>120</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="isResult">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1400,7 +1414,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>131</line>
+          <line>158</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="run">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1409,7 +1423,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>107</line>
+          <line>134</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="getWatcher">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1427,12 +1441,30 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/mallobio/output/MallobClientOutputWatcher.java</url>
-          <line>120</line>
+          <line>147</line>
           <properties class="edu.kit.fallob.mallobio.output.MallobClientOutputWatcher" method="pushResultObject">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/commands/MallobCommands.java</url>
+          <line>39</line>
+          <properties class="edu.kit.fallob.commands.MallobCommands" method="getSystemState">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="142" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/database/EventDaoImpl.java</url>
+          <line>89</line>
+          <properties class="edu.kit.fallob.database.EventDaoImpl" method="getEventsByTime">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="143" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/backend/src/main/java/edu/kit/fallob/api/request/controller/AbortJobController.java</url>

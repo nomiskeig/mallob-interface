@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,6 +51,7 @@ public class FallobConfigReader {
 		c.setAmountProcesses(json.getInt("amountProcesses"));
 		c.setMaxJobsTotal(json.getInt("maxJobsTotal"));
 		c.setMaxJobsUser(json.getInt("maxJobsUser"));
+		c.setStartTime(LocalDateTime.now());
 		
 		//int-array is a little bit more complicated
 		JSONArray arr = json.getJSONArray("client-processes");

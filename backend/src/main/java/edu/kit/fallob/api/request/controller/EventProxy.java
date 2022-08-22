@@ -2,7 +2,6 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.mallobio.outputupdates.Event;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -13,7 +12,7 @@ public class EventProxy {
     private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
 
     //event-attributes
-    private final int processID;
+    private final int rank;
     private final int treeIndex;
     private final int jobID;
     private final boolean load;
@@ -22,7 +21,7 @@ public class EventProxy {
 
 
     public EventProxy(Event event) {
-        this.processID = event.getProcessID();
+        this.rank = event.getProcessID();
         this.treeIndex = event.getTreeIndex();
         this.jobID = event.getJobID();
         this.load = event.isLoad();
@@ -44,8 +43,8 @@ public class EventProxy {
         return treeIndex;
     }
 
-    public int getProcessID() {
-        return processID;
+    public int getRank() {
+        return rank;
     }
 
     public String getTime() {
