@@ -62,7 +62,6 @@ public class MallobOutputWatcherManager {
 		watcher.setDistributor(resultDistributor);
 		watchers.add(watcher);
 		
-		
 		startWatcherThread(watcher);
 	}
 

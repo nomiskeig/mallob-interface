@@ -23,6 +23,8 @@ import java.util.stream.Stream;
  *
  */
 public class MallobOutputReader implements Runnable {
+	
+
 
 	
 	private String pathToDirectory;
@@ -35,6 +37,9 @@ public class MallobOutputReader implements Runnable {
 	
 	private long lastReadLine;
 	
+	private Path dir;
+
+	
 
 
 	/**
@@ -46,7 +51,7 @@ public class MallobOutputReader implements Runnable {
 		this.pathToDirectory = pathToDirectory;
 		this.logFileName = logFileName;
 		this.stopWatchingLogFile = false;
-		this.absoluteLogFilePath = pathToDirectory + File.separator + logFileName;
+		this.absoluteLogFilePath = pathToDirectory + logFileName;
 		this.processors = new ArrayList<>();
 	}
 	
@@ -57,17 +62,13 @@ public class MallobOutputReader implements Runnable {
 	 * @param processor Initial output-processor for this reader
 	 */
 	public MallobOutputReader(String pathToDirectory, String logFileName, OutputProcessor processor) {
-		this.pathToDirectory = pathToDirectory;
-		this.logFileName = logFileName;
-		this.stopWatchingLogFile = false;
-		this.absoluteLogFilePath = pathToDirectory + File.separator + logFileName;
-		this.processors = new ArrayList<>();
+		this(pathToDirectory, logFileName);
 		this.processors.add(processor);
 	}
+
 	
 	
 	/**
-<<<<<<< HEAD
 	 * Read the next Line(s) of the file, which path is sepcified in pathToMallobOutputLog
 	 */
 	public void readNextLine() {
@@ -93,28 +94,34 @@ public class MallobOutputReader implements Runnable {
 	 * 
 	 */
 	public void listenToLogFile() throws InterruptedException, IOException {
-		
+		System.out.println("Watching for log-file :" + logFileName + " in directory :" + pathToDirectory); 
 		WatchService watcher = getWatcher();
+		WatchKey nextKey;
 
 		//retreive the result from the directory 
 		while(!stopWatchingLogFile) {
-			WatchKey nextKey = watcher.take();
-			
+			nextKey = watcher.take();
+		
 			
 			for (WatchEvent<?> event : nextKey.pollEvents()) {
 				
-				if (event.kind() != StandardWatchEventKinds.ENTRY_CREATE) {
+				if (event.kind() != StandardWatchEventKinds.ENTRY_MODIFY) {
 					continue;
 				}
-								
+
 				WatchEvent<Path> ev = (WatchEvent<Path>)event;
-		        Path filename = ev.context();
-		        
-				if (logFileWasChanged(filename.toString())){
+				String fileName = ev.context().toString();
+		        //Path relativePath = ev.context();
+		        //final String autoLoadFilename = relativePath.toAbsolutePath().toFile().getName();
+
+		        //String fileName = dir.resolve(relativePath).toString();
+				if (logFileWasChanged(fileName)){
 					readNextLine();
 				}
 			}
+			nextKey.reset();
 		}
+	
 	}
 	
 	
@@ -124,6 +131,7 @@ public class MallobOutputReader implements Runnable {
 	 * @return 
 	 */
 	private boolean logFileWasChanged(String fileName) {
+		System.out.println("Checking for log-file change in logFile : '" +fileName+"' should equal : '" + logFileName + "'");
 		return logFileName.equals(fileName);
 	}
 
@@ -135,8 +143,8 @@ public class MallobOutputReader implements Runnable {
 	 * @throws IOException
 	 */
 	private WatchService getWatcher() throws IOException {
+		dir = Paths.get(pathToDirectory);
 		//setup watcher 
-		Path dir = Paths.get(pathToDirectory);
 		WatchService watcher = FileSystems.getDefault().newWatchService();
 		try {
 			dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);

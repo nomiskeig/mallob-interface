@@ -115,7 +115,7 @@ public class MallobInputImplementation implements MallobInput {
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
-				+ File.separator + NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
+				+ NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
 		
         System.out.println(absoluteFilePath);
 		this.writeJsonInDirectory(json, absoluteFilePath);

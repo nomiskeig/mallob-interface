@@ -85,6 +85,25 @@ public class MallobReaderStarter {
 	}
 	
 	
+	/**
+	 * Initializes an array of readers (length === amountProcesses)
+	 * Then, it inintializes a new MallobOutputReader for every index of the array
+	 * Every Reader gets the same distributor
+	 * 
+	 * @param amountProcesses
+	 */
+	private void initializeReaders(int amountProcesses) 
+	{
+		this.readers = new MallobOutputReader[amountProcesses];
+		for (int i = 0; i < amountProcesses; i++) {
+			this.readers[i] = new MallobOutputReader(
+					MallobFilePathGenerator.generateLogDirectoryPath(pathToMallobDirectory, i), 
+					MallobFilePathGenerator.generateLogName(i),
+					logDistributor);
+		}
+	}
+	
+	
 	
 	/**
 	 * Initialize mallobOuptut, logDistributor and resultDistributor
@@ -117,23 +136,7 @@ public class MallobReaderStarter {
 	
 	
 
-	/**
-	 * Initializes an array of readers (length === amountProcesses)
-	 * Then, it inintializes a new MallobOutputReader for every index of the array
-	 * Every Reader gets the same distributor
-	 * 
-	 * @param amountProcesses
-	 */
-	private void initializeReaders(int amountProcesses) 
-	{
-		this.readers = new MallobOutputReader[amountProcesses];
-		for (int i = 0; i < amountProcesses; i++) {
-			this.readers[i] = new MallobOutputReader(
-					MallobFilePathGenerator.generateLogDirectoryPath(pathToMallobDirectory, i), 
-					MallobFilePathGenerator.generateLogName(i),
-					logDistributor);
-		}
-	}
+
 	
 	
 	/**
