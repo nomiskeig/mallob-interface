@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,6 +70,8 @@ public class FallobConfigReader {
 		c.setEventStorageTime(storageJson.getInt("eventStorageTime"));
 		c.setWarningStorageTime(storageJson.getInt("warningStorageTime"));
 		c.setMaxDescriptionStorageSize(storageJson.getInt("maxDescriptionStorageSize"));
+
+		c.setStartTime(LocalDateTime.now(ZoneOffset.UTC));
 
 
 		//get the json object for the default values

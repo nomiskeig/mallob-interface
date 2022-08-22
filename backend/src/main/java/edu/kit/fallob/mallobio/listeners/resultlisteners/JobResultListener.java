@@ -54,7 +54,13 @@ public class JobResultListener implements ResultObjectListener {
 			e.printStackTrace();
 		}
 		JSONObject result = new JSONObject(jsonString);
-		int jobID = (int) result.get(INTERNAL_ID_KEY);
+		int mallobID = (int) result.get(INTERNAL_ID_KEY);
+		int jobID = 0;
+		try {
+			jobID = jobDao.getJobIdByMallobId(mallobID);
+		} catch (FallobException e) {
+			e.printStackTrace();
+		}
 		JobResult newJobResult = new JobResult(rao.getResult());
 		
 		JSONObject stats = (JSONObject) result.get(STATS_KEY);

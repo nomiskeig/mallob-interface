@@ -26,7 +26,7 @@ public class BackendApplication {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
-		//initialize mallob-config
+		
 		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {

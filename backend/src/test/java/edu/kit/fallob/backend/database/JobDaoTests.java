@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,7 +144,7 @@ public class JobDaoTests {
 
         int jobId1 = this.jobDao.saveJobConfiguration(config1, TEST_USERNAME, 1);
         Thread.sleep(1000);
-        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time = LocalDateTime.now(ZoneOffset.UTC);
         Thread.sleep(1000);
         int jobId2 = this.jobDao.saveJobConfiguration(config2, TEST_USERNAME, 2);
 
