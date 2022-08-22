@@ -218,7 +218,7 @@ public class JobDaoImpl implements JobDao{
                 //delete entry from the resultMetaData table
                 PreparedStatement deleteMetaData = this.conn.prepareStatement(DELETE_FROM_META_DATA);
                 deleteMetaData.setInt(1, jobId);
-                deleteConfig.executeUpdate();
+                deleteMetaData.executeUpdate();
 
                 //delete entry from job table
                 PreparedStatement deleteJob = this.conn.prepareStatement(DELETE_FROM_JOB);
