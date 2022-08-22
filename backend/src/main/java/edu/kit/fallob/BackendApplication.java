@@ -27,7 +27,6 @@ public class BackendApplication {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
-		
 		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {
@@ -67,7 +66,7 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
-		if (args.length > 1 && args[0] == "printMallobLogsToConsole") {
+		if (args.length > 1 && args[1].equals("printMallobLogsToConsole")) {
 			CentralOutputLogListener consolePrinter = new CentralOutputLogListener();
 			MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
 			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
