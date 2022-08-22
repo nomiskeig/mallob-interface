@@ -122,5 +122,4 @@ public class MallobOutputReaderTests {
 	public static void deleteFile() {
 		testFile.delete();
 	}
-	
 }

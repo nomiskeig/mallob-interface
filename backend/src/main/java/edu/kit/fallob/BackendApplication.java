@@ -24,6 +24,7 @@ public class BackendApplication {
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		//initialize mallob-config
+		args = new String[1]; args[0]="/home/siwi/pse_dev/fallob-configuration.json";
 		String pathToFallobConfigFile = args[0];
 		
 		FallobConfigReader reader;
@@ -50,18 +51,13 @@ public class BackendApplication {
 		mallobio.initOutput(config.getAmountProcesses());
 		mallobio.initInput(config.getAmountProcesses(), config.getClientProcesses());
 		
-		//------------------------add your irregular readers here-----------------------
-		//mallobio.addIrregularReaders(directoryPath, fileName);
-		
 		
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 
-
 		
 		//-----------------------add additional file-readers here 
-		//mallobio.addIrregularReaders(<yourfilepath>);
-		//file-reader for 
+		//mallobio.addIrregularReaders(<your directory, your filename>);
 		int processID = config.getAmountProcesses() - 1;
 		mallobio.addIrregularReaders(
 				MallobFilePathGenerator.generateLogDirectoryPath(config.getMallobBasePath(), processID),

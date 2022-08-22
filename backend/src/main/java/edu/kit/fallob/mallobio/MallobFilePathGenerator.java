@@ -42,12 +42,13 @@ public class MallobFilePathGenerator {
 	
 	/**
 	 * Create the path to the out-directory (the directory in which the solution lies) of the process with processID
+	 * Notice that the given processID HAS to be a client-process
 	 * @return
 	 */
-	public static String generateOutDirectoryPath(int processID, String basePath) {
+	public static String generateOutDirectoryPath(String basePath, int processID) {
 		return basePath + API_DIRECTORY + File.separator + JOB_INPUT_DIRECTORY + Integer.toString(processID) + File.separator + OUT_DIRECTORY + File.separator;
 	}
-	
+
 	/**
 	 * 
 	 * @param processID

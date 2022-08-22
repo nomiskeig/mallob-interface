@@ -106,10 +106,13 @@ public class MallobReaderStarter {
 	 * @param fileName name of the file which is supposed to be watched
 	 */
 	public void addIrregularReaders(String directoryPath, String fileName) {
+		if (logDistributor == null) {
+			throw new NullPointerException("Log-Distributor is null. Please call initOutput() first.");
+		}
 		if (irregularFilesReaders == null) {
 			irregularFilesReaders = new ArrayList<>();
 		}
-		irregularFilesReaders.add(new MallobOutputReader(directoryPath, fileName));	
+		irregularFilesReaders.add(new MallobOutputReader(directoryPath, fileName, logDistributor));	
 	}
 	
 	
@@ -117,7 +120,7 @@ public class MallobReaderStarter {
 	/**
 	 * Initializes an array of readers (length === amountProcesses)
 	 * Then, it inintializes a new MallobOutputReader for every index of the array
-	 * Every Reader gets the same 
+	 * Every Reader gets the same distributor
 	 * 
 	 * @param amountProcesses
 	 */
@@ -126,9 +129,9 @@ public class MallobReaderStarter {
 		this.readers = new MallobOutputReader[amountProcesses];
 		for (int i = 0; i < amountProcesses; i++) {
 			this.readers[i] = new MallobOutputReader(
-					MallobFilePathGenerator.generateOutDirectoryPath(amountProcesses, pathToMallobDirectory), 
-					MallobFilePathGenerator.generateLogName(i));
-			this.readers[i].addProcessor(logDistributor);
+					MallobFilePathGenerator.generateLogDirectoryPath(pathToMallobDirectory, i), 
+					MallobFilePathGenerator.generateLogName(i),
+					logDistributor);
 		}
 	}
 	

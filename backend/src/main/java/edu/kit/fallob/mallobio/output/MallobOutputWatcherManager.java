@@ -56,7 +56,7 @@ public class MallobOutputWatcherManager {
 			throw new NullPointerException("No result distributor available for distribution.");
 		}
 		String pathToOutputDirectpory = 
-				MallobFilePathGenerator.generateOutDirectoryPath(clientProcessID, (FallobConfiguration.getInstance()).getMallobBasePath());
+				MallobFilePathGenerator.generateOutDirectoryPath((FallobConfiguration.getInstance()).getMallobBasePath(), clientProcessID);
 		String expectedResultName = MallobFilePathGenerator.generateResultName(jobName, userName);
 		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName);
 		watcher.setDistributor(resultDistributor);
