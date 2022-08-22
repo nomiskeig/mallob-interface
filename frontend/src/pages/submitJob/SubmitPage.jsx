@@ -39,7 +39,7 @@ const FormData = require('form-data');
 function validateInput(parameters) {
 	let validateErrors = [];
 	configParameters
-		.filter((param) => !param.inputType === INPUT_TYPE_NONE)
+		.filter((param) => param.inputType !== INPUT_TYPE_NONE)
 		.forEach((param) => {
 			let result = param.validateValue(parameters[param.internalName]);
 			if (!result.isValid) {
