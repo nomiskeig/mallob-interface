@@ -108,16 +108,16 @@ public class MallobOutputReader implements Runnable {
 				if (event.kind() != StandardWatchEventKinds.ENTRY_MODIFY) {
 					continue;
 				}
+				/*
+				WatchEvent<Path> ev = (WatchEvent<Path>) event;
+				System.out.println(event);
 
-				WatchEvent<Path> ev = (WatchEvent<Path>)event;
 				String fileName = ev.context().toString();
-		        //Path relativePath = ev.context();
-		        //final String autoLoadFilename = relativePath.toAbsolutePath().toFile().getName();
-
+		        Path relativePath = ev.context();
+		        final File file = relativePath.toAbsolutePath().toFile();
+				*/
 		        //String fileName = dir.resolve(relativePath).toString();
-				if (logFileWasChanged(fileName)){
-					readNextLine();
-				}
+				readNextLine();
 			}
 			nextKey.reset();
 		}

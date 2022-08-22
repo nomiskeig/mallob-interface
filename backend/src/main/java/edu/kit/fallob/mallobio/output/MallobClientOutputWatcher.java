@@ -74,7 +74,6 @@ public class MallobClientOutputWatcher implements Runnable {
 								
 				WatchEvent<Path> ev = (WatchEvent<Path>)event;
 		        Path filename = ev.context();
-		        		        
 				if (isResult(filename.toString())){
 			        this.pushResultObject(new ResultAvailableObject(this.pathToMallobDirectory + filename.toString()));
 			        retreivedResult = true;

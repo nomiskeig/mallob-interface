@@ -14,6 +14,7 @@ import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.CentralOutputLogListener;
+import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
 
@@ -68,6 +69,11 @@ public class BackendApplication {
 				MallobFilePathGenerator.generateLogDirectoryPath(config.getMallobBasePath(), processID),
 				MallobFilePathGenerator.generateLogMappingFileName(processID));
 		mallobio.startMallobio();
+		
+		//-------------------testing watcher
+		MallobOutputWatcherManager m = MallobOutputWatcherManager.getInstance();
+		m.addNewWatcher("testuser", "testjob", 0);
+		
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
