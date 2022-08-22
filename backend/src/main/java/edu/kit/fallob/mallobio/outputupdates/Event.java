@@ -32,10 +32,11 @@ public class Event extends OutputUpdate {
 	//event-attributes 
 	private int processID;
 	private int treeIndex;
+	private int mallobJobID;
 	private int jobID;
 	private boolean load;
 	private LocalDateTime time;
-	
+
 
 	/**
 	 * Constructor of event 
@@ -73,15 +74,8 @@ public class Event extends OutputUpdate {
 		
 		int jobIDBegin = jobIDandTreeIndexInfo.indexOf('#') + 1;
 		int jobIDEnd = treeIndexBegin - 1;
-		int mallobID = Integer.parseInt(jobIDandTreeIndexInfo.substring(jobIDBegin, jobIDEnd));
-
-		//convert the mallob Id into the correct job id
-		try {
-			JobDao jobDao = new DaoFactory().getJobDao();
-			jobID = jobDao.getJobIdByMallobId(mallobID);
-		} catch (FallobException e) {
-			throw new RuntimeException(e);
-		}
+		mallobJobID = Integer.parseInt(jobIDandTreeIndexInfo.substring(jobIDBegin, jobIDEnd));
+		
 
 		load = Integer.parseInt(splittedLogLine[3]) == 1;
 	}
@@ -95,8 +89,8 @@ public class Event extends OutputUpdate {
 		return load;
 	}
 
-	public int getJobID() {
-		return jobID;
+	public int getMallobJobID() {
+		return mallobJobID;
 	}
 
 	public int getTreeIndex() {
@@ -110,6 +104,15 @@ public class Event extends OutputUpdate {
 
 	public LocalDateTime getTime() {
 		return time;
+	}
+
+
+	public int getJobID() {
+		return jobID;
+	}
+	
+	public void setJobID(int jobID) {
+		this.jobID = jobID;
 	}
 
 }
