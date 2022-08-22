@@ -1,6 +1,7 @@
 export const INPUT_TYPE_TEXT = 'text';
 export const INPUT_TYPE_SELECT = 'select';
 export const INPUT_TYPE_BOOLEAN = 'boolean';
+export const INPUT_TYPE_DATETIME = 'datetime'
 export const INPUT_TYPE_NONE = 'none';
 export const configParameters = [
 	{
@@ -156,7 +157,7 @@ export const configParameters = [
 		width: 300,
 		index: 5,
 		required: false,
-		inputType: INPUT_TYPE_TEXT,
+		inputType: INPUT_TYPE_DATETIME,
 		showOnJobPage: true,
 		validateValue: (value) => {
 			return {

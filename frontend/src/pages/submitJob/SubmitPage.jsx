@@ -25,6 +25,7 @@ import {
 	INPUT_TYPE_TEXT,
 	INPUT_TYPE_SELECT,
 	INPUT_TYPE_BOOLEAN,
+	INPUT_TYPE_DATETIME,
 	INPUT_TYPE_NONE,
 } from '../jobPage/Parameters';
 import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
@@ -88,7 +89,7 @@ export function SubmitPage(props) {
 				newAdditionalConfig.push({ index: index, key: key, value: value });
 				index += 1;
 			}
-            setAdditionalConfig([...newAdditionalConfig]);
+			setAdditionalConfig([...newAdditionalConfig]);
 		}
 
 		setSelectedOptionalIndices([...newSelectionOptionalIndices]);
@@ -122,6 +123,9 @@ export function SubmitPage(props) {
 		}
 
 		let job = { ...jobToSubmit };
+        if (job.arrival) {
+            job.arrival = new Date(job.arrival);
+        }
 		job['description'] = [...descriptions];
 		if (dependencies.length > 0) {
 			job['dependencies'] = [...dependencies];
@@ -275,6 +279,21 @@ export function SubmitPage(props) {
 						></input>
 					</div>
 				);
+
+			case INPUT_TYPE_DATETIME:
+				return (
+					<InputWithLabel
+                        lablelText={"Arrival"}
+						datetime={true}
+						onChange={(newValue) => {
+                            let newJobToSubmit = {...jobToSubmit}
+                             newJobToSubmit[param.internalName] =newValue ;
+                            setJobToSubmit(newJobToSubmit)
+							console.log(newValue);
+						}}
+                        value={jobToSubmit[param.internalName] ? jobToSubmit[param.internalName] : ''}
+					></InputWithLabel>
+				);
 			default:
 				return <div></div>;
 		}
@@ -340,75 +359,75 @@ export function SubmitPage(props) {
 	});
 
 	return (
-		<div className='submitPageContainer'>
-			<div className='marginContainer'>
-				<div className='row g-0 submitPageRow'>
-					<div className='col submitPageCol'>
-						<div className='submitPagePanel row g-0 upperPanel'>
-							<div className='requiredParamsContainer col-md-3'>
-								<Header title={'Required'} />
-								<div className='requiredParamsFlex d-flex flex-column-reverse justify-content-end'>
-									{requiredParamsInputs}
+			<div className='submitPageContainer'>
+				<div className='marginContainer'>
+					<div className='row g-0 submitPageRow'>
+						<div className='col submitPageCol'>
+							<div className='submitPagePanel row g-0 upperPanel'>
+								<div className='requiredParamsContainer col-md-3'>
+									<Header title={'Required'} />
+									<div className='requiredParamsFlex d-flex flex-column-reverse justify-content-end'>
+										{requiredParamsInputs}
+									</div>
 								</div>
-							</div>
-							<div className='optionalParamsContainer col-md-9'>
-								<Header title={'Optional'} />
-								<div className='optionalParamInputsContainer d-flex flex-wrap'>
-									{optionalParamInputs}
-									{selectAdditionalParamsItems.length >= 1 && (
-										<DropdownComponent
-											title={'Add option'}
-											items={selectAdditionalParamsItems}
-										/>
-									)}
+								<div className='optionalParamsContainer col-md-9'>
+									<Header title={'Optional'} />
+									<div className='optionalParamInputsContainer d-flex flex-wrap'>
+										{optionalParamInputs}
+										{selectAdditionalParamsItems.length >= 1 && (
+											<DropdownComponent
+												title={'Add option'}
+												items={selectAdditionalParamsItems}
+											/>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div className='row g-0 submitPageRow'>
-					<div className='col-12 col-md-6 submitPageCol'>
-						<div className='submitPagePanel lowerPanel lowerPanelLeft d-flex flex-column'>
-							<Header title={'Description'} />
-							<Description
-								setDescriptions={(descriptions) =>
-									setDescriptions(descriptions)
-								}
-								setDescriptionKind={(descriptionKind) =>
-									setDescriptionKind(descriptionKind)
-								}
-							/>
-						</div>
-					</div>
-					<div className='col-12 col-md-6 submitPageCol d-flex flex-column'>
-						<div className='submitPagePanel lowerPanel lowerPanelRight'>
-							<Header title={'Dependencies'} />
-							<DependencyTable
-								dependencies={ownJobs}
-								selectedIDs={dependencies}
-								input={true}
-								onChange={(selectedJobIDs) => {
-									setDependencies([...selectedJobIDs]);
-								}}
-							/>
-						</div>
-						<div className='submitButtonContainer flex-grow-1 d-flex flex-row-reverse'>
-							<button
-								className='btn btn-success submitButton'
-								onClick={() => {
-									if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
-										submitJobInclusive();
-									} else if (descriptionKind === DESCRIPTION_FILE) {
-										submitJobExclusiveDescription();
+					<div className='row g-0 submitPageRow'>
+						<div className='col-12 col-md-6 submitPageCol'>
+							<div className='submitPagePanel lowerPanel lowerPanelLeft d-flex flex-column'>
+								<Header title={'Description'} />
+								<Description
+									setDescriptions={(descriptions) =>
+										setDescriptions(descriptions)
 									}
-								}}
-							>
-								Submit job
-							</button>
+									setDescriptionKind={(descriptionKind) =>
+										setDescriptionKind(descriptionKind)
+									}
+								/>
+							</div>
+						</div>
+						<div className='col-12 col-md-6 submitPageCol d-flex flex-column'>
+							<div className='submitPagePanel lowerPanel lowerPanelRight'>
+								<Header title={'Dependencies'} />
+								<DependencyTable
+									dependencies={ownJobs}
+									selectedIDs={dependencies}
+									input={true}
+									onChange={(selectedJobIDs) => {
+										setDependencies([...selectedJobIDs]);
+									}}
+								/>
+							</div>
+							<div className='submitButtonContainer flex-grow-1 d-flex flex-row-reverse'>
+								<button
+									className='btn btn-success submitButton'
+									onClick={() => {
+										if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
+											submitJobInclusive();
+										} else if (descriptionKind === DESCRIPTION_FILE) {
+											submitJobExclusiveDescription();
+										}
+									}}
+								>
+									Submit job
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 	);
 }
