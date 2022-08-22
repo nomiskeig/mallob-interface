@@ -1,7 +1,10 @@
 .dependencyTable {
     background-color: white;
-    height: 85%;
+    max-height: 85%;
     overflow-y: scroll
+}
+.table {
+    margin-bottom: 0px
 }
 
 .dependencyTableCell {
