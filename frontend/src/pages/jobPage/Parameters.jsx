@@ -28,7 +28,7 @@ export const configParameters = [
 			if (value <= 0) {
 				return {
 					isValid: false,
-					reason: 'Priority has to be bigger than zero.',
+					reason: 'Priority has to be greater than zero.',
 				};
 			}
 
@@ -37,6 +37,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "The priority of the job. Has to be a number greater than zero."
 	},
 	{
 		name: 'Application',
@@ -60,6 +61,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "The kind of problem to solve."
 	},
 	{
 		name: 'Maximum Demand',
@@ -93,6 +95,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "The maximum of processes this job can use. Has to be an positive integer."
 	},
 	{
 		name: 'Wallclock-Limit',
@@ -121,6 +124,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "Limit for the Wallclock time the job can use. Has to be a number followed by one of ms, s, m, h, d"
 	},
 	{
 		name: 'CPU-Limit',
@@ -149,6 +153,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "Limit for the CPU time the job can use. Has to be a number followed by one of ms, s, m, h, d"
 	},
 	{
 		name: 'Arrival',
@@ -165,6 +170,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "The date and time when the job gets run."
 	},
 	{
 		name: 'Dependencies',
@@ -180,6 +186,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 	{
 		name: 'Incremental',
@@ -196,6 +203,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "If checked, the job is an incremental job."
 	},
 	{
 		name: 'Precursor',
@@ -223,6 +231,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "The ID of the precursor job."
 	},
 	{
 		name: 'Content-Mode',
@@ -240,6 +249,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: "The format of the description."
 	},
 	{
 		name: 'Name',
@@ -262,6 +272,7 @@ export const configParameters = [
 		inputType: INPUT_TYPE_TEXT,
 		showOnJobPage: false,
 		transformOutput: (value) => value,
+        tooltipText: "The name of the job."
 	},
 	{
 		name: 'Additional config',
@@ -277,6 +288,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => JSON.stringify(value),
+        tooltipText: "An addtional key-value pair, which gets included in the json which is given to mallob."
 	},
 	{
 		name: 'Parsing Time',
@@ -292,6 +304,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 	{
 		name: 'Processing Time',
@@ -307,6 +320,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 	{
 		name: 'Scheduling Time',
@@ -322,6 +336,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 	{
 		name: 'Total Time',
@@ -337,6 +352,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 	{
 		name: 'Used CPU Seconds',
@@ -352,6 +368,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 	{
 		name: 'Used Wallclock Seconds',
@@ -367,6 +384,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
+        tooltipText: ""
 	},
 ];
 export function getIndexByParam(paramToFind) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import Tooltip from '@mui/material/Tooltip';
 import './SubmitPage.scss';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +31,7 @@ import {
 } from '../jobPage/Parameters';
 import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
 const FormData = require('form-data');
+const TOOLTIP_ENTER_DELAY = 1000;
 
 /**
  * Validates the given paramters.
@@ -123,9 +125,9 @@ export function SubmitPage(props) {
 		}
 
 		let job = { ...jobToSubmit };
-        if (job.arrival) {
-            job.arrival = new Date(job.arrival);
-        }
+		if (job.arrival) {
+			job.arrival = new Date(job.arrival);
+		}
 		job['description'] = [...descriptions];
 		if (dependencies.length > 0) {
 			job['dependencies'] = [...dependencies];
@@ -221,38 +223,46 @@ export function SubmitPage(props) {
 		switch (param.inputType) {
 			case INPUT_TYPE_TEXT:
 				return (
-					<InputWithLabel
-						key={getIndexByParam(param)}
-						labelText={param.name}
-						value={
-							jobToSubmit[param.internalName]
-								? jobToSubmit[param.internalName]
-								: ''
-						}
-						onChange={(newValue) => {
-							let newJobToSubmit = { ...jobToSubmit };
-							newJobToSubmit[param.internalName] = newValue;
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div>
+							<InputWithLabel
+								key={getIndexByParam(param)}
+								labelText={param.name}
+								value={
+									jobToSubmit[param.internalName]
+										? jobToSubmit[param.internalName]
+										: ''
+								}
+								onChange={(newValue) => {
+									let newJobToSubmit = { ...jobToSubmit };
+									newJobToSubmit[param.internalName] = newValue;
 
-							setJobToSubmit(newJobToSubmit);
-						}}
-					></InputWithLabel>
+									setJobToSubmit(newJobToSubmit);
+								}}
+							></InputWithLabel>
+						</div>
+					</Tooltip>
 				);
 			case INPUT_TYPE_SELECT:
 				return (
-					<DropdownComponent
-						key={getIndexByParam(param)}
-						title={param.name}
-						items={param.selectValues.map((value) => ({
-							onClick: () => {
-								let newJobToSubmit = { ...jobToSubmit };
-								newJobToSubmit[param.internalName] = value;
-								setJobToSubmit(newJobToSubmit);
-							},
-							name: value,
-						}))}
-						default={jobToSubmit[param.internalName]}
-						displaySelectedValue={true}
-					></DropdownComponent>
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div>
+							<DropdownComponent
+								key={getIndexByParam(param)}
+								title={param.name}
+								items={param.selectValues.map((value) => ({
+									onClick: () => {
+										let newJobToSubmit = { ...jobToSubmit };
+										newJobToSubmit[param.internalName] = value;
+										setJobToSubmit(newJobToSubmit);
+									},
+									name: value,
+								}))}
+								default={jobToSubmit[param.internalName]}
+								displaySelectedValue={true}
+							></DropdownComponent>
+						</div>
+					</Tooltip>
 				);
 			case INPUT_TYPE_BOOLEAN:
 				if (jobToSubmit[param.internalName] === undefined) {
@@ -261,38 +271,48 @@ export function SubmitPage(props) {
 					setJobToSubmit(newJobToSubmit);
 				}
 				return (
-					<div
-						key={getIndexByParam}
-						className='d-flex flex-column align-items-start booleanInputContainer'
-					>
-						<label className='booleanInputLabel'>{param.name}</label>
-						<input
-							type='checkbox'
-							className='form-check-input booleanInputCheckbox'
-							checked={jobToSubmit[param.internalName]}
-							onChange={() => {
-								let newJobToSubmit = { ...jobToSubmit };
-								newJobToSubmit[param.internalName] =
-									!jobToSubmit[param.internalName];
-								setJobToSubmit(newJobToSubmit);
-							}}
-						></input>
-					</div>
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div
+							key={getIndexByParam}
+							className='d-flex flex-column align-items-start booleanInputContainer'
+						>
+							<label className='booleanInputLabel'>{param.name}</label>
+							<input
+								type='checkbox'
+								className='form-check-input booleanInputCheckbox'
+								checked={jobToSubmit[param.internalName]}
+								onChange={() => {
+									let newJobToSubmit = { ...jobToSubmit };
+									newJobToSubmit[param.internalName] =
+										!jobToSubmit[param.internalName];
+									setJobToSubmit(newJobToSubmit);
+								}}
+							></input>
+						</div>
+					</Tooltip>
 				);
 
 			case INPUT_TYPE_DATETIME:
 				return (
-					<InputWithLabel
-                        labelText={"Arrival"}
-						datetime={true}
-						onChange={(newValue) => {
-                            let newJobToSubmit = {...jobToSubmit}
-                             newJobToSubmit[param.internalName] =newValue ;
-                            setJobToSubmit(newJobToSubmit)
-							console.log(newValue);
-						}}
-                        value={jobToSubmit[param.internalName] ? jobToSubmit[param.internalName] : ''}
-					></InputWithLabel>
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div>
+							<InputWithLabel
+								labelText={'Arrival'}
+								datetime={true}
+								onChange={(newValue) => {
+									let newJobToSubmit = { ...jobToSubmit };
+									newJobToSubmit[param.internalName] = newValue;
+									setJobToSubmit(newJobToSubmit);
+									console.log(newValue);
+								}}
+								value={
+									jobToSubmit[param.internalName]
+										? jobToSubmit[param.internalName]
+										: ''
+								}
+							></InputWithLabel>
+						</div>
+					</Tooltip>
 				);
 			default:
 				return <div></div>;
@@ -359,75 +379,75 @@ export function SubmitPage(props) {
 	});
 
 	return (
-			<div className='submitPageContainer'>
-				<div className='marginContainer'>
-					<div className='row g-0 submitPageRow'>
-						<div className='col submitPageCol'>
-							<div className='submitPagePanel row g-0 upperPanel'>
-								<div className='requiredParamsContainer col-md-3'>
-									<Header title={'Required'} />
-									<div className='requiredParamsFlex d-flex flex-column-reverse justify-content-end'>
-										{requiredParamsInputs}
-									</div>
-								</div>
-								<div className='optionalParamsContainer col-md-9'>
-									<Header title={'Optional'} />
-									<div className='optionalParamInputsContainer d-flex flex-wrap'>
-										{optionalParamInputs}
-										{selectAdditionalParamsItems.length >= 1 && (
-											<DropdownComponent
-												title={'Add option'}
-												items={selectAdditionalParamsItems}
-											/>
-										)}
-									</div>
+		<div className='submitPageContainer'>
+			<div className='marginContainer'>
+				<div className='row g-0 submitPageRow'>
+					<div className='col submitPageCol'>
+						<div className='submitPagePanel row g-0 upperPanel'>
+							<div className='requiredParamsContainer col-md-3'>
+								<Header title={'Required'} />
+								<div className='requiredParamsFlex d-flex flex-column-reverse justify-content-end'>
+									{requiredParamsInputs}
 								</div>
 							</div>
-						</div>
-					</div>
-					<div className='row g-0 submitPageRow'>
-						<div className='col-12 col-md-6 submitPageCol'>
-							<div className='submitPagePanel lowerPanel lowerPanelLeft d-flex flex-column'>
-								<Header title={'Description'} />
-								<Description
-									setDescriptions={(descriptions) =>
-										setDescriptions(descriptions)
-									}
-									setDescriptionKind={(descriptionKind) =>
-										setDescriptionKind(descriptionKind)
-									}
-								/>
-							</div>
-						</div>
-						<div className='col-12 col-md-6 submitPageCol d-flex flex-column'>
-							<div className='submitPagePanel lowerPanel lowerPanelRight'>
-								<Header title={'Dependencies'} />
-								<DependencyTable
-									dependencies={ownJobs}
-									selectedIDs={dependencies}
-									input={true}
-									onChange={(selectedJobIDs) => {
-										setDependencies([...selectedJobIDs]);
-									}}
-								/>
-							</div>
-							<div className='submitButtonContainer flex-grow-1 d-flex flex-row-reverse'>
-								<button
-									className='btn btn-success submitButton'
-									onClick={() => {
-										if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
-											submitJobInclusive();
-										} else if (descriptionKind === DESCRIPTION_FILE) {
-											submitJobExclusiveDescription();
-										}
-									}}
-								>
-									Submit job
-								</button>
+							<div className='optionalParamsContainer col-md-9'>
+								<Header title={'Optional'} />
+								<div className='optionalParamInputsContainer d-flex flex-wrap'>
+									{optionalParamInputs}
+									{selectAdditionalParamsItems.length >= 1 && (
+										<DropdownComponent
+											title={'Add option'}
+											items={selectAdditionalParamsItems}
+										/>
+									)}
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				<div className='row g-0 submitPageRow'>
+					<div className='col-12 col-md-6 submitPageCol'>
+						<div className='submitPagePanel lowerPanel lowerPanelLeft d-flex flex-column'>
+							<Header title={'Description'} />
+							<Description
+								setDescriptions={(descriptions) =>
+									setDescriptions(descriptions)
+								}
+								setDescriptionKind={(descriptionKind) =>
+									setDescriptionKind(descriptionKind)
+								}
+							/>
+						</div>
+					</div>
+					<div className='col-12 col-md-6 submitPageCol d-flex flex-column'>
+						<div className='submitPagePanel lowerPanel lowerPanelRight'>
+							<Header title={'Dependencies'} />
+							<DependencyTable
+								dependencies={ownJobs}
+								selectedIDs={dependencies}
+								input={true}
+								onChange={(selectedJobIDs) => {
+									setDependencies([...selectedJobIDs]);
+								}}
+							/>
+						</div>
+						<div className='submitButtonContainer flex-grow-1 d-flex flex-row-reverse'>
+							<button
+								className='btn btn-success submitButton'
+								onClick={() => {
+									if (descriptionKind === DESCRIPTION_TEXT_FIELD) {
+										submitJobInclusive();
+									} else if (descriptionKind === DESCRIPTION_FILE) {
+										submitJobExclusiveDescription();
+									}
+								}}
+							>
+								Submit job
+							</button>
+						</div>
+					</div>
+				</div>
 			</div>
+		</div>
 	);
 }
