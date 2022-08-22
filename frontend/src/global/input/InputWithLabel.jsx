@@ -6,6 +6,7 @@ export function InputWithLabel(props) {
 			<label className='inputWithLabelLabel'>{props.labelText}</label>
 			<input
 				className='form-control'
+                type={props.datetime ? 'datetime-local': 'text'}
 				disabled={props.disabled ? true : false}
 				value={props.value ? props.value : ''}
 				onChange={(e) => props.onChange(e.target.value)}

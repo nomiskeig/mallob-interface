@@ -17,19 +17,19 @@ export function LoginPage(props) {
 	const username = 'username';
 	const password = 'password';
 
-    let [usernameContent, setUsernameContext] = useState('');
-    let [passwordContent, setPasswordContent] = useState('');
+	let [usernameContent, setUsernameContext] = useState('');
+	let [passwordContent, setPasswordContent] = useState('');
 	//let usernameContent = '';
 	//let passwordContent = '';
 
 	const handleChangeUsername = (event) => {
-	//	usernameContent = event.target.value;J
-        setUsernameContext(event.target.value);
+		//	usernameContent = event.target.value;J
+		setUsernameContext(event.target.value);
 	};
 
 	const handleChangePassword = (event) => {
 		//passwordContent = event.target.value;
-        setPasswordContent(event.target.value)
+		setPasswordContent(event.target.value);
 	};
 
 	const loginURL = process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/login';
@@ -45,11 +45,10 @@ export function LoginPage(props) {
 
 		axios
 			.post(loginURL, {
-				username:  usernameContent ,
-				password:  passwordContent ,
+				username: usernameContent,
+				password: passwordContent,
 			})
 			.then((res) => {
-
 				//request went through and username + password were accepted
 				userContext.login(res.data.token);
 				navigate('/jobs');
@@ -138,7 +137,7 @@ export function LoginPage(props) {
 	}
 	function loginUser() {
 		userContext.login(
-			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6InVzZXIiLCJ2ZXJpZmllZCI6InRydWUifQ.YRKFOZKrvoTPuS2sUbSxfwI2pTR3dcOhFoqSfd4XLN0'
+			'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzaW1vbiIsImV4cCI6MTY2Mjg5MTgxNiwiaWF0IjoxNjYxMDkxODE2LCJhdXRob3JpdGllcyI6IltOT1JNQUxfVVNFUiwgVmVyaWZpZWRdIn0.4RTbqcPdDCaR658s5tGJ2b92tY2fyOaq6sT_5GWPYXfAdYjPChviLrhFVoKelMWHqig7yG3t3oFn-wzJaMnzpA'
 		);
 		navigate('/jobs');
 	}

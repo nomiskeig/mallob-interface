@@ -10,30 +10,30 @@
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.3.0",
 		"@testing-library/user-event": "^13.5.0",
+		"assert": "^2.0.0",
 		"axios": "^0.27.2",
 		"bootstrap": "^5.2.0-beta1",
+		"buffer": "^6.0.3",
 		"canvas": "^2.9.3",
+		"crypto-browserify": "^3.12.0",
 		"date-fns": "^2.28.0",
+		"https-browserify": "^1.0.0",
 		"jsonwebtoken": "^8.5.1",
+		"os-browserify": "^0.3.0",
+		"process": "^0.11.10",
 		"react": "^18.2.0",
+		"react-app-rewired": "^2.2.1",
 		"react-dom": "^18.2.0",
 		"react-router": "^6.3.0",
 		"react-router-dom": "^6.3.0",
 		"react-scripts": "5.0.1",
 		"sass": "^1.53.0",
-		"two.js": "^0.8.10",
-		"use-file-picker": "^1.4.2",
-		"web-vitals": "^2.1.4",
-		"assert": "^2.0.0",
-		"buffer": "^6.0.3",
-		"crypto-browserify": "^3.12.0",
-		"https-browserify": "^1.0.0",
-		"os-browserify": "^0.3.0",
-		"process": "^0.11.10",
-		"react-app-rewired": "^2.2.1",
 		"stream-browserify": "^3.0.0",
 		"stream-http": "^3.2.0",
-		"url": "^0.11.0"
+		"two.js": "^0.8.10",
+		"url": "^0.11.0",
+		"use-file-picker": "^1.4.2",
+		"web-vitals": "^2.1.4"
 	},
 	"scripts": {
 		"start": "react-app-rewired start",
@@ -47,15 +47,11 @@
 			"react-app",
 			"react-app/jest"
 		],
-        "rules": {
-            "eqeqeq": "off",
-            "react-hooks/exhaustive-deps": "off"
-        }
-        
-
-    },
-
-
+		"rules": {
+			"eqeqeq": "off",
+			"react-hooks/exhaustive-deps": "off"
+		}
+	},
 	"browserslist": {
 		"production": [
 			">0.2%",
@@ -68,8 +64,12 @@
 			"last 1 safari version"
 		]
 	},
-    "jest": {
-        "collectCoverage": true,
-        "coverageReporters": ["json", "html", "text"]
-    }
+	"jest": {
+		"collectCoverage": true,
+		"coverageReporters": [
+			"json",
+			"html",
+			"text"
+		]
+	}
 }

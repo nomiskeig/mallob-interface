@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import Tooltip from '@mui/material/Tooltip';
 import './SubmitPage.scss';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -25,10 +26,12 @@ import {
 	INPUT_TYPE_TEXT,
 	INPUT_TYPE_SELECT,
 	INPUT_TYPE_BOOLEAN,
+	INPUT_TYPE_DATETIME,
 	INPUT_TYPE_NONE,
 } from '../jobPage/Parameters';
 import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
 const FormData = require('form-data');
+const TOOLTIP_ENTER_DELAY = 1000;
 
 /**
  * Validates the given paramters.
@@ -39,7 +42,7 @@ const FormData = require('form-data');
 function validateInput(parameters) {
 	let validateErrors = [];
 	configParameters
-		.filter((param) => !param.inputType === INPUT_TYPE_NONE)
+		.filter((param) => param.inputType !== INPUT_TYPE_NONE)
 		.forEach((param) => {
 			let result = param.validateValue(parameters[param.internalName]);
 			if (!result.isValid) {
@@ -59,6 +62,41 @@ export function SubmitPage(props) {
 	let [descriptions, setDescriptions] = useState([]);
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
 	let [additionalConfig, setAdditionalConfig] = useState([]);
+	useEffect(() => {
+		if (jobContext.jobToRestart === null) {
+			return;
+		}
+		let submittedJob = jobContext.jobs.filter(
+			(job) => job.jobID == jobContext.jobToRestart
+		)[0];
+		if (submittedJob.config.dependencies) {
+			setDependencies(submittedJob.config.dependencies);
+			delete submittedJob.config.dependencies;
+		}
+		setJobToSubmit(submittedJob.config);
+		let newSelectionOptionalIndices = selectedOptionalIndices;
+		configParameters
+			.filter((param) => !param.required)
+			.forEach((param) => {
+				if (submittedJob.config[param.internalName]) {
+					newSelectionOptionalIndices.push(getIndexByParam(param));
+				}
+			});
+		if (submittedJob.config.additionalConfig) {
+			let index = 0;
+			let newAdditionalConfig = additionalConfig;
+			for (let [key, value] of Object.entries(
+				submittedJob.config.additionalConfig
+			)) {
+				newAdditionalConfig.push({ index: index, key: key, value: value });
+				index += 1;
+			}
+			setAdditionalConfig([...newAdditionalConfig]);
+		}
+
+		setSelectedOptionalIndices([...newSelectionOptionalIndices]);
+		jobContext.setJobToRestart(null);
+	}, []);
 	useEffect(() => {
 		if (!userContext.user.isVerified) {
 			navigate('/jobs');
@@ -87,6 +125,9 @@ export function SubmitPage(props) {
 		}
 
 		let job = { ...jobToSubmit };
+		if (job.arrival) {
+			job.arrival = new Date(job.arrival);
+		}
 		job['description'] = [...descriptions];
 		if (dependencies.length > 0) {
 			job['dependencies'] = [...dependencies];
@@ -182,37 +223,46 @@ export function SubmitPage(props) {
 		switch (param.inputType) {
 			case INPUT_TYPE_TEXT:
 				return (
-					<InputWithLabel
-						key={getIndexByParam(param)}
-						labelText={param.name}
-						value={
-							jobToSubmit[param.internalName]
-								? jobToSubmit[param.internalName]
-								: ''
-						}
-						onChange={(newValue) => {
-							let newJobToSubmit = { ...jobToSubmit };
-							newJobToSubmit[param.internalName] = newValue;
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div>
+							<InputWithLabel
+								key={getIndexByParam(param)}
+								labelText={param.name}
+								value={
+									jobToSubmit[param.internalName]
+										? jobToSubmit[param.internalName]
+										: ''
+								}
+								onChange={(newValue) => {
+									let newJobToSubmit = { ...jobToSubmit };
+									newJobToSubmit[param.internalName] = newValue;
 
-							setJobToSubmit(newJobToSubmit);
-						}}
-					></InputWithLabel>
+									setJobToSubmit(newJobToSubmit);
+								}}
+							></InputWithLabel>
+						</div>
+					</Tooltip>
 				);
 			case INPUT_TYPE_SELECT:
 				return (
-					<DropdownComponent
-						key={getIndexByParam(param)}
-						title={param.name}
-						items={param.selectValues.map((value) => ({
-							onClick: () => {
-								let newJobToSubmit = { ...jobToSubmit };
-								newJobToSubmit[param.internalName] = value;
-								setJobToSubmit(newJobToSubmit);
-							},
-							name: value,
-						}))}
-						displaySelectedValue={true}
-					></DropdownComponent>
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div>
+							<DropdownComponent
+								key={getIndexByParam(param)}
+								title={param.name}
+								items={param.selectValues.map((value) => ({
+									onClick: () => {
+										let newJobToSubmit = { ...jobToSubmit };
+										newJobToSubmit[param.internalName] = value;
+										setJobToSubmit(newJobToSubmit);
+									},
+									name: value,
+								}))}
+								default={jobToSubmit[param.internalName]}
+								displaySelectedValue={true}
+							></DropdownComponent>
+						</div>
+					</Tooltip>
 				);
 			case INPUT_TYPE_BOOLEAN:
 				if (jobToSubmit[param.internalName] === undefined) {
@@ -221,23 +271,48 @@ export function SubmitPage(props) {
 					setJobToSubmit(newJobToSubmit);
 				}
 				return (
-					<div
-						key={getIndexByParam}
-						className='d-flex flex-column align-items-start booleanInputContainer'
-					>
-						<label className='booleanInputLabel'>{param.name}</label>
-						<input
-							type='checkbox'
-							className='form-check-input booleanInputCheckbox'
-							checked={jobToSubmit[param.internalName]}
-							onChange={() => {
-								let newJobToSubmit = { ...jobToSubmit };
-								newJobToSubmit[param.internalName] =
-									!jobToSubmit[param.internalName];
-								setJobToSubmit(newJobToSubmit);
-							}}
-						></input>
-					</div>
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div
+							key={getIndexByParam}
+							className='d-flex flex-column align-items-start booleanInputContainer'
+						>
+							<label className='booleanInputLabel'>{param.name}</label>
+							<input
+								type='checkbox'
+								className='form-check-input booleanInputCheckbox'
+								checked={jobToSubmit[param.internalName]}
+								onChange={() => {
+									let newJobToSubmit = { ...jobToSubmit };
+									newJobToSubmit[param.internalName] =
+										!jobToSubmit[param.internalName];
+									setJobToSubmit(newJobToSubmit);
+								}}
+							></input>
+						</div>
+					</Tooltip>
+				);
+
+			case INPUT_TYPE_DATETIME:
+				return (
+					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+						<div>
+							<InputWithLabel
+								labelText={'Arrival'}
+								datetime={true}
+								onChange={(newValue) => {
+									let newJobToSubmit = { ...jobToSubmit };
+									newJobToSubmit[param.internalName] = newValue;
+									setJobToSubmit(newJobToSubmit);
+									console.log(newValue);
+								}}
+								value={
+									jobToSubmit[param.internalName]
+										? jobToSubmit[param.internalName]
+										: ''
+								}
+							></InputWithLabel>
+						</div>
+					</Tooltip>
 				);
 			default:
 				return <div></div>;
@@ -349,9 +424,10 @@ export function SubmitPage(props) {
 							<Header title={'Dependencies'} />
 							<DependencyTable
 								dependencies={ownJobs}
+								selectedIDs={dependencies}
 								input={true}
 								onChange={(selectedJobIDs) => {
-									setDependencies(selectedJobIDs);
+									setDependencies([...selectedJobIDs]);
 								}}
 							/>
 						</div>
