@@ -17,7 +17,7 @@ import {
 } from '../../global/statusLabel/StatusLabel';
 import './JobPage.scss';
 import axios from 'axios';
-import { InfoContext} from '../../context/InfoContextProvider';
+//import { InfoContext} from '../../context/InfoContextProvider';
 function getStatus(job) {
 	let status;
 	switch (job.status) {
