@@ -16,7 +16,7 @@ export class PastEventManager extends EventManager {
         this.#isLoading = false;
 	}
 
-	getNewEvents() {
+	getNewEvents(userContext) {
 		//forwards
 		if (this.timeManager.getDirection() === 1) {
 			// buffer to small, load new events
@@ -44,6 +44,9 @@ export class PastEventManager extends EventManager {
 						startTime: this.#forwardBuffer.toISOString(),
 						endTime: endTime.toISOString(),
 					},
+                    headers: {
+                        Authorization: userContext.user.token,
+                    }
 				}).then((res) => {
 					res.data.forEach((event) =>
 						this.events.push(
@@ -89,7 +92,7 @@ export class PastEventManager extends EventManager {
 		let nextTime = this.timeManager.getNextTime();
 		this.#forwardBuffer = nextTime;
 		this.#backwardBuffer = nextTime;
-		this.getNewEvents();
+		this.getNewEvents(userContext);
 		return axios({
 			method: 'get',
 			url:
