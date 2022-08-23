@@ -7,6 +7,11 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A proxy for the Event class that does not contain the log line variable (for json parsing)
+ */
 public class EventProxy {
     //the return format for the time
     private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
@@ -19,7 +24,10 @@ public class EventProxy {
     private final LocalDateTime time;
 
 
-
+    /**
+     * Constructor that takes an event and parses its attributes
+     * @param event the given event
+     */
     public EventProxy(Event event) {
         this.rank = event.getProcessID();
         this.treeIndex = event.getTreeIndex();
