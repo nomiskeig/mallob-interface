@@ -50,7 +50,7 @@ public class MallobInputTests {
 	//optional attributes 
 	public static final String WALLCLOCK_LIMIT = "10m";
 	public static final String CPU_LIMIT = "10h";
-	public static final double ARRIVAL = 10.3;
+	public static final String ARRIVAL = "2022-08-23T11:32:01.840Z";
 	public static final String[] DEPENDENCIES = {"admin.prereq-job1", "admin.prereq-job2"};
 	public static final boolean INCREMENTAL = false;
 	
@@ -133,7 +133,7 @@ public class MallobInputTests {
 		
 		config.setWallClockLimit(WALLCLOCK_LIMIT);
 		config.setCpuLimit(CPU_LIMIT);
-		config.setArrival(ARRIVAL);
+		config.setArrival(null);
 		config.setDependenciesStrings(DEPENDENCIES);
 		config.setIncremental(false);
 		
