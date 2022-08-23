@@ -29,6 +29,7 @@ public class JobConfiguration {
 	private String[] dependenciesStrings;
     @JsonInclude(Include.NON_EMPTY)
 	private String contentMode;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private boolean interrupt;
 	private boolean incremental;
     @JsonInclude(Include.NON_EMPTY)
@@ -39,6 +40,7 @@ public class JobConfiguration {
 	private String precursorString;
     @JsonInclude(Include.NON_EMPTY)
 	private String assumptions;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private boolean done;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private int descriptionID;
