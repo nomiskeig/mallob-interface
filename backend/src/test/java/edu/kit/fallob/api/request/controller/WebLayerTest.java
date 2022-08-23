@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 public class WebLayerTest {
-    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+    private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     //TODO JavaDoc
 
@@ -557,7 +557,7 @@ public class WebLayerTest {
 
         this.mockMvc.perform(get("/api/v1/system/config")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string("{\"amountProcesses\":1," +
-                        "\"startTime\":\"2020-04-13T17:53:12.840\",\"defaults\":{\"priority\":1.0,\"wallClockLimit\":\"1\"," +
+                        "\"startTime\":\"2020-04-13T17:53:12.840Z\",\"defaults\":{\"priority\":1.0,\"wallClockLimit\":\"1\"," +
                         "\"contentMode\":\"content\"}}"));
 
 

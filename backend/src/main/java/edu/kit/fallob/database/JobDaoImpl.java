@@ -39,7 +39,7 @@ public class JobDaoImpl implements JobDao{
     private final FallobConfiguration configuration;
 
     //string that defines the return format for the submission time
-    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+    private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     //constants for different regex and strings that are required for handling file paths
     private static final String SINGLE_FILE_REGEX = "%d.*";
