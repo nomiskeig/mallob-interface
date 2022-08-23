@@ -3,6 +3,14 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * 
+ * @author Simon Wilhelm Schübel
+ * 
+ * This buffer holds objects, until a given function can be executed with those object as parameters
+ *
+ * @param <T> Type of object which is supposed to be buffered 
+ */
 public class Buffer<T> {
 	
 	private Queue<T> bufferedUpdates;
