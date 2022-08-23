@@ -6,6 +6,7 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.database.UserDao;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
+import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.PriorityConverter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
@@ -29,10 +30,12 @@ public class JobSubmitCommands {
 	private DaoFactory daoFactory;
 
 	private UserDao userDao;
+	private JobDao jobDao;
 	private MallobOutput mallobOutput;
 	private UserActionAuthentificater uaa;
 
 	private static final String USER_NOT_VERIFIED = "User not verified";
+	private static final String RESTART_SUFFIX = "_restart";
 	
 	
 	public JobSubmitCommands() throws FallobException{
@@ -40,6 +43,7 @@ public class JobSubmitCommands {
 		try {
 			daoFactory = new DaoFactory();
 			this.userDao = daoFactory.getUserDao();
+			this.jobDao = daoFactory.getJobDao();
 			uaa = new UserActionAuthentificater(daoFactory);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -75,7 +79,6 @@ public class JobSubmitCommands {
 		formatConfiguration(username, jobConfiguration);
 
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
-		JobDao jobDao = daoFactory.getJobDao();
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
@@ -89,7 +92,6 @@ public class JobSubmitCommands {
 		if (!uaa.hasDescriptionAccessViaDescriptionID(username, jobdescriptionID)) {
 			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
 		}
-		JobDao jobDao = daoFactory.getJobDao();
 		JobDescription jobDescription = jobDao.getJobDescription(jobdescriptionID);
 		formatConfiguration(username, jobConfiguration);
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
@@ -98,12 +100,15 @@ public class JobSubmitCommands {
 	}
 	
 	public int restartCanceledJob(String username, int jobID) throws FallobException {
-//		if (!uaa.isOwnerOfJob(username, jobID)) {
-//			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
-//		}
-		JobDao jobDao = daoFactory.getJobDao();
+		if (!uaa.isOwnerOfJob(username, jobID)) {
+			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+		}
+		if (jobDao.getJobStatus(jobID) == JobStatus.RUNNING) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+		}
 		JobConfiguration jobConfiguration = jobDao.getJobConfiguration(jobID);
 		JobDescription jobDescription = jobDao.getJobDescription(jobConfiguration.getDescriptionID());
+		jobConfiguration.setName(formatRestartJobName(jobConfiguration.getName()));
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 	}
@@ -112,12 +117,10 @@ public class JobSubmitCommands {
 //		if (!userDao.getUserByUsername(username).isVerified()) {
 //			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
 //		}
-		JobDao jobDao = daoFactory.getJobDao();
 		return jobDao.saveJobDescription(jobDescription, username);
 	}
 	
 	private void formatConfiguration(String username, JobConfiguration jobConfiguration) throws FallobException {
-		JobDao jobDao = daoFactory.getJobDao();
 	    Integer[] dependencies = jobConfiguration.getDependencies();
 		int precursor = jobConfiguration.getPrecursor();
 		if (dependencies != null) {
@@ -144,6 +147,13 @@ public class JobSubmitCommands {
 			jobConfiguration.setPriority(prioConverter.getPriorityForMallob(username, jobConfiguration.getPriority()));
 		}
 		
+	}
+	
+	private String formatRestartJobName(String name) {
+		if (name.endsWith(RESTART_SUFFIX)) {
+			return name;
+		}
+		return name + RESTART_SUFFIX;
 	}
 
 }

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class Warning extends OutputUpdate {
 	
-	public static final String WARNING_REGEX = ""; //TODO
+	public static final String WARNING_REGEX = "WARN";
 	private static final Pattern PATTERN = Pattern.compile(WARNING_REGEX);
 	
 	public static boolean isWarning(String logLine) {
@@ -21,6 +21,9 @@ public class Warning extends OutputUpdate {
 
 	public Warning(String logLine) {
 		super(logLine);
+		int warnIndex = logLine.indexOf(WARNING_REGEX);
+		String formattedLogLine = logLine.substring(warnIndex - 3);
+		this.logLine = formattedLogLine;
 	}
 
 }

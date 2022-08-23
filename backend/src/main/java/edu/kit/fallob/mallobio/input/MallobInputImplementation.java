@@ -176,17 +176,13 @@ public class MallobInputImplementation implements MallobInput {
 		if (jobConfiguration.getMaxDemand() != JobConfiguration.INT_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_MAX_DEMAND, jobConfiguration.getMaxDemand());
 		}
-	
-		if (jobConfiguration.getDependencies() != JobConfiguration.OBJECT_NOT_SET){
-			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, jobConfiguration.getDependencies());
-		}
 		
 		if (jobConfiguration.getContentMode() != JobConfiguration.OBJECT_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_CONTENT_MODE, jobConfiguration.getContentMode());
 		}
 		
-		if (jobConfiguration.getDependencies() != JobConfiguration.OBJECT_NOT_SET){
-			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, new JSONArray(jobConfiguration.getDependencies()));
+		if (jobConfiguration.getDependenciesStrings() != JobConfiguration.OBJECT_NOT_SET){
+			json.put(MallobAttributeNames.MALLOB_DEPENDENCIES, new JSONArray(jobConfiguration.getDependenciesStrings()));
 		}
 		
 		json.put(MallobAttributeNames.MALLOB_INCREMENTAL, jobConfiguration.isIncremental());
