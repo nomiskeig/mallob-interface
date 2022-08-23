@@ -44,9 +44,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // dont authenticate this particular request
         http.authorizeRequests().antMatchers("/api/v1/users/login", "/api/v1/users/register").permitAll();
         http.authorizeRequests().antMatchers(POST, "/api/v1/jobs/cancel/global", "/api/v1/system/mallob/start",
-                "/api/v1/system/mallob/stop", "/api/v1/system/mallob/restart").hasAnyAuthority("ADMIN");
+                "/api/v1/system/mallob/stop", "/api/v1/system/mallob/restart").hasAnyAuthority("ADMIN")
+                .and().exceptionHandling().accessDeniedHandler(jwtAuthenticationEntryPoint);
         http.authorizeRequests().antMatchers(GET, "/api/v1/jobs/info/global", "/api/v1/system/mallobInfo").
-                hasAnyAuthority("ADMIN");
+                hasAnyAuthority("ADMIN").and().exceptionHandling().accessDeniedHandler(jwtAuthenticationEntryPoint);
         // all other requests need to be authenticated
         http.cors().and().authorizeRequests().anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
