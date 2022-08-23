@@ -26,6 +26,13 @@ public class StreamInitializer {
         this.executor.execute(eventStreamStarter);
     }
 
+    /**
+     * initializes a new custom log line stream
+     * @param emitter the ResponseBodyEmitter over which the data is continuously given back to the user
+     * @param jobId the id of the job for whose log lines should be listened
+     * @param regex the regex that is used to filter the log lines
+     * @param username the name of the user that requested the stream
+     */
     public void startLineStream(ResponseBodyEmitter emitter, int jobId, String[] regex, String username) {
         //TODO
     }
