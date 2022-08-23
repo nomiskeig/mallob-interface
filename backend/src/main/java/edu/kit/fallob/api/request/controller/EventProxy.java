@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class EventProxy {
     //the return format for the time
-    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+    private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     //event-attributes
     private final int rank;
