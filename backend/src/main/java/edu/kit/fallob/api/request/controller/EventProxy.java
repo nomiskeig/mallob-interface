@@ -26,6 +26,7 @@ public class EventProxy {
 
     /**
      * Constructor that takes an event and parses its attributes
+     * Transforms the load boolean into (0/1) int
      * @param event the given event
      */
     public EventProxy(Event event) {
@@ -37,30 +38,49 @@ public class EventProxy {
         } else {
             this.load = 0;
         }
-
-
         this.time = event.getTime();
     }
 
 
     //-----------------------------------------getter
 
+
+    /**
+     * Getter
+     * @return 1 if the process has load
+     */
     public int getLoad() {
         return load;
     }
 
+    /**
+     * Getter
+     * @return job id
+     */
     public int getJobID() {
         return jobID;
     }
 
+    /**
+     * Getter
+     * @return tree index of the process/job
+     */
     public int getTreeIndex() {
         return treeIndex;
     }
 
+    /**
+     * Getter
+     * @return rank of the process
+     */
     public int getRank() {
         return rank;
     }
 
+    /**
+     * Getter
+     * @return the time the event happened in iso format
+     */
     public String getTime() {
         //format the time to the right format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);

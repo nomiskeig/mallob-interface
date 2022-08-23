@@ -35,7 +35,7 @@ public class AbortJobController {
      * Takes a request, parses the data needed to abort a single job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, that is to be aborted
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return sends a response with the needed Information (a status code and a message in json format)
+     * @return sends a response with the id of the aborted job or an error (including a status code and a message in json format)
      */
     @PostMapping("/single/{jobId}")
     public ResponseEntity<Object> abortSingleJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
@@ -45,9 +45,9 @@ public class AbortJobController {
     /**
      * An POST endpoint for aborting the processing of multiple jobs
      * Takes a request, parses the data needed to abort multiple jobs and forwards it. It is also responsible for system error handling
-     * @param request a AbortJobRequest object containing the job ids of the jobs, that are to be aborted
+     * @param request an AbortJobRequest object containing the job ids of the jobs, that are to be aborted
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return sends a response with the needed Information (a status code and a message in json format)
+     * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
     @PostMapping("/multiple")
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
@@ -74,7 +74,7 @@ public class AbortJobController {
      * An POST endpoint for aborting the processing of all owned jobs
      * Takes a request, parses the data needed to abort all owned jobs and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return sends a response with the needed Information (a status code and a message in json format)
+     * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
     @PostMapping("/all")
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
@@ -94,7 +94,7 @@ public class AbortJobController {
      * An POST endpoint for aborting the processing of all jobs in the system (Available only for admins)
      * Takes a request, parses the data needed to abort all jobs and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return sends a response with the needed Information (a status code and a message in json format)
+     * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
     @PostMapping("/global")
     public ResponseEntity<Object> abortAllGlobalJobs(HttpServletRequest httpRequest) {
@@ -115,7 +115,7 @@ public class AbortJobController {
      * Takes a request, parses the data needed to abort an incremental job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, that is to be aborted
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return sends a response with the needed Information (a status code and a message in json format)
+     * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
     @PostMapping("/incremental/{jobId}")
     public ResponseEntity<Object> abortIncrementalJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
@@ -126,7 +126,7 @@ public class AbortJobController {
      * Takes a jobId, parses the username from the httpRequest and forwards the data. It is also responsible for system error handling
      * @param jobId the job id of the job, that is to be aborted
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return a response with the needed Information (a status code and a message in json format)
+     * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
     private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);

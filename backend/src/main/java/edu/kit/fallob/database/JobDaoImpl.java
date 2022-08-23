@@ -332,7 +332,7 @@ public class JobDaoImpl implements JobDao{
                 int maxDemand = result.getInt(5);
                 String wallclockLimit = result.getString(6);
                 String cpuLimit = result.getString(7);
-                double arrival = result.getDouble(8);
+                String arrival = result.getString(8);
                 Array dependenciesArray = result.getArray(9);
                 //make an Integer array out of the sql array
                 Integer[] dependencies = this.assembleIntegerArray(dependenciesArray);
@@ -520,6 +520,7 @@ public class JobDaoImpl implements JobDao{
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
+    
 
     /**
      * returns the mallobId of a job from a given jobId
@@ -634,7 +635,7 @@ public class JobDaoImpl implements JobDao{
             configStatement.setInt(5, configuration.getMaxDemand());
             configStatement.setString(6, configuration.getWallClockLimit());
             configStatement.setString(7, configuration.getCpuLimit());
-            configStatement.setDouble(8, configuration.getArrival());
+            configStatement.setString(8, configuration.getArrival());
             //convert the dependencies int array into an Array object
             Array dependencies = this.conn.createArrayOf(ARRAY_TYPE_INT, configuration.getDependencies());
             configStatement.setArray(9, dependencies);
@@ -654,7 +655,7 @@ public class JobDaoImpl implements JobDao{
     }
 
     //assembles and returns a new JobConfiguration object out of the different configuration parameters
-    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, double arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, String additionalParameters) {
+    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, String arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, String additionalParameters) {
         JobConfiguration configuration = new JobConfiguration(name, priority, application);
         configuration.setDescriptionID(descriptionId);
         configuration.setMaxDemand(maxDemand);
