@@ -214,7 +214,7 @@ public class MallobReaderStarter {
 		
 		this.mallobOutput.addResultObjectListener(new JobResultListener(dao.getJobDao()));
 
-		this.mallobOutput.addOutputLogLineListener(new EventListener(dao.getEventDao()));
+		this.mallobOutput.addOutputLogLineListener(new EventListener(dao.getEventDao(), dao.getJobDao()));
 		this.mallobOutput.addOutputLogLineListener(new JobStatusListener());
 		this.mallobOutput.addOutputLogLineListener(MallobTimeListener.getInstance());
 		this.mallobOutput.addOutputLogLineListener(new WarningListener(dao.getWarningDao()));
