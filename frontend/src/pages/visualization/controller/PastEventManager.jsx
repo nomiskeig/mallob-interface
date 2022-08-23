@@ -45,7 +45,7 @@ export class PastEventManager extends EventManager {
 						endTime: endTime.toISOString(),
 					},
                     headers: {
-                        Authorization: userContext.user.token,
+                        Authorization: 'Bearer ' + userContext.user.token,
                     }
 				}).then((res) => {
 					res.data.forEach((event) =>
