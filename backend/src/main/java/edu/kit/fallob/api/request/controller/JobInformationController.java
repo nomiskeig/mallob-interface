@@ -170,8 +170,8 @@ public class JobInformationController {
                     Scanner myReader = new Scanner(file);
                     boolean hasNextLine = myReader.hasNextLine();
                     while (hasNextLine) {
-                        hasNextLine = myReader.hasNextLine();
                         String nextLine = myReader.nextLine();
+                        hasNextLine = myReader.hasNextLine();
                         stringBuilder.append(nextLine);
                         if (hasNextLine) {
                             stringBuilder.append("\n");
