@@ -30,12 +30,11 @@ public class Buffer<T> {
 	public void retryBufferedFunction() {
 		if (bufferedUpdates.size() == 0) {return;}
 		int maxTries = bufferedUpdates.size();
-		T update = bufferedUpdates.poll();
 		
-		while(update != null && maxTries > 0) {
+		while(maxTries > 0) {
+			T update = bufferedUpdates.poll();
 			tryToExecuteBufferFunciton(update);
 			maxTries--;
-			update = bufferedUpdates.poll();
 		}
 	}
 	
