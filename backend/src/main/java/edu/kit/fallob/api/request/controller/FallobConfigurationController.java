@@ -6,13 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A Rest Controller for getting the Fallob Configuration
+ */
 @RestController
 @CrossOrigin
 public class FallobConfigurationController {
@@ -20,6 +24,10 @@ public class FallobConfigurationController {
     @Autowired
     private FallobCommands fallobConfigCommand;
 
+    /**
+     * An POST endpoint for getting the Fallob Configuration
+     * @return sends a response with the configuration attributes or an error (including a status code and a message in json format)
+     */
     @GetMapping("/api/v1/system/config")
     public ResponseEntity<Object> getFallobConfiguration() {
             FallobConfiguration fallobConfig  = fallobConfigCommand.getFallobConfiguration();
