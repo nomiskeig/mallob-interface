@@ -48,7 +48,7 @@ export class PastEventManager extends EventManager {
                         Authorization: 'Bearer ' + userContext.user.token,
                     }
 				}).then((res) => {
-					res.data.forEach((event) =>
+					res.data.events.forEach((event) =>
 						this.events.push(
 							new Event(
 								new Date(event.time),
@@ -100,12 +100,12 @@ export class PastEventManager extends EventManager {
 				'/api/v1/events/state?time=' +
 				nextTime.toISOString(),
 			headers: {
-				Authentication: 'Bearer ' + userContext.user.token,
+				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		})
 			.then((res) => {
 				let result =[];
-				res.data.forEach((event) => {
+				res.data.events.forEach((event) => {
 					let newEvent = new Event(
 						new Date(event.time),
 						event.rank,
