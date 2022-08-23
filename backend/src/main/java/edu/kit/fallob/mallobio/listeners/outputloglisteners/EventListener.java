@@ -48,7 +48,7 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 	public boolean bufferFunction(Event outputUpdate) {
 		int jobID = 0;
 		try {
-			jobID = this.jobDao.getMallobIdByJobId(outputUpdate.getMallobJobID());
+			jobID = this.jobDao.getJobIdByMallobId(outputUpdate.getMallobJobID());
 		} catch (FallobException e) {
 			System.out.println("An error occurred while accessing the database");
 		}
