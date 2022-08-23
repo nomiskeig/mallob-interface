@@ -5,6 +5,7 @@ import java.util.Queue;
 
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.EventDao;
+import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.springConfig.FallobException;
 
@@ -21,11 +22,13 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 	
 	
 	private EventDao eventDao;
+	private JobDao jobDao;
 	private Buffer<Event> eventBuffer;
 	
 	
-	public EventListener(EventDao eventDao) {
+	public EventListener(EventDao eventDao, JobDao jobDao) {
 		this.eventDao = eventDao;
+		this.jobDao = jobDao;
 		this.eventBuffer = new Buffer<>(this);
 	}
 
@@ -43,8 +46,13 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 	
 	@Override
 	public boolean bufferFunction(Event outputUpdate) {
-		int jobID = convertJobID(outputUpdate.getMallobJobID());
-		if (jobID != -1) {
+		int jobID = 0;
+		try {
+			jobID = this.jobDao.getMallobIdByJobId(outputUpdate.getMallobJobID());
+		} catch (FallobException e) {
+			System.out.println("An error occurred while accessing the database");
+		}
+		if (jobID > 0) {
 			//set job-id and save to mallob
 			outputUpdate.setJobID(jobID);
 			try {
@@ -55,22 +63,6 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 			return true;
 		}
 		return false;
-	}	
-
-	/**
-	 * Convert a mallobID into an internal fallob-ID
-	 * @param mallobID
-	 * @return internal fallob-ID, if conversion was successful, -1 if conversion failed
-	 */
-	private int convertJobID(int mallobID) {
-		//convert the mallob Id into the correct job id
-		try {
-			return new DaoFactory().getJobDao().getJobIdByMallobId(mallobID);
-		} catch (FallobException e) {
-			return -1;
-		}		
 	}
-
-
 
 }
