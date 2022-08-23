@@ -50,7 +50,7 @@ public class MallobInputTests {
 	//optional attributes 
 	public static final String WALLCLOCK_LIMIT = "10m";
 	public static final String CPU_LIMIT = "10h";
-	public static final double ARRIVAL = 10.3;
+	public static final String ARRIVAL = "10.3";
 	public static final String[] DEPENDENCIES = {"admin.prereq-job1", "admin.prereq-job2"};
 	public static final boolean INCREMENTAL = false;
 	

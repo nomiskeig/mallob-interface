@@ -520,6 +520,7 @@ public class JobDaoImpl implements JobDao{
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
         }
     }
+    
 
     /**
      * returns the mallobId of a job from a given jobId
@@ -654,7 +655,7 @@ public class JobDaoImpl implements JobDao{
     }
 
     //assembles and returns a new JobConfiguration object out of the different configuration parameters
-    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, double arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, String additionalParameters) {
+    private JobConfiguration assembleJobConfiguration(String name, double priority, String application, int descriptionId, int maxDemand, String wallclockLimit, String cpuLimit, String arrival, Integer[] dependencies, String[] dependenciesStrings, boolean incremental, int precursor, String precursorString, String contentMode, String additionalParameters) {
         JobConfiguration configuration = new JobConfiguration(name, priority, application);
         configuration.setDescriptionID(descriptionId);
         configuration.setMaxDemand(maxDemand);
