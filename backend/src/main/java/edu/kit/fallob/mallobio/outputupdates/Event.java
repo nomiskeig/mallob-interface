@@ -1,5 +1,9 @@
 package edu.kit.fallob.mallobio.outputupdates;
 
+import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.springConfig.FallobException;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -28,10 +32,11 @@ public class Event extends OutputUpdate {
 	//event-attributes 
 	private int processID;
 	private int treeIndex;
+	private int mallobJobID;
 	private int jobID;
 	private boolean load;
 	private LocalDateTime time;
-	
+
 
 	/**
 	 * Constructor of event 
@@ -69,8 +74,9 @@ public class Event extends OutputUpdate {
 		
 		int jobIDBegin = jobIDandTreeIndexInfo.indexOf('#') + 1;
 		int jobIDEnd = treeIndexBegin - 1;
-		jobID = Integer.parseInt(jobIDandTreeIndexInfo.substring(jobIDBegin, jobIDEnd));
+		mallobJobID = Integer.parseInt(jobIDandTreeIndexInfo.substring(jobIDBegin, jobIDEnd));
 		
+
 		load = Integer.parseInt(splittedLogLine[3]) == 1;
 	}
 	
@@ -83,8 +89,8 @@ public class Event extends OutputUpdate {
 		return load;
 	}
 
-	public int getJobID() {
-		return jobID;
+	public int getMallobJobID() {
+		return mallobJobID;
 	}
 
 	public int getTreeIndex() {
@@ -98,6 +104,15 @@ public class Event extends OutputUpdate {
 
 	public LocalDateTime getTime() {
 		return time;
+	}
+
+
+	public int getJobID() {
+		return jobID;
+	}
+	
+	public void setJobID(int jobID) {
+		this.jobID = jobID;
 	}
 
 }

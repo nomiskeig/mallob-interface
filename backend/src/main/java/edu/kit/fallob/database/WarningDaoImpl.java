@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class WarningDaoImpl implements WarningDao{
         try {
             PreparedStatement statement = this.conn.prepareStatement(INSERT_STATEMENT);
 
-            statement.setObject(1, LocalDateTime.now());
+            statement.setObject(1, LocalDateTime.now(ZoneOffset.UTC));
             statement.setString(2, warning.getLogLine());
 
             statement.executeUpdate();

@@ -35,6 +35,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -47,6 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 public class WebLayerTest {
+    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+
     //TODO JavaDoc
 
     @Autowired
@@ -123,8 +128,8 @@ public class WebLayerTest {
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
     private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
-            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":1.0,\"dependencies\":[1,2],\"interrupt\":false," +
-            "\"incremental\":true,\"done\":false,\"additionalParameter\":\"parameter\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
+            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":1.0,\"dependencies\":[1,2]," +
+            "\"incremental\":true,\"additionalParameter\":\"parameter\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
             "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
@@ -979,11 +984,14 @@ public class WebLayerTest {
         Event event = new Event(1, 1, 1, true, timeBetween);
         eventsList.add(event);
 
+        ZonedDateTime timeWithZone = timeBetween.atZone(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+
         when(mallobCommands.getEvents(LocalDateTime.parse(startTime), LocalDateTime.parse(endTime))).thenReturn(eventsList);
 
         this.mockMvc.perform(get("/api/v1/events/events?startTime=" + startTime + "&endTime=" + endTime))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
-                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + timeBetween + "\"}]}"));
+                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + timeWithZone.format(formatter) + "\"}]}"));
     }
 
     @Test
@@ -1009,11 +1017,14 @@ public class WebLayerTest {
         SystemState systemState = new SystemState(LocalDateTime.now());
         systemState.setSystemState(eventsList);
 
+        ZonedDateTime timeWithZone = timeBetween.atZone(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+
         when(mallobCommands.getSystemState(LocalDateTime.parse(timeBetween.toString()))).thenReturn(systemState);
 
         this.mockMvc.perform(get("/api/v1/events/state?time=" + timeBetween))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
-                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + timeBetween + "\"}]}"));
+                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + timeWithZone.format(formatter) + "\"}]}"));
     }
 
     @Test

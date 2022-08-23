@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class WarningDaoTests {
@@ -95,7 +96,7 @@ public class WarningDaoTests {
 
         this.warningDao.save(testWarning1);
         Thread.sleep(1000);
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.now(ZoneOffset.UTC);
         Thread.sleep(1000);
         this.warningDao.save(testWarning2);
 

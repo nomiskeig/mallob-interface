@@ -4,6 +4,7 @@ package edu.kit.fallob;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import edu.kit.fallob.database.DatabaseGarbageCollector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,9 @@ import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.CentralOutputLogListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
 
 @SpringBootApplication
@@ -24,7 +27,6 @@ public class BackendApplication {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
-		//initialize mallob-config
 		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {
@@ -45,7 +47,11 @@ public class BackendApplication {
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
 
-		
+
+		//start the database garbage collector
+		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
+		Thread garbageCollectorThread = new Thread(garbageCollector);
+		garbageCollectorThread.start();
 		
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
@@ -60,7 +66,11 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
-
+		if (args.length > 1 && args[1].equals("printMallobLogsToConsole")) {
+			CentralOutputLogListener consolePrinter = new CentralOutputLogListener();
+			MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
+			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
+		}
 
 		
 		//-----------------------add additional file-readers here 
