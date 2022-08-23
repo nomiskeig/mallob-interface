@@ -1,5 +1,9 @@
 package edu.kit.fallob.mallobio.outputupdates;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,8 +25,14 @@ public class Warning extends OutputUpdate {
 
 	public Warning(String logLine) {
 		super(logLine);
+	}
+	
+	public Warning(String logLine, LocalDateTime time) {
+		super(logLine);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		ZonedDateTime zonedTime = time.atZone(ZoneOffset.UTC);
 		int warnIndex = logLine.indexOf(WARNING_REGEX);
-		String formattedLogLine = logLine.substring(warnIndex - 3);
+		String formattedLogLine = zonedTime.format(formatter) + " " + logLine.substring(warnIndex - 3);
 		this.logLine = formattedLogLine;
 	}
 
