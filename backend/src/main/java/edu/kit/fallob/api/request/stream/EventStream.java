@@ -25,7 +25,7 @@ import java.util.Queue;
 public class EventStream implements OutputLogLineListener, BufferFunction<Event> {
 
     //output format for the time
-    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+    private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final String RANK_KEY = "rank";
     private static final String TREE_INDEX_KEY = "treeIndex";
     private static final String TIME_KEY = "time";

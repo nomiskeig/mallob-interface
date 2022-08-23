@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 public class WebLayerTest {
-    private static final String TIME_FORMAT = "yyyy-mm-dd'T'HH:mm:ss.SSSX";
+    private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     //TODO JavaDoc
 
@@ -127,7 +127,7 @@ public class WebLayerTest {
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
     private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
-            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":1.0,\"dependencies\":[1,2]," +
+            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
             "\"incremental\":true,\"additionalParameter\":\"parameter\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
             "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
@@ -139,7 +139,7 @@ public class WebLayerTest {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
     private static final String JSON_EVENTS = "{\"events\":[{" +
-            "\"rank\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + TIME_WITH_ZONE.format(FORMATTER) + "\"}]}";
+            "\"rank\":1,\"treeIndex\":1,\"jobID\":1,\"load\":1,\"time\":\"" + TIME_WITH_ZONE.format(FORMATTER) + "\"}]}";
 
     private static final String JOB_ID_JSON = "{\"jobID\":1}";
 
@@ -181,7 +181,7 @@ public class WebLayerTest {
         jobConfig.setDependencies(dependencies);
         jobConfig.setWallClockLimit(String.valueOf(1.0));
         jobConfig.setCpuLimit(String.valueOf(1.0));
-        jobConfig.setArrival(1.0);
+        jobConfig.setArrival("bspArrival");
         User user = new NormalUser(USERNAME, PASSWORD, EMAIL);
         result = new ResultMetaData(1, 1, 1, 1, 1, 1);
         jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
@@ -557,7 +557,7 @@ public class WebLayerTest {
 
         this.mockMvc.perform(get("/api/v1/system/config")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string("{\"amountProcesses\":1," +
-                        "\"startTime\":\"2020-04-13T17:53:12.840\",\"defaults\":{\"priority\":1.0,\"wallClockLimit\":\"1\"," +
+                        "\"startTime\":\"2020-04-13T17:53:12.840Z\",\"defaults\":{\"priority\":1.0,\"wallClockLimit\":\"1\"," +
                         "\"contentMode\":\"content\"}}"));
 
 
