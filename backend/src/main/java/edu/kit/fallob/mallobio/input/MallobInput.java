@@ -32,7 +32,7 @@ public interface MallobInput {
 	 * @param jobConfiguration
 	 * @param jobDescription
 	 * @return ID of the process (mallob) it was committed to
-	 * @throws IOException if writing the file was not successful 
+	 * @throws IOException if writing the file was not successful OR, if necessary parameters are not given; application, jobName, username
 	 */
 	int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 

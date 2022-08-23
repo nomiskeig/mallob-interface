@@ -4,6 +4,7 @@ package edu.kit.fallob;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import edu.kit.fallob.database.DatabaseGarbageCollector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +47,11 @@ public class BackendApplication {
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
 
-		
+
+		//start the database garbage collector
+		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
+		Thread garbageCollectorThread = new Thread(garbageCollector);
+		garbageCollectorThread.start();
 		
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();

@@ -100,7 +100,7 @@ public class MallobInputImplementation implements MallobInput {
 	@Override
 	public int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) throws IOException 
+			JobDescription jobDescription) throws IOException, IllegalArgumentException
 	{
 		
 		int processID = this.getNextProcess();
@@ -141,13 +141,21 @@ public class MallobInputImplementation implements MallobInput {
 	
 	private JSONObject createSubmitJSON(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) 
+			JobDescription jobDescription) throws IllegalArgumentException
 	{
+		if (userName == null || jobConfiguration.getName() == null || jobConfiguration.getApplication() == null) {
+			throw new IllegalArgumentException("Username, JobName and Application name have to be given");
+		}
 		JSONObject json = new JSONObject();
 		json.put(MallobAttributeNames.MALLOB_USER, userName);
 		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
 		addJobDescription(json, jobDescription);
-		json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
+		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
+			json.put(MallobAttributeNames.MALLOB_PRIORTIY, FallobConfiguration.getInstance().getDefaultJobPriority());
+		} else {
+			json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
+		}
+		
 		json.put(MallobAttributeNames.MALLOB_APPLICATION, jobConfiguration.getApplication());		
 		
 		
