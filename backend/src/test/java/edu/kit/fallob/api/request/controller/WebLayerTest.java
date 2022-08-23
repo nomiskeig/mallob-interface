@@ -30,10 +30,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -93,6 +91,7 @@ public class WebLayerTest {
     @MockBean
     private AuthenticationManager authenticationManager;
 
+
     private static int[] jobIds;
 
     private static List<Integer> jobIdsList;
@@ -133,6 +132,14 @@ public class WebLayerTest {
             "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
+
+    private static final LocalDateTime TIME_BETWEEN = LocalDateTime.of(2020, 2, 13, 18, 52, 9);
+
+    private static final ZonedDateTime TIME_WITH_ZONE = TIME_BETWEEN.atZone(ZoneOffset.UTC);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
+
+    private static final String JSON_EVENTS = "{\"events\":[{" +
+            "\"rank\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + TIME_WITH_ZONE.format(FORMATTER) + "\"}]}";
 
     private static final String JOB_ID_JSON = "{\"jobID\":1}";
 
@@ -501,15 +508,6 @@ public class WebLayerTest {
     }
 
     @Test
-    @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
-    public void abortJobsGloballyForbidden() throws Exception {
-        when(jobAbortCommands.abortAllGlobalJob(null)).thenReturn(jobIdsList);
-
-        this.mockMvc.perform(post("/api/v1/jobs/cancel/global")).andDo(print())
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
     public void abortJobsGloballySuccessful() throws Exception {
         when(jobAbortCommands.abortAllGlobalJob(null)).thenReturn(jobIdsList);
@@ -627,17 +625,6 @@ public class WebLayerTest {
 
         this.mockMvc.perform(get("/api/v1/jobs/info/global")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JSON_MULTIPLE_JOB_INFORMATION));
-    }
-
-    @Test
-    @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
-    public void getGlobalJobInformationForbidden() throws Exception {
-        List<JobInformation> jobInformationList = new ArrayList<>();
-        jobInformationList.add(jobInformation);
-        when(jobInformationCommands.getAllGlobalJobInformation(null)).thenReturn(jobInformationList);
-
-        this.mockMvc.perform(get("/api/v1/jobs/info/global")).andDo(print())
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -868,15 +855,6 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"logLine\":\"" + LOG_LINE_PLACE + "\"}]}"));
     }
 
-    @Test
-    @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
-    public void getWarningsForbidden() throws Exception {
-        Warning warning = new Warning(LOG_LINE_PLACE);
-        when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
-
-        this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
-                .andExpect(status().isForbidden()).andExpect(content().string(""));
-    }
 
     @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
@@ -901,17 +879,6 @@ public class WebLayerTest {
     }
 
     @Test
-    @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
-    public void startMallobForbidden() throws Exception {
-
-        when(mallobCommands.startMallob(PARAMS)).thenReturn(true);
-        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(PARAMS);
-
-        this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                .contentType("application/json")).andDo(print()).andExpect(status().isForbidden()).andExpect(content().string(""));
-    }
-
-    @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
     public void stopMallobSuccessfully() throws Exception {
         when(mallobCommands.stopMallob()).thenReturn(true);
@@ -927,15 +894,6 @@ public class WebLayerTest {
 
         this.mockMvc.perform(post("/api/v1/system/mallob/stop")).andDo(print()).andExpect(status().isConflict())
                 .andExpect(content().string("The system is not running"));
-    }
-
-    @Test
-    @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
-    public void stopMallobForbidden() throws Exception {
-        when(mallobCommands.stopMallob()).thenReturn(true);
-
-        this.mockMvc.perform(post("/api/v1/system/mallob/stop")).andDo(print()).andExpect(status().isForbidden())
-                .andExpect(content().string(""));
     }
 
     @Test
@@ -962,17 +920,6 @@ public class WebLayerTest {
                 .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is not running"));
     }
 
-    @Test
-    @WithMockUser(authorities = AUTHORITY_NORMAL_USER)
-    public void restartMallobForbidden() throws Exception {
-
-        when(mallobCommands.stopMallob()).thenReturn(true);
-        when(mallobCommands.startMallob(PARAMS)).thenReturn(true);
-        MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(PARAMS);
-
-        this.mockMvc.perform(post("/api/v1/system/mallob/restart").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                .contentType("application/json")).andDo(print()).andExpect(status().isForbidden()).andExpect(content().string(""));
-    }
 
     @Test
     @WithMockUser
@@ -980,18 +927,13 @@ public class WebLayerTest {
         String startTime = "2020-02-13T18:51:09.840";
         String endTime = "2020-02-13T18:54:09.234";
         List<Event> eventsList = new ArrayList<>();
-        LocalDateTime timeBetween = LocalDateTime.of(2020, 2, 13, 18, 52, 9);
-        Event event = new Event(1, 1, 1, true, timeBetween);
+        Event event = new Event(1, 1, 1, true, TIME_BETWEEN);
         eventsList.add(event);
-
-        ZonedDateTime timeWithZone = timeBetween.atZone(ZoneOffset.UTC);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
         when(mallobCommands.getEvents(LocalDateTime.parse(startTime), LocalDateTime.parse(endTime))).thenReturn(eventsList);
 
         this.mockMvc.perform(get("/api/v1/events/events?startTime=" + startTime + "&endTime=" + endTime))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
-                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + timeWithZone.format(formatter) + "\"}]}"));
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(JSON_EVENTS));
     }
 
     @Test
@@ -1011,20 +953,15 @@ public class WebLayerTest {
     @WithMockUser
     public void getSystemStateSuccessfully() throws Exception {
         List<Event> eventsList = new ArrayList<>();
-        LocalDateTime timeBetween = LocalDateTime.of(2020, 2, 13, 18, 52, 9);
-        Event event = new Event(1, 1, 1, true, timeBetween);
+        Event event = new Event(1, 1, 1, true, TIME_BETWEEN);
         eventsList.add(event);
         SystemState systemState = new SystemState(LocalDateTime.now());
         systemState.setSystemState(eventsList);
 
-        ZonedDateTime timeWithZone = timeBetween.atZone(ZoneOffset.UTC);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        when(mallobCommands.getSystemState(LocalDateTime.parse(TIME_BETWEEN.toString()))).thenReturn(systemState);
 
-        when(mallobCommands.getSystemState(LocalDateTime.parse(timeBetween.toString()))).thenReturn(systemState);
-
-        this.mockMvc.perform(get("/api/v1/events/state?time=" + timeBetween))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string("{\"events\":[{" +
-                        "\"processID\":1,\"treeIndex\":1,\"jobID\":1,\"load\":true,\"time\":\"" + timeWithZone.format(formatter) + "\"}]}"));
+        this.mockMvc.perform(get("/api/v1/events/state?time=" + TIME_BETWEEN))
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(JSON_EVENTS));
     }
 
     @Test

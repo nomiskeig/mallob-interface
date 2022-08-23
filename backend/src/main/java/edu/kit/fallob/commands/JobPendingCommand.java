@@ -25,6 +25,7 @@ public class JobPendingCommand {
 		try {
 			daoFactory = new DaoFactory();
 			uaa = new UserActionAuthentificater(daoFactory);
+			mallobOutput = MallobOutput.getInstance();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
