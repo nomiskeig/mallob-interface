@@ -5,7 +5,6 @@ import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListene
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.springConfig.FallobException;
-import edu.kit.fallob.springConfig.FallobWarning;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
@@ -14,6 +13,8 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * the event listener for the event stream
@@ -31,6 +32,7 @@ public class EventStream implements OutputLogLineListener {
 
     private final ResponseBodyEmitter emitter;
     private final JobDao jobDao;
+    private final Queue<Event> bufferedEvents;
 
     /**
      * constructor of the class
@@ -40,6 +42,7 @@ public class EventStream implements OutputLogLineListener {
     public EventStream(ResponseBodyEmitter emitter, JobDao jobDao) {
         this.emitter = emitter;
         this.jobDao = jobDao;
+        this.bufferedEvents = new LinkedList<>();
     }
 
     /**
@@ -53,27 +56,73 @@ public class EventStream implements OutputLogLineListener {
         if (Event.isEvent(line)) {
             Event event = new Event(line);
 
-            //convert the load boolean into an integer for the json object
-            int loadInt = event.isLoad() ? 1 : 0;
+            this.tryToSendEvent(event);
+        }
 
-            //convert the time into the right format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
-            ZonedDateTime timeWithZone = event.getTime().atZone(ZoneOffset.UTC);
+        this.tryToSendBufferedEvents();
+    }
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(RANK_KEY, event.getProcessID());
-            jsonObject.put(TREE_INDEX_KEY, event.getTreeIndex());
-            jsonObject.put(TIME_KEY, timeWithZone.format(formatter));
-            jsonObject.put(JOB_ID_KEY, event.getJobID());
-            jsonObject.put(LOAD_KEY, loadInt);
+    private void tryToSendEvent(Event event) {
+        if (!sendEvent(event)) {
+            this.bufferEvent(event);
+        }
+    }
 
-            try {
-                this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
-            } catch (IOException e) {
-                this.emitter.complete();
-                MallobOutput mallobOutput = MallobOutput.getInstance();
-                mallobOutput.removeOutputLogLineListener(this);
-            }
+    private boolean sendEvent(Event event) {
+        //try to convert the mallob id into the job id
+        int mallobId = event.getJobID();
+        int jobId = 0;
+        try {
+            jobId = this.jobDao.getJobIdByMallobId(mallobId);
+        } catch (FallobException e) {
+            return false;
+        }
+
+        //convert the load boolean into an integer for the json object
+        int loadInt = event.isLoad() ? 1 : 0;
+
+        //convert the time into the right format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        ZonedDateTime timeWithZone = event.getTime().atZone(ZoneOffset.UTC);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(RANK_KEY, event.getProcessID());
+        jsonObject.put(TREE_INDEX_KEY, event.getTreeIndex());
+        jsonObject.put(TIME_KEY, timeWithZone.format(formatter));
+        jsonObject.put(JOB_ID_KEY, jobId);
+        jsonObject.put(LOAD_KEY, loadInt);
+
+        try {
+            this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
+        } catch (IOException e) {
+            this.emitter.complete();
+            MallobOutput mallobOutput = MallobOutput.getInstance();
+            mallobOutput.removeOutputLogLineListener(this);
+        }
+
+        return true;
+    }
+
+    private void bufferEvent(Event event) {
+        try {
+            this.bufferedEvents.add(event);
+        } catch(IllegalStateException e) {
+            System.out.println("Event could not be added to buffering-queue : capacity overflow.");
+        }
+    }
+
+    private void tryToSendBufferedEvents() {
+        if (this.bufferedEvents.size() == 0) {
+            return;
+        }
+
+        int maxTries = this.bufferedEvents.size();
+        Event event = this.bufferedEvents.poll();
+
+        while(event != null && maxTries > 0) {
+            this.tryToSendEvent(event);
+            maxTries--;
+            event = this.bufferedEvents.poll();
         }
     }
 }
