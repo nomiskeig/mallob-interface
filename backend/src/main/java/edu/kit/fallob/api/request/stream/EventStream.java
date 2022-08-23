@@ -91,7 +91,7 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
 
     @Override
     public boolean bufferFunction(Event outputUpdate) {
-        int mallobId = outputUpdate.getJobID();
+        int mallobId = outputUpdate.getMallobJobID();
         int jobId = 0;
         try {
             jobId = this.jobDao.getJobIdByMallobId(mallobId);
