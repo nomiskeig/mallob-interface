@@ -168,8 +168,16 @@ public class JobInformationController {
                 StringBuilder stringBuilder = new StringBuilder();
                 try {
                     Scanner myReader = new Scanner(file);
-                    while (myReader.hasNextLine()) {
-                        stringBuilder.append(myReader.nextLine());
+                    boolean hasNextLine = myReader.hasNextLine();
+                    while (hasNextLine) {
+                        hasNextLine = myReader.hasNextLine();
+                        String nextLine = myReader.nextLine();
+                        stringBuilder.append(nextLine);
+                        if (hasNextLine) {
+                            stringBuilder.append("\n");
+                        } else {
+                            break;
+                        }
                     }
                     myReader.close();
                 } catch (FileNotFoundException e) {
