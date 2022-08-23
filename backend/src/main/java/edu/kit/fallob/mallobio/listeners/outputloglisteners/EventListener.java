@@ -17,84 +17,45 @@ import edu.kit.fallob.springConfig.FallobException;
  * and store them in the database 
  *
  */
-public class EventListener implements OutputLogLineListener {
+public class EventListener implements OutputLogLineListener, BufferFunction<Event> {
 	
 	
 	private EventDao eventDao;
-	private Queue<Event> unsavedEvents;
+	private Buffer<Event> eventBuffer;
 	
 	
 	public EventListener(EventDao eventDao) {
 		this.eventDao = eventDao;
-		unsavedEvents = new LinkedList<>();
+		this.eventBuffer = new Buffer<>(this);
 	}
 
 	@Override
 	public void processLine(String line) {
 		if (Event.isEvent(line)) {
 			Event e = new Event(line);
-			tryToStoreEvent(e);
+			eventBuffer.tryToExecuteBufferFunciton(e);
 		}
 		
 		//try to save buffered events
-		retrySavingBufferedEvents();
+		eventBuffer.retryBufferedFunction();
 	}
 	
 	
-	/**
-	 * Runs through all buffered events and tries to re-store them to the database 
-	 */
-	private void retrySavingBufferedEvents() {
-		if (unsavedEvents.size() == 0) {return;}
-		int maxTries = unsavedEvents.size();
-		Event event = unsavedEvents.poll();
-		
-		while(event != null && maxTries > 0) {
-			tryToStoreEvent(event);
-			maxTries--;
-			event = unsavedEvents.poll();
-		}
-	}
-	
-	
-	/*
-	 * Tries to convert the mallob-id of the event to the fallob job-id 
-	 * and if it fails, it buffers the event via bufferEvent(event)
-	 */
-	private void tryToStoreEvent(Event event) {
-		if (!storeEvent(event)) {
-			bufferEvent(event);
-		} 
-	}
-	
-	private void bufferEvent(Event event) {
-		try {
-			unsavedEvents.add(event);
-		} catch(IllegalStateException e) {
-			System.out.println("Event could not be added to buffering-queue : capacity overflow.");
-		}
-	}
-
-	/**
-	 * 
-	 * @param e
-	 * @return false if event could not be saved to databse, true if it did 
-	 */
-	private boolean storeEvent(Event event) {
-		int jobID = convertJobID(event.getMallobJobID());
+	@Override
+	public boolean bufferFunction(Event outputUpdate) {
+		int jobID = convertJobID(outputUpdate.getMallobJobID());
 		if (jobID != -1) {
 			//set job-id and save to mallob
-			event.setJobID(jobID);
+			outputUpdate.setJobID(jobID);
 			try {
-				eventDao.save(event);
+				eventDao.save(outputUpdate);
 			} catch (FallobException e) {
 				System.out.println("Event could not be saved : " + e.getMessage());
 			}
 			return true;
 		}
 		return false;
-	}
-	
+	}	
 
 	/**
 	 * Convert a mallobID into an internal fallob-ID
@@ -109,5 +70,7 @@ public class EventListener implements OutputLogLineListener {
 			return -1;
 		}		
 	}
+
+
 
 }
