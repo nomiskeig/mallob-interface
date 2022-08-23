@@ -33,7 +33,9 @@ public class Buffer<T> {
 		
 		while(maxTries > 0) {
 			T update = bufferedUpdates.poll();
-			tryToExecuteBufferFunciton(update);
+			if (update == null) {
+				tryToExecuteBufferFunciton(update);
+			}
 			maxTries--;
 		}
 	}

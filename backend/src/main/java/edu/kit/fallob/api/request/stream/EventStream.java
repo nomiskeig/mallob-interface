@@ -54,7 +54,6 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
      */
     @Override
     public void processLine(String line) {
-        System.out.println("got new event");
         if (Event.isEvent(line)) {
             Event event = new Event(line);
 
