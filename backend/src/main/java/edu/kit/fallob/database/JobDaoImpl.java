@@ -500,8 +500,8 @@ public class JobDaoImpl implements JobDao{
     /**
      * returns the id of a job from a given mallobId
      * @param mallobId the mallob Id for which the jobId should be returned
-     * @return the jobId
-     * @throws FallobException if an error occurs while accessing the database or if the job couldn't be found
+     * @return the jobId or -1 if the job couldn't be found
+     * @throws FallobException if an error occurs while accessing the database
      */
     @Override
     public int getJobIdByMallobId(int mallobId) throws FallobException {
@@ -514,7 +514,7 @@ public class JobDaoImpl implements JobDao{
             if (result.next()) {
                 return result.getInt(1);
             } else {
-                throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
+                return -1;
             }
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
