@@ -242,7 +242,7 @@ public class MallobInputImplementation implements MallobInput {
 	private void addJobDescription(JSONObject jobJSON, JobDescription jobDescription) {
 		String[] descriptionPaths = new String[jobDescription.getDescriptionFiles().size()];
 		for (int i = 0; i < descriptionPaths.length; i++) {
-			descriptionPaths[i] = jobDescription.getDescriptionFiles().get(i).getName();
+			descriptionPaths[i] = jobDescription.getDescriptionFiles().get(i).getAbsolutePath();
 		}
 		jobJSON.put(MallobAttributeNames.MALLOB_DESCRIPTION, new JSONArray(descriptionPaths));
 	}
