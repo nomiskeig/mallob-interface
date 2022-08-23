@@ -29,8 +29,8 @@ public class MallobEventsController {
         LocalDateTime timeLowerBound;
         LocalDateTime timeUpperBound;
         try {
-            timeLowerBound = LocalDateTime.parse(startTime);
-            timeUpperBound = LocalDateTime.parse(endTime);
+            timeLowerBound = formatTime(startTime);
+            timeUpperBound = formatTime(endTime);
         } catch (DateTimeParseException e) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, e.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -49,12 +49,13 @@ public class MallobEventsController {
         }
         return ResponseEntity.ok(new MallobEventsResponse(eventProxies));
     }
+
     @GetMapping("/state")
     public ResponseEntity<Object> getSystemState(@RequestParam String time) {
         SystemState state;
         LocalDateTime formattedTime;
         try {
-            formattedTime = LocalDateTime.parse(time);
+            formattedTime = formatTime(time);
         } catch (DateTimeParseException e) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, e.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -72,5 +73,12 @@ public class MallobEventsController {
             eventProxies.add(new EventProxy(event));
         }
         return ResponseEntity.ok(new MallobEventsResponse(eventProxies));
+    }
+
+    private LocalDateTime formatTime(String time) throws DateTimeParseException {
+        while(!Character.isDigit(time.charAt(time.length() - 1))) {
+            time = time.substring(0, time.length() - 1);
+        }
+        return LocalDateTime.parse(time);
     }
 }

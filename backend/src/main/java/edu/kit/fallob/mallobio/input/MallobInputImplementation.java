@@ -167,11 +167,11 @@ public class MallobInputImplementation implements MallobInput {
 			json.put(MallobAttributeNames.MALLOB_CPU_LIMIT, jobConfiguration.getCpuLimit());
 		}
 		
-		
-		if (jobConfiguration.getArrival() != JobConfiguration.DOUBLE_NOT_SET){
+		double arrivalAsDouble = AbsoluteTimeConverter.convertTimeToDouble(jobConfiguration.getArrival());
+		if (arrivalAsDouble != JobConfiguration.DOUBLE_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_ARRIVAL, jobConfiguration.getArrival());
 		}
-		
+	
 		
 		if (jobConfiguration.getMaxDemand() != JobConfiguration.INT_NOT_SET){
 			json.put(MallobAttributeNames.MALLOB_MAX_DEMAND, jobConfiguration.getMaxDemand());

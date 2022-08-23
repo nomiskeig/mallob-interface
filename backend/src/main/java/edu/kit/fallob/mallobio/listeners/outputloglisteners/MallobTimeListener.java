@@ -44,4 +44,8 @@ public class MallobTimeListener implements OutputLogLineListener {
 			secondsSinceMallobStart = updatedSecondsSinceMallobStart;
 		}
 	}
+	
+	public void setSecondsSinceStart(double seconds) {
+		this.secondsSinceMallobStart = seconds;
+	}
 }

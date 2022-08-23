@@ -76,10 +76,10 @@ public class SubmitJobRequest implements Serializable {
     public void setCpuLimit(String cpuLimit) {
         jobConfiguration.setCpuLimit(cpuLimit);
     }
-    public double getArrival() {
+    public String getArrival() {
         return jobConfiguration.getArrival();
     }
-    public void setArrival(double arrival) {
+    public void setArrival(String arrival) {
         jobConfiguration.setArrival(arrival);
     }
 

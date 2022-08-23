@@ -22,7 +22,7 @@ public class JobConfiguration {
 	private String wallClockLimit;
     @JsonInclude(Include.NON_NULL)
 	private String cpuLimit;
-	private double arrival;
+	private String arrival;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationDependencyFilter.class)
 	private Integer[] dependencies;
     @JsonInclude(value = Include.CUSTOM, valueFilter= JobConfigurationNeverFilter.class)
@@ -56,7 +56,7 @@ public class JobConfiguration {
 
 		this.setMaxDemand(INT_NOT_SET);
 		this.setPrecursor(INT_NOT_SET);
-		this.setArrival(DOUBLE_NOT_SET);
+		this.setArrival((String) OBJECT_NOT_SET);
 
 	}
 	
@@ -99,10 +99,10 @@ public class JobConfiguration {
 	public void setCpuLimit(String cpuLimit) {
 		this.cpuLimit = cpuLimit;
 	}
-	public double getArrival() {
+	public String getArrival() {
 		return arrival;
 	}
-	public void setArrival(double arrival) {
+	public void setArrival(String arrival) {
 		this.arrival = arrival;
 	}
 	
