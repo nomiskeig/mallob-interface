@@ -40,7 +40,9 @@ test('gets the systemState of the next time', async () => {
     jest.spyOn(pastEventManager, 'getNewEvents').mockImplementation(() =>{})
 
 	axios.mockResolvedValue({
-		data: testSystemState,
+		data: {
+            events: testSystemState,
+        }
 	});
 	let state = pastEventManager.getSystemState(mockUserContext);
 	state.then((data) => {

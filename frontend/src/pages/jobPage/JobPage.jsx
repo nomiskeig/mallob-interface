@@ -17,7 +17,7 @@ import {
 } from '../../global/statusLabel/StatusLabel';
 import './JobPage.scss';
 import axios from 'axios';
-import { InfoContext, TYPE_INFO } from '../../context/InfoContextProvider';
+//import { InfoContext} from '../../context/InfoContextProvider';
 function getStatus(job) {
 	let status;
 	switch (job.status) {
@@ -45,7 +45,7 @@ export function JobPage(props) {
 	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
 	let userContext = useContext(UserContext);
-	let infoContext = useContext(InfoContext);
+	//let infoContext = useContext(InfoContext);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
@@ -143,22 +143,10 @@ export function JobPage(props) {
 	}
 
 	function cancelJob() {
-		axios({
-			method: 'post',
-			url:
-				process.env.REACT_APP_API_BASE_PATH +
-				'/api/v1/jobs/cancel/single/' +
-				jobID,
-			headers: {
-				Authorization: 'Bearer ' + userContext.user.token,
-			},
-		}).then((res) => {
-			infoContext.handleInformation(
-				'Sucessesfully cancelled the job.',
-				TYPE_INFO
-			);
-		});
+        jobContext.cancelJob(jobID);
 	}
+
+
 
 	let parameterDisplayList = [];
 	if (job) {
