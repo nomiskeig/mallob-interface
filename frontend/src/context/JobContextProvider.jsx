@@ -1,6 +1,6 @@
 import React, { useState, useContext, createContext, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
-import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
+import { InfoContext, TYPE_ERROR, TYPE_INFO, TYPE_WARNING } from './InfoContextProvider';
 import axios from 'axios';
 
 function reducer(jobs, action) {
@@ -29,7 +29,7 @@ export function JobContextProvider({ children }) {
 	//	const [jobs, setJobs] = useState([]);
 
 	const [jobs, dispatch] = useReducer(reducer, []);
-    let [jobToRestart, setJobToRestart] = useState(null);
+	let [jobToRestart, setJobToRestart] = useState(null);
 
 	async function fetchJobs() {
 		await axios
@@ -37,9 +37,34 @@ export function JobContextProvider({ children }) {
 			.then((res) => {}) // setJobs(res))
 			.catch((err) => console.log(err));
 	}
+	function cancelJob(jobID) {
+		axios({
+			method: 'post',
+			url:
+				process.env.REACT_APP_API_BASE_PATH +
+				'/api/v1/jobs/cancel/single/' +
+				jobID,
+			headers: {
+				Authorization: 'Bearer ' + userContext.user.token,
+			},
+		})
+			.then((res) => {
+				infoContext.handleInformation(
+					'Sucessesfully cancelled the job.',
+					TYPE_INFO
+				);
+				loadSingleJob(jobID);
+			})
+			.catch((err) => {
+				infoContext.handleInformation(
+					'Could not cancel the job.',
+					TYPE_WARNING
+				);
+			});
+	}
 
 	function fetchMostJobsPossible(restrictToOwnJobs, callback) {
-        console.log(userContext.user.token)
+		console.log(userContext.user.token);
 		let apiAddress;
 		if (userContext.user.role === ROLE_USER || restrictToOwnJobs) {
 			apiAddress = '/api/v1/jobs/info/all';
@@ -119,8 +144,9 @@ export function JobContextProvider({ children }) {
 		<JobContext.Provider
 			value={{
 				jobs: jobs,
-                setJobToRestart: setJobToRestart,
-                jobToRestart: jobToRestart,
+				setJobToRestart: setJobToRestart,
+				jobToRestart: jobToRestart,
+				cancelJob: cancelJob,
 				fetchJobs: fetchJobs,
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,

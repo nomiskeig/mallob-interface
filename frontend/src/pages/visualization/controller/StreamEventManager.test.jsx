@@ -43,7 +43,9 @@ test('gets the current system state', () => {
 	setTimeManagerDefaults();
 
 	axios.mockResolvedValue({
-		data: testSystemState,
+		data: {
+            events: testSystemState,
+        }
 	});
 	let state = streamEventManager.getSystemState(mockUserContext);
 	state.then((data) => {
@@ -58,7 +60,9 @@ test('opens the stream when getSystemState is called', () => {
 	setTimeManagerDefaults();
 	//let openFn = jest.spyOn(XMLHttpRequest.prototype, 'open');
 	axios.mockResolvedValue({
-		data: testSystemState,
+		data: {
+            events: testSystemState,
+        }
 	});
 	streamEventManager.getSystemState(mockUserContext);
     streamEventManager.closeStream();

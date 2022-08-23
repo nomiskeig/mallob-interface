@@ -54,9 +54,12 @@ export class DetailsComponent extends React.Component {
 					<div className='buttons ms-auto d-flex flex-row '>
 						{showButtons  && (
 							<React.Fragment>
-								<Button color='#f24236' text='cancel job'></Button>
+								<Button color='#f24236' text='cancel job' onClick={() => {
+                                    console.log(this.props.context.jobContext)
+                                    this.props.context.jobContext.cancelJob(job.getJobID())
+                                }}></Button>
 								<div className='buttonSpacer'></div>
-								<JobPageButton className='jobButton'></JobPageButton>
+								<JobPageButton className='jobButton' jobID={job.getJobID()}></JobPageButton>
 							</React.Fragment>
 						)}
 					</div>

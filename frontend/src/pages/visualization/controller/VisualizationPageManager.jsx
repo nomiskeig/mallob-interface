@@ -26,10 +26,11 @@ export class VisualizationPageManager extends React.Component {
 	#binaryTreeRef;
 	#showDetailsPanel;
 	constructor(props) {
+
 		super(props);
+		this.#context = props.context;
 		this.#timeManager = new TimeManager();
 		this.#eventManager = new StreamEventManager(this.#timeManager);
-		this.#context = props.context;
 		this.#jobStorage = new JobStorage(this.#context);
 		this.#visualizationRef = React.createRef();
 		this.#binaryTreeRef = React.createRef();

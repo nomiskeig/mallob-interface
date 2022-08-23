@@ -34,15 +34,16 @@ public class EventProxy {
         this.treeIndex = event.getTreeIndex();
         this.jobID = event.getJobID();
         if (event.isLoad()) {
-            load = 1;
+            this.load = 1;
         } else {
-            load = 0;
+            this.load = 0;
         }
         this.time = event.getTime();
     }
 
 
     //-----------------------------------------getter
+
 
     /**
      * Getter

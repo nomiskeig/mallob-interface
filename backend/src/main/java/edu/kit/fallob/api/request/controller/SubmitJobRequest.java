@@ -12,7 +12,7 @@ public class SubmitJobRequest implements Serializable {
     private String url;
 
     public SubmitJobRequest(){
-        jobConfiguration = new JobConfiguration(null,0.0, null);
+        jobConfiguration = new JobConfiguration(null, JobConfiguration.DOUBLE_NOT_SET, null);
     }
 
     public SubmitJobRequest(List<String> description, JobConfiguration jobConfiguration) {
