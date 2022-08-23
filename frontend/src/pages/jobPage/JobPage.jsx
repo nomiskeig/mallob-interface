@@ -143,22 +143,10 @@ export function JobPage(props) {
 	}
 
 	function cancelJob() {
-		axios({
-			method: 'post',
-			url:
-				process.env.REACT_APP_API_BASE_PATH +
-				'/api/v1/jobs/cancel/single/' +
-				jobID,
-			headers: {
-				Authorization: 'Bearer ' + userContext.user.token,
-			},
-		}).then((res) => {
-			infoContext.handleInformation(
-				'Sucessesfully cancelled the job.',
-				TYPE_INFO
-			);
-		});
+        jobContext.cancelJob(jobID);
 	}
+
+
 
 	let parameterDisplayList = [];
 	if (job) {
