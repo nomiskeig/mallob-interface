@@ -20,7 +20,7 @@ public class EventProxy {
     private final int rank;
     private final int treeIndex;
     private final int jobID;
-    private final boolean load;
+    private final int load;
     private final LocalDateTime time;
 
 
@@ -32,14 +32,20 @@ public class EventProxy {
         this.rank = event.getProcessID();
         this.treeIndex = event.getTreeIndex();
         this.jobID = event.getJobID();
-        this.load = event.isLoad();
+        if (event.isLoad()) {
+            this.load = 1;
+        } else {
+            this.load = 0;
+        }
+
+
         this.time = event.getTime();
     }
 
 
     //-----------------------------------------getter
 
-    public boolean isLoad() {
+    public int getLoad() {
         return load;
     }
 
