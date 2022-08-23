@@ -1,22 +1,40 @@
 package edu.kit.fallob.api.request.controller;
 
-import java.util.List;
-
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A request class for json parsing
+ */
 public class AbortJobRequest {
 
-    private int[] jobIds;
+    private int[] jobs;
 
+    /**
+     * Standard Constructor, used by Spring for json Parsing
+     */
     public AbortJobRequest(){}
 
-    public AbortJobRequest(int[] jobIds) {
-        this.jobIds = jobIds;
+    /**
+     * Constructor that takes jobIds (mainly for testing)
+     * @param jobs job ids
+     */
+    public AbortJobRequest(int[] jobs) {
+        this.jobs = jobs;
     }
 
-    public int[] getJobIds() {
-        return jobIds;
+    /**
+     * Getter
+     * @return job ids
+     */
+    public int[] getJobs() {
+        return jobs;
     }
 
-    public void setJobIds(int[] jobIds) {
-        this.jobIds = jobIds;
+    /**
+     * Setter
+     * @param jobs job ids
+     */
+    public void setJobs(int[] jobs) {
+        this.jobs = jobs;
     }
 }

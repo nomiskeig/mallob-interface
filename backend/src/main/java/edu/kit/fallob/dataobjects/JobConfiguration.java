@@ -1,8 +1,7 @@
 package edu.kit.fallob.dataobjects;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class JobConfiguration {
 	
@@ -17,21 +16,35 @@ public class JobConfiguration {
 	private String name;
 	private double priority;
 	private String application;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationIntFilter.class)
 	private int maxDemand;
+    @JsonInclude(Include.NON_NULL)
 	private String wallClockLimit;
+    @JsonInclude(Include.NON_NULL)
 	private String cpuLimit;
 	private double arrival;
-	private String[] dependencies;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationDependencyFilter.class)
+	private Integer[] dependencies;
+    @JsonInclude(value = Include.CUSTOM, valueFilter= JobConfigurationNeverFilter.class)
 	private String[] dependenciesStrings;
+    @JsonInclude(Include.NON_EMPTY)
 	private String contentMode;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private boolean interrupt;
 	private boolean incremental;
+    @JsonInclude(Include.NON_EMPTY)
 	private int[] literals;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationIntFilter.class)
 	private int precursor;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private String precursorString;
+    @JsonInclude(Include.NON_EMPTY)
 	private String assumptions;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private boolean done;
+    @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private int descriptionID;
+    @JsonInclude(Include.NON_NULL)
 	private String additionalParameter;
 
 	public JobConfiguration(String name, double priority,
@@ -73,6 +86,7 @@ public class JobConfiguration {
 	public void setMaxDemand(int maxDemand) {
 		this.maxDemand = maxDemand;
 	}
+
 	public String getWallClockLimit() {
 		return wallClockLimit;
 	}
@@ -92,10 +106,10 @@ public class JobConfiguration {
 		this.arrival = arrival;
 	}
 	
-	public String[] getDependencies() {
+	public Integer[] getDependencies() {
 		return dependencies;
 	}
-	public void setDependencies(String[] dependencies2) {
+	public void setDependencies(Integer[] dependencies2) {
 		this.dependencies = dependencies2;
 	}
 	public boolean isIncremental() {

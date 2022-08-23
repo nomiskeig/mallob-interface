@@ -34,6 +34,6 @@ public class LineStream implements OutputLogLineListener {
      */
     @Override
     public void processLine(String line) {
-
+        //TODO
     }
 }

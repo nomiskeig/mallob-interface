@@ -1,8 +1,6 @@
-import { AppError } from '../../../context/AppError';
 import { Job } from './Job';
 import { JobTreeVertex } from './JobTreeVertex';
 import { GlobalStats } from './GlobalStats';
-import { TYPE_UNRECOVERABLE } from '../../../context/InfoContextProvider';
 export class JobStorage {
 	#jobUpdateListeners;
 	#jobs;
@@ -52,14 +50,6 @@ export class JobStorage {
 			return color;
 		}
 		function getRandomOuterColor(jobID) {
-			console.log(
-				'orginal: ' +
-					getSeededRandom(jobID) +
-					'\n random1 : ' +
-					getSeededRandom(getSeededRandom(jobID)) +
-					'\n random2: ' +
-					getSeededRandom(getSeededRandom(getSeededRandom(jobID)))
-			);
 			let color =
 				'hsl(' +
 				360 * getSeededRandom(getSeededRandom(jobID) * 100) +
@@ -98,16 +88,18 @@ export class JobStorage {
 				}
 				if (job === undefined) {
 					console.log('non existant job');
-					throw new AppError('Can not stop working on a non-existent job');
+                    return;
+					//throw new AppError('Can not stop working on a non-existent job');
 				}
 				if (!job.getVertex(event.getTreeIndex())) {
 					console.log('trying to remove a vertex which is not part of the job');
 					console.log('rank: ' + event.getRank());
 					console.log('treeIndex: ' + event.getTreeIndex());
-					throw new AppError(
-						'trying to remove a vertex which is not part of the job.',
-						TYPE_UNRECOVERABLE
-					);
+                    return;
+					//throw new AppError(
+					//	'trying to remove a vertex which is not part of the job.',
+					//	TYPE_UNRECOVERABLE
+					//);
 				}
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() - 1
@@ -122,7 +114,6 @@ export class JobStorage {
 				if (job.getSize() === 0) {
 					//delete this.#jobs[jobIndex];
                     this.#jobs.splice(jobIndex, 1);
-                    console.log(this.#jobs)
 					this.#globalStats.setActiveJobs(
 						this.#globalStats.getActiveJobs() - 1
 					);
@@ -136,7 +127,6 @@ export class JobStorage {
 				// create now job if job does not exist
 				if (job === undefined) {
 					let newJob = new Job(jobID, getRandomGrayColor(jobID));
-                    console.log('adding new job' + jobID)
 					this.#jobs.push(newJob);
 					job = newJob;
 					this.#globalStats.setActiveJobs(
@@ -145,22 +135,15 @@ export class JobStorage {
 					this.#context.jobContext
 						.getSingleJobInfo(jobID)
 						.then((info) => {
-							console.log(info);
-							console.log(info.config.name);
 							job.setColor(getRandomColor(jobID));
 							job.setOuterColor(getRandomOuterColor(jobID));
 							job.setJobName(info.config.name);
-						console.log(job.getJobName());
-                            console.log(this.#context.userContext.user.username);
 							if (info.user !== this.#context.userContext.user.username) {
-                                console.log('set username')
 								job.setUsername(info.user);
 								job.setUserEmail(info.email);
 							}
 
 							this.#jobUpdateListeners.forEach((listener) => {
-                                console.log('updating listener')
-                                console.log(job.getVertices())
 								job
 									.getVertices()
 									.forEach((vertex) =>
@@ -174,10 +157,10 @@ export class JobStorage {
 					console.log('trying to add a vertex which is already existent');
 					console.log('rank: ' + rank);
 					console.log('treeIndex ' + treeIndex);
-					throw new AppError(
-						'trying to add a vertex where there is already a vertex existent.',
-						TYPE_UNRECOVERABLE
-					);
+					//throw new AppError(
+					//	'trying to add a vertex where there is already a vertex existent.',
+					//	TYPE_UNRECOVERABLE
+					//);
 				}
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);

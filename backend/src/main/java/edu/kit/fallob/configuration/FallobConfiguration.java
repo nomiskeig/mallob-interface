@@ -1,5 +1,6 @@
 package edu.kit.fallob.configuration;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,10 +21,10 @@ public class FallobConfiguration {
 	private int maxJobsUser;
 	private int[] clientProcesses;
 	private int garbageCollectorInterval;
-	private int jobStorageTime;
-	private int eventStorageTime;
-	private int warningStorageTime;
-	private int maxDescriptionStorageSize;
+	private long jobStorageTime;
+	private long eventStorageTime;
+	private long warningStorageTime;
+	private long maxDescriptionStorageSize;
 	private float defaultJobPriority;
 	private String defaultWallClockLimit;
 	private String defaultContentMode;
@@ -34,8 +35,10 @@ public class FallobConfiguration {
 	private String dataBaseUsername;
 	private String databasePassword;
 
+	private int amountReaderThreads;
+	private int  readingIntervalPerReadingThread;
 
-	private String startTime;
+	private LocalDateTime startTime;
 
 	private FallobConfiguration() {
 		
@@ -53,7 +56,28 @@ public class FallobConfiguration {
 		}
 		return instance;
 	}
+	/**
+	 * ONLY USE THIS METhOD IF YOU WANT TO USE A FRESH CONFIG 
+	 */
+	public static void resetConfig() {
+		instance = null;
+	}
 	
+	public void setAmountReaderThreads(int amountReaderThreads) {
+		this.amountReaderThreads = amountReaderThreads;
+	}
+	
+	public int getAmountReaderThreads() {
+		return this.amountReaderThreads;
+	}
+	
+	public void setReadingIntervalPerReadingThread(int readingInterval) {
+		this.readingIntervalPerReadingThread = readingInterval;
+	}
+	
+	public int getReadingIntervalPerReadingThread() {
+		return this.readingIntervalPerReadingThread;
+	}
 	
 	
 	public int getAmountProcesses() {
@@ -96,34 +120,34 @@ public class FallobConfiguration {
 	}
 	
 	
-	public int getJobStorageTime() {
+	public long getJobStorageTime() {
 		return jobStorageTime;
 	}
-    void setJobStorageTime(int jobStorageTime) {
+    void setJobStorageTime(long jobStorageTime) {
 		this.jobStorageTime = jobStorageTime;
 	}
     
     
-	public int getEventStorageTime() {
+	public long getEventStorageTime() {
 		return eventStorageTime;
 	}
-	void setEventStorageTime(int eventStorageTime) {
+	void setEventStorageTime(long eventStorageTime) {
 		this.eventStorageTime = eventStorageTime;
 	}
 	
 	
-	public int getWarningStorageTime() {
+	public long getWarningStorageTime() {
 		return warningStorageTime;
 	}
-	void setWarningStorageTime(int warningStorageTime) {
+	void setWarningStorageTime(long warningStorageTime) {
 		this.warningStorageTime = warningStorageTime;
 	}
 	
 	
-	public int getMaxDescriptionStorageSize() {
+	public long getMaxDescriptionStorageSize() {
 		return maxDescriptionStorageSize;
 	}
-	void setMaxDescriptionStorageSize(int maxDescriptionStorageSize) {
+	void setMaxDescriptionStorageSize(long maxDescriptionStorageSize) {
 		this.maxDescriptionStorageSize = maxDescriptionStorageSize;
 	}
 	
@@ -183,11 +207,11 @@ public class FallobConfiguration {
 		this.resultBasePath = resultBasePath;
 	}
 
-	public String getStartTime() {
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(String startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 

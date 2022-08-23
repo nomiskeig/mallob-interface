@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A Rest Controller for Aborting the processing of jobs
+ */
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/jobs/cancel")
@@ -19,17 +24,37 @@ public class AbortJobController {
     @Autowired
     private JobAbortCommands jobAbortCommand;
 
+    private static final String NO_JOBS_ACTIVE = "No jobs are active";
+
+    private static final String JOB_NOT_ACTIVE = "Job is not active";
+
+    private static final String USERNAME = "username";
+
+    /**
+     * An POST endpoint for aborting the processing of a single job
+     * Takes a request, parses the data needed to abort a single job and forwards it. It is also responsible for system error handling
+     * @param jobId the job id of the job, that is to be aborted
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the needed Information (a status code and a message in json format)
+     */
     @PostMapping("/single/{jobId}")
     public ResponseEntity<Object> abortSingleJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
     }
 
+    /**
+     * An POST endpoint for aborting the processing of multiple jobs
+     * Takes a request, parses the data needed to abort multiple jobs and forwards it. It is also responsible for system error handling
+     * @param request a AbortJobRequest object containing the job ids of the jobs, that are to be aborted
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the needed Information (a status code and a message in json format)
+     */
     @PostMapping("/multiple")
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
-            successfullyAborted = jobAbortCommand.abortMultipleJobs(username, request.getJobIds());
+            successfullyAborted = jobAbortCommand.abortMultipleJobs(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -41,13 +66,19 @@ public class AbortJobController {
         if (!successfullyAborted.isEmpty()) {
             return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("No jobs are active");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(NO_JOBS_ACTIVE);
         }
     }
 
+    /**
+     * An POST endpoint for aborting the processing of all owned jobs
+     * Takes a request, parses the data needed to abort all owned jobs and forwards it. It is also responsible for system error handling
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the needed Information (a status code and a message in json format)
+     */
     @PostMapping("/all")
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortAllJobs(username);
@@ -59,9 +90,15 @@ public class AbortJobController {
         return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
     }
 
+    /**
+     * An POST endpoint for aborting the processing of all jobs in the system (Available only for admins)
+     * Takes a request, parses the data needed to abort all jobs and forwards it. It is also responsible for system error handling
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the needed Information (a status code and a message in json format)
+     */
     @PostMapping("/global")
     public ResponseEntity<Object> abortAllGlobalJobs(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
             successfullyAborted = jobAbortCommand.abortAllGlobalJob(username);
@@ -73,13 +110,26 @@ public class AbortJobController {
         return ResponseEntity.ok(new AbortJobResponse(successfullyAborted));
     }
 
+    /**
+     * An POST endpoint for aborting the processing of an incremental job
+     * Takes a request, parses the data needed to abort an incremental job and forwards it. It is also responsible for system error handling
+     * @param jobId the job id of the job, that is to be aborted
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the needed Information (a status code and a message in json format)
+     */
     @PostMapping("/incremental/{jobId}")
     public ResponseEntity<Object> abortIncrementalJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
     }
 
+    /**
+     * Takes a jobId, parses the username from the httpRequest and forwards the data. It is also responsible for system error handling
+     * @param jobId the job id of the job, that is to be aborted
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return a response with the needed Information (a status code and a message in json format)
+     */
     private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         boolean successful;
         try {
             successful = jobAbortCommand.abortSingleJob(username, jobId);
@@ -91,7 +141,7 @@ public class AbortJobController {
         if (successful) {
             return ResponseEntity.ok(HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Job is not active");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(JOB_NOT_ACTIVE);
         }
     }
 }

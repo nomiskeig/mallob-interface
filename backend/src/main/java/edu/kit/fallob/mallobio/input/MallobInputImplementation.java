@@ -20,6 +20,8 @@ import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 
 public class MallobInputImplementation implements MallobInput {
 	
+	private static MallobInputImplementation mii;
+	
 	
 
 	public static final String NEW_JOB_FILENAME = "newjob";
@@ -39,13 +41,23 @@ public class MallobInputImplementation implements MallobInput {
 	//these round-robin counters ensure that all requests are uniformly distributed amongst all client-processes; see getNextProcess()
 	private int lastUsedClientProcess = 0;
 	
+	public static MallobInputImplementation getInstance() {
+		if (mii == null) {
+			mii = new MallobInputImplementation();
+		}
+		return mii;
+	}
+	
+	private MallobInputImplementation() {};
+	
+	
 	/**
-	 * Standard Constructor for MallobInputImplementation
+	 * Standard setup for MallobInputImplementation
 	 * 
 	 * @param pathToMallobDirectory base-directory of mallob-input-directory
 	 * @param clientProcessIDs all process-id's of those processes of mallob, that are client-processes
 	 */
-	public MallobInputImplementation(String pathToMallobDirectory, int[] clientProcessIDs) {
+	public void setupInput(String pathToMallobDirectory, int[] clientProcessIDs) {
 		this.pathToMallobDirectory = pathToMallobDirectory;
 		this.clientProcessIDs = clientProcessIDs;
 		this.amountClientProcesses = clientProcessIDs.length;
@@ -53,8 +65,9 @@ public class MallobInputImplementation implements MallobInput {
 	}
 	
 	
+	
 	/**
-	 * ONLY USE THIS CONSTRUCTOR, IF ALL PROCESSES ARE CLIENT-PROCESSES 
+	 * ONLY USE THIS SETUP, IF ALL PROCESSES ARE CLIENT-PROCESSES 
 	 * 
 	 * this constructor creates an array a of size amountProcesses. 
 	 * 
@@ -62,20 +75,21 @@ public class MallobInputImplementation implements MallobInput {
 	 * @param pathToMallobDirectory
 	 * @param amountProcesses
 	 */
-	public MallobInputImplementation(String pathToMallobDirectory, int amountProcesses) {
+	public void setupInputAllProcesses(String pathToMallobDirectory, int amountProcesses) {
 		this.pathToMallobDirectory = pathToMallobDirectory;
 		//this.clientProcessIDs = clientProcessIDs;
 		allProcessesAreClient = true;
 		this.amountClientProcesses = amountProcesses;
+	}
+
 	
-	}	
 
 	@Override
 	public int abortJob(String username, String jobName) throws IOException {
 		
 		int processID = this.getNextProcess();
 		String filePath = MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID) 
-				+ File.separator + ABORT_FILENAME + JSON_FILE_EXTENSION;
+				+ ABORT_FILENAME + JSON_FILE_EXTENSION;
 		
 		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(), filePath);
 		return processID;
@@ -86,7 +100,7 @@ public class MallobInputImplementation implements MallobInput {
 	@Override
 	public int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) throws IOException 
+			JobDescription jobDescription) throws IOException, IllegalArgumentException
 	{
 		
 		int processID = this.getNextProcess();
@@ -101,9 +115,10 @@ public class MallobInputImplementation implements MallobInput {
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
-				+ File.separator + NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
-		
+				+ NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
+
 		this.writeJsonInDirectory(json, absoluteFilePath);
+		System.out.println("Wrote Job-Json in directory : " + absoluteFilePath);
 		return processID;
 	}
 	
@@ -126,13 +141,21 @@ public class MallobInputImplementation implements MallobInput {
 	
 	private JSONObject createSubmitJSON(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) 
+			JobDescription jobDescription) throws IllegalArgumentException
 	{
+		if (userName == null || jobConfiguration.getName() == null || jobConfiguration.getApplication() == null) {
+			throw new IllegalArgumentException("Username, JobName and Application name have to be given");
+		}
 		JSONObject json = new JSONObject();
 		json.put(MallobAttributeNames.MALLOB_USER, userName);
 		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
 		addJobDescription(json, jobDescription);
-		json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
+		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
+			json.put(MallobAttributeNames.MALLOB_PRIORTIY, FallobConfiguration.getInstance().getDefaultJobPriority());
+		} else {
+			json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
+		}
+		
 		json.put(MallobAttributeNames.MALLOB_APPLICATION, jobConfiguration.getApplication());		
 		
 		

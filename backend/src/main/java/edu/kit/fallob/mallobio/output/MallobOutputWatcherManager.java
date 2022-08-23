@@ -1,14 +1,20 @@
 package edu.kit.fallob.mallobio.output;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
 
 public class MallobOutputWatcherManager {
 	
 	private static MallobOutputWatcherManager manager;
-	private ResultObjectDistributor resulDistributor;
+	private ResultObjectDistributor resultDistributor;
 	
-	private MallobOutputRunnerThread[] watcherThreads;
-	private Thread[] threadpool;
+	
+	private List<MallobClientOutputWatcher> watchers = new ArrayList<>();
+	private List<Thread> watcherThreads = new ArrayList<>();
 	
 	
 	public static MallobOutputWatcherManager getInstance() {
@@ -21,13 +27,16 @@ public class MallobOutputWatcherManager {
 	
 	private MallobOutputWatcherManager() {}
 
-
-
 	
-	
-
-	public void setResultDistributor(ResultObjectDistributor resulDistributor) {
-		this.resulDistributor = resulDistributor;
+	/**
+	 * Sets the result distributor to resultDistributor for all watchers being created from this point 
+	 * @param resultDistributor
+	 */
+	public void setResultDistributor(ResultObjectDistributor resultDistributor) {
+		if (resultDistributor == null) {
+			throw new NullPointerException("Cannot set result distributor to null.");
+		}
+		this.resultDistributor = resultDistributor;
 	}
 	
 	
@@ -37,57 +46,32 @@ public class MallobOutputWatcherManager {
 	 * @param userName username of the user who submitted the job
 	 * @param jobName name of the job the user gave to it 
 	 * @param clientProcessID ProcessID of the (client) process which received the job
+	 * 
+	 * @throws NullPointerException if no result distributor is available for watcher-thread
 	 */
 	 /// .api/jobs.0/out/<user-name>.<job-name>.json
 	public void addNewWatcher(String userName, String jobName, int clientProcessID) {
-		String pathToOutputDirectory = ".api/jobs." + Integer.toString(clientProcessID) + "/out/";
-		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectory);
-		watcher.setDistributor(resulDistributor);
-		addWatcherToThreadPool(watcher);
+		
+		if (this.resultDistributor == null) {
+			throw new NullPointerException("No result distributor available for distribution.");
+		}
+		String pathToOutputDirectpory = 
+				MallobFilePathGenerator.generateOutDirectoryPath(clientProcessID, (FallobConfiguration.getInstance()).getMallobBasePath());
+		String expectedResultName = MallobFilePathGenerator.generateResultName(jobName, userName);
+		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName, resultDistributor);
+		watchers.add(watcher);
+		startWatcherThread(watcher);
 	}
 
 
 	/**
-	 * Adds a watcher to the threadpool
+	 * Creates a thread that holds a watcher and starts the thread immediately 
+	 * 
 	 * @param watcher
 	 */
-	private void addWatcherToThreadPool(MallobClientOutputWatcher watcher) {
-		watcherThreads[getIndexOfMinimalLoadThread()].addActionChecker(watcher);
+	private void startWatcherThread(MallobClientOutputWatcher watcher) {
+		Thread t = new Thread(watcher);
+		this.watcherThreads.add(t);
+		t.start();
 	}
-	
-	/**
-	 *O(n), where n is the amount of watcher-threads
-	 * @return
-	 */
-	private int getIndexOfMinimalLoadThread() {
-		int minAmountWatchers = Integer.MAX_VALUE;
-		for (int i = 0; i < threadpool.length; i++) {
-			if (watcherThreads[i].getAmountActionCheckers() <= minAmountWatchers) {
-				minAmountWatchers = i;
-			}
-		}
-		return minAmountWatchers;
-	}
-
-	
-	//--------------------------------setup and start of threads
-
-	public void setup(String mallobBaseDirectory, int amountWatcherThreads, int watchingIntervalPerWatcherThread) {
-		watcherThreads = new MallobOutputRunnerThread[amountWatcherThreads];
-		threadpool = MallobOutputRunnerThread.initializeThreadPool(watcherThreads, watchingIntervalPerWatcherThread);
-	}
-	
-	public void startThreads() {
-		MallobOutputRunnerThread.startThreadPoolExecution(threadpool);
-	}
-	
-	
-
-
-	public void stopThreads() throws IllegalArgumentException, InterruptedException {
-		MallobOutputRunnerThread.stopThreadPoolExecution(threadpool, watcherThreads);
-	}
-
-	//-------------------------------other funcionality 
-
 }

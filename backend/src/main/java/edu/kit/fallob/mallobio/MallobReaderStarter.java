@@ -1,12 +1,23 @@
 package edu.kit.fallob.mallobio;
 
-import edu.kit.fallob.mallobio.output.MallobClientOutputWatcher;
+import java.util.List;
+import java.util.ArrayList;
+
+
+import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.mallobio.input.MallobInputImplementation;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.EventListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobStatusListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.WarningListener;
+import edu.kit.fallob.mallobio.listeners.resultlisteners.JobResultListener;
 import edu.kit.fallob.mallobio.output.MallobOutputReader;
 import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.output.distributors.OutputLogLineDistributor;
 import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
+import edu.kit.fallob.springConfig.FallobException;
 
 /**
  * 
@@ -18,11 +29,10 @@ import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
  */
 public class MallobReaderStarter {
 	
-
-
-
+	protected String pathToMallobDirectory;
 	
-	protected String pathToMallobLogDirectory;
+	
+
 	
 	
 	private Thread[] readerThreadPool;
@@ -36,11 +46,31 @@ public class MallobReaderStarter {
 	private OutputLogLineDistributor logDistributor;
 	private ResultObjectDistributor resultDistributor;
 	
+	private List<MallobOutputReader> irregularFilesReaders;
 	
+	
+	public MallobReaderStarter(String pathToMallobDirectory) {
+		this.pathToMallobDirectory = pathToMallobDirectory;
+	}
+	
+	/**
+	 * Initialize the input-module to communicate with mallob 
+	 * 
+	 * @param amountProcesses
+	 * @param clientProcesses
+	 */
+	public void initInput(int amountProcesses, int[] clientProcesses) {
+		MallobInputImplementation mii = MallobInputImplementation.getInstance();
+		if (clientProcesses == null || clientProcesses.length == amountProcesses) {
+			mii.setupInputAllProcesses(pathToMallobDirectory, amountProcesses);
+		} else {
+			mii.setupInput(pathToMallobDirectory, clientProcesses);
+		}
+	}
 	
 	/**
 	 * 
-	 * 0. Initialize MallobOuptut and all required distributor-classe
+	 * 0. Initialize MallobOuptut and all required distributor-classes
 	 * 
 	 * 
 	 * 1. Calls initializeRunnerThreadPool() to initialize the MallobOutputReaderRunner.
@@ -52,42 +82,37 @@ public class MallobReaderStarter {
 	 * distribution of mallobOutputReader to MallbOutputReaderRunner
 	 * 
 	 * 2.5 give every MallobOutputReader the same LogLineDistributor (initialized in step 0)
-	 * 
-	 * 3.Initialize MallobOutputWatchers - works like starting the readers
-	 * 
-	 * @param mallbLogDirectory
+	 *  
 	 * @param amountProcesses
 	 * @param amountReaderThreads Amount of threads that each hold MallobOutputReader
 	 * @param readingIntervalPerReadingThread Inteval between read of every MallobOutputReader
 	 */
-	public void initParsingModule(String mallbLogDirectory, 
+	public void initOutput( 
 			int amountProcesses,
-			int amountWatcherThreads,
-			int watchingIntervalPerWatcherThread,
 			int amountReaderThreads,
 			int readingIntervalPerReadingThread) throws IllegalArgumentException
 	{
-		
-		
+	
 		if (amountReaderThreads > amountProcesses) {
-			throw new IllegalArgumentException("Cant have more threads than watchers/readers");
+			throw new IllegalArgumentException("Cannot have more threads than readers. Ensure, that you have at max. as many threads as processes.");
 		}
-		
-		watcherManager = MallobOutputWatcherManager.getInstance();
-		watcherManager.setup(mallbLogDirectory, amountWatcherThreads, watchingIntervalPerWatcherThread);
 		
 		initializeMallobOuptut();
 		
+		watcherManager = MallobOutputWatcherManager.getInstance();
+		watcherManager.setResultDistributor(resultDistributor);
 		
-		initializeReaders(mallbLogDirectory, 
-				 amountProcesses,
-				 amountReaderThreads,
-				 readingIntervalPerReadingThread);
+		
+		
+		readerRunners = new MallobOutputRunnerThread[amountReaderThreads];
+		readerThreadPool = MallobOutputRunnerThread.initializeThreadPool(readerRunners, readingIntervalPerReadingThread);
+		initializeReaders(amountProcesses, readingIntervalPerReadingThread);
 		
 
 		//after this mallobio can be started 
-			
 	}
+	
+	
 	
 	
 
@@ -97,33 +122,48 @@ public class MallobReaderStarter {
 	 * 
 	 * @param mallbLogDirectory
 	 * @param amountProcesses
-	 * @param amountReaderThreads
 	 * @param readingIntervalPerReadingThread
 	 */
-	private void initializeReaders(String mallbLogDirectory, 
+	private void initializeReaders( 
 			int amountProcesses,
-			int amountReaderThreads,
 			int readingIntervalPerReadingThread) 
 	{
+		if (logDistributor == null) {
+			throw new NullPointerException("No log-distributor instance present at initialisation of readers.");
+		}
 		
-		readerRunners = new MallobOutputRunnerThread[amountReaderThreads];
-		readerThreadPool = MallobOutputRunnerThread.initializeThreadPool(readerRunners, readingIntervalPerReadingThread);
 				
-		//create MallobReader and map them to a readerThread
-		int roundRobinCounter = 0;
+		//create MallobReader for the log file of all processes 
 		readers = new MallobOutputReader[amountProcesses];
-		for (int i = 0; i < amountProcesses; i++) {
-			
-			//initialize MallobOutputreader
-			readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateLogFilePath(i, mallbLogDirectory));
-			
-			//give output-reader the correct distributor :
-			readers[i].addProcessor(logDistributor);
-			
+
+		for (int i = 0; i < readers.length; i++) {
+			//initialize MallobOutputreader and give them the correct log-distributor 
+
+			readers[i] = new MallobOutputReader(MallobFilePathGenerator.generateLogFilePath(i, pathToMallobDirectory), logDistributor);
+		}
+		
+		mapReaderToThread(readers, readerRunners);
+
+	}
+	
+	/**
+	 * Given an array of readers, it maps each reader onto a thread, such that all readers are evenly distributed amongst all threads
+	 * @param readersToMap
+	 * @param readerThreads
+	 */
+	private void mapReaderToThread(MallobOutputReader[] readersToMap, MallobOutputRunnerThread[] readerThreads) {
+		if (readersToMap == null || readerThreads == null) {
+			throw new NullPointerException("Cannot map onto null-object.");
+		}
+		
+		int roundRobinCounter = 0;
+		for (int i = 0; i < readersToMap.length; i++) {
 			//add outputreader-to readerRunner
-			readerRunners[roundRobinCounter].addActionChecker(readers[i]);
+			readerThreads[roundRobinCounter].addActionChecker(readersToMap[i]);
 			roundRobinCounter++;
-			if (roundRobinCounter >= readerRunners.length) {
+			
+			if (roundRobinCounter >= readerThreads.length) {
+
 				roundRobinCounter = 0;
 			}
 		}
@@ -131,17 +171,54 @@ public class MallobReaderStarter {
 	
 	
 	/**
-	 * Initialize mallobOuptut, logDistributor and resultDistributor
-	 * mallobOutput is going to hold a reference of both the log and resultDistributor
+	 * Add file-readers, to watch specific files. Files that are being watched, are the regular log-files of each process.
+	 * 
+	 * All added Readers are also being started, when startMallobIO() is called
+	 * 
+	 * @param directoryPath of the file which is supposed to be watched 
+	 * @param fileName name of the file which is supposed to be watched
 	 */
-	private void initializeMallobOuptut() {
-		this.logDistributor = new OutputLogLineDistributor();
-		this.resultDistributor = new ResultObjectDistributor();
-		
-		this.watcherManager.setResultDistributor(resultDistributor);
-		this.mallobOutput = new MallobOutput(resultDistributor, logDistributor);
+	public void addIrregularReaders(String filePath) {
+		if (logDistributor == null) {
+			throw new NullPointerException("Cannot assign Distributor that is null to reader. Initialize output first.");
+		}
+		if (irregularFilesReaders == null) {
+			irregularFilesReaders = new ArrayList<>();
+		}
+		MallobOutputReader r = new MallobOutputReader(filePath, logDistributor);
+		irregularFilesReaders.add(r);	
 	}
 	
+	
+	/**
+	 * Initialize mallobOuptut, logDistributor and resultDistributor
+	 * mallobOutput is going to hold a reference of both the log and resultDistributor
+	 * set log-distributor and result-distributor
+	 */
+	private void initializeMallobOuptut() {
+
+		this.mallobOutput = MallobOutput.getInstance();
+
+		this.logDistributor = this.mallobOutput.getOutputLogLineDistributor();
+		this.resultDistributor = this.mallobOutput.getResultObjectDistributor();
+		}
+	
+	
+	/**
+	 * Adds all listeners the mallob-output 
+	 * @throws FallobException, if connection to database could not be established (eventListener, ...)
+	 */
+	public void addStaticListeners() throws FallobException {
+		
+		DaoFactory dao = new DaoFactory();
+		
+		this.mallobOutput.addResultObjectListener(new JobResultListener(dao.getJobDao()));
+
+		this.mallobOutput.addOutputLogLineListener(new EventListener(dao.getEventDao()));
+		this.mallobOutput.addOutputLogLineListener(new JobStatusListener());
+		this.mallobOutput.addOutputLogLineListener(MallobTimeListener.getInstance());
+		this.mallobOutput.addOutputLogLineListener(new WarningListener(dao.getWarningDao()));
+	}
 	
 	
 	
@@ -152,9 +229,18 @@ public class MallobReaderStarter {
 	 * Starts the reading of the log-files and the watching of the output directories 
 	 */
 	public void startMallobio() {
-
+		if (readerThreadPool == null || readerRunners == null || readers == null) {
+			throw new NullPointerException("Cannot start mallobio. Module has not been initialized properly. Threadpool, Threads or Readeres missing.");
+		}
+		//add irregular readers to the current threads 
+		if (irregularFilesReaders != null) {
+            MallobOutputReader[] outputReaders = new MallobOutputReader[irregularFilesReaders.size()];
+            irregularFilesReaders.toArray(outputReaders);
+			this.mapReaderToThread(outputReaders, this.readerRunners);
+		}
+		
+		//start reader-execution
 		MallobOutputRunnerThread.startThreadPoolExecution(readerThreadPool);
-		this.watcherManager.startThreads();
 	}
 
 
@@ -165,13 +251,13 @@ public class MallobReaderStarter {
 	 */
 	public void stopMallobio() throws InterruptedException {
 		MallobOutputRunnerThread.stopThreadPoolExecution(readerThreadPool, readerRunners);
-		this.watcherManager.stopThreads();
 	}
 	
-	public MallobOutput getMallobOutput() throws NullPointerException {
-		if (mallobOutput == null) {
-			throw new NullPointerException("Not yet initialized. Please initialize Module first.");
-		}
-		return mallobOutput;
+	public MallobOutputReader[] getReaders() {
+		return this.readers;
+	}
+	
+	public MallobOutputRunnerThread[] getReaderThreads() {
+		return this.readerRunners;
 	}
 }

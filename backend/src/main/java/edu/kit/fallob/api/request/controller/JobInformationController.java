@@ -37,9 +37,13 @@ public class JobInformationController {
     @Autowired
     private JobPendingCommand jobPendingCommmand;
 
+    private static final String USERNAME = "username";
+
+    private static final String FILE_CORRUPT = "Job is not active";
+
     @GetMapping("/info/single/{jobId}")
     public ResponseEntity<Object> getSingleJobInformation(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         JobInformation jobInformation;
         try {
             jobInformation = jobInformationCommand.getSingleJobInformation(username, jobId);
@@ -48,14 +52,14 @@ public class JobInformationController {
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         JobInformationProxy proxy = new JobInformationProxy(jobInformation);
-        return ResponseEntity.ok(new JobInformationResponse(Collections.singletonList(proxy)));
+        return ResponseEntity.ok(proxy);
     }
-    @GetMapping("/info")
+    @PostMapping("/info")
     public ResponseEntity<Object> getMultipleJobInformation(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
-            jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobIds());
+            jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -72,7 +76,7 @@ public class JobInformationController {
     }
     @GetMapping("/info/all")
     public ResponseEntity<Object> getAllJobInformation(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getAllJobInformation(username);
@@ -89,7 +93,7 @@ public class JobInformationController {
     }
     @GetMapping("/info/global")
     public ResponseEntity<Object> getAllGlobalJobInformation(HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
             jobInformations = jobInformationCommand.getAllGlobalJobInformation(username);
@@ -106,7 +110,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/description/single/{jobId}")
     public ResponseEntity<Object> getSingleJobDescription(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         JobDescription jobDescriptions;
         try {
             jobDescriptions = jobDescriptionCommand.getSingleJobDescription(username, jobId);
@@ -126,7 +130,7 @@ public class JobInformationController {
                     }
                     myReader.close();
                 } catch (FileNotFoundException e) {
-                    FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, "File does not exist or is corrupt");
+                    FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, FILE_CORRUPT);
                     return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
                 }
             }
@@ -136,12 +140,12 @@ public class JobInformationController {
            return getDescriptionsZip(response, Collections.singletonList(jobDescriptions));
         }
     }
-    @GetMapping(value = "/description")
+    @PostMapping(value = "/description")
     public ResponseEntity<Object> getMultipleJobDescriptions(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
         try {
-            jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobIds());
+            jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -154,7 +158,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/description/all")
     public ResponseEntity<Object> getAllJobDescriptions(HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
         try {
             jobDescriptions = jobDescriptionCommand.getAllJobDescription(username);
@@ -167,7 +171,7 @@ public class JobInformationController {
 
     @GetMapping(value ="/solution/single/{jobId}")
     public ResponseEntity<Object> getSingleJobResult(@PathVariable int jobId, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         JobResult jobResult;
         try {
             jobResult = jobResultCommand.getSingleJobResult(username, jobId);
@@ -178,12 +182,12 @@ public class JobInformationController {
         return getResultsZip(response, Collections.singletonList(jobResult));
     }
 
-    @GetMapping("/solution")
+    @PostMapping("/solution")
     public ResponseEntity<Object> getMultipleJobResults(@RequestBody JobInformationRequest request, HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
         try {
-            jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobIds());
+            jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobs());
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -196,7 +200,7 @@ public class JobInformationController {
     }
     @GetMapping(value = "/solution/all")
     public ResponseEntity<Object> getAllJobResults(HttpServletRequest httpRequest, HttpServletResponse response) throws IOException {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
         try {
             jobResults = jobResultCommand.getAllJobResult(username);
@@ -208,7 +212,7 @@ public class JobInformationController {
     }
     @GetMapping("/waitFor/{jobId}")
     public ResponseEntity<Object> waitForJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        String username = (String) httpRequest.getAttribute("username");
+        String username = (String) httpRequest.getAttribute(USERNAME);
         ResultMetaData jobResult;
         try {
             jobResult = jobPendingCommmand.waitForJob(username, jobId);
@@ -222,6 +226,7 @@ public class JobInformationController {
     private ResponseEntity<Object> getDescriptionsZip(HttpServletResponse response, List<JobDescription> jobDescriptions) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
+        response.setHeader("Content-disposition", "attachment; filename=description.zip");
 
         // Creating byteArray stream, make it bufferable and passing this buffer to ZipOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -257,6 +262,7 @@ public class JobInformationController {
     private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
+        response.setHeader("Content-disposition", "attachment; filename=description.zip");
 
         // Creating byteArray stream, making it bufferable and passing this buffer to ZipOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

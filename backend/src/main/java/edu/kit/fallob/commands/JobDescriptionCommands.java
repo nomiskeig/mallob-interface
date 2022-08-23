@@ -3,14 +3,12 @@ package edu.kit.fallob.commands;
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.dataobjects.JobDescription;
-import edu.kit.fallob.dataobjects.JobResult;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service
 public class JobDescriptionCommands {

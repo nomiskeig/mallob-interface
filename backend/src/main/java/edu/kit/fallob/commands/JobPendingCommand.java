@@ -16,6 +16,7 @@ public class JobPendingCommand {
 	private MallobOutput mallobOutput;
 	private DaoFactory daoFactory;
 	private UserActionAuthentificater uaa;
+	private JobDao jobDao;
 	
 	
 	
@@ -24,10 +25,11 @@ public class JobPendingCommand {
 		try {
 			daoFactory = new DaoFactory();
 			uaa = new UserActionAuthentificater(daoFactory);
+			mallobOutput = MallobOutput.getInstance();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
+		jobDao = daoFactory.getJobDao();
 	}
 	
 	public ResultMetaData waitForJob(String username, int jobID) throws FallobException {
@@ -35,14 +37,15 @@ public class JobPendingCommand {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
 		//get mallobID
-		int mallobID = 0;
+		int mallobID = jobDao.getMallobIdByJobId(jobID);
 		JobListener jobListener = new JobListener(mallobID);
 		mallobOutput.addOutputLogLineListener(jobListener);
 		jobListener.waitForJob();
 		mallobOutput.removeOutputLogLineListener(jobListener);
 
 		//TODO Temporary fix from kalo (need an ResultMetaData-Object of the job the user is waiting for)
-		return null;
+		
+		return jobDao.getJobInformation(jobID).getResultMetaData();
 	}
 
 }

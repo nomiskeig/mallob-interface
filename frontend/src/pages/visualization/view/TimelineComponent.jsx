@@ -44,7 +44,7 @@ export class TimelineComponent extends React.Component {
 		}
 
 		return (
-			<div className='timelineContainer d-flex flex-column align-items-center'>
+			<div className='timelineContainer mt-auto d-flex flex-column align-items-center'>
 				<div className='sliderContainer'>
 					<Slider
 						step={1}
@@ -55,13 +55,11 @@ export class TimelineComponent extends React.Component {
 						valueLabelFormat={valueText}
 						valueLabelDisplay='auto'
 						onChange={(event, newValue) => {
-							console.log(newValue);
 							this.#position = newValue;
 							this.#changing = true;
 						}}
 						onChangeCommitted={(event, newValue) => {
 							this.#changing = false;
-							console.log(newValue);
 							this.#timeManager.setNextTime(
 								addMilliseconds(startTime, newValue)
 							);
@@ -108,6 +106,7 @@ export class TimelineComponent extends React.Component {
 							<path d='M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z' />
 						</svg>
 					</button>
+                    <button className='btn btn-secondary toggleButton' onClick={() => this.props.toggleDetails()}>Toggle detail panel</button>
 					<div className='flex-fill'></div>
 					<form className='replaySpeedForm d-flex align-items-center'>
 						<label className='replaySpeedLabel' htmlFor='replaySpeed'>

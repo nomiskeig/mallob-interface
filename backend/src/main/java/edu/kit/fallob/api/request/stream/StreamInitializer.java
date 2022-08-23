@@ -21,6 +21,7 @@ public class StreamInitializer {
      * @throws FallobException if something goes wrong while working with the database
      */
     public void startEventStream(ResponseBodyEmitter emitter) throws FallobException {
+        System.out.println("Started initializer");
         Runnable eventStreamStarter = new EventStreamStarter(emitter);
         this.executor.execute(eventStreamStarter);
     }
@@ -33,6 +34,6 @@ public class StreamInitializer {
      * @param username the name of the user that requested the stream
      */
     public void startLineStream(ResponseBodyEmitter emitter, int jobId, String[] regex, String username) {
-
+        //TODO
     }
 }

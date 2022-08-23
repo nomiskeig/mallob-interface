@@ -24,6 +24,7 @@ export class VisualizationPageManager extends React.Component {
 	#shouldUpdate;
 	#binaryTree;
 	#binaryTreeRef;
+	#showDetailsPanel;
 	constructor(props) {
 		super(props);
 		this.#timeManager = new TimeManager();
@@ -37,9 +38,10 @@ export class VisualizationPageManager extends React.Component {
 		this.#detailsComponent = React.createRef();
 		this.#stateLoaded = false;
 		this.#shouldUpdate = true;
+		this.#showDetailsPanel = true;
+        this.#shouldUpdate = false;
 	}
 	shouldComponentUpdate(nextProps) {
-		console.log('shouldComponentUpdate');
 		this.#context = nextProps.context;
 
 		this.#jobStorage.updateContext(nextProps.context);
@@ -70,11 +72,10 @@ export class VisualizationPageManager extends React.Component {
 			this.#jobStorage.addEvents(res);
 			this.#stateLoaded = true;
 		});
-		console.log('mounted');
+        this.#shouldUpdate = true;
 	}
 
 	componentWillUnmount() {
-		console.log('will unmount');
 		this.#shouldUpdate = false;
 		this.#eventManager.closeStream();
 		this.#visualization.stop();
@@ -83,7 +84,6 @@ export class VisualizationPageManager extends React.Component {
 		this.#jobStorage = null;
 	}
 	update() {
-		console.log('updating');
 		if (!this.#shouldUpdate) {
 			return;
 		}
@@ -119,12 +119,20 @@ export class VisualizationPageManager extends React.Component {
 			this.#timeManager.updateTime();
 		} catch (e) {
 			if (this.#shouldUpdate) {
-				this.#context.infoContext.handleInformation(
-					e.getMessage(),
-					e.getType()
-				);
+				try {
+					this.#context.infoContext.handleInformation(
+						e.getMessage(),
+						e.getType()
+					);
+				} catch (f) {
+					console.error(e.message);
+				}
 			}
 		}
+	}
+	toggleDetailsPanel() {
+		this.#showDetailsPanel = !this.#showDetailsPanel;
+		this.forceUpdate();
 	}
 
 	onClick(jobID, treeIndex) {
@@ -138,11 +146,15 @@ export class VisualizationPageManager extends React.Component {
 
 	render() {
 		return (
-			<div className='pageContainer'>
+			<div className='visPageContainer'>
 				<div className='row g-0'>
-					<div className='col-12 col-md-6 visualizationHalf d-flex align-items-center justify-content-center'>
+					<div
+						className={`col-12 col-md-${
+							this.#showDetailsPanel ? 6 : 12
+						} visualizationHalf d-flex align-items-center justify-content-center`}
+					>
 						<div className='halfContainer d-flex flex-column align-items-center'>
-							<div className='visCanvasContainer'>
+							<div className='visCanvasContainer '>
 								<div
 									className='visualizationCanvas'
 									ref={(el) => (this.#visualizationRef = el)}
@@ -152,6 +164,7 @@ export class VisualizationPageManager extends React.Component {
 								timeManager={this.#timeManager}
 								context={this.#context}
 								ref={(el) => (this.#timeLineComponent = el)}
+								toggleDetails={this.toggleDetailsPanel.bind(this)}
 							></TimelineComponent>
 							<GlobalStatsComponent
 								ref={(el) => (this.#globalStatsComponent = el)}
@@ -159,7 +172,11 @@ export class VisualizationPageManager extends React.Component {
 							></GlobalStatsComponent>
 						</div>
 					</div>
-					<div className='col-12 col-md-6 binaryTreeHalf d-flex align-items-center justify-content-center'>
+					<div
+						className={`col-12 col-md-6 binaryTreeHalf d-flex align-items-center justify-content-center ${
+							!this.#showDetailsPanel ? 'hiddenPanel' : ''
+						}`}
+					>
 						<div className='halfContainer d-flex flex-column align-items-center'>
 							<DetailsComponent
 								ref={(el) => (this.#detailsComponent = el)}
@@ -174,7 +191,6 @@ export class VisualizationPageManager extends React.Component {
 							</div>
 							<button
 								onClick={() => {
-									console.log('showing tree');
 									this.#jobStorage.reset();
 									this.#timeManager.setPaused(true);
 									this.#shouldUpdate = false;

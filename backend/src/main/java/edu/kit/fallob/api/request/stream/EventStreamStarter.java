@@ -3,8 +3,8 @@ package edu.kit.fallob.api.request.stream;
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
+import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 /**
@@ -37,12 +37,16 @@ public class EventStreamStarter implements Runnable{
     public void run() {
         OutputLogLineListener eventStream = new EventStream(this.emitter, this.jobDao);
 
-        //TODO: register listener
+        MallobOutput mallobOutput = MallobOutput.getInstance();
+        mallobOutput.addOutputLogLineListener(eventStream);
+        System.out.println("registered listener");
 
-        try {
-            this.wait();
-        } catch (InterruptedException e) {
-            throw new RuntimeException();
+        synchronized (this) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException();
+            }
         }
     }
 }

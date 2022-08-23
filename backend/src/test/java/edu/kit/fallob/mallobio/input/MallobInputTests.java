@@ -115,7 +115,8 @@ public class MallobInputTests {
 	
 	@BeforeEach
 	public void setupBeforeEach() {
-		mInput = new MallobInputImplementation(TEST_DIRECTORY_PATH, CLIENT_PROCESSES);
+		mInput = MallobInputImplementation.getInstance();
+		((MallobInputImplementation) mInput).setupInput(TEST_DIRECTORY_PATH, CLIENT_PROCESSES);
 	}
 	
 	
@@ -133,7 +134,7 @@ public class MallobInputTests {
 		config.setWallClockLimit(WALLCLOCK_LIMIT);
 		config.setCpuLimit(CPU_LIMIT);
 		config.setArrival(ARRIVAL);
-		config.setDependencies(DEPENDENCIES);
+		config.setDependenciesStrings(DEPENDENCIES);
 		config.setIncremental(false);
 		
 		TEST_JOB = "{\"application\":\"SAT\","

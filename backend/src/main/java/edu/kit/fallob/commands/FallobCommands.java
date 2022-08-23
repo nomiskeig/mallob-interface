@@ -1,26 +1,20 @@
 package edu.kit.fallob.commands;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.database.UserDao;
+import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import edu.kit.fallob.configuration.FallobConfiguration;
-import edu.kit.fallob.database.DaoFactory;
-import edu.kit.fallob.database.UserDao;
-import edu.kit.fallob.dataobjects.User;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -28,6 +22,13 @@ public class FallobCommands implements UserDetailsService {
 	
 	private DaoFactory daoFactory;
 	private UserDao userDao;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
+	private static final String DUPLICATE_USERNAME = "Username already exists";
+
+	private static final String DUPLICATE_EMAIL = "Email already exists";
 	
 	
 	public FallobCommands() throws FallobException {
@@ -42,27 +43,31 @@ public class FallobCommands implements UserDetailsService {
 	
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user;
 
-        // JPA Beispiel fur die Implementation
+		try {
+			user = userDao.getUserByUsername(username);
+		} catch (FallobException e) {
+			throw new UsernameNotFoundException(e.getMessage());
+		}
 
-//        User user = userRepo.findByUsername(username);
-
-//        if (user == null || !user.isVerified()) {
-//            throw new UsernameNotFoundException("User not found in the database or is not verified");
-//        } else {
-//            List <SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getUserType));
-//
-//            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
-//        }
-    	User user = userDao.getUserByUsername(username);
-    	List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    	authorities.add(new SimpleGrantedAuthority(user.toString()));
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    	authorities.add(new SimpleGrantedAuthority(user.getUserType().getAuthority()));
+		String isVerified = "Not verified";
+		if (user.isVerified()) {
+			isVerified = "Verified";
+		}
+		authorities.add(new SimpleGrantedAuthority(isVerified));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
     
     
     public boolean register(String username, String password, String email) throws FallobException {
-    	return false;
+
+		String encodedPassword = passwordEncoder.encode(password);
+		userDao.save(new NormalUser(username, encodedPassword, email));
+		return true;
+
     }
     
     

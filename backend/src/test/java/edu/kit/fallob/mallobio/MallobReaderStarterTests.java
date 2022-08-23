@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import edu.kit.fallob.mallobio.output.MallobOutputRunnerThread;
+
 
 
 public class MallobReaderStarterTests {
@@ -21,6 +23,8 @@ public class MallobReaderStarterTests {
 
 	
 	public static final int TEST_AMOUNT_PROCESSES = 100;
+	
+	public static final int[] TEST_CLIENT_PROCESSES = {2,3,4,5,6,7};
 		
 	public static final int TEST_AMOUNT_READERTHREADS = 10;
 	public static final int TEST_AMOUNT_WATCHERTHREADS = 1;
@@ -33,56 +37,44 @@ public class MallobReaderStarterTests {
 	private static MallobReaderStarter starter;
 	
 	@Test
-	public void testInitializationMallobOutput() {
-		assertTrue(starter.getMallobOutput() != null);
+	public void testLength() {
+		assertTrue(starter.getReaders().length == TEST_AMOUNT_PROCESSES);
+		assertTrue(starter.getReaderThreads().length == TEST_AMOUNT_READERTHREADS);
 	}
 	
-	/*
+	
 	@Test
-	public void threadCreationAndStoppage() throws InterruptedException {
-		
-		int amountThreadsBeforeCreation = Thread.activeCount();
-		starter.startMallobio();
-		assertTrue(Thread.activeCount() == amountThreadsBeforeCreation + TEST_AMOUNT_READERTHREADS + TEST_AMOUNT_WATCHERTHREADS);
-		
-		starter.stopMallobio();
-		assertTrue(Thread.activeCount() == amountThreadsBeforeCreation);
-		
+	public void testDistributionOfReaders() {
+		MallobOutputRunnerThread[] runners = starter.getReaderThreads();
+		assertTrue(runners.length == TEST_AMOUNT_READERTHREADS);
+
+		int lowerBound = (int) Math.floor(TEST_AMOUNT_PROCESSES / TEST_AMOUNT_READERTHREADS);
+		int upperBound = lowerBound + 1;
+		for (int i = 0; i < runners.length; i++) {
+			int amountReadersPerThread = runners[i].getAmountActionCheckers();
+			assertTrue(amountReadersPerThread >= lowerBound);
+			assertTrue(amountReadersPerThread <= upperBound);
+		}
 	}
-	*/
+	
+	@Test
+	public void addIrregularReader() {
+		starter.addIrregularReaders(null);
+	}
+
 
 	
 	@BeforeEach
 	public void setupBeforeEach() {
-		starter = new MallobReaderStarter();
-		starter.initParsingModule(TEST_DIRECTORY_PATH, 
+		starter = new MallobReaderStarter(TEST_DIRECTORY_PATH);
+		starter.initOutput(
 				TEST_AMOUNT_PROCESSES, 
-				TEST_AMOUNT_WATCHERTHREADS, 
-				TEST_WATCHINGINTERVAL, 
 				TEST_AMOUNT_READERTHREADS, 
 				TEST_READINGINTERVAL);
+		starter.initInput(TEST_AMOUNT_PROCESSES, TEST_CLIENT_PROCESSES);
 		
 					
 	}
 
-	@BeforeAll
-	public static void setupFiles() {
-		/*
-		//create directory
-		new File(TEST_MALLOB_API_PATH).mkdirs();
-		
-		//Create directory of logs 
-		for (int i = 0; i < TEST_AMOUNT_PROCESSES; i++) {
-			new File(MallobFilePathGenerator.generateLogDirectoryPath(i, TEST_MALLOB_API_PATH)).mkdirs();
-			new File(MallobFilePathGenerator.generateLogFilePath(i, TEST_MALLOB_API_PATH));
-		}
-		*/
-	}
-	
-	@AfterAll
-	public static void deleteFile() throws IOException {
-		//FileUtils.deleteDirectory(new File(TEST_MALLOB_API_PATH));
-	}
-	
 	
 }

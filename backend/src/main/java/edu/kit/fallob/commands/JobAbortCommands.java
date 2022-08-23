@@ -1,18 +1,18 @@
 package edu.kit.fallob.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.dataobjects.JobInformation;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.input.MallobInput;
+import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class provides methods to abort running jobs.
@@ -37,6 +37,7 @@ public class JobAbortCommands {
 			daoFactory = new DaoFactory();
 			jobDao = daoFactory.getJobDao();
 			uaa = new UserActionAuthentificater(daoFactory);
+			mallobInput = MallobInputImplementation.getInstance();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -54,13 +55,13 @@ public class JobAbortCommands {
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
 			throw new FallobException(HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
 		}
-        /*
+		JobInformation jobInfo = jobDao.getJobInformation(jobID);
 		try {
-			mallobInput.abortJob(jobID);
+			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
 		} catch (IOException e) {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 		}
-        */
+        
 		return true;
 	}
 	
@@ -90,8 +91,12 @@ public class JobAbortCommands {
 		if (!uaa.isAdmin(username)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
-		int[] allGlobalJobIDs = new int[1]; //provisorisch
-		return abortMultipleJobs(username, allGlobalJobIDs);
+		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); 
+		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];
+		for (int i = 0; i < allGlobalJobIDs.size(); i++) {
+			allGlobalJobIDsArray[i] = allGlobalJobIDs.get(i);
+		}
+		return abortMultipleJobs(username, allGlobalJobIDsArray);
 	}
 
 }

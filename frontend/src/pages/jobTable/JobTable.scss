@@ -1,0 +1,55 @@
+$controlBarHeight: 70px;
+
+.dataGridContainer {
+    height: 100%;
+}
+
+.controlBar  {
+    height: $controlBarHeight;
+    margin-bottom: 10px;
+}
+.dataGridWrapper {
+    height: calc(100% - $controlBarHeight);
+    background-color: white
+}
+
+.showJobsLabel {
+    height: 20px;
+}
+
+
+.headerRender {
+    width: 100% !important
+}
+
+.MuiDataGrid-columnHeaderTitleContainerContent {
+    width: 100%
+}
+.MuiDataGrid-row {
+    cursor: pointer;
+}
+.MuiTablePagination-displayedRows {
+    margin-bottom: 0px
+}
+
+.MuiTablePagination-selectLabel {
+    margin-bottom: 0px;
+}
+.MuiToolbar-roo {
+    align-items: center
+}
+.tableHeaderSpacer {
+    width: 5px;
+}
+
+.removeButton {
+    cursor: pointer ;
+}
+
+.orderButton {
+    cursor: pointer;
+}
+
+.statusCell {
+    width: 100%
+}

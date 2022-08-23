@@ -1,13 +1,13 @@
 package edu.kit.fallob.api.request.controller;
 
 public class SubmitJobResponse {
-    private final int jobId;
+    private final int jobID;
 
-    public SubmitJobResponse(int jobId) {
-        this.jobId = jobId;
+    public SubmitJobResponse(int jobID) {
+        this.jobID = jobID;
     }
 
-    public int getJobId() {
-        return jobId;
+    public int getJobID() {
+        return jobID;
     }
 }

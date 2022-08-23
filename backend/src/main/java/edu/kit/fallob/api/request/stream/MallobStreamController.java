@@ -2,15 +2,16 @@ package edu.kit.fallob.api.request.stream;
 
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.FallobWarning;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * controller class for the event stream and the custom log line stream
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @CrossOrigin
+@RequestMapping("/api/v1")
 public class MallobStreamController {
 
     /**
@@ -30,6 +32,7 @@ public class MallobStreamController {
      */
     @GetMapping("/api/v1/system/logStream")
     public ResponseEntity<ResponseBodyEmitter> streamLogs(HttpServletRequest httpRequest, MallobStreamRequest request) {
+        //TODO
         return null;
     }
 
@@ -37,8 +40,8 @@ public class MallobStreamController {
      * api endpoint for the event stream of mallob
      * @return a ResponseBodyEmitter with which data is continuously given back to the user
      */
-    @GetMapping("/api/v1/events/eventStream")
-    public ResponseEntity<Object> streamEvents() {
+    @GetMapping("/events/eventStream")
+    public ResponseEntity<ResponseBodyEmitter> streamEvents() {
         StreamInitializer initializer = new StreamInitializer();
         ResponseBodyEmitter emitter = new ResponseBodyEmitter();
 
@@ -46,7 +49,12 @@ public class MallobStreamController {
             initializer.startEventStream(emitter);
         } catch (FallobException e) {
             FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            try {
+                emitter.send(warning);
+            } catch (IOException ex) {
+                emitter.complete();
+            }
+            emitter.complete();
         }
 
         return new ResponseEntity<>(emitter, HttpStatus.OK);
