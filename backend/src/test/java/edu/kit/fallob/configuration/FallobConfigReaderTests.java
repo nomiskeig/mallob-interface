@@ -90,6 +90,11 @@ public class FallobConfigReaderTests {
 		database.put("databaseUsername", DB_USERNAME);
 		database.put("databasePassword", DB_PW);
 		o.put("database", database);
+		
+		JSONObject readerSetup = new JSONObject();
+		readerSetup.put("readingIntervalPerReadingThread", 20);
+		readerSetup.put("amountReaderThreads", 2);
+		o.put("readerSetup", readerSetup);
 
 		return o;
 	}

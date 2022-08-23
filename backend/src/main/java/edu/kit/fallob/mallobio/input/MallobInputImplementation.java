@@ -169,7 +169,7 @@ public class MallobInputImplementation implements MallobInput {
 		
 		double arrivalAsDouble = AbsoluteTimeConverter.convertTimeToDouble(jobConfiguration.getArrival());
 		if (arrivalAsDouble != JobConfiguration.DOUBLE_NOT_SET){
-			json.put(MallobAttributeNames.MALLOB_ARRIVAL, jobConfiguration.getArrival());
+			json.put(MallobAttributeNames.MALLOB_ARRIVAL, arrivalAsDouble);
 		}
 	
 		
