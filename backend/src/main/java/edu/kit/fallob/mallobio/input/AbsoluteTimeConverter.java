@@ -1,14 +1,22 @@
 package edu.kit.fallob.mallobio.input;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 
 public class AbsoluteTimeConverter {
+		
+	private static final double MILLISECONDS_TO_SECONDS = 0.001;
 	
-	private static final int MILLISECONDS_TO_SECONDS = 1000;
-
 	
 	
 	/**
@@ -22,15 +30,23 @@ public class AbsoluteTimeConverter {
 	 * @return time in seconds, since mallob-start, to match the absolute point specified by the string. If the given string is before 
 	 * the current date (absolute), JobConfiguration.DOUBLE_NOT_SET is returned 
 	 */
-	public static double convertTimeToDouble(String timeString) {
+	public static double convertTimeToDouble(String timeString)  {
 		if (timeString == null) {return JobConfiguration.DOUBLE_NOT_SET;}
 		
-		Date d = javax.xml.bind.DatatypeConverter.parseDateTime(timeString).getTime();
+		/*
+		OffsetDateTime odt = OffsetDateTime.parse(timeString);
+		Date d = Date.from(odt.toInstant());
+		TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(timeString);
+	    Date d = Date.from(Instant.from(ta));
+	    */
+		ZonedDateTime zonedTime = ZonedDateTime.parse(timeString);
+		Date d = Date.from(zonedTime.toInstant());
+		
 		if (d.before(new Date())) { //date is before today
 			return JobConfiguration.DOUBLE_NOT_SET;
 		}
 		
-		long timeDifferenceInMS = d.getTime() - new Date().getTime();
-		return (MallobTimeListener.getInstance().getAmountOfSecondsSinceStart() + timeDifferenceInMS) * MILLISECONDS_TO_SECONDS;
+		double timeDifferenceInMS = d.getTime() - new Date().getTime();
+		return (MallobTimeListener.getInstance().getAmountOfSecondsSinceStart() + (timeDifferenceInMS * MILLISECONDS_TO_SECONDS));
 	}
 }

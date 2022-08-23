@@ -8,9 +8,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 
 public class AbsoluteTimeConverterTests {
@@ -29,11 +30,15 @@ public class AbsoluteTimeConverterTests {
 	
 	
 	@BeforeEach
-	public static void beforeEach() {
+	public void beforeEach() {
+		timeInThreeMinutesAsISO = getISOString(getDate(MINUTES_UNTIL_ARRIVAL * MINUTES_TO_MS));
+	}
+	
+	private static String getISOString(Date d) {
 		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
 		df.setTimeZone(tz);
-		timeInThreeMinutesAsISO = df.format(getDate(MINUTES_UNTIL_ARRIVAL * MINUTES_TO_MS));
+		return df.format(d);
 	}
 
 	/**
@@ -55,4 +60,12 @@ public class AbsoluteTimeConverterTests {
 		assertTrue(timeInS >= expectedTimeInS - BUFFER_IN_S);
 		assertTrue(timeInS <= expectedTimeInS + BUFFER_IN_S);
 	}
+	
+	@Test 
+	public void testTimeConversionForIllegalTime() {
+		String illegalTimeString = getISOString(getDate((-1) * 3 * MINUTES_TO_MS));
+		assertTrue(AbsoluteTimeConverter.convertTimeToDouble(illegalTimeString) == JobConfiguration.DOUBLE_NOT_SET);
+	}
+
+	
 }
