@@ -8,7 +8,6 @@ import './VisualizationPageManager.scss';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailsComponent';
-import { Event } from './Event';
 import { BinaryTree } from '../view/BinaryTree';
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
