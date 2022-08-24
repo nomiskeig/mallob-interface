@@ -32,7 +32,7 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
     private static final String JOB_ID_KEY = "jobID";
     private static final String LOAD_KEY = "load";
 
-    private final ResponseBodyEmitter emitter;
+    private ResponseBodyEmitter emitter;
     private final JobDao jobDao;
     private final Buffer<Event> bufferedEvents;
 
@@ -54,7 +54,6 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
      */
     @Override
     public void processLine(String line) {
-        System.out.println("got new event");
         if (Event.isEvent(line)) {
             Event event = new Event(line);
 
@@ -80,12 +79,15 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
         jsonObject.put(JOB_ID_KEY, jobId);
         jsonObject.put(LOAD_KEY, loadInt);
 
-        try {
-            this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
-        } catch (IOException e) {
-            this.emitter.complete();
-            MallobOutput mallobOutput = MallobOutput.getInstance();
-            mallobOutput.removeOutputLogLineListener(this);
+        if (this.emitter != null) {
+            try {
+                this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
+            } catch (IOException e) {
+                this.emitter.complete();
+                this.emitter = null;
+                MallobOutput mallobOutput = MallobOutput.getInstance();
+                mallobOutput.removeOutputLogLineListener(this);
+            }
         }
     }
 
