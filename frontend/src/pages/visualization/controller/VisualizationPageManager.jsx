@@ -8,7 +8,6 @@ import './VisualizationPageManager.scss';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailsComponent';
-import { Event } from './Event';
 import { BinaryTree } from '../view/BinaryTree';
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
@@ -190,32 +189,6 @@ export class VisualizationPageManager extends React.Component {
 									ref={(el) => (this.#binaryTreeRef = el)}
 								></div>
 							</div>
-							<button
-								onClick={() => {
-									this.#jobStorage.reset();
-									this.#timeManager.setPaused(true);
-									this.#shouldUpdate = false;
-									let events = [];
-									for (let i = 0; i < 250; i += 1) {
-										events.push(new Event(null, i * 4, i, 4, 1));
-									}
-									this.#jobStorage.addEvents(events);
-								}}
-							>
-								Show tree
-							</button>
-
-							<button
-								onClick={() => {
-									let events = [];
-									for (let i = 8; i < 15; i += 1) {
-										events.push(new Event(null, i * 4, i, 4, 0));
-									}
-									this.#jobStorage.addEvents(events);
-								}}
-							>
-								Remove some vertices from the tree
-							</button>
 						</div>
 					</div>
 				</div>
