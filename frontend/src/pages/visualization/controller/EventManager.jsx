@@ -1,4 +1,3 @@
-import {TYPE_UNRECOVERABLE} from '../../../context/InfoContextProvider'
 /**
  * This class represents the base class for the more specific EventManagers.
  *
