@@ -4,6 +4,12 @@ import axios from 'axios';
 import isBefore from 'date-fns/isBefore';
 import isAfter from 'date-fns/isAfter';
 import isEqual from 'date-fns/isEqual';
+/**
+ * This class uses the Event-Stream provided by the API to provide the new Events.
+ *
+ * @extends EventManager
+ * @author Simon Giek
+ */
 export class StreamEventManager extends EventManager {
 	#stream;
 	#lastTimeReceived;
@@ -65,7 +71,7 @@ export class StreamEventManager extends EventManager {
 					this.events.push(newEvent);
 				}
 			} else {
-				// recover events if they get lost and no event is invoked for them, i do not know why that happens
+				// recover events if they get lost and no event is invoked for them
 				let newEvents = [];
 				let index = events.length - 2;
 				while (true) {
@@ -112,10 +118,7 @@ export class StreamEventManager extends EventManager {
 						event.jobID,
 						event.load
 					);
-					//if (isAfter(newEvent.getTime(), initialTime)) {
-
 					result.push(newEvent);
-					//}
 				});
 				return result;
 			})

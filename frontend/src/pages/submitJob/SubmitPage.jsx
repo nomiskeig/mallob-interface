@@ -36,8 +36,6 @@ const TOOLTIP_ENTER_DELAY = 1000;
 /**
  * Validates the given paramters.
  *
- * @param {[TODO:type]} parameters - [TODO:description]
- * @returns {[TODO:type]} [TODO:description]
  */
 function validateInput(parameters) {
 	let validateErrors = [];

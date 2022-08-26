@@ -2,7 +2,14 @@ import Two from 'two.js';
 import { VisualizationNode } from './VisualizationNode';
 import { CoordPair } from './CoordPair';
 import { VisualizationConnection } from './VisualizationConnection';
-export class Visualization {
+import {JobUpdateListener} from '../model/JobUpdateListener'
+/**
+ * This class displays the jobs.
+ *
+ * @extends JobUpdateListener
+ * @author Simon Giek
+ */
+export class Visualization extends JobUpdateListener {
 	#processes;
 	#two;
 	#jobStorage;
@@ -12,7 +19,17 @@ export class Visualization {
 	#hoveredRank;
 	#clickedRank = null;
 	#onClick;
+    /**
+     * The constructor.
+     *
+     * @param {HTMLElement} canvas - The element on which the visualization is rendered.
+     * @param {Method} update - The update method from the VisualizationPageManager.
+     * @param {int} processes - The amount of processes to display.
+     * @param {JobStorage} jobStorage - The instance of the jobStorage.
+     * @param {Method} onClick - The onClick method from the VisualizationPageManager.
+     */
 	constructor(canvas, update, processes, jobStorage, onClick) {
+        super();
 		this.#two = new Two({ fitted: true });
 		this.#two.appendTo(canvas);
 		this.#nodes = [];
@@ -93,6 +110,12 @@ export class Visualization {
 		this.#two.play();
 	}
 
+    /**
+     * Calculates the position of the given rank and returns it.
+     *
+     * @param {int} rank - The rank to get the position of.
+     * @returns {CoordPair} An instance of CoordPair with the coordinates.
+     */
 	#getCoords(rank) {
 		let margin = 10;
 		let distance = 40;
@@ -102,6 +125,11 @@ export class Visualization {
 		let yPos = 20 + distance * Math.floor(rank / perRow);
 		return new CoordPair(xPos, yPos);
 	}
+    /**
+     * Updates the visualization in such a way that the given rank is highlighted.
+     *
+     * @param {int} rank - The rank to highlight.
+     */
 	onHoverEnter(rank) {
 		if (this.#clickedRank !== null && this.#clickedRank !== rank) {
 			return;
@@ -147,6 +175,10 @@ export class Visualization {
 				}
 			});
 	}
+    /**
+     * Resets the highlighting.
+     *
+     */
 	onHoverLeave() {
 		if (this.#clickedRank) {
 			return;
@@ -253,6 +285,10 @@ export class Visualization {
 		this.#onClick(nodeClicked.getJobID(), nodeClicked.getTreeIndex());
 	}
 
+    /**
+     * Stops the instance of two.js.
+     *
+     */
 	stop() {
 		this.#two.pause();
 	}
