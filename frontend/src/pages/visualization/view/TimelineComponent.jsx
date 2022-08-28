@@ -3,7 +3,6 @@ import Slider from '@mui/material/Slider';
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
 import format from 'date-fns/format';
 import addMilliseconds from 'date-fns/addMilliseconds';
-import parseISO from 'date-fns/parseISO';
 import './TimelineComponent.scss';
 import { TYPE_WARNING } from '../../../context/InfoContextProvider';
 export class TimelineComponent extends React.Component {
@@ -31,7 +30,7 @@ export class TimelineComponent extends React.Component {
 			);
 			return text;
 		}
-		let startTime = parseISO(this.#context.settingsContext.settings.startTime);
+        let startTime = new Date(this.#context.settingsContext.settings.startTime);
 		let currentTime = this.#timeManager.isLive()
 			? this.#timeManager.getNextTime()
 			: new Date();

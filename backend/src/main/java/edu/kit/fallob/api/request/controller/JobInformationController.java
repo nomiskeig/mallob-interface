@@ -165,16 +165,26 @@ public class JobInformationController {
             List<File> files = jobDescriptions.getDescriptionFiles();
             List<String> description = new ArrayList<>();
             for (File file : files) {
+                StringBuilder stringBuilder = new StringBuilder();
                 try {
                     Scanner myReader = new Scanner(file);
-                    while (myReader.hasNextLine()) {
-                        description.add(myReader.nextLine());
+                    boolean hasNextLine = myReader.hasNextLine();
+                    while (hasNextLine) {
+                        String nextLine = myReader.nextLine();
+                        hasNextLine = myReader.hasNextLine();
+                        stringBuilder.append(nextLine);
+                        if (hasNextLine) {
+                            stringBuilder.append("\n");
+                        } else {
+                            break;
+                        }
                     }
                     myReader.close();
                 } catch (FileNotFoundException e) {
                     FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, FILE_CORRUPT);
                     return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
                 }
+                description.add(stringBuilder.toString());
             }
             return ResponseEntity.ok(new JobDescriptionResponse(description));
         }

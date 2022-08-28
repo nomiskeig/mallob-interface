@@ -19,7 +19,7 @@ export class StreamEventManager extends EventManager {
 		}
 	}
 
-	getNewEvents() {
+	getNewEvents(userContext) {
 		let nextTime = this.timeManager.getNextTime();
 		let newEvents = this.events.filter(
 			(event) =>
@@ -45,6 +45,7 @@ export class StreamEventManager extends EventManager {
 			process.env.REACT_APP_API_BASE_PATH + '/api/v1/events/eventStream',
 			true
 		);
+        this.#stream.setRequestHeader('Authorization', 'Bearer ' + userContext.user.token)
 		this.#stream.onprogress = (event) => {
 			let events = event.target.responseText.split('\n');
 			if (!this.#lastTimeReceived) {
@@ -58,6 +59,7 @@ export class StreamEventManager extends EventManager {
 					lastEvent.jobID,
 					lastEvent.load
 				);
+                console.log('first event', newEvent)
 				this.#lastTimeReceived = newEvent.getTime();
 				if (isAfter(newEvent.getTime(), initialTime)) {
 					this.events.push(newEvent);
@@ -68,6 +70,7 @@ export class StreamEventManager extends EventManager {
 				let index = events.length - 2;
 				while (true) {
 					let lastEvent = JSON.parse(events[index]);
+                    console.log('streamed a new event', lastEvent)
 					let date = new Date(lastEvent.time);
 					if (!isAfter(date, this.#lastTimeReceived)) {
 						break;
@@ -96,12 +99,12 @@ export class StreamEventManager extends EventManager {
 				'/api/v1/events/state?time=' +
 				initialTime.toISOString(),
 			headers: {
-				Authentication: 'Bearer ' + userContext.user.token,
+				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		})
 			.then((res) => {
 				let result = [];
-				res.data.forEach((event) => {
+				res.data.events.forEach((event) => {
 					let newEvent = new Event(
 						new Date(event.time),
 						event.rank,

@@ -1,11 +1,12 @@
 package edu.kit.fallob.api.request.stream;
 
 import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.Buffer;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.BufferFunction;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.springConfig.FallobException;
-import edu.kit.fallob.springConfig.FallobWarning;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
@@ -14,12 +15,15 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * the event listener for the event stream
  * it implements the OutputLogLineListener interface and gets registered as listener for the mallob log lines
  */
-public class EventStream implements OutputLogLineListener {
+public class EventStream implements OutputLogLineListener, BufferFunction<Event> {
+
     //output format for the time
     private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final String RANK_KEY = "rank";
@@ -28,8 +32,9 @@ public class EventStream implements OutputLogLineListener {
     private static final String JOB_ID_KEY = "jobID";
     private static final String LOAD_KEY = "load";
 
-    private final ResponseBodyEmitter emitter;
+    private ResponseBodyEmitter emitter;
     private final JobDao jobDao;
+    private final Buffer<Event> bufferedEvents;
 
     /**
      * constructor of the class
@@ -39,6 +44,7 @@ public class EventStream implements OutputLogLineListener {
     public EventStream(ResponseBodyEmitter emitter, JobDao jobDao) {
         this.emitter = emitter;
         this.jobDao = jobDao;
+        this.bufferedEvents = new Buffer<>(this);
     }
 
     /**
@@ -48,32 +54,58 @@ public class EventStream implements OutputLogLineListener {
      */
     @Override
     public void processLine(String line) {
-        System.out.println("got new event");
         if (Event.isEvent(line)) {
             Event event = new Event(line);
 
-            //convert the load boolean into an integer for the json object
-            int loadInt = event.isLoad() ? 1 : 0;
+            this.bufferedEvents.tryToExecuteBufferFunciton(event);
+        }
 
-            //convert the time into the right format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
-            ZonedDateTime timeWithZone = event.getTime().atZone(ZoneOffset.UTC);
+        //retry to send the buffered events
+        this.bufferedEvents.retryBufferedFunction();
+    }
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(RANK_KEY, event.getProcessID());
-            jsonObject.put(TREE_INDEX_KEY, event.getTreeIndex());
-            jsonObject.put(TIME_KEY, timeWithZone.format(formatter));
-            jsonObject.put(JOB_ID_KEY, event.getJobID());
-            jsonObject.put(LOAD_KEY, loadInt);
+    private void sendEvent(Event event, int jobId) {
+        //convert the load boolean into an integer for the json object
+        int loadInt = event.isLoad() ? 1 : 0;
 
+        //convert the time into the right format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        ZonedDateTime timeWithZone = event.getTime().atZone(ZoneOffset.UTC);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(RANK_KEY, event.getProcessID());
+        jsonObject.put(TREE_INDEX_KEY, event.getTreeIndex());
+        jsonObject.put(TIME_KEY, timeWithZone.format(formatter));
+        jsonObject.put(JOB_ID_KEY, jobId);
+        jsonObject.put(LOAD_KEY, loadInt);
+
+        if (this.emitter != null) {
             try {
                 this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
             } catch (IOException e) {
                 this.emitter.complete();
+                this.emitter = null;
                 MallobOutput mallobOutput = MallobOutput.getInstance();
                 mallobOutput.removeOutputLogLineListener(this);
             }
         }
+    }
+
+    @Override
+    public boolean bufferFunction(Event outputUpdate) {
+        int mallobId = outputUpdate.getMallobJobID();
+        int jobId = 0;
+        try {
+            jobId = this.jobDao.getJobIdByMallobId(mallobId);
+        } catch (FallobException e) {
+            System.out.println("An sql error occurred while accessing the database");
+        }
+
+        if (jobId > 0) {
+            this.sendEvent(outputUpdate, jobId);
+            return true;
+        }
+        return false;
     }
 }
 

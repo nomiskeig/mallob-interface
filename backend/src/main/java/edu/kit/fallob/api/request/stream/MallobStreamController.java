@@ -23,6 +23,14 @@ import java.io.IOException;
 @RequestMapping("/api/v1")
 public class MallobStreamController {
 
+    /**
+     * api endpoint for the custom log line stream
+     * is responsible for initializing a new line stream
+     * @param httpRequest is required to get information about the user
+     * @param request holds all the information that is necessary to open the stream
+     * @return a ResponseBodyEmitter with which data is continuously given back to the user
+     */
+    @GetMapping("/api/v1/system/logStream")
     public ResponseEntity<ResponseBodyEmitter> streamLogs(HttpServletRequest httpRequest, MallobStreamRequest request) {
         //TODO
         return null;
