@@ -9,14 +9,6 @@ test('is initialized correctly', () =>{
     expect(eventManager.timeManager).toBe(tm);
 })
 
-test('throws error if getNewEvents method is called', ()=>{
-    let eventManager = new EventManager();
-    expect(() => eventManager.getNewEvents()).toThrowError();
-})
-test('throws error if getSystemState method is called', ()=>{
-    let eventManager = new EventManager();
-    expect(() => eventManager.getSystemState()).toThrowError();
-})
 
 test('does not throw error if the closeStream method is called', () =>{
     let eventManager = new EventManager();

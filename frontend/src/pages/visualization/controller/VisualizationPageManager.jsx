@@ -129,7 +129,7 @@ export class VisualizationPageManager extends React.Component {
 			}
 			this.#timeLineComponent.update();
 			this.#globalStatsComponent.update();
-			this.#dektailsComponent.update();
+			this.#detailsComponent.update();
 			this.#timeManager.updateTime();
 		} catch (e) {
 			if (this.#shouldUpdate) {
