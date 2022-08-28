@@ -44,7 +44,7 @@ public class JobInformationController {
 
     private static final String USERNAME = "username";
 
-    private static final String FILE_CORRUPT = "Job is not active";
+    private static final String FILE_CORRUPT = "One of the files is corrupted or could not be parsed";
 
     /**
      * An GET endpoint for getting Information about a single job

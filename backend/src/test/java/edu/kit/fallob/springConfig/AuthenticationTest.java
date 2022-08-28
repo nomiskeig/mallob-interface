@@ -61,8 +61,10 @@ public class AuthenticationTest {
         authorities.add(UserType.NORMAL_USER);
         String token = jwtTokenUtil.generateToken(new User(username, password, authorities));
 
+
         long currentTime = System.currentTimeMillis();
         Assertions.assertNotNull(token);
+        Assertions.assertTrue(jwtTokenUtil.validateToken(token, new User(username, password, authorities)));
         // 30 days converted in ms
         long thirtyDayValidity = 5 * 60 * 60 * 100000;
         // asserts the token will expire at the calculated date in ms, accounting for an error of +-10s. (because of the time the system needs for calculations)

@@ -26,27 +26,45 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    private static final String AUTHORIZATION = "Authorization";
+
+    private static final String BEARER = "Bearer ";
+
+    private static final String CAN_NOT_GET_JWT = "Unable to get JWT Token";
+
+    private static final String JWT_EXPIRED = "JWT Token has expired";
+
+    private static final String BEARER_WARNING = "JWT Token does not begin with Bearer String";
+
+    private static final int FORBIDDEN_CODE = 403;
+
+    private static final String USERNAME = "username";
+
+    private static final String AUTHORITY = "authority";
+
+    private static final int INDEX_BEARER = 7;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String requestTokenHeader = request.getHeader("Authorization");
+        final String requestTokenHeader = request.getHeader(AUTHORIZATION);
 
         String username = null;
         String jwtToken = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
         // only the Token
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+        if (requestTokenHeader != null && requestTokenHeader.startsWith(BEARER)) {
+            jwtToken = requestTokenHeader.substring(INDEX_BEARER);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
+                System.out.println(CAN_NOT_GET_JWT);
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
+                System.out.println(JWT_EXPIRED);
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+            logger.warn(BEARER_WARNING);
         }
 
         // Once we get the token validate it.
@@ -55,7 +73,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
             } catch (UsernameNotFoundException exception) {
-                response.setStatus(403);
+                response.setStatus(FORBIDDEN_CODE);
             }
 
             // if token is valid configure Spring Security to manually set authentication
@@ -70,8 +88,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // Spring Security Configurations successfully.
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
-                request.setAttribute("username", username);
-                request.setAttribute("authority", userDetails.getAuthorities().toString());
+                request.setAttribute(USERNAME, username);
+                request.setAttribute(AUTHORITY, userDetails.getAuthorities().toString());
             }
         }
         chain.doFilter(request, response);

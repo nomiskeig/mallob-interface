@@ -2,13 +2,13 @@ package edu.kit.fallob.api.request.controller;
 
 public class JwtResponse {
 
-    private final String JwtToken;
+    private final String jwtToken;
 
     public JwtResponse(String jwtToken) {
-        JwtToken = jwtToken;
+        this.jwtToken = jwtToken;
     }
 
     public String getToken() {
-        return JwtToken;
+        return jwtToken;
     }
 }

@@ -68,7 +68,7 @@ public class JobSubmitController {
         return getInclusiveCommandResponse(request, username, jobDescription);
     }
 
-    private ResponseEntity<Object> getInclusiveCommandResponse(@RequestBody SubmitJobRequest request, String username, JobDescription jobDescription) {
+    private ResponseEntity<Object> getInclusiveCommandResponse(SubmitJobRequest request, String username, JobDescription jobDescription) {
         int jobId;
         try {
             jobId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
