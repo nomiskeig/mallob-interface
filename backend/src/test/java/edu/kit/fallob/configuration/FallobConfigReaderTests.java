@@ -52,6 +52,8 @@ public class FallobConfigReaderTests {
 	public static final String DB_USERNAME = "dbusername";
 	
 	public static final String DB_PW = "dbpw";
+    public static final int READING_INTERVAL = 50;
+    public static final int AMOUNT_READERS =2;
 	
 	private static String fileContent;
 	private static FallobConfiguration fconfig;
@@ -91,6 +93,12 @@ public class FallobConfigReaderTests {
 		database.put("databasePassword", DB_PW);
 		o.put("database", database);
 
+
+        JSONObject readerSetup = new JSONObject();
+        readerSetup.put("readingIntervalPerReadingThread",READING_INTERVAL);
+        readerSetup.put("amountReaderThreads", AMOUNT_READERS);
+        o.put("readerSetup", readerSetup);
+
 		return o;
 	}
 	
@@ -116,6 +124,8 @@ public class FallobConfigReaderTests {
 		}
 		
 		assertTrue(fconfig.getDatabaseBasePath().equals(DATABASE_BASE_PATH));
+        assertTrue(fconfig.getAmountReaderThreads() == AMOUNT_READERS);
+        assertTrue(fconfig.getReadingIntervalPerReadingThread() == READING_INTERVAL);
 	}
 	
 	
