@@ -1,5 +1,7 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
+import java.time.LocalDateTime;
+
 import edu.kit.fallob.database.WarningDao;
 import edu.kit.fallob.mallobio.outputupdates.Warning;
 import edu.kit.fallob.springConfig.FallobException;
@@ -22,7 +24,7 @@ public class WarningListener implements OutputLogLineListener {
 	public void processLine(String line) {
 		if (Warning.isWarning(line)) {
 			try {
-				warningDao.save(new Warning(line));
+				warningDao.save(new Warning(line, LocalDateTime.now()));
 			} catch (FallobException e) {
 				System.out.println(e.getMessage());
 			}

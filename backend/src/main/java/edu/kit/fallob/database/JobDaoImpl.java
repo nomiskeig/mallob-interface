@@ -720,6 +720,9 @@ public class JobDaoImpl implements JobDao{
             Integer integer = (Integer) java.lang.reflect.Array.get(arrayObject, i);
             integers[i] = integer;
         }
+        if (integers[0] == null) {
+        	return null;
+        }
         return integers;
     }
 
@@ -732,6 +735,9 @@ public class JobDaoImpl implements JobDao{
         for (int i = 0; i < arrayLength - 1; i++) {
             String string = (String) java.lang.reflect.Array.get(arrayObject, i);
             strings[i] = string;
+        }
+        if (strings[0] == null) {
+        	return null;
         }
         return strings;
     }

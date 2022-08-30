@@ -1,5 +1,6 @@
 package edu.kit.fallob.commands;
 
+import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.dataobjects.ResultMetaData;
 import org.springframework.http.HttpStatus;
 
@@ -35,6 +36,9 @@ public class JobPendingCommand {
 	public ResultMetaData waitForJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+		}
+		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
 		}
 		//get mallobID
 		int mallobID = jobDao.getMallobIdByJobId(jobID);
