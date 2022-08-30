@@ -22,4 +22,4 @@ services:
           target: ${WORKING_DIR} 
         - type: bind
           source: ${MALLOB_DIR}
-          target: /app/mallobDir/
+          target: ${MALLOB_DIR} 
