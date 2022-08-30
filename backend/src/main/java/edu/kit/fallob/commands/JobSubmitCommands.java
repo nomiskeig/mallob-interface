@@ -78,6 +78,8 @@ public class JobSubmitCommands {
 //		}
 		formatConfiguration(username, jobConfiguration);
 
+       System.out.println("additionalParams:");
+        System.out.println(jobConfiguration.getAdditionalParameter());
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);

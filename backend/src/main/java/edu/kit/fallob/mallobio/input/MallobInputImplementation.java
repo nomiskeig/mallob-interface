@@ -112,6 +112,8 @@ public class MallobInputImplementation implements MallobInput {
 		if (jobConfiguration.getAdditionalParameter() != JobConfiguration.OBJECT_NOT_SET) {
 			json = addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
 		}
+        System.out.println("final json");
+        System.out.println(json);
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
@@ -221,10 +223,13 @@ public class MallobInputImplementation implements MallobInput {
 	 */
 	private String addAdditionalParameters(String additionalParameter, String json) {
 		//remove json-closing bracket 
-		String newJson = json.toString().substring(0, json.length());
+		String newJson = json.toString().substring(0, json.length()- 1);
 		
+        System.out.println("additionalParameter");
+        System.out.println(additionalParameter);
 		//add additional-parameter tag 
-		return newJson += "," + additionalParameter + "}";
+        String trimmedParameter = additionalParameter.substring(1, additionalParameter.length() -1);
+		return newJson += "," + trimmedParameter + "}";
 	}
 
 

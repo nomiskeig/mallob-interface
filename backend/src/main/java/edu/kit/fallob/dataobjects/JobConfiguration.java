@@ -1,6 +1,8 @@
 package edu.kit.fallob.dataobjects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class JobConfiguration {
@@ -44,6 +46,8 @@ public class JobConfiguration {
 	private boolean done;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationNeverFilter.class)
 	private int descriptionID;
+    @JsonRawValue
+    @JsonProperty("additionalConfig")
     @JsonInclude(Include.NON_NULL)
 	private String additionalParameter;
 
