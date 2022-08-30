@@ -13,7 +13,7 @@
     "defaults": {
         "priority": 1.0,
         "wallclockLimit": "1",
-        "contentMode": "raw"
+        "contentMode": "text"
         },
     "paths": {
         "databaseBasePath": "",
@@ -27,6 +27,6 @@
         },
     "readerSetup" : {
         "readingIntervalPerReadingThread" : 50,
-        "amountReaderThreads" : 5
+        "amountReaderThreads" : 2
     }
 }
