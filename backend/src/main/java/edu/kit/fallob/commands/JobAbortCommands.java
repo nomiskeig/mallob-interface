@@ -42,7 +42,7 @@ public class JobAbortCommands {
 			System.out.println(e.getMessage());
 		}
 
-		
+		mallobInput = MallobInputImplementation.getInstance();
 	}
 	
 	
