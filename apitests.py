@@ -20,29 +20,30 @@ BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + "
 print("Base-URL for API requests : "  + str(BASE_URL))
 SHOW_ALL_TESTS = "showAllTests"
 SETTOKEN = "setToken"
-AVAILABLE_TESTS = ["register (T1000)", "login (T1010)", "submitJobInternalDescription (T2021)", "submitDescription", "getSINGLEJobInformation (T1070)"]
+AVAILABLE_TESTS = ["register (T1000)", "login (T1010)", "submitJobInternalDescription (T2021)", "submitDescription", 
+    "get (Single, All, Global, Multiple)-JobInformation (T1070)"]
 
 #these are variabls, which are being set at runtime
 #holds the current authentication-token
 CURRENT_ACTIVE_TOKEN = None
-LATEST_SAVED_JOB_ID = -1
+LATEST_SAVED_JOB_ID = None
 
 
 #---------------test-cases
 REGISTER = "T1000"
 LOGIN = "T1010"
 JOBSUBMIT_INCLUDE = "T1021"
-GET_SINGLE_JOB_INFO = "T1070"
+GET_JOB_INFO = "T1070"
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
                 JOBSUBMIT_INCLUDE : "/api/v1/jobs/submit/inclusive",
-                GET_SINGLE_JOB_INFO : "/api/v1/jobs/info/single/"}
+                GET_JOB_INFO : "/api/v1/jobs/info"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
                 JOBSUBMIT_INCLUDE : True,
-                GET_SINGLE_JOB_INFO : True
+                GET_JOB_INFO : True
 }
 
 
@@ -58,14 +59,14 @@ def setAfterRequestFuncitons():
         REGISTER : noFunction,
         LOGIN : afterLogin,
         JOBSUBMIT_INCLUDE : afterJobInclude,
-        GET_SINGLE_JOB_INFO : printResponse
+        GET_JOB_INFO : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
         REGISTER : register_help,
         LOGIN : login_help,
         JOBSUBMIT_INCLUDE : submitJob_descriptionIncluded_help,
-        GET_SINGLE_JOB_INFO : getSingleJobInfo_help
+        GET_JOB_INFO : getJobInfo_help
     }
 
 
@@ -167,26 +168,52 @@ def afterJobInclude(request):
 #----------------------------------------------------------------T1070 Get single job-information -------------------------------
 
 
-def getSingleJobInfo_help():
-    getSingleJobInfo_help_text = """
+def getJobInfo_help():
+    getJobInfo_help_text = """
         ------------------------------Get information of a single job - API - Test----------------------------------------
 
-        1. Function
-            Tries to get the information of a single job
+        1. Function  + Usage 
+            Tries to get the information of a job (or multiple)
+            The path sepcified for this test is only api/v1/jobs/info
+
+            You actually have to specify in [arg2] what kind of request you want. Possible values :
+            [arg2] == /all or [arg2] == /global or [arg2] == /single/(id)
+
+            Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
+            to a json-body [arg2]. Because in this case you are requesting multiple job-informations. See API-Spec.
+
+            If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
+            If you don't the LATEST_SAVED_JOB_ID is used.
         
-        2. Usage 
-            This test can work 2 ways. If you provide a job ID in [arg2], the test will ues this one. If not
-            it will use the job-ID stored in LATEST_SAVED_JOB_ID
+        
 
         3. Response
             The test will print the json-body as a response. 
         """
-    print(getSingleJobInfo_help_text)
+    print(getJobInfo_help_text)
 #------------------------------------------------------API, main, and other helping methods 
 
 
-def generalGetRequest(testCase):
-    pass
+def generalGetRequest(testCase, parameter, parameterPossible):
+    url = BASE_URL + URL_MAPPINGS.get(testCase)
+    hasBody = False
+    if exists(commandLineArguments[ARG_2]):
+        #in this case [arg2] was a filepath to a json body and the url is done already
+        hasBody = True
+    else:
+        url += commandLineArguments[ARG_2]
+        if parameterPossible:
+            if len(commandLineArguments) > 1:
+                url += str(commandLineArguments[ARG_3])
+            else:
+                url += str(parameter)
+
+    if (hasBody):
+        r = requests.get(url, json=readFileAsPythonDict(commandLineArguments[ARG_2], headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)}))
+    else:
+        r = requests.get(url, headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)})
+    
+    printResponse(r)
 
 """
     This method performs a general post request to an API
@@ -332,6 +359,8 @@ def executeTestCase(testCaseIdentifier):
         generalPostRequest(LOGIN)
     elif testCaseIdentifier == JOBSUBMIT_INCLUDE:
         generalPostRequest(JOBSUBMIT_INCLUDE)
+    elif testCaseIdentifier == GET_JOB_INFO:
+        generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
     else:
         print("Seems like the Test-case given has not yet been implemented, or is just wrong all together.")
         printHelp()
@@ -392,6 +421,7 @@ def main():
 
         if commandLineArguments[ARG_1] == "runTestsFromFile":
             runTestsFromFile()
+            continue
 
         executeRunLoop()
 
