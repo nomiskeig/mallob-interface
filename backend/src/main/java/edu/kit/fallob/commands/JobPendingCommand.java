@@ -1,5 +1,6 @@
 package edu.kit.fallob.commands;
 
+import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.dataobjects.ResultMetaData;
 import org.springframework.http.HttpStatus;
 
@@ -16,6 +17,7 @@ public class JobPendingCommand {
 	private MallobOutput mallobOutput;
 	private DaoFactory daoFactory;
 	private UserActionAuthentificater uaa;
+	private JobDao jobDao;
 	
 	
 	
@@ -24,25 +26,30 @@ public class JobPendingCommand {
 		try {
 			daoFactory = new DaoFactory();
 			uaa = new UserActionAuthentificater(daoFactory);
+			mallobOutput = MallobOutput.getInstance();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
+		jobDao = daoFactory.getJobDao();
 	}
 	
 	public ResultMetaData waitForJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
+		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+		}
 		//get mallobID
-		int mallobID = 0;
+		int mallobID = jobDao.getMallobIdByJobId(jobID);
 		JobListener jobListener = new JobListener(mallobID);
 		mallobOutput.addOutputLogLineListener(jobListener);
 		jobListener.waitForJob();
 		mallobOutput.removeOutputLogLineListener(jobListener);
 
 		//TODO Temporary fix from kalo (need an ResultMetaData-Object of the job the user is waiting for)
-		return null;
+		
+		return jobDao.getJobInformation(jobID).getResultMetaData();
 	}
 
 }

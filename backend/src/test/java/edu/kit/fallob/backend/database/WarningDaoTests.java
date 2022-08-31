@@ -14,11 +14,12 @@ import org.mockito.Mockito;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class WarningDaoTests {
-    private static final String TEST_LOG_LINE = "Test warning";
-    private static final String SECOND_TEST_LOG_LINE = "Second Test warning";
+    private static final String TEST_LOG_LINE = "123.123 2 [WARN] Test warning";
+    private static final String SECOND_TEST_LOG_LINE = "123.123 2 [WARN] Second Test warning";
 
     private String databasePath;
     private Connection connection;
@@ -54,8 +55,10 @@ public class WarningDaoTests {
 
     @Test
     public void testSaveAndGetMultiple() throws FallobException {
-        Warning testWarning1 = new Warning(TEST_LOG_LINE);
-        Warning testWarning2 = new Warning(SECOND_TEST_LOG_LINE);
+    	LocalDateTime now1 = LocalDateTime.now();
+    	LocalDateTime now2 = LocalDateTime.now();
+        Warning testWarning1 = new Warning(TEST_LOG_LINE, now1);
+        Warning testWarning2 = new Warning(SECOND_TEST_LOG_LINE, now2);
 
         this.warningDao.save(testWarning1);
         this.warningDao.save(testWarning2);
@@ -95,7 +98,7 @@ public class WarningDaoTests {
 
         this.warningDao.save(testWarning1);
         Thread.sleep(1000);
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.now(ZoneOffset.UTC);
         Thread.sleep(1000);
         this.warningDao.save(testWarning2);
 

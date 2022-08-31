@@ -3,7 +3,7 @@ package edu.kit.fallob.mallobio.output;
 import edu.kit.fallob.mallobio.output.distributors.ResultObjectDistributor;
 import edu.kit.fallob.mallobio.outputupdates.ResultAvailableObject;
 
-
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -27,7 +27,7 @@ import java.nio.file.WatchService;
  */
 public class MallobClientOutputWatcher implements Runnable {
 	
-	private String pathToMallobDirectory;
+	private String pathToOutputDirectory;
 		
 	private ResultObjectDistributor distributor;
 		
@@ -36,19 +36,42 @@ public class MallobClientOutputWatcher implements Runnable {
 	private boolean isWatching;
 	
 	
-	
+	public MallobClientOutputWatcher(String pathToMallobDirectory, String expectedResultName, ResultObjectDistributor dist) {
+		this.pathToOutputDirectory = pathToMallobDirectory;
+		this.expectedResultName = expectedResultName;
+		this.distributor = dist;
+		setupClientOutputWatcher();
+	}
 	
 	public MallobClientOutputWatcher(String pathToMallobDirectory, String expectedResultName) {
-		setupClientOutputWatcher(pathToMallobDirectory);
+		this.pathToOutputDirectory = pathToMallobDirectory;
 		this.expectedResultName = expectedResultName;
+		setupClientOutputWatcher();
 	}
 	
 	
-	private void setupClientOutputWatcher(String pathToMallobDirectory) {
-		this.pathToMallobDirectory = pathToMallobDirectory;
+	private void setupClientOutputWatcher() {
 		retreivedResult = false;
 		isWatching = false;
-		//scanInitialFiles();
+		scanInitialFiles();
+	}
+	
+	/**
+	 * Scan the directory this watcher is supposed to watch for the file it is looking for.
+	 * If this is the case this file is not going to be created, and therefore the watcher can pick up the file now, distribute it 
+	 * and close the thread immediately
+	 */
+	private void scanInitialFiles() {
+		File folder = new File(pathToOutputDirectory);
+		for (File file : folder.listFiles()) {
+	        if (file.isDirectory()) {
+	            continue;
+	        }
+	        if (file.getName().equals(expectedResultName)) {
+	        	this.pushResultObject(this.generateResultObject());
+	        	this.retreivedResult = true;
+	        }
+	    }
 	}
 	
 	/**
@@ -76,12 +99,16 @@ public class MallobClientOutputWatcher implements Runnable {
 		        Path filename = ev.context();
 		        		        
 				if (isResult(filename.toString())){
-			        this.pushResultObject(new ResultAvailableObject(this.pathToMallobDirectory + filename.toString()));
+			        this.pushResultObject(generateResultObject());
 			        retreivedResult = true;
 				}
 			}
 		}
 		
+	}
+	
+	private ResultAvailableObject generateResultObject() {
+		return new ResultAvailableObject(this.pathToOutputDirectory + this.expectedResultName);
 	}
 	
 	
@@ -107,7 +134,7 @@ public class MallobClientOutputWatcher implements Runnable {
 	 */
 	private WatchService getWatcher() throws IOException {
 		//setup watcher 
-		Path dir = Paths.get(pathToMallobDirectory);
+		Path dir = Paths.get(pathToOutputDirectory);
 		WatchService watcher = FileSystems.getDefault().newWatchService();
 		try {
 			dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE);

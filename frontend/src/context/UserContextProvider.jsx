@@ -19,6 +19,7 @@ export function UserContextProvider({ children }) {
 		role: token ? payload.role : '',
 		username: token ? payload.username : '',
 		isLoaded: token ? true : false,
+        isVerified: token ? payload.verified : false,
 	});
 
 	async function logout() {
@@ -28,6 +29,7 @@ export function UserContextProvider({ children }) {
 			role: '',
 			username: '',
 			isLoaded: false,
+            isVerified: false
 		});
 	}
 
@@ -41,12 +43,38 @@ export function UserContextProvider({ children }) {
 			role: payload.role,
 			username: payload.username,
 			isLoaded: true,
+            isVerified: payload.verified
 		});
-        console.log(user.username);
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);
-		return decoded;
+        console.log('decoded', decoded)
+
+
+        if (!decoded) {
+            return null;
+        }
+
+        let payload = {
+            username: decoded.sub
+        }
+        let authorities = decoded.authorities;
+        authorities = authorities.substring(1, authorities.length -1);
+        authorities = authorities.split(', ')
+        if (authorities[1] === 'Verified') {
+            payload['verified'] = true;
+            decoded.verified = true;
+        } else {
+            decoded.verified = false;
+            payload['verified'] = false;
+        }
+        if (authorities[0] === 'NORMAL_USER') {
+            payload['role'] = ROLE_USER;
+        } else {
+            payload['role'] = ROLE_ADMIN
+        }
+
+		return payload;
 	}
 
 	return (

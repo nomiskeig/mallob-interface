@@ -8,7 +8,6 @@ import './VisualizationPageManager.scss';
 import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailsComponent';
-import { Event } from './Event';
 import { BinaryTree } from '../view/BinaryTree';
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
@@ -26,10 +25,11 @@ export class VisualizationPageManager extends React.Component {
 	#binaryTreeRef;
 	#showDetailsPanel;
 	constructor(props) {
+
 		super(props);
+		this.#context = props.context;
 		this.#timeManager = new TimeManager();
 		this.#eventManager = new StreamEventManager(this.#timeManager);
-		this.#context = props.context;
 		this.#jobStorage = new JobStorage(this.#context);
 		this.#visualizationRef = React.createRef();
 		this.#binaryTreeRef = React.createRef();
@@ -146,7 +146,7 @@ export class VisualizationPageManager extends React.Component {
 
 	render() {
 		return (
-			<div className='pageContainer'>
+			<div className='visPageContainer'>
 				<div className='row g-0'>
 					<div
 						className={`col-12 col-md-${
@@ -189,32 +189,6 @@ export class VisualizationPageManager extends React.Component {
 									ref={(el) => (this.#binaryTreeRef = el)}
 								></div>
 							</div>
-							<button
-								onClick={() => {
-									this.#jobStorage.reset();
-									this.#timeManager.setPaused(true);
-									this.#shouldUpdate = false;
-									let events = [];
-									for (let i = 0; i < 250; i += 1) {
-										events.push(new Event(null, i * 4, i, 4, 1));
-									}
-									this.#jobStorage.addEvents(events);
-								}}
-							>
-								Show tree
-							</button>
-
-							<button
-								onClick={() => {
-									let events = [];
-									for (let i = 8; i < 15; i += 1) {
-										events.push(new Event(null, i * 4, i, 4, 0));
-									}
-									this.#jobStorage.addEvents(events);
-								}}
-							>
-								Remove some vertices from the tree
-							</button>
 						</div>
 					</div>
 				</div>

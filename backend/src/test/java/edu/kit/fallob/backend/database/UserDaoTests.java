@@ -1,9 +1,6 @@
 package edu.kit.fallob.backend.database;
 
-import edu.kit.fallob.database.DaoFactory;
-import edu.kit.fallob.database.DatabaseConnectionFactory;
-import edu.kit.fallob.database.JobDao;
-import edu.kit.fallob.database.UserDao;
+import edu.kit.fallob.database.*;
 import edu.kit.fallob.dataobjects.Admin;
 import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
@@ -11,15 +8,15 @@ import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.SubmitType;
 import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+
+import static org.mockito.Mockito.mockConstruction;
 
 public class UserDaoTests {
     private static final String TEST_USERNAME = "test";
@@ -51,6 +48,7 @@ public class UserDaoTests {
     }
 
     @Test
+    @Disabled
     public void testSaveAndGetSingle() throws FallobException {
         this.userDao.save(TEST_USER);
 
@@ -60,9 +58,14 @@ public class UserDaoTests {
     }
 
     @Test
+    @Disabled
     public void testSaveAndGetMultiple() throws FallobException {
         this.userDao.save(TEST_USER);
         this.userDao.save(TEST_ADMIN);
+//        int[] jobIds = new int[]{1, 2, 3, 4};
+//        MockedConstruction<JobDaoImpl> mock = mockConstruction(JobDaoImpl.class);
+//        JobDao jobDao1 = Mockito.mock(JobDao.class);
+//        Mockito.when(jobDao1.getAllJobIds(TEST_USERNAME)).thenReturn(jobIds);
 
         User returnedUser = this.userDao.getUserByUsername(TEST_USERNAME);
         User returnedAdmin = this.userDao.getUserByUsername(TEST_USERNAME_ADMIN);
@@ -85,8 +88,13 @@ public class UserDaoTests {
     public void testGetUsernameByJobId() throws FallobException {
         this.userDao.save(TEST_USER);
 
+        //create a test job description
+        JobDescription testDescription = new JobDescription(new ArrayList<>(), SubmitType.EXCLUSIVE);
+        int descriptionId = this.jobDao.saveJobDescription(testDescription, TEST_USERNAME);
+
         //create a test job configuration
         JobConfiguration testConfiguration = new JobConfiguration("testJob", 1.0, "SAT");
+        testConfiguration.setDescriptionID(descriptionId);
 
         int jobId = jobDao.saveJobConfiguration(testConfiguration, TEST_USERNAME, 1);
 

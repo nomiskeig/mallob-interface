@@ -1,5 +1,6 @@
 package edu.kit.fallob.mallobio.output;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
@@ -12,8 +13,8 @@ public class MallobOutputWatcherManager {
 	private ResultObjectDistributor resultDistributor;
 	
 	
-	private List<MallobClientOutputWatcher> watchers;
-	private List<Thread> watcherThreads;
+	private List<MallobClientOutputWatcher> watchers = new ArrayList<>();
+	private List<Thread> watcherThreads = new ArrayList<>();
 	
 	
 	public static MallobOutputWatcherManager getInstance() {
@@ -27,8 +28,14 @@ public class MallobOutputWatcherManager {
 	private MallobOutputWatcherManager() {}
 
 	
-
+	/**
+	 * Sets the result distributor to resultDistributor for all watchers being created from this point 
+	 * @param resultDistributor
+	 */
 	public void setResultDistributor(ResultObjectDistributor resultDistributor) {
+		if (resultDistributor == null) {
+			throw new NullPointerException("Cannot set result distributor to null.");
+		}
 		this.resultDistributor = resultDistributor;
 	}
 	
@@ -51,11 +58,8 @@ public class MallobOutputWatcherManager {
 		String pathToOutputDirectpory = 
 				MallobFilePathGenerator.generateOutDirectoryPath(clientProcessID, (FallobConfiguration.getInstance()).getMallobBasePath());
 		String expectedResultName = MallobFilePathGenerator.generateResultName(jobName, userName);
-		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName);
-		watcher.setDistributor(resultDistributor);
+		MallobClientOutputWatcher watcher = new MallobClientOutputWatcher(pathToOutputDirectpory, expectedResultName, resultDistributor);
 		watchers.add(watcher);
-		
-		
 		startWatcherThread(watcher);
 	}
 
