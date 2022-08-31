@@ -51,7 +51,7 @@ public class BackendApplication {
 		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
 		Thread garbageCollectorThread = new Thread(garbageCollector);
 		garbageCollectorThread.start();
-		
+
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
 		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 

@@ -188,7 +188,7 @@ public class JobDaoImpl implements JobDao{
 
         //remove the descriptionFiles from the filesystem
         String path = this.configuration.getDescriptionsbasePath();
-        String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId);
+        String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId + NAME_SEPARATOR);
 
         FileHandler.deleteFilesByRegex(path, regex);
     }
