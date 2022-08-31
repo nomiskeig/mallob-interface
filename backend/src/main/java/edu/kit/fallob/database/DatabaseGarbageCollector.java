@@ -4,6 +4,7 @@ import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.springConfig.FallobException;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * class that is responsible for removing the old entries from the database and the filesysten
@@ -64,7 +65,7 @@ public class DatabaseGarbageCollector implements Runnable{
     private void removeOldJobConfigurations() {
         JobDao jobDao = this.daoFactory.getJobDao();
         long storageTime = this.configuration.getJobStorageTime();
-        LocalDateTime deletionTime = LocalDateTime.now().minusHours(storageTime);
+        LocalDateTime deletionTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(storageTime);
 
         try {
             jobDao.removeAllJobsBeforeTime(deletionTime);
@@ -96,7 +97,7 @@ public class DatabaseGarbageCollector implements Runnable{
     private void removeOldEvents() {
         EventDao eventDao = this.daoFactory.getEventDao();
         long storageTime = this.configuration.getEventStorageTime();
-        LocalDateTime deletionTime = LocalDateTime.now().minusHours(storageTime);
+        LocalDateTime deletionTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(storageTime);
 
         try {
             eventDao.removeEventsBeforeTime(deletionTime);
@@ -111,7 +112,7 @@ public class DatabaseGarbageCollector implements Runnable{
     private void removeOldWarnings() {
         WarningDao warningDao = this.daoFactory.getWarningDao();
         long storageTime = this.configuration.getWarningStorageTime();
-        LocalDateTime deletionTime = LocalDateTime.now().minusHours(storageTime);
+        LocalDateTime deletionTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(storageTime);
 
         try {
             warningDao.removeAllWarningsBeforeTime(deletionTime);
