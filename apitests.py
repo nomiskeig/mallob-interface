@@ -6,8 +6,6 @@ from urllib.request import Request, urlopen
 import socket
 import json
 
-#runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
-#runTestsFromFile /home/siwi/pse_dev/filesForTesting/submitJob_exclude.txt
 
 #This class is purely cosmetical
 class bcolors:
@@ -56,10 +54,9 @@ GET_JOB_INFO = "T1070"
 SUBMIT_DESCRIPTION = "T1019"
 DOWNLOAD_DESCRIPTION = "T2022"
 SUBMIT_JOB_EXTERNAL = "T1020"
-
+CANCEL_JOB = "T1030"
 
 #not yet implemented
-CANCEL_JOB = "T1030"
 GET_RESULT = "T1080"
 GET_SYSTEM_CONFIG = "T1120"
 GET_MALLOB_INFO = "T1100"
@@ -70,7 +67,8 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 GET_JOB_INFO : "/api/v1/jobs/info",
                 SUBMIT_DESCRIPTION : "/api/v1/jobs/submit/exclusive/description",
                 DOWNLOAD_DESCRIPTION : "/api/v1/jobs/description",
-                SUBMIT_JOB_EXTERNAL : "/api/v1/jobs/submit/exclusive/config"}
+                SUBMIT_JOB_EXTERNAL : "/api/v1/jobs/submit/exclusive/config",
+                CANCEL_JOB : "/api/v1/jobs/cancel"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
@@ -78,7 +76,8 @@ AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 GET_JOB_INFO : True,
                 SUBMIT_DESCRIPTION : True,
                 DOWNLOAD_DESCRIPTION : True,
-                SUBMIT_JOB_EXTERNAL : True
+                SUBMIT_JOB_EXTERNAL : True,
+                CANCEL_JOB : True
 }
 
 
@@ -97,7 +96,8 @@ def setAfterRequestFuncitons():
         GET_JOB_INFO : printResponse,
         SUBMIT_DESCRIPTION : afterDescriptionUpload,
         DOWNLOAD_DESCRIPTION : printResponse,
-        SUBMIT_JOB_EXTERNAL : afterJobInclude
+        SUBMIT_JOB_EXTERNAL : afterJobInclude,
+        CANCEL_JOB : noFunction
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -107,7 +107,8 @@ def setAfterRequestFuncitons():
         GET_JOB_INFO : getJobInfo_help,
         SUBMIT_DESCRIPTION : descriptionUpload_help,
         DOWNLOAD_DESCRIPTION : downloadDescription_help,
-        SUBMIT_JOB_EXTERNAL : submitJob_descriptionExcluded_help
+        SUBMIT_JOB_EXTERNAL : submitJob_descriptionExcluded_help,
+        CANCEL_JOB : cancel_job_help
     }
 
 
@@ -317,6 +318,29 @@ def submitJob_descriptionExcluded_help():
     """
     print(submitJob_descriptionIncluded_help_text)
 
+def cancel_job_help():
+    cancel_job_help_text = """
+        ------------------------------Cancel Job - API - Test----------------------------------------
+
+        1. Function
+            Tries to cancel a job
+        
+        2. Usage 
+            [arg2] == filePath to the .json file containing the body, if you want to cancel multiple jobs
+            If you want to cancel only one, or all jobs, 
+            set [arg2] == "/all", or "/single/(id)"
+
+            Cancel a single job
+
+            If you cancle a single job you can either set [arg3] == id, or you don't. In the case of no 
+            [arg3] given, the job-ID stored in LAST_SAVED_JOB_ID is candelled.
+        
+
+        3. Response
+            In case of a single job-cancellation, only a status-code is printed. 
+            In case of all, or some job-cancellations the answer is printed.
+    """
+    print(cancel_job_help_text)
 #------------------------------------------------------submitting a job with external description needed and extra method...
 def submit_job_external(testCase):
     filePath = commandLineArguments[ARG_2]
@@ -339,7 +363,24 @@ def submit_job_external(testCase):
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
         afterFunction(r)
 
+def cancelJob(testCase):
+    filePath = commandLineArguments[ARG_2]
+    url = BASE_URL + URL_MAPPINGS.get(testCase)
 
+    #build url
+    if not exists(commandLineArguments[ARG_2]): # multiple jobs are about to be canceled
+        url += commandLineArguments[ARG_2]
+        if commandLineArguments[ARG_2] != "/all":
+            #only a single job is cancelled
+            if len(commandLineArguments) > 2:
+                url += commandLineArguments[ARG_3]
+            else:
+                url += str(LATEST_SAVED_JOB_ID) 
+        r = requests.post(url, headers=HEADER)
+    else:
+        r = requests.post(url, json=readFileAsPythonDict(filePath), headers=HEADER)
+    printWarning("Response-Statuscode : " + str(r.status_code))
+    printResponse(r)
     
 #------------------------------------------------------API, main, and other helping methods 
 #runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
@@ -574,6 +615,8 @@ def executeTestCase(testCaseIdentifier):
         multiPartFileRequest(SUBMIT_DESCRIPTION)
     elif testCaseIdentifier == SUBMIT_JOB_EXTERNAL:
         submit_job_external(SUBMIT_JOB_EXTERNAL)
+    elif testCaseIdentifier == CANCEL_JOB:
+        cancelJob(CANCEL_JOB)
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
         generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
