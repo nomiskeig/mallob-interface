@@ -41,6 +41,7 @@ AVAILABLE_TESTS = ["register (T1000)", "login (T1010)",  "submitDescription (T10
 #holds the current authentication-token
 CURRENT_ACTIVE_TOKEN = None
 LATEST_SAVED_JOB_ID = None
+LATEST_SAVED_DESCRIPTION_ID = None
 
 
 #---------------test-cases
@@ -62,12 +63,14 @@ GET_MALLOB_INFO = "T1100"
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
                 JOBSUBMIT_INCLUDE : "/api/v1/jobs/submit/inclusive",
-                GET_JOB_INFO : "/api/v1/jobs/info"}
+                GET_JOB_INFO : "/api/v1/jobs/info",
+                SUBMIT_DESCRIPTION : "/api/v1/jobs/submit/exclusive/description"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
                 JOBSUBMIT_INCLUDE : True,
-                GET_JOB_INFO : True
+                GET_JOB_INFO : True,
+                SUBMIT_DESCRIPTION : True
 }
 
 
@@ -83,18 +86,20 @@ def setAfterRequestFuncitons():
         REGISTER : noFunction,
         LOGIN : afterLogin,
         JOBSUBMIT_INCLUDE : afterJobInclude,
-        GET_JOB_INFO : printResponse
+        GET_JOB_INFO : printResponse,
+        SUBMIT_DESCRIPTION : afterDescriptionUpload
     }
 
     HELP_FUNCTION_MAPPINGS = {
         REGISTER : register_help,
         LOGIN : login_help,
         JOBSUBMIT_INCLUDE : submitJob_descriptionIncluded_help,
-        GET_JOB_INFO : getJobInfo_help
+        GET_JOB_INFO : getJobInfo_help,
+        SUBMIT_DESCRIPTION : descriptionUpload_help
     }
 
 
-
+#------------------------------------------------------after methods 
 def noFunction(r):
     pass
 
@@ -102,7 +107,29 @@ def printResponse(r):
     responseJSON = r.json()
     print(responseJSON)
 
-#---------------------------------------------------------------------T1000 REGISTER - REQUEST -------------------------------
+
+def afterLogin(request):
+    global CURRENT_ACTIVE_TOKEN
+    responseJSON = request.json()
+    print(responseJSON)
+    token = responseJSON.get("token")
+    CURRENT_ACTIVE_TOKEN = token
+
+def afterJobInclude(request):
+    global LATEST_SAVED_JOB_ID
+    responseJSON = request.json()
+    LATEST_SAVED_JOB_ID = responseJSON.get("jobID")
+    print(responseJSON)
+
+def afterDescriptionUpload(request):
+    global LATEST_SAVED_DESCRIPTION_ID
+    responseJSON = request.json()
+    LATEST_SAVED_DESCRIPTION_ID = responseJSON.get("descriptionID")
+    print(responseJSON)
+#------------------------------------------------------helper funcitons
+
+
+
 
 
 def register_help():
@@ -122,15 +149,6 @@ def register_help():
         If you see this message after following the instructions correctly, maybe the file-path you gave was not correct
     """
     print(registerHelpText)
-
-#----------------------------------------------------------------T1010 LOGIN (AUTHENTICATE) - REQUEST -------------------------------
-
-def afterLogin(request):
-    global CURRENT_ACTIVE_TOKEN
-    responseJSON = request.json()
-    print(responseJSON)
-    token = responseJSON.get("token")
-    CURRENT_ACTIVE_TOKEN = token
 
 def login_help():
     loginHelpText = """
@@ -154,12 +172,6 @@ def login_help():
     """
     print(loginHelpText)
 
-#----------------------------------------------------------------ALL OF THESE TESTS NEED AUTHENTICATION FIRST
-#----------------------------------------------------------------T1020 SUBMIT JOB WITH SEPERATE DESCRIPTION -------------------------------
-
-
-#----------------------------------------------------------------T1021 SUBMIT JOB WITH INCLUDED DESCRIPTION -------------------------------
-
 
 def submitJob_descriptionIncluded_help():
     submitJob_descriptionIncluded_help_text = """
@@ -181,15 +193,6 @@ def submitJob_descriptionIncluded_help():
         If you see this message after following the instructions correctly, maybe the file-path you gave was not correct
     """
     print(submitJob_descriptionIncluded_help_text)
-
-
-def afterJobInclude(request):
-    global LATEST_SAVED_JOB_ID
-    responseJSON = request.json()
-    LATEST_SAVED_JOB_ID = responseJSON.get("jobID")
-    print(responseJSON)
-
-#----------------------------------------------------------------T1070 Get job-information -------------------------------
 
 
 def getJobInfo_help():
@@ -215,6 +218,30 @@ def getJobInfo_help():
             The test will print the json-body as a response. 
         """
     print(getJobInfo_help_text)
+
+def descriptionUpload_help():
+    descriptionUpload_help_text = """
+        ------------------------------Submit Description - API - Test----------------------------------------
+
+        1. Function
+            Tries to submit a desceription by itself
+        
+        2. Usage 
+            This tests requires you to give 1 argument, which is the absolute filepath to a json-file,
+            [arg2] == pathToJsonFile
+
+        3. Response
+            The test will print the json-body as a response. Furthermore,
+        
+        4. Aftermath
+            In case of succcess, the LATEST_SAVED_DESCRIPTION_ID variable is set to the returned description-id
+        
+        If you see this message after following the instructions correctly, maybe the file-path you gave was not correct
+    """
+    print(descriptionUpload_help_text)
+
+
+
 #------------------------------------------------------API, main, and other helping methods 
 #runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
 
@@ -306,6 +333,26 @@ def doPostRequest(pathToJsonFileContainingBody, url, helpFunciton, authenticatio
         helpFunciton()
         return None
 
+def multiPartFileRequest(testCase):
+    helperFunction = HELP_FUNCTION_MAPPINGS.get(testCase)
+    if (requestsHelp(commandLineArguments[ARG_2])):
+        helperFunction()
+        return
+    filePath = commandLineArguments[ARG_2]
+    url = BASE_URL + URL_MAPPINGS.get(testCase)
+    r = None
+    if exists(filePath):
+        r = requests.post(url, headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)},
+            files={"file1" : (open(filePath, "rb"))})
+        print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
+
+    else:
+        helperFunction()
+        return
+    if r != None:
+        afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
+        afterFunction(r)
+
 def requestToJSON(request):
     return urlopen(request).read().decode()
 
@@ -384,6 +431,9 @@ def executeTestCase(testCaseIdentifier):
         generalPostRequest(LOGIN)
     elif testCaseIdentifier == JOBSUBMIT_INCLUDE:
         generalPostRequest(JOBSUBMIT_INCLUDE)
+    elif testCaseIdentifier == SUBMIT_DESCRIPTION:
+        multiPartFileRequest(SUBMIT_DESCRIPTION)
+    #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
         generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
     else:
@@ -422,8 +472,6 @@ def executeRunLoop():
     if tryExtraCommandLineFuncion():
         return
 
-    #if commandLineArguments[ARG_1].lower() == SETTOKEN.lower():
-    #    setToken(commandLineArguments[ARG_2])
     if CATCH_REQUEST_ERROR:
         try:    
             executeTestCase(commandLineArguments[ARG_1])
