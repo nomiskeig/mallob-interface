@@ -31,6 +31,7 @@ ARG_3 = 2
 #print the request json body before each request
 PRINT_REQ_JSON_BODY = False
 CATCH_REQUEST_ERROR = False
+PRINT_RESPONSE_JSON = True
 
 BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + ":8080"
 print(bcolors.OKGREEN + "Base-URL for API requests : "  + str(BASE_URL) + bcolors.ENDC)
@@ -58,11 +59,11 @@ DOWNLOAD_DESCRIPTION = "T2022"
 SUBMIT_JOB_EXTERNAL = "T1020"
 CANCEL_JOB = "T1030"
 GET_SYSTEM_CONFIG = "T1120"
+GET_MALLOB_INFO = "T1100"
 
 
 #not yet implemented
 GET_RESULT = "T1080"
-GET_MALLOB_INFO = "T1100"
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
@@ -72,7 +73,8 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 DOWNLOAD_DESCRIPTION : "/api/v1/jobs/description",
                 SUBMIT_JOB_EXTERNAL : "/api/v1/jobs/submit/exclusive/config",
                 CANCEL_JOB : "/api/v1/jobs/cancel",
-                GET_SYSTEM_CONFIG : "/api/v1/system/config"}
+                GET_SYSTEM_CONFIG : "/api/v1/system/config",
+                GET_MALLOB_INFO : "/api/v1/system/mallobInfo"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
@@ -82,7 +84,8 @@ AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 DOWNLOAD_DESCRIPTION : True,
                 SUBMIT_JOB_EXTERNAL : True,
                 CANCEL_JOB : True,
-                GET_SYSTEM_CONFIG : True
+                GET_SYSTEM_CONFIG : True,
+                GET_MALLOB_INFO : True
 }
 
 
@@ -103,7 +106,8 @@ def setAfterRequestFuncitons():
         DOWNLOAD_DESCRIPTION : printResponse,
         SUBMIT_JOB_EXTERNAL : afterJobInclude,
         CANCEL_JOB : noFunction,
-        GET_SYSTEM_CONFIG : printResponse
+        GET_SYSTEM_CONFIG : printResponse,
+        GET_MALLOB_INFO : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -115,7 +119,8 @@ def setAfterRequestFuncitons():
         DOWNLOAD_DESCRIPTION : downloadDescription_help,
         SUBMIT_JOB_EXTERNAL : submitJob_descriptionExcluded_help,
         CANCEL_JOB : cancel_job_help,
-        GET_SYSTEM_CONFIG : getConfig_help
+        GET_SYSTEM_CONFIG : getConfig_help,
+        GET_MALLOB_INFO : getMallobInfo_help
     }
 
 
@@ -123,11 +128,15 @@ def setAfterRequestFuncitons():
 def noFunction(r):
     pass
 
+def printResponseJSON(responseJSON):
+    if PRINT_RESPONSE_JSON:
+        print(json.dumps(responseJSON, indent=4))
+
 def printResponse(r):
     responseJSON = convertRequestToJSON(r)
     if responseJSON == None:
         return
-    print(responseJSON)
+    printResponseJSON(responseJSON)
 
 
 def afterLogin(request):
@@ -135,7 +144,7 @@ def afterLogin(request):
     responseJSON = convertRequestToJSON(request)
     if responseJSON == None:
         return
-    print(responseJSON)
+    printResponseJSON(responseJSON)
     CURRENT_ACTIVE_TOKEN = responseJSON.get("token")
 
     #set the global header variable;
@@ -147,7 +156,7 @@ def afterJobInclude(request):
     if responseJSON == None:
         return    
     LATEST_SAVED_JOB_ID = responseJSON.get("jobID")
-    print(responseJSON)
+    printResponseJSON(responseJSON)
 
 def afterDescriptionUpload(request):
     global LATEST_SAVED_DESCRIPTION_ID
@@ -155,7 +164,7 @@ def afterDescriptionUpload(request):
     if responseJSON == None:
         return
     LATEST_SAVED_DESCRIPTION_ID = responseJSON.get("descriptionID")
-    print(responseJSON)
+    printResponseJSON(responseJSON)
 
 #Converts the given response into a json (python dict), if possible. and returns it. if not it Throws an error-message and returns None.
 def convertRequestToJSON(request):
@@ -361,6 +370,16 @@ def getConfig_help():
     """
     print(getConfig_help_text)
 
+def getMallobInfo_help():
+    getMallobInfo_help_text = """
+        ------------------------------GetMallob-Info API - Test----------------------------------------
+        1. Function
+            Get warnings from mallob
+
+        2. Params
+            No params required 
+    """
+    print(getMallobInfo_help_text)
 
 #------------------------------------------------------submitting a job with external description needed and extra method...
 def submit_job_external(testCase):
@@ -496,7 +515,7 @@ def generalPostRequest(testCase):
 """
 def doPostRequest(pathToJsonFileContainingBody, url, authentication):
     if authentication and HEADER == None:
-        print(bcolors.FAIL + "You are not authenticated. Please authenticate yourself first - by using login" + bcolors.ENDC)
+        printError("You are not authenticated. Please authenticate yourself first - by using login")
         return None
     if exists(pathToJsonFileContainingBody):
         if PRINT_REQ_JSON_BODY:
@@ -599,6 +618,7 @@ def printHelp():
                     ..."showAllTests" and a list of all possible tests is printed
                     ..."togglePrintBody" - toggles printing the request-body before each request - 
                     ..."toggleCatchReqError" - toggles catching the error.
+                    ...."togglePrintResponse" - if true, prints the response json, if false, it doesn't
                     ..."exit" to leave the program
 
            
@@ -646,13 +666,15 @@ def executeTestCase(testCaseIdentifier):
         generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID, True, True)
     elif testCaseIdentifier == GET_SYSTEM_CONFIG:
         generalGetRequest(GET_SYSTEM_CONFIG, None, False, False)
+    elif testCaseIdentifier == GET_MALLOB_INFO:
+        generalGetRequest(GET_MALLOB_INFO, None, False, False)
     else:
         print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
 
 
 #Tries if the user wanted to use an extra function 
 def tryExtraCommandLineFuncion():
-    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR
+    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON
     if requestsHelp(commandLineArguments[ARG_1]):
         printHelp()
         return True
@@ -666,7 +688,11 @@ def tryExtraCommandLineFuncion():
         CATCH_REQUEST_ERROR = not CATCH_REQUEST_ERROR
         printWarning("Catch Request- Error : " + str(CATCH_REQUEST_ERROR))
         return True
-    
+
+    if commandLineArguments[ARG_1].lower() == "togglePrintResponse".lower():
+        PRINT_RESPONSE_JSON = not PRINT_RESPONSE_JSON
+        printWarning("Print response-json : " + str(PRINT_RESPONSE_JSON))
+        return True
 
     if commandLineArguments[ARG_1].lower() == SHOW_ALL_TESTS.lower():
         print(AVAILABLE_TESTS)

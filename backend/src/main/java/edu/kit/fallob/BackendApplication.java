@@ -27,6 +27,7 @@ public class BackendApplication {
 		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
+		args = new String[1]; args[0] = "/home/siwi/pse_dev/fallob-configuration.json";
 		String pathToFallobConfigFile = args[0];
 		FallobConfigReader reader;
 		try {
