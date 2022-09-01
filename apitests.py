@@ -5,6 +5,19 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import socket
 import json
+
+#Thi class is purely cosmetical
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
     
 commandLineArguments = sys.argv
 ARG_1 = 0
@@ -14,14 +27,15 @@ ARG_3 = 2
 
 #print the request json body before each request
 PRINT_REQ_JSON_BODY = False
-
+CATCH_REQUEST_ERROR = False
 
 BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + ":8080"
-print("Base-URL for API requests : "  + str(BASE_URL))
+print(bcolors.OKGREEN + "Base-URL for API requests : "  + str(BASE_URL) + bcolors.ENDC)
 SHOW_ALL_TESTS = "showAllTests"
 SETTOKEN = "setToken"
-AVAILABLE_TESTS = ["register (T1000)", "login (T1010)", "submitJobInternalDescription (T2021)", "submitDescription", 
-    "get (Single, All, Global, Multiple)-JobInformation (T1070)"]
+AVAILABLE_TESTS = ["register (T1000)", "login (T1010)",  "submitDescription (T1019)",  "submitJobExternalDescription (T1020)",  "submitJobInternalDescription (T2021)",
+    "downloadDescription (T1022)",
+    "cancelJob (T1030)", "get (Single, All, Global, Multiple)-JobInformation (T1070)",  "getResult - one, multiple, all - (T1080)", "getMallobInfo (T1100)" , "getSystemConfig (T1120)"]
 
 #these are variabls, which are being set at runtime
 #holds the current authentication-token
@@ -34,6 +48,16 @@ REGISTER = "T1000"
 LOGIN = "T1010"
 JOBSUBMIT_INCLUDE = "T1021"
 GET_JOB_INFO = "T1070"
+
+
+#not yet implemented
+SUBMIT_DESCRIPTION = "T1019"
+DOWNLOAD_DESCRIPTION = "T2022"
+SUBMIT_JOB_EXTERNAL = "T1020"
+CANCEL_JOB = "T1030"
+GET_RESULT = "T1080"
+GET_SYSTEM_CONFIG = "T1120"
+GET_MALLOB_INFO = "T1100"
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
@@ -165,7 +189,7 @@ def afterJobInclude(request):
     LATEST_SAVED_JOB_ID = responseJSON.get("jobID")
     print(responseJSON)
 
-#----------------------------------------------------------------T1070 Get single job-information -------------------------------
+#----------------------------------------------------------------T1070 Get job-information -------------------------------
 
 
 def getJobInfo_help():
@@ -192,7 +216,7 @@ def getJobInfo_help():
         """
     print(getJobInfo_help_text)
 #------------------------------------------------------API, main, and other helping methods 
-
+#runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
 
 def generalGetRequest(testCase, parameter, parameterPossible):
     url = BASE_URL + URL_MAPPINGS.get(testCase)
@@ -202,8 +226,8 @@ def generalGetRequest(testCase, parameter, parameterPossible):
         hasBody = True
     else:
         url += commandLineArguments[ARG_2]
-        if parameterPossible:
-            if len(commandLineArguments) > 1:
+        if parameterPossible and commandLineArguments[ARG_2] != "/all": 
+            if len(commandLineArguments) > 2:
                 url += str(commandLineArguments[ARG_3])
             else:
                 url += str(parameter)
@@ -212,8 +236,9 @@ def generalGetRequest(testCase, parameter, parameterPossible):
         r = requests.get(url, json=readFileAsPythonDict(commandLineArguments[ARG_2], headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)}))
     else:
         r = requests.get(url, headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)})
-    
+    print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
     printResponse(r)
+
 
 """
     This method performs a general post request to an API
@@ -245,7 +270,6 @@ def generalPostRequest(testCase):
     filePath = commandLineArguments[ARG_2]
     url = BASE_URL + URL_MAPPINGS.get(testCase)
     r = doPostRequest(filePath, url, helperFunction, AUTHENTICATION_MAPPINGS.get(testCase))
-
     if r != None:
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
         afterFunction(r)
@@ -266,7 +290,7 @@ def generalPostRequest(testCase):
 """
 def doPostRequest(pathToJsonFileContainingBody, url, helpFunciton, authentication):
     if authentication and CURRENT_ACTIVE_TOKEN == None:
-        print("You are not authenticated. Please authenticate yourself first - by using login")
+        print(bcolors.FAIL + "You are not authenticated. Please authenticate yourself first - by using login" + bcolors.ENDC)
         return None
     if exists(pathToJsonFileContainingBody):
         if PRINT_REQ_JSON_BODY:
@@ -276,7 +300,7 @@ def doPostRequest(pathToJsonFileContainingBody, url, helpFunciton, authenticatio
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody), headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)})
         else:
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody))
-        print("Response-Statuscode : " + str(r.status_code))
+        print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
         return r
     else:
         helpFunciton()
@@ -333,6 +357,7 @@ def printHelp():
                 -Specail commands for [arg1]. Set [arg1] to ...
                     ..."showAllTests" and a list of all possible tests is printed
                     ..."togglePrintBody" - toggles printing the request-body before each request - 
+                    ..."toggleCatchReqError" - toggles catching the error.
                     ..."exit" to leave the program
 
            
@@ -362,19 +387,25 @@ def executeTestCase(testCaseIdentifier):
     elif testCaseIdentifier == GET_JOB_INFO:
         generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
     else:
-        print("Seems like the Test-case given has not yet been implemented, or is just wrong all together.")
+        print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
         printHelp()
 
 
 #Tries if the user wanted to use an extra function 
 def tryExtraCommandLineFuncion():
-    global PRINT_REQ_JSON_BODY
+    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR
     if requestsHelp(commandLineArguments[ARG_1]):
         printHelp()
         return True
     
     if commandLineArguments[ARG_1].lower() == "togglePrintBody".lower():
         PRINT_REQ_JSON_BODY = not PRINT_REQ_JSON_BODY
+        print(bcolors.WARNING + "Print JSON_BODY : " + str(PRINT_REQ_JSON_BODY) + bcolors.ENDC)
+        return True
+    
+    if commandLineArguments[ARG_1].lower() == "toggleCatchReqError".lower():
+        CATCH_REQUEST_ERROR = not CATCH_REQUEST_ERROR
+        print(bcolors.WARNING + "Catch Request- Error : " + str(CATCH_REQUEST_ERROR) + bcolors.ENDC)
         return True
     
     if commandLineArguments[ARG_1] == "exit":
@@ -393,10 +424,13 @@ def executeRunLoop():
 
     #if commandLineArguments[ARG_1].lower() == SETTOKEN.lower():
     #    setToken(commandLineArguments[ARG_2])
-    try:    
+    if CATCH_REQUEST_ERROR:
+        try:    
+            executeTestCase(commandLineArguments[ARG_1])
+        except:
+            print(bcolors.FAIL + "Something went wrong with the API-Request." + bcolors.ENDC)
+    else:
         executeTestCase(commandLineArguments[ARG_1])
-    except:
-        print("Something went wrong with the API-Request.")
 
 def runTestsFromFile():
     global commandLineArguments
@@ -404,7 +438,7 @@ def runTestsFromFile():
     lines = testSpecificationFile.readlines()
     for line in lines:
         commandLineArguments = line.split()
-        print("Executing test-case : " + str(commandLineArguments[ARG_1]))
+        print(bcolors.OKGREEN + "Executing test-case : " + str(commandLineArguments[ARG_1]) + bcolors.ENDC)
         executeRunLoop()
 
 def main():
@@ -413,7 +447,7 @@ def main():
     
     running = True
     while(running):
-        userInput = input("Fallob-API-Tests> ")
+        userInput = input(bcolors.OKCYAN + bcolors.BOLD + "Fallob-API-Tests> " + bcolors.ENDC)
         commandLineArguments = userInput.split()
 
         if not commandLineArguments:
