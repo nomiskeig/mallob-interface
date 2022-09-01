@@ -7,6 +7,8 @@ import socket
 import json
 
 
+
+
 #This class is purely cosmetical
 class bcolors:
     HEADER = '\033[95m'
@@ -55,10 +57,11 @@ SUBMIT_DESCRIPTION = "T1019"
 DOWNLOAD_DESCRIPTION = "T2022"
 SUBMIT_JOB_EXTERNAL = "T1020"
 CANCEL_JOB = "T1030"
+GET_SYSTEM_CONFIG = "T1120"
+
 
 #not yet implemented
 GET_RESULT = "T1080"
-GET_SYSTEM_CONFIG = "T1120"
 GET_MALLOB_INFO = "T1100"
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
@@ -68,7 +71,8 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 SUBMIT_DESCRIPTION : "/api/v1/jobs/submit/exclusive/description",
                 DOWNLOAD_DESCRIPTION : "/api/v1/jobs/description",
                 SUBMIT_JOB_EXTERNAL : "/api/v1/jobs/submit/exclusive/config",
-                CANCEL_JOB : "/api/v1/jobs/cancel"}
+                CANCEL_JOB : "/api/v1/jobs/cancel",
+                GET_SYSTEM_CONFIG : "/api/v1/system/config"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
@@ -77,7 +81,8 @@ AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 SUBMIT_DESCRIPTION : True,
                 DOWNLOAD_DESCRIPTION : True,
                 SUBMIT_JOB_EXTERNAL : True,
-                CANCEL_JOB : True
+                CANCEL_JOB : True,
+                GET_SYSTEM_CONFIG : True
 }
 
 
@@ -97,7 +102,8 @@ def setAfterRequestFuncitons():
         SUBMIT_DESCRIPTION : afterDescriptionUpload,
         DOWNLOAD_DESCRIPTION : printResponse,
         SUBMIT_JOB_EXTERNAL : afterJobInclude,
-        CANCEL_JOB : noFunction
+        CANCEL_JOB : noFunction,
+        GET_SYSTEM_CONFIG : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -108,7 +114,8 @@ def setAfterRequestFuncitons():
         SUBMIT_DESCRIPTION : descriptionUpload_help,
         DOWNLOAD_DESCRIPTION : downloadDescription_help,
         SUBMIT_JOB_EXTERNAL : submitJob_descriptionExcluded_help,
-        CANCEL_JOB : cancel_job_help
+        CANCEL_JOB : cancel_job_help,
+        GET_SYSTEM_CONFIG : getConfig_help
     }
 
 
@@ -341,6 +348,20 @@ def cancel_job_help():
             In case of all, or some job-cancellations the answer is printed.
     """
     print(cancel_job_help_text)
+
+
+def getConfig_help():
+    getConfig_help_text = """
+        ------------------------------Getconfig Config API - Test----------------------------------------
+        1. Function
+            Get the configuration of fallob
+
+        2. Params
+            No parameters needed
+    """
+    print(getConfig_help_text)
+
+
 #------------------------------------------------------submitting a job with external description needed and extra method...
 def submit_job_external(testCase):
     filePath = commandLineArguments[ARG_2]
@@ -399,21 +420,22 @@ For convenience, this method has the
 
     @oaram parameterPossible is True, if a parameter is even possible - meaning if the GET-request HAS  parameter at the end
 """
-def generalGetRequest(testCase, parameter, parameterPossible):
+def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
     url = BASE_URL + URL_MAPPINGS.get(testCase)
     hasBody = False
-    if exists(commandLineArguments[ARG_2]):
-        #in this case [arg2] was a filepath to a json body and the url is done already
-        #multiple-option was used
-        hasBody = True
-    else:
-        url += commandLineArguments[ARG_2]
-        #/single/ optio was used 
-        if parameterPossible and commandLineArguments[ARG_2] != "/all": 
-            if len(commandLineArguments) > 2:
-                url += str(commandLineArguments[ARG_3])
-            else:
-                url += str(parameter)
+    if urlModification:
+        if exists(commandLineArguments[ARG_2]):
+            #in this case [arg2] was a filepath to a json body and the url is done already
+            #multiple-option was used
+            hasBody = True
+        else:
+            url += commandLineArguments[ARG_2]
+            #/single/ optio was used 
+            if parameterPossible and commandLineArguments[ARG_2] != "/all": 
+                if len(commandLineArguments) > 2:
+                    url += str(commandLineArguments[ARG_3])
+                else:
+                    url += str(parameter)
 
     if hasBody:
         filePath = commandLineArguments[ARG_2]
@@ -619,9 +641,11 @@ def executeTestCase(testCaseIdentifier):
         cancelJob(CANCEL_JOB)
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
-        generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
+        generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True, True)
     elif testCaseIdentifier == DOWNLOAD_DESCRIPTION:
-        generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID, True)
+        generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID, True, True)
+    elif testCaseIdentifier == GET_SYSTEM_CONFIG:
+        generalGetRequest(GET_SYSTEM_CONFIG, None, False, False)
     else:
         print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
 
