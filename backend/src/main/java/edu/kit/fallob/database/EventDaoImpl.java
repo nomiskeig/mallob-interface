@@ -141,8 +141,8 @@ public class EventDaoImpl implements EventDao{
 
     /**
      * returns the time of the earliest stored event
-     * @return the time of the event
-     * @throws FallobException if an error occurs in the database or if no event could be found
+     * @return the time of the event or null if no event could be found
+     * @throws FallobException if an error occurred in the database
      */
     @Override
     public LocalDateTime getTimeOfFirstEvent() throws FallobException {
@@ -154,7 +154,7 @@ public class EventDaoImpl implements EventDao{
             if (result.next()) {
                 return result.getTimestamp(1).toLocalDateTime();
             } else {
-                throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
+                return null;
             }
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);

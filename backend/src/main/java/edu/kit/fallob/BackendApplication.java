@@ -3,8 +3,11 @@ package edu.kit.fallob;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
+import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.DatabaseGarbageCollector;
+import edu.kit.fallob.database.EventDao;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +49,14 @@ public class BackendApplication {
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
 
+
+		//set the right start time in the configuration
+		EventDao eventDao = new DaoFactory().getEventDao();
+		LocalDateTime firstEventTime = eventDao.getTimeOfFirstEvent();
+
+		if (firstEventTime != null) {
+			config.setStartTime(firstEventTime);
+		}
 
 		//start the database garbage collector
 		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());

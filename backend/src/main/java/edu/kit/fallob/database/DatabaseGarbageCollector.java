@@ -101,6 +101,13 @@ public class DatabaseGarbageCollector implements Runnable{
 
         try {
             eventDao.removeEventsBeforeTime(deletionTime);
+
+            //update the staring time in the configuration
+            LocalDateTime timeFirstEvent = eventDao.getTimeOfFirstEvent();
+
+            if (timeFirstEvent != null) {
+                this.configuration.setStartTime(timeFirstEvent);
+            }
         } catch (FallobException e) {
             e.printStackTrace();
         }
