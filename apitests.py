@@ -6,7 +6,10 @@ from urllib.request import Request, urlopen
 import socket
 import json
 
-#Thi class is purely cosmetical
+#runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
+#runTestsFromFile /home/siwi/pse_dev/filesForTesting/submitJob_exclude.txt
+
+#This class is purely cosmetical
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -113,13 +116,17 @@ def noFunction(r):
     pass
 
 def printResponse(r):
-    responseJSON = r.json()
+    responseJSON = convertRequestToJSON(r)
+    if responseJSON == None:
+        return
     print(responseJSON)
 
 
 def afterLogin(request):
     global CURRENT_ACTIVE_TOKEN
-    responseJSON = request.json()
+    responseJSON = convertRequestToJSON(request)
+    if responseJSON == None:
+        return
     print(responseJSON)
     CURRENT_ACTIVE_TOKEN = responseJSON.get("token")
 
@@ -128,15 +135,28 @@ def afterLogin(request):
 
 def afterJobInclude(request):
     global LATEST_SAVED_JOB_ID
-    responseJSON = request.json()
+    responseJSON = convertRequestToJSON(request)
+    if responseJSON == None:
+        return    
     LATEST_SAVED_JOB_ID = responseJSON.get("jobID")
     print(responseJSON)
 
 def afterDescriptionUpload(request):
     global LATEST_SAVED_DESCRIPTION_ID
-    responseJSON = request.json()
+    responseJSON = convertRequestToJSON(request)
+    if responseJSON == None:
+        return
     LATEST_SAVED_DESCRIPTION_ID = responseJSON.get("descriptionID")
     print(responseJSON)
+
+#Converts the given response into a json (python dict), if possible. and returns it. if not it Throws an error-message and returns None.
+def convertRequestToJSON(request):
+    try:
+        responseJSON = request.json()
+        return responseJSON
+    except:
+        printError("Could not convert Response into JSON. Maybe the returned type was a zip. Check status code for further information.")
+        return None
 #------------------------------------------------------helper funcitons
 
 
