@@ -39,6 +39,7 @@ AVAILABLE_TESTS = ["register (T1000)", "login (T1010)",  "submitDescription (T10
 
 #these are variabls, which are being set at runtime
 #holds the current authentication-token
+HEADER = None
 CURRENT_ACTIVE_TOKEN = None
 LATEST_SAVED_JOB_ID = None
 LATEST_SAVED_DESCRIPTION_ID = None
@@ -49,11 +50,11 @@ REGISTER = "T1000"
 LOGIN = "T1010"
 JOBSUBMIT_INCLUDE = "T1021"
 GET_JOB_INFO = "T1070"
+SUBMIT_DESCRIPTION = "T1019"
+DOWNLOAD_DESCRIPTION = "T2022"
 
 
 #not yet implemented
-SUBMIT_DESCRIPTION = "T1019"
-DOWNLOAD_DESCRIPTION = "T2022"
 SUBMIT_JOB_EXTERNAL = "T1020"
 CANCEL_JOB = "T1030"
 GET_RESULT = "T1080"
@@ -64,13 +65,15 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
                 JOBSUBMIT_INCLUDE : "/api/v1/jobs/submit/inclusive",
                 GET_JOB_INFO : "/api/v1/jobs/info",
-                SUBMIT_DESCRIPTION : "/api/v1/jobs/submit/exclusive/description"}
+                SUBMIT_DESCRIPTION : "/api/v1/jobs/submit/exclusive/description",
+                DOWNLOAD_DESCRIPTION : "/api/v1/jobs/description"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
                 JOBSUBMIT_INCLUDE : True,
                 GET_JOB_INFO : True,
-                SUBMIT_DESCRIPTION : True
+                SUBMIT_DESCRIPTION : True,
+                DOWNLOAD_DESCRIPTION : True
 }
 
 
@@ -87,7 +90,8 @@ def setAfterRequestFuncitons():
         LOGIN : afterLogin,
         JOBSUBMIT_INCLUDE : afterJobInclude,
         GET_JOB_INFO : printResponse,
-        SUBMIT_DESCRIPTION : afterDescriptionUpload
+        SUBMIT_DESCRIPTION : afterDescriptionUpload,
+        DOWNLOAD_DESCRIPTION : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -95,7 +99,8 @@ def setAfterRequestFuncitons():
         LOGIN : login_help,
         JOBSUBMIT_INCLUDE : submitJob_descriptionIncluded_help,
         GET_JOB_INFO : getJobInfo_help,
-        SUBMIT_DESCRIPTION : descriptionUpload_help
+        SUBMIT_DESCRIPTION : descriptionUpload_help,
+        DOWNLOAD_DESCRIPTION : downloadDescription_help
     }
 
 
@@ -112,8 +117,10 @@ def afterLogin(request):
     global CURRENT_ACTIVE_TOKEN
     responseJSON = request.json()
     print(responseJSON)
-    token = responseJSON.get("token")
-    CURRENT_ACTIVE_TOKEN = token
+    CURRENT_ACTIVE_TOKEN = responseJSON.get("token")
+
+    #set the global header variable;
+    setHeader()
 
 def afterJobInclude(request):
     global LATEST_SAVED_JOB_ID
@@ -227,7 +234,8 @@ def descriptionUpload_help():
             Tries to submit a desceription by itself
         
         2. Usage 
-            This tests requires you to give 1 argument, which is the absolute filepath to a json-file,
+            This tests requires you to give (at least one) argument, which is the absolute filepath to a .cnf-file you want to upload
+            however you can also give multiple arguments to upload multiple .cnf files.
             [arg2] == pathToJsonFile
 
         3. Response
@@ -240,29 +248,70 @@ def descriptionUpload_help():
     """
     print(descriptionUpload_help_text)
 
+def downloadDescription_help():
+    getJobInfo_help_text = """
+        ------------------------------Get information of a single job - API - Test----------------------------------------
 
+        1. Function  + Usage 
+            Tries to download description of a job (or multiple)
+            The path sepcified for this test is only /api/v1/jobs/description
+
+            You actually have to specify in [arg2] what kind of request you want. Possible values :
+            [arg2] == /all or [arg2] == /single/(id)
+
+            Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
+            to a json-body [arg2]. Because in this case you are requesting multiple job-informations. See API-Spec.
+
+            If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
+            If you don't the LATEST_SAVED_JOB_ID is used.
+        
+        3. Response
+            The test will print the json-body as a response. 
+        """
+    print(getJobInfo_help_text)
 
 #------------------------------------------------------API, main, and other helping methods 
 #runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
 
+"""
+This request is a general get-request for mostly all GET requests of our API..
+Because most GET requests have the option to get /single/, /all, or just some
+This method has some extra parameters.
+
+For convenience, this method has the
+    @param parameter, which is used, if 
+            1. parameterPossible
+            2. no Parameter was given in [arg2]
+        This parameter is appended to the end of the URL
+    
+
+    @oaram parameterPossible is True, if a parameter is even possible - meaning if the GET-request HAS  parameter at the end
+"""
 def generalGetRequest(testCase, parameter, parameterPossible):
     url = BASE_URL + URL_MAPPINGS.get(testCase)
     hasBody = False
     if exists(commandLineArguments[ARG_2]):
         #in this case [arg2] was a filepath to a json body and the url is done already
+        #multiple-option was used
         hasBody = True
     else:
         url += commandLineArguments[ARG_2]
+        #/single/ optio was used 
         if parameterPossible and commandLineArguments[ARG_2] != "/all": 
             if len(commandLineArguments) > 2:
                 url += str(commandLineArguments[ARG_3])
             else:
                 url += str(parameter)
 
-    if (hasBody):
-        r = requests.get(url, json=readFileAsPythonDict(commandLineArguments[ARG_2], headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)}))
+    if hasBody:
+        filePath = commandLineArguments[ARG_2]
+        if (exists()):
+            r = requests.get(url, json=readFileAsPythonDict(filePath), headers=HEADER)
+        else:
+            print(bcolors.FAIL + "Given filepath " + str(filePath) + " was not valid" + bcolors.ENDC)
+
     else:
-        r = requests.get(url, headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)})
+        r = requests.get(url, headers=HEADER)
     print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
     printResponse(r)
 
@@ -290,13 +339,9 @@ def generalGetRequest(testCase, parameter, parameterPossible):
 
 """
 def generalPostRequest(testCase):
-    helperFunction = HELP_FUNCTION_MAPPINGS.get(testCase)
-    if (requestsHelp(commandLineArguments[ARG_2])):
-        helperFunction()
-        return
     filePath = commandLineArguments[ARG_2]
     url = BASE_URL + URL_MAPPINGS.get(testCase)
-    r = doPostRequest(filePath, url, helperFunction, AUTHENTICATION_MAPPINGS.get(testCase))
+    r = doPostRequest(filePath, url, AUTHENTICATION_MAPPINGS.get(testCase))
     if r != None:
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
         afterFunction(r)
@@ -315,8 +360,8 @@ def generalPostRequest(testCase):
 
     @return request-answer object if request was successful, None if something went wrong
 """
-def doPostRequest(pathToJsonFileContainingBody, url, helpFunciton, authentication):
-    if authentication and CURRENT_ACTIVE_TOKEN == None:
+def doPostRequest(pathToJsonFileContainingBody, url, authentication):
+    if authentication and HEADER == None:
         print(bcolors.FAIL + "You are not authenticated. Please authenticate yourself first - by using login" + bcolors.ENDC)
         return None
     if exists(pathToJsonFileContainingBody):
@@ -324,38 +369,47 @@ def doPostRequest(pathToJsonFileContainingBody, url, helpFunciton, authenticatio
             print("Json-Body for this request ; \n" + str(readFile(pathToJsonFileContainingBody)))
         #r = requests.post(registerURL, json=fileContent)
         if authentication:
-            r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody), headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)})
+            r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody), headers=HEADER)
         else:
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody))
         print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
         return r
     else:
-        helpFunciton()
+        print(bcolors.FAIL + "Given filepath " + str(pathToJsonFileContainingBody) + " was not valid" + bcolors.ENDC)
         return None
 
+"""
+
+"""
 def multiPartFileRequest(testCase):
-    helperFunction = HELP_FUNCTION_MAPPINGS.get(testCase)
-    if (requestsHelp(commandLineArguments[ARG_2])):
-        helperFunction()
-        return
-    filePath = commandLineArguments[ARG_2]
+
+    #filePath = commandLineArguments[ARG_2]
     url = BASE_URL + URL_MAPPINGS.get(testCase)
     r = None
-    if exists(filePath):
-        r = requests.post(url, headers={'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)},
-            files={"file1" : (open(filePath, "rb"))})
-        print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
 
-    else:
-        helperFunction()
-        return
+    #build the file-parameter for the request
+    fileDict = {}
+    for i in range(1, len(commandLineArguments)):
+        if exists(commandLineArguments[i]):
+            fileDict["file" + str(i)] = (open(commandLineArguments[i], "rb"))
+
+    #actually issue the request
+    r = requests.post(url, headers=HEADER, files=fileDict)
+    print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
+        
     if r != None:
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
         afterFunction(r)
+        
+
 
 def requestToJSON(request):
     return urlopen(request).read().decode()
 
+#Sets the global HEADER variable to include authorisation. CURRENT_ACTIVE_TOKEN is used as token.
+def setHeader():
+    global HEADER
+    HEADER = {'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)}
 
 def readFile(path):
     f = open(path, "r")
@@ -424,6 +478,14 @@ def printHelp():
 
 
 def executeTestCase(testCaseIdentifier):
+    try:
+        helperFunction = HELP_FUNCTION_MAPPINGS.get(testCaseIdentifier)
+        if len (commandLineArguments) >  1 and requestsHelp(commandLineArguments[ARG_2]):
+            helperFunction()
+            return
+    except:
+        noFunction()
+
     #this is only written so supid because i want to prevent 
     if testCaseIdentifier == REGISTER:
         generalPostRequest(REGISTER)
@@ -436,6 +498,8 @@ def executeTestCase(testCaseIdentifier):
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
         generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
+    elif testCaseIdentifier == DOWNLOAD_DESCRIPTION:
+        generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID, True)
     else:
         print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
         printHelp()
