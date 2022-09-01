@@ -48,6 +48,7 @@ public class FallobCommands implements UserDetailsService {
 		try {
 			user = userDao.getUserByUsername(username);
 		} catch (FallobException e) {
+			e.printStackTrace();
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 

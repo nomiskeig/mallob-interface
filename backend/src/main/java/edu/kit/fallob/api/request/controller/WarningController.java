@@ -26,6 +26,7 @@ public class WarningController {
         try {
             warnings = warningCommand.getWarnings();
         } catch (FallobException e) {
+            e.printStackTrace();
             FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }

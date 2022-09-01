@@ -120,7 +120,7 @@ public class JobDaoImpl implements JobDao{
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -156,7 +156,7 @@ public class JobDaoImpl implements JobDao{
             }
             return descriptionId;
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -183,7 +183,7 @@ public class JobDaoImpl implements JobDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
 
         //remove the descriptionFiles from the filesystem
@@ -231,7 +231,7 @@ public class JobDaoImpl implements JobDao{
                 FileHandler.deleteFilesByRegex(resultDirectoryPath, regex);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -258,7 +258,7 @@ public class JobDaoImpl implements JobDao{
 
             return jobIds.stream().mapToInt(i -> i).toArray();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -292,7 +292,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -349,7 +349,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -374,7 +374,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -392,6 +392,7 @@ public class JobDaoImpl implements JobDao{
         try {
             metaData = this.getResultMetaData(jobId);
         } catch (FallobException e) {
+            e.printStackTrace();
             metaData = null;
         }
         JobStatus status = this.getJobStatus(jobId);
@@ -421,7 +422,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
 
     }
@@ -460,7 +461,7 @@ public class JobDaoImpl implements JobDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -493,7 +494,7 @@ public class JobDaoImpl implements JobDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -517,7 +518,7 @@ public class JobDaoImpl implements JobDao{
                 return -1;
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
     
@@ -542,7 +543,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -580,7 +581,7 @@ public class JobDaoImpl implements JobDao{
 
             return runningJobs;
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -599,7 +600,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -650,7 +651,7 @@ public class JobDaoImpl implements JobDao{
 
             configStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 
@@ -700,7 +701,7 @@ public class JobDaoImpl implements JobDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 

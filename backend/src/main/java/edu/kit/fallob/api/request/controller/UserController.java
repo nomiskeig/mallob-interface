@@ -35,6 +35,7 @@ public class UserController {
         try {
             successful = fallobCommand.register(request.getUsername(), request.getPassword(), request.getEmail());
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
