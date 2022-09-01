@@ -52,10 +52,10 @@ JOBSUBMIT_INCLUDE = "T1021"
 GET_JOB_INFO = "T1070"
 SUBMIT_DESCRIPTION = "T1019"
 DOWNLOAD_DESCRIPTION = "T2022"
+SUBMIT_JOB_EXTERNAL = "T1020"
 
 
 #not yet implemented
-SUBMIT_JOB_EXTERNAL = "T1020"
 CANCEL_JOB = "T1030"
 GET_RESULT = "T1080"
 GET_SYSTEM_CONFIG = "T1120"
@@ -66,14 +66,16 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 JOBSUBMIT_INCLUDE : "/api/v1/jobs/submit/inclusive",
                 GET_JOB_INFO : "/api/v1/jobs/info",
                 SUBMIT_DESCRIPTION : "/api/v1/jobs/submit/exclusive/description",
-                DOWNLOAD_DESCRIPTION : "/api/v1/jobs/description"}
+                DOWNLOAD_DESCRIPTION : "/api/v1/jobs/description",
+                SUBMIT_JOB_EXTERNAL : "/api/v1/jobs/submit/exclusive/config"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
                 JOBSUBMIT_INCLUDE : True,
                 GET_JOB_INFO : True,
                 SUBMIT_DESCRIPTION : True,
-                DOWNLOAD_DESCRIPTION : True
+                DOWNLOAD_DESCRIPTION : True,
+                SUBMIT_JOB_EXTERNAL : True
 }
 
 
@@ -91,7 +93,8 @@ def setAfterRequestFuncitons():
         JOBSUBMIT_INCLUDE : afterJobInclude,
         GET_JOB_INFO : printResponse,
         SUBMIT_DESCRIPTION : afterDescriptionUpload,
-        DOWNLOAD_DESCRIPTION : printResponse
+        DOWNLOAD_DESCRIPTION : printResponse,
+        SUBMIT_JOB_EXTERNAL : afterJobInclude
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -100,7 +103,8 @@ def setAfterRequestFuncitons():
         JOBSUBMIT_INCLUDE : submitJob_descriptionIncluded_help,
         GET_JOB_INFO : getJobInfo_help,
         SUBMIT_DESCRIPTION : descriptionUpload_help,
-        DOWNLOAD_DESCRIPTION : downloadDescription_help
+        DOWNLOAD_DESCRIPTION : downloadDescription_help,
+        SUBMIT_JOB_EXTERNAL : submitJob_descriptionExcluded_help
     }
 
 
@@ -270,6 +274,53 @@ def downloadDescription_help():
         """
     print(getJobInfo_help_text)
 
+
+def submitJob_descriptionExcluded_help():
+    submitJob_descriptionIncluded_help_text = """
+        ------------------------------Submit Job with Included Description - API - Test----------------------------------------
+
+        1. Function
+            Tries to submit a job, with an exclusive description.
+        
+        2. Usage 
+            [arg2] == filePath to the configuration-file of the job
+            
+            Now, if you want to use the latest description-ID that you got when using this porgram, you can 
+            set [arg3] == "useLastDescriptionID" and the program will insert it into your configuration and then submit it.
+            Notice, that [arg3] is optional 
+
+        3. Response
+            The test will print the json-body as a response. 
+        
+        4. Aftermath
+            In case of succcess, the LATEST_SAVED_JOB_ID variable is set to the returned JOB-id
+    """
+    print(submitJob_descriptionIncluded_help_text)
+
+#------------------------------------------------------submitting a job with external description needed and extra method...
+def submit_job_external(testCase):
+    filePath = commandLineArguments[ARG_2]
+    if not exists(filePath):
+        printError("Given filepath " + str(filePath) + " was not valid")
+
+    url = BASE_URL + URL_MAPPINGS.get(testCase)
+
+
+    jsonContent = readFileAsPythonDict(filePath)
+
+    #modify json-content and use the latest description ID that has been submitted
+    if (len(commandLineArguments) > 2 and commandLineArguments[ARG_3].lower() == "useLastDescriptionID".lower()):
+        jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID 
+
+    r = requests.post(url, json=jsonContent, headers=HEADER)
+    printWarning("Response-Statuscode : " + str(r.status_code))
+
+    if r != None:
+        afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
+        afterFunction(r)
+
+
+    
 #------------------------------------------------------API, main, and other helping methods 
 #runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
 
@@ -308,11 +359,11 @@ def generalGetRequest(testCase, parameter, parameterPossible):
         if (exists()):
             r = requests.get(url, json=readFileAsPythonDict(filePath), headers=HEADER)
         else:
-            print(bcolors.FAIL + "Given filepath " + str(filePath) + " was not valid" + bcolors.ENDC)
+            printError("Given filepath " + str(filePath) + " was not valid")
 
     else:
         r = requests.get(url, headers=HEADER)
-    print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
+    printWarning("Response-Statuscode : " + str(r.status_code))
     printResponse(r)
 
 
@@ -372,10 +423,10 @@ def doPostRequest(pathToJsonFileContainingBody, url, authentication):
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody), headers=HEADER)
         else:
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody))
-        print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
+        printWarning("Response-Statuscode : " + str(r.status_code))
         return r
     else:
-        print(bcolors.FAIL + "Given filepath " + str(pathToJsonFileContainingBody) + " was not valid" + bcolors.ENDC)
+        printError("Given filepath " + str(pathToJsonFileContainingBody) + " was not valid")
         return None
 
 """
@@ -395,7 +446,7 @@ def multiPartFileRequest(testCase):
 
     #actually issue the request
     r = requests.post(url, headers=HEADER, files=fileDict)
-    print(bcolors.WARNING + "Response-Statuscode : " + str(r.status_code) + bcolors.ENDC)
+    printWarning("Response-Statuscode : " + str(r.status_code))
         
     if r != None:
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
@@ -425,7 +476,13 @@ def readFileAsPythonDict(path):
 def requestsHelp(parameter):
     if parameter == "help" or parameter == "?":
         return True
-    return False
+    return False 
+
+def printError(message):
+    print(bcolors.FAIL + message + bcolors.ENDC)
+
+def printWarning(message):
+    print(bcolors.WARNING + message + bcolors.ENDC)
 
 def printHelp():
     tutorialText = """
@@ -480,7 +537,7 @@ def printHelp():
 def executeTestCase(testCaseIdentifier):
     try:
         helperFunction = HELP_FUNCTION_MAPPINGS.get(testCaseIdentifier)
-        if len (commandLineArguments) >  1 and requestsHelp(commandLineArguments[ARG_2]):
+        if commandLineArguments and requestsHelp(commandLineArguments[ARG_1]) or len(commandLineArguments) >  1 and requestsHelp(commandLineArguments[ARG_2]):
             helperFunction()
             return
     except:
@@ -495,6 +552,8 @@ def executeTestCase(testCaseIdentifier):
         generalPostRequest(JOBSUBMIT_INCLUDE)
     elif testCaseIdentifier == SUBMIT_DESCRIPTION:
         multiPartFileRequest(SUBMIT_DESCRIPTION)
+    elif testCaseIdentifier == SUBMIT_JOB_EXTERNAL:
+        submit_job_external(SUBMIT_JOB_EXTERNAL)
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
         generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True)
@@ -502,7 +561,6 @@ def executeTestCase(testCaseIdentifier):
         generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID, True)
     else:
         print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
-        printHelp()
 
 
 #Tries if the user wanted to use an extra function 
@@ -514,17 +572,14 @@ def tryExtraCommandLineFuncion():
     
     if commandLineArguments[ARG_1].lower() == "togglePrintBody".lower():
         PRINT_REQ_JSON_BODY = not PRINT_REQ_JSON_BODY
-        print(bcolors.WARNING + "Print JSON_BODY : " + str(PRINT_REQ_JSON_BODY) + bcolors.ENDC)
+        printWarning("Print JSON_BODY : " + str(PRINT_REQ_JSON_BODY))
         return True
     
     if commandLineArguments[ARG_1].lower() == "toggleCatchReqError".lower():
         CATCH_REQUEST_ERROR = not CATCH_REQUEST_ERROR
-        print(bcolors.WARNING + "Catch Request- Error : " + str(CATCH_REQUEST_ERROR) + bcolors.ENDC)
+        printWarning("Catch Request- Error : " + str(CATCH_REQUEST_ERROR))
         return True
     
-    if commandLineArguments[ARG_1] == "exit":
-        running = False
-        return True
 
     if commandLineArguments[ARG_1].lower() == SHOW_ALL_TESTS.lower():
         print(AVAILABLE_TESTS)
@@ -540,7 +595,7 @@ def executeRunLoop():
         try:    
             executeTestCase(commandLineArguments[ARG_1])
         except:
-            print(bcolors.FAIL + "Something went wrong with the API-Request." + bcolors.ENDC)
+            printError("Something went wrong with the API-Request.")
     else:
         executeTestCase(commandLineArguments[ARG_1])
 
@@ -563,6 +618,10 @@ def main():
         commandLineArguments = userInput.split()
 
         if not commandLineArguments:
+            continue
+    
+        if commandLineArguments[ARG_1] == "exit":
+            running = False
             continue
 
         if commandLineArguments[ARG_1] == "runTestsFromFile":
