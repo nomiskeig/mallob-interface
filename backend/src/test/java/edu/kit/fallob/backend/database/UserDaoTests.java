@@ -79,9 +79,9 @@ public class UserDaoTests {
         this.userDao.save(TEST_USER);
         this.userDao.remove(TEST_USERNAME);
 
-        Assertions.assertThrows(FallobException.class, () -> {
-            this.userDao.getUserByUsername(TEST_USERNAME);
-        });
+        User user = this.userDao.getUserByUsername(TEST_USERNAME);
+
+        Assertions.assertNull(user);
     }
 
     @Test

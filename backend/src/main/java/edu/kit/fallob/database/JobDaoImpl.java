@@ -417,6 +417,10 @@ public class JobDaoImpl implements JobDao{
 
                 User user = userDao.getUserByUsername(username);
 
+                if (user == null) {
+                    throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
+                }
+
                 return new JobInformation(configuration, metaData, user, timeWithZone.format(formatter), status, jobId);
             } else {
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
