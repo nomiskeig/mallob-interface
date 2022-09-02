@@ -37,33 +37,47 @@ BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + "
 print(bcolors.OKGREEN + "Base-URL for API requests : "  + str(BASE_URL) + bcolors.ENDC)
 SHOW_ALL_TESTS = "showAllTests"
 SETTOKEN = "setToken"
-AVAILABLE_TESTS = ["register (T1000)", "login (T1010)",  "submitDescription (T1019)",  "submitJobExternalDescription (T1020)",  "submitJobInternalDescription (T2021)",
-    "downloadDescription (T1022)",
-    "cancelJob (T1030)", "get (Single, All, Global, Multiple)-JobInformation (T1070)",  "getResult - one, multiple, all - (T1080)", "getMallobInfo (T1100)" , "getSystemConfig (T1120)"]
+
 
 #these are variabls, which are being set at runtime
 #holds the current authentication-token
 HEADER = None
 CURRENT_ACTIVE_TOKEN = None
-LATEST_SAVED_JOB_ID = None
-LATEST_SAVED_DESCRIPTION_ID = None
+ALL_ACTIVE_USERS = []
+CURRENT_ACTIVE_USER_INDEX = 0
 
+LATEST_SAVED_JOB_ID = []
+LATEST_SAVED_DESCRIPTION_ID = []
+
+LATEST_STATUS_CODE = None
 
 #---------------test-cases
-REGISTER = "T1000"
-LOGIN = "T1010"
-JOBSUBMIT_INCLUDE = "T1021"
-GET_JOB_INFO = "T1070"
-SUBMIT_DESCRIPTION = "T1019"
-DOWNLOAD_DESCRIPTION = "T2022"
-SUBMIT_JOB_EXTERNAL = "T1020"
-CANCEL_JOB = "T1030"
-GET_SYSTEM_CONFIG = "T1120"
-GET_MALLOB_INFO = "T1100"
+REGISTER = "register"
+LOGIN = "login"
+JOBSUBMIT_INCLUDE = "submitJob_include"
+GET_JOB_INFO = "getJobInfo"
+SUBMIT_DESCRIPTION = "submitDescription"
+DOWNLOAD_DESCRIPTION = "downloadDescription"
+SUBMIT_JOB_EXTERNAL = "submitJob_external"
+CANCEL_JOB = "cancelJob"
+GET_SYSTEM_CONFIG = "getSystemConfig"
+GET_MALLOB_INFO = "getMallobInfo"
 
 
 #not yet implemented
-GET_RESULT = "T1080"
+GET_RESULT = "getResult"
+
+AVAILABLE_TESTS = [REGISTER,
+LOGIN,
+JOBSUBMIT_INCLUDE,
+GET_JOB_INFO,
+SUBMIT_DESCRIPTION ,
+DOWNLOAD_DESCRIPTION,
+SUBMIT_JOB_EXTERNAL,
+CANCEL_JOB ,
+GET_SYSTEM_CONFIG ,
+GET_MALLOB_INFO, 
+GET_RESULT]
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
@@ -145,17 +159,17 @@ def afterLogin(request):
     if responseJSON == None:
         return
     printResponseJSON(responseJSON)
-    CURRENT_ACTIVE_TOKEN = responseJSON.get("token")
-
-    #set the global header variable;
-    setHeader()
+    
+    if LATEST_STATUS_CODE == 200:
+        #set the global header variable;
+        setHeader(responseJSON.get("token"))
 
 def afterJobInclude(request):
     global LATEST_SAVED_JOB_ID
     responseJSON = convertRequestToJSON(request)
     if responseJSON == None:
         return    
-    LATEST_SAVED_JOB_ID = responseJSON.get("jobID")
+    LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] = responseJSON.get("jobID")
     printResponseJSON(responseJSON)
 
 def afterDescriptionUpload(request):
@@ -163,7 +177,7 @@ def afterDescriptionUpload(request):
     responseJSON = convertRequestToJSON(request)
     if responseJSON == None:
         return
-    LATEST_SAVED_DESCRIPTION_ID = responseJSON.get("descriptionID")
+    LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] = responseJSON.get("descriptionID")
     printResponseJSON(responseJSON)
 
 #Converts the given response into a json (python dict), if possible. and returns it. if not it Throws an error-message and returns None.
@@ -382,6 +396,7 @@ def getMallobInfo_help():
     print(getMallobInfo_help_text)
 
 #------------------------------------------------------submitting a job with external description needed and extra method...
+
 def submit_job_external(testCase):
     filePath = commandLineArguments[ARG_2]
     if not exists(filePath):
@@ -394,10 +409,10 @@ def submit_job_external(testCase):
 
     #modify json-content and use the latest description ID that has been submitted
     if (len(commandLineArguments) > 2 and commandLineArguments[ARG_3].lower() == "useLastDescriptionID".lower()):
-        jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID 
+        jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] 
 
     r = requests.post(url, json=jsonContent, headers=HEADER)
-    printWarning("Response-Statuscode : " + str(r.status_code))
+    printStatusCode(r.status_code)
 
     if r != None:
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
@@ -415,11 +430,11 @@ def cancelJob(testCase):
             if len(commandLineArguments) > 2:
                 url += commandLineArguments[ARG_3]
             else:
-                url += str(LATEST_SAVED_JOB_ID) 
+                url += str(LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX]) 
         r = requests.post(url, headers=HEADER)
     else:
         r = requests.post(url, json=readFileAsPythonDict(filePath), headers=HEADER)
-    printWarning("Response-Statuscode : " + str(r.status_code))
+    printStatusCode(r.status_code)
     printResponse(r)
     
 #------------------------------------------------------API, main, and other helping methods 
@@ -465,7 +480,7 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
 
     else:
         r = requests.get(url, headers=HEADER)
-    printWarning("Response-Statuscode : " + str(r.status_code))
+    printStatusCode(r.status_code)
     printResponse(r)
 
 
@@ -525,7 +540,8 @@ def doPostRequest(pathToJsonFileContainingBody, url, authentication):
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody), headers=HEADER)
         else:
             r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody))
-        printWarning("Response-Statuscode : " + str(r.status_code))
+        printStatusCode(r.status_code)
+
         return r
     else:
         printError("Given filepath " + str(pathToJsonFileContainingBody) + " was not valid")
@@ -548,7 +564,7 @@ def multiPartFileRequest(testCase):
 
     #actually issue the request
     r = requests.post(url, headers=HEADER, files=fileDict)
-    printWarning("Response-Statuscode : " + str(r.status_code))
+    printStatusCode(r.status_code)
         
     if r != None:
         afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
@@ -559,10 +575,41 @@ def multiPartFileRequest(testCase):
 def requestToJSON(request):
     return urlopen(request).read().decode()
 
+def printStatusCode(statusCode):
+    global LATEST_STATUS_CODE
+    LATEST_STATUS_CODE = statusCode
+    printWarning("Response-Statuscode : " + str(statusCode))
+
 #Sets the global HEADER variable to include authorisation. CURRENT_ACTIVE_TOKEN is used as token.
-def setHeader():
+def setHeader(token):
+    global HEADER, ALL_ACTIVE_USERS, CURRENT_ACTIVE_USER_INDEX
+    CURRENT_ACTIVE_TOKEN = token
+    userIndex = len(ALL_ACTIVE_USERS)
+    printWarning("User is now authenticated. Refer to this user as 'user" + str(userIndex) + "'")
+    CURRENT_ACTIVE_USER_INDEX = userIndex
+
+    #expand the array for latest saved job-id and description-id
+    LATEST_SAVED_DESCRIPTION_ID.append(-1)
+    LATEST_SAVED_JOB_ID.append(-1)
+
+    ALL_ACTIVE_USERS.append(CURRENT_ACTIVE_TOKEN)
+    purelySetHeader(CURRENT_ACTIVE_TOKEN)
+
+def purelySetHeader(token):
     global HEADER
-    HEADER = {'Authorization' : "Bearer " + str(CURRENT_ACTIVE_TOKEN)}
+    HEADER = {'Authorization' : "Bearer " + str(token)}
+
+def switchUser():
+    global CURRENT_ACTIVE_USER_INDEX
+    try:
+        index = int(commandLineArguments[ARG_2])
+    except:
+        printError("Cannot switch to 'user" + commandLineArguments[ARG_2] + "'. Please set [arg_2] to an int > 0.")
+    if not ALL_ACTIVE_USERS or index >= len(ALL_ACTIVE_USERS) or index < 0:
+        printError("User-index invalid.")
+    CURRENT_ACTIVE_USER_INDEX = index
+    purelySetHeader(ALL_ACTIVE_USERS[index])
+    printWarning("Switched to 'user" + str(index) + "'")
 
 def readFile(path):
     f = open(path, "r")
@@ -598,14 +645,25 @@ def printHelp():
             > [arg1] [arg2] [arg3]
 
         
-         Important function;
-            
-            set [arg1] to "runTestsFromFile" and [arg2] to a filePath in which you specify these files.
-            Set the file up like the following;
-            [tetscaseNumber1] [arg2] [arg3] ...
-            [tetscaseNumber2] [arg2] [arg3] ...
+         Important functions;
 
-            The program will then read your file and execute each instruction as if you typed it into the programs interface regularly.
+            a) Run tests from File
+            
+                set [arg1] == "runTestsFromFile" and [arg2] to a filePath in which you specify these files.
+                Set the file up like the following;
+                    [tetscaseNumber1] [arg2] [arg3] ...
+                    #this is a comment
+                    [tetscaseNumber2] [arg2] [arg3] ...
+
+                The program will then read your file and execute each instruction as if you typed it into the programs interface regularly.
+                Lines beginning with # in your specification-file will be ignored as comments.
+
+            b) Multi-User System
+
+                If you want to simulate multiple users interacting with fallob, you can do that easily, by setting [arg1] == "switchUser" and
+                [arg2] == (index). 
+                Every user you authenticate is stored, the first one you authenticate is stored as user0, second one as user1, ...
+                After you use switchUser, every request you do comes form the user-token you just switched to.
 
 
         2. Args
@@ -613,24 +671,15 @@ def printHelp():
             [arg1] is the type of test you want to execue. 
                 - If you want to issue a specific tests, use the number given to each test-case in the Pflichtenheft. For example, registering a new 
                   user is T1000.
+            [arg2-n] resources and parameters for the test-case sepcified in [arg1]. Set [arg2] == help or [arg2] == ? to get a help page for each API-Request.
                 
-                -Specail commands for [arg1]. Set [arg1] to ...
-                    ..."showAllTests" and a list of all possible tests is printed
-                    ..."togglePrintBody" - toggles printing the request-body before each request - 
-                    ..."toggleCatchReqError" - toggles catching the error.
-                    ...."togglePrintResponse" - if true, prints the response json, if false, it doesn't
-                    ..."exit" to leave the program
+            -Specail commands for [arg1]. Set [arg1] to ...
+                ..."showAllTests" and a list of all possible tests is printed
+                ..."togglePrintBody" - toggles printing the request-body before each request - 
+                ..."toggleCatchReqError" - toggles catching the error.
+                ...."togglePrintResponse" - if true, prints the response json, if false, it doesn't
+                ..."exit" to leave the program
 
-           
-
-
-            [arg2-n] is the resources necessary for executing the test, specified in [arg1]
-                for example a filepath to a file contianing a JobConfiguration like a user would submit it
-                or multiple-filepaths, for either multiple JobConfigurations
-            
-                For a detailed explanation of what parameters are requested for each test-run, specify your test in [arg1] and use "?", 
-                or "help" as argument 2
-            
 
             Notice; all paths given have to be absolute
     """
@@ -661,9 +710,9 @@ def executeTestCase(testCaseIdentifier):
         cancelJob(CANCEL_JOB)
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
-        generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID, True, True)
+        generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
     elif testCaseIdentifier == DOWNLOAD_DESCRIPTION:
-        generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID, True, True)
+        generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
     elif testCaseIdentifier == GET_SYSTEM_CONFIG:
         generalGetRequest(GET_SYSTEM_CONFIG, None, False, False)
     elif testCaseIdentifier == GET_MALLOB_INFO:
@@ -697,6 +746,10 @@ def tryExtraCommandLineFuncion():
     if commandLineArguments[ARG_1].lower() == SHOW_ALL_TESTS.lower():
         print(AVAILABLE_TESTS)
         return True
+    
+    if commandLineArguments[ARG_1].lower() == "switchUser".lower():
+        switchUser()
+        return True
 
     return False
 
@@ -718,7 +771,15 @@ def runTestsFromFile():
     lines = testSpecificationFile.readlines()
     for line in lines:
         commandLineArguments = line.split()
-        print(bcolors.OKGREEN + "Executing test-case : " + str(commandLineArguments[ARG_1]) + bcolors.ENDC)
+
+        if not commandLineArguments or commandLineArguments[ARG_1][0] =="#":
+            continue
+
+        if CURRENT_ACTIVE_TOKEN == None:
+            print(bcolors.OKGREEN + "Executing test-case : " + str(commandLineArguments[ARG_1]) + bcolors.ENDC)
+        else:
+            print(bcolors.OKGREEN + "Executing test-case : " + str(commandLineArguments[ARG_1]) + "as 'user" + str(CURRENT_ACTIVE_USER_INDEX) + "'" + bcolors.ENDC)
+
         executeRunLoop()
 
 def main():
@@ -736,6 +797,8 @@ def main():
         if commandLineArguments[ARG_1] == "exit":
             running = False
             continue
+    
+        
 
         if commandLineArguments[ARG_1] == "runTestsFromFile":
             runTestsFromFile()
