@@ -38,7 +38,7 @@ export function TextFieldDescription(props) {
 		);
 	});
 	return (
-		<div className='textFieldDescriptionContainer d-flex flex-column'>
+		<div data-testid="textFieldDescription" className='textFieldDescriptionContainer d-flex flex-column'>
 			<div className='textFieldPickerButtons d-flex flex-wrap'>
 				{textFieldPickerButtons}
 				{!props.displayOnly && (

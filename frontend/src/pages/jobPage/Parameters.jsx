@@ -77,7 +77,7 @@ export const configParameters = [
 				return {
 					isValid: true,
 				};
-			} else if (!Number.isInteger) {
+			} else if (!Number.isInteger(value * 1)) {
                 return {
                     isValid: false,
                     reason: 'Maximum Demand has to be an integer.'
@@ -220,7 +220,7 @@ export const configParameters = [
                     isValid: true
                 };
             }
-            if (!Number.isInteger(value)) {
+            if (!Number.isInteger(value *1)) {
                 return {
                     isValid: false,
                     reason: "Precursor has to be an integer."

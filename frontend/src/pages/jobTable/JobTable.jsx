@@ -7,18 +7,28 @@ import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
 import { ROLE_ADMIN } from '../../context/UserContextProvider';
 import { StatusLabel } from '../../global/statusLabel/StatusLabel';
 import { UserContext } from '../../context/UserContextProvider';
-import { InfoContext, TYPE_INFO, TYPE_WARNING } from '../../context/InfoContextProvider';
+import {
+	InfoContext,
+	TYPE_INFO,
+	TYPE_WARNING,
+} from '../../context/InfoContextProvider';
+export const JOBS_SUCCESSFULLY_CANCELED =
+	'Successfully cancelled the selected jobs.';
+export const JOBS_PARTLY_CANCELED_BEGIN =
+	'Successfully cancelled some of the selected jobs. \nThe jobs with the following IDs could not be cancelled: ';
 export function JobTable(props) {
-	let [selectedIndices, setSelectedIndices] = useState([]);
+	let [selectedIndices, setSelectedIndices] = useState([
+		configParameters.find((param) => param.name === 'Name').index,
+	]);
 	let [selectedJobs, setSelectedJobs] = useState([]);
 	let [filterUser, setFilterUser] = useState(false);
 	let [canCancelJobs, setCanCancelJobs] = useState(false);
-    let [canDownloadResults, setCanDownloadsResults] = useState(false);
+	let [canDownloadResults, setCanDownloadsResults] = useState(false);
 
 	let userContext = useContext(UserContext);
 	let infoContext = useContext(InfoContext);
 
-	let isAdmin = props.user.role === ROLE_ADMIN;
+	let isAdmin = userContext.user.role === ROLE_ADMIN;
 
 	let filteredConfigParams = configParameters.filter((param) => {
 		if (!selectedIndices.includes(param.index)) {
@@ -58,16 +68,16 @@ export function JobTable(props) {
 	function updateActionPossibilities(selectedJobs) {
 		if (selectedJobs.length === 0) {
 			setCanCancelJobs(false);
-            setCanDownloadsResults(false);
+			setCanDownloadsResults(false);
 			return;
 		}
-        setCanDownloadsResults(true);
+		setCanDownloadsResults(true);
 
 		setCanCancelJobs(true);
 	}
 
 	function cancelSelectedJobs() {
-        let jobsToCancel = selectedJobs;
+		let jobsToCancel = selectedJobs;
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/cancel',
@@ -79,20 +89,19 @@ export function JobTable(props) {
 			},
 		})
 			.then((res) => {
-                console.log(res.data)
-                if (res.data.cancelled.length === jobsToCancel.length ) {
-				infoContext.handleInformation(
-					'Successfully cancelled the selected jobs.',
-					TYPE_INFO
-				);
-                } else {
-                    let notCancelled = jobsToCancel.filter((id) => !res.data.cancelled.includes(id));
-                    let message = 'Successfully cancelled some of the selected jobs. \nThe jobs with the following IDs could not be cancelled: '
-                    notCancelled.forEach((id) => message += id + ', ');
-                    message = message.slice(0, message.length-2);
-                    infoContext.handleInformation(message, TYPE_WARNING);
-                }
-
+				console.log(res.data);
+				if (res.data.cancelled.length === jobsToCancel.length) {
+                    console.log(infoContext.handleInformation)
+					infoContext.handleInformation(JOBS_SUCCESSFULLY_CANCELED, TYPE_INFO);
+				} else {
+					let notCancelled = jobsToCancel.filter(
+						(id) => !res.data.cancelled.includes(id)
+					);
+					let message = JOBS_PARTLY_CANCELED_BEGIN;
+					notCancelled.forEach((id) => (message += id + ', '));
+					message = message.slice(0, message.length - 2);
+					infoContext.handleInformation(message, TYPE_WARNING);
+				}
 			})
 			.catch((e) => {
 				console.log(e);
@@ -108,15 +117,15 @@ export function JobTable(props) {
 			headers: {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
-            responseType: 'blob'
+			responseType: 'blob',
 		}).then((res) => {
-            let url = window.URL.createObjectURL(new Blob([res.data]));
-                let link = document.createElement('a');
-                link.href= url;
-                link.setAttribute('download', 'descriptions.zip');
-                document.body.appendChild(link);
-                link.click();
-            });
+			let url = window.URL.createObjectURL(new Blob([res.data]));
+			let link = document.createElement('a');
+			link.href = url;
+			link.setAttribute('download', 'descriptions.zip');
+			document.body.appendChild(link);
+			link.click();
+		});
 	}
 	function getHeaderButtons(index, name, internalName) {
 		return (
@@ -179,6 +188,7 @@ export function JobTable(props) {
 				<div className='d-flex justify-content-around statusCell'>
 					<StatusLabel status={param.row.status} />
 					<input
+						data-testid={'rowCheckbox-' + param.row.id}
 						className='form-check-intput'
 						type='checkbox'
 						checked={selectedJobs.includes(param.row.id)}
@@ -197,7 +207,8 @@ export function JobTable(props) {
 	let jobs = props.jobs;
 	if (filterUser) {
 		jobs = jobs.filter((job) => {
-			if (job.user === props.user.username) {
+			console.log('user', job.user, 'username', userContext.user.username);
+			if (job.user == userContext.user.username) {
 				return true;
 			}
 			return false;
@@ -220,14 +231,14 @@ export function JobTable(props) {
 	});
 
 	return (
-		<div className='dataGridContainer'>
+		<div data-testid='jobTable' className='dataGridContainer'>
 			<div className='controlBar d-flex flex-row align-items-end justify-content-between'>
 				<DropdownComponent
 					title={'Pick shown attributes'}
 					items={paramDropdownItems}
 				></DropdownComponent>
 				{isAdmin && (
-					<div className='d-flex flex-row'>
+					<div data-testid='adminFilter' className='d-flex flex-row'>
 						<div className='showJobsLabel'>Show all jobs</div>
 						<div className='tableHeaderSpacer'></div>
 						<input
@@ -248,7 +259,7 @@ export function JobTable(props) {
 						{
 							name: 'Download results of selected Jobs',
 							onClick: () => downloadSelectedResults(),
-                            disabled: !canDownloadResults
+							disabled: !canDownloadResults,
 						},
 						{
 							name: 'Cancel selected jobs',

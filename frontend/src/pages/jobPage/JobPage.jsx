@@ -71,7 +71,7 @@ export function JobPage(props) {
 		if (!loaded || !job) {
 			return;
 		}
-
+ 
 		if (job.user !== userContext.user.username) {
 			setDescriptionDisplay([]);
 			return;
@@ -164,6 +164,7 @@ export function JobPage(props) {
 					parameterDisplayList.push(
 						<div key={getIndexByParam(param)} className='singleParamDisplay'>
 							<InputWithLabel
+                                dataTestID={"inputWithLabel-" + param.internalName}
 								disabled={true}
 								value={value}
 								labelText={param.name}
@@ -177,6 +178,7 @@ export function JobPage(props) {
 				parameterDisplayList.push(
 					<div key={key} className='singleParamDisplay'>
 						<InputWithLabel
+                                dataTestID={"inputWithLabel-" + key}
 							disabled={true}
 							value={value}
 							labelText={key}
@@ -202,7 +204,7 @@ export function JobPage(props) {
 	let status = job ? getStatus(job) : null;
 
 	return (
-		<div className={embedded ? 'embeddedPageContainer' : 'jobPageContainer'}>
+		<div data-testid='jobPage' className={embedded ? 'embeddedPageContainer' : 'jobPageContainer'}>
 			<div className={embedded ? '' : 'marginContainer'}>
 				<div className={embedded ? '' : 'row jobPageRow g-0'}>
 					<div className={embedded ? '' : 'col jobPageColumn'}>
@@ -231,7 +233,6 @@ export function JobPage(props) {
 									job.user === userContext.user.username && (
 										<Button
 											onClick={() => {
-                                                console.log(jobID)
 												jobContext.setJobToRestart(jobID);
 												navigate('/submit');
 											}}

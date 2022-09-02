@@ -31,12 +31,6 @@ export function JobContextProvider({ children }) {
 	const [jobs, dispatch] = useReducer(reducer, []);
 	let [jobToRestart, setJobToRestart] = useState(null);
 
-	async function fetchJobs() {
-		await axios
-			.get('/api/v1/jobs/all')
-			.then((res) => {}) // setJobs(res))
-			.catch((err) => console.log(err));
-	}
 	function cancelJob(jobID) {
 		axios({
 			method: 'post',
@@ -147,7 +141,6 @@ export function JobContextProvider({ children }) {
 				setJobToRestart: setJobToRestart,
 				jobToRestart: jobToRestart,
 				cancelJob: cancelJob,
-				fetchJobs: fetchJobs,
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,
 				loadSingleJob: loadSingleJob,

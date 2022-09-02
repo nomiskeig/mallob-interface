@@ -6,7 +6,6 @@ import { JobContextProvider } from './JobContextProvider';
 import { JobContext } from './JobContextProvider';
 import axios from 'axios';
 import {UserContext} from './UserContextProvider';
-
 jest.mock('axios');
 jest.mock('./UserContextProvider.jsx')
 

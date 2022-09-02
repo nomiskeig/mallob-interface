@@ -22,7 +22,7 @@ export function FileDescription(props) {
 	});
 
 	return (
-		<div className='fileDescriptionContainer d-flex flex-column'>
+		<div data-testid="fileDescription" className='fileDescriptionContainer d-flex flex-column'>
 			<button
 				className='btn btn-primary addDescriptionButton'
 				onClick={() => openFileSelector()}

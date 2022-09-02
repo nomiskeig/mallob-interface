@@ -32,6 +32,7 @@ export function DropdownComponent(props) {
 						return (
 							<li key={index}>
 								<button
+                                    data-testid={'dropdownOption-'+ item.name}
 									disabled={item.disabled ? true : false}
 									className='dropdown-item'
 									type='button'
