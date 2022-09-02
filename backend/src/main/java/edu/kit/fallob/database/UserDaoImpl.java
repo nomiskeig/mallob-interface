@@ -110,7 +110,7 @@ public class UserDaoImpl implements UserDao{
                 } else {
                     returnUser = new NormalUser(username, password, email);
                 }
-                JobDao jobDao = new JobDaoImpl();
+                JobDao jobDao = new DaoFactory().getJobDao();
                 List<Integer> jobIDs = new ArrayList<>();
                 for (Integer i : jobDao.getAllJobIds(username)) {
                 	jobIDs.add(i);
