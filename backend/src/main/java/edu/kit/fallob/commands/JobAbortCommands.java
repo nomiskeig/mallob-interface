@@ -2,6 +2,7 @@ package edu.kit.fallob.commands;
 
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
+import edu.kit.fallob.database.UserDao;
 import edu.kit.fallob.dataobjects.JobInformation;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.input.MallobInput;
@@ -29,6 +30,8 @@ public class JobAbortCommands {
 	private MallobInput mallobInput;
 	private UserActionAuthentificater uaa;
 	private JobDao jobDao;
+
+	private UserDao userDao;
 	
 	
 	public JobAbortCommands() throws FallobException{
@@ -36,6 +39,7 @@ public class JobAbortCommands {
 		try {
 			daoFactory = new DaoFactory();
 			jobDao = daoFactory.getJobDao();
+			userDao = daoFactory.getUserDao();
 			uaa = new UserActionAuthentificater(daoFactory);
 			mallobInput = MallobInputImplementation.getInstance();
 		} catch (Exception e) {
@@ -55,7 +59,12 @@ public class JobAbortCommands {
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
 			throw new FallobException(HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
 		}
+
+		if (uaa.isAdmin(username)) {
+			username = userDao.getUsernameByJobId(jobID);
+		}
 		JobInformation jobInfo = jobDao.getJobInformation(jobID);
+
 		try {
 			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
 		} catch (IOException e) {

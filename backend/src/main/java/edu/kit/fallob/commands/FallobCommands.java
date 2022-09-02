@@ -7,6 +7,7 @@ import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,6 +30,12 @@ public class FallobCommands implements UserDetailsService {
 	private static final String DUPLICATE_USERNAME = "Username already exists";
 
 	private static final String DUPLICATE_EMAIL = "Email already exists";
+	private static final String USERNAME_REQUIREMENTS = "Username must be between 4 and 25 characters";
+
+	private static final String PASSWORD_TOO_SHORT = "Password must be at least 8 characters";
+	private static final int USERNAME_LOWER_BOUND = 4;
+	private static final int USERNAME_UPPER_BOUND = 25;
+	private static final int PASSWORD_LOWER_BOUND = 8;
 	
 	
 	public FallobCommands() throws FallobException {
@@ -63,11 +70,15 @@ public class FallobCommands implements UserDetailsService {
     
     
     public boolean register(String username, String password, String email) throws FallobException {
-
+		if (username.length() < USERNAME_LOWER_BOUND || username.length() > USERNAME_UPPER_BOUND) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, USERNAME_REQUIREMENTS);
+		}
+		if (password.length() < PASSWORD_LOWER_BOUND) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, PASSWORD_TOO_SHORT);
+		}
 		String encodedPassword = passwordEncoder.encode(password);
 		userDao.save(new NormalUser(username, encodedPassword, email));
 		return true;
-
     }
     
     

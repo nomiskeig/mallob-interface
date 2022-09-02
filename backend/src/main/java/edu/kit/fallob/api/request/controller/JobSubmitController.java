@@ -41,6 +41,8 @@ public class JobSubmitController {
 
     private static final String DIRECTORY_SEPARATOR = "/";
 
+    private static int FILENAME_COUNTER = 0;
+
     @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
@@ -105,13 +107,12 @@ public class JobSubmitController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<File> files = new ArrayList<>();
         try {
-            int counter = 0;
             List<String> lines = request.getDescription();
             for (String line : lines) {
-                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME + counter + FILE_EXTENSION);
+                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME + FILENAME_COUNTER + FILE_EXTENSION);
                 FileWriter myWriter = new FileWriter(file.getAbsolutePath());
                 myWriter.write(line);
-                counter++;
+                FILENAME_COUNTER++;
                 files.add(file);
                 myWriter.close();
             }
