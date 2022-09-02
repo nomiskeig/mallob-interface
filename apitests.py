@@ -609,7 +609,7 @@ def switchUser():
         printError("User-index invalid.")
     CURRENT_ACTIVE_USER_INDEX = index
     purelySetHeader(ALL_ACTIVE_USERS[index])
-    printWarning("Switched to 'user" + str(index) + "'")
+    print(bcolors.OKCYAN + "Switched to 'user" + str(index) + "'" + bcolors.ENDC)
 
 def readFile(path):
     f = open(path, "r")
@@ -753,17 +753,26 @@ def tryExtraCommandLineFuncion():
 
     return False
 
+#
+def runTestCase(testCase):
+    if CURRENT_ACTIVE_TOKEN == None:
+        print(bcolors.OKGREEN + "Executing test-case : " + str(testCase) + bcolors.ENDC)
+    else:
+        print(bcolors.OKGREEN + "Executing test-case : " + str(testCase) + "as 'user" + str(CURRENT_ACTIVE_USER_INDEX) + "'" + bcolors.ENDC)
+
+    if CATCH_REQUEST_ERROR:
+        try:    
+            executeTestCase(testCase)
+        except:
+            printError("Something went wrong with the API-Request.")
+    else:
+        executeTestCase(testCase)
+
 def executeRunLoop():
     if tryExtraCommandLineFuncion():
         return
 
-    if CATCH_REQUEST_ERROR:
-        try:    
-            executeTestCase(commandLineArguments[ARG_1])
-        except:
-            printError("Something went wrong with the API-Request.")
-    else:
-        executeTestCase(commandLineArguments[ARG_1])
+    runTestCase(commandLineArguments[ARG_1])
 
 def runTestsFromFile():
     global commandLineArguments
@@ -774,12 +783,6 @@ def runTestsFromFile():
 
         if not commandLineArguments or commandLineArguments[ARG_1][0] =="#":
             continue
-
-        if CURRENT_ACTIVE_TOKEN == None:
-            print(bcolors.OKGREEN + "Executing test-case : " + str(commandLineArguments[ARG_1]) + bcolors.ENDC)
-        else:
-            print(bcolors.OKGREEN + "Executing test-case : " + str(commandLineArguments[ARG_1]) + "as 'user" + str(CURRENT_ACTIVE_USER_INDEX) + "'" + bcolors.ENDC)
-
         executeRunLoop()
 
 def main():
