@@ -54,10 +54,11 @@ export class DetailsComponent extends React.Component {
 					<div className='buttons ms-auto d-flex flex-row '>
 						{showButtons  && (
 							<React.Fragment>
+                                {this.props.context.jobContext.jobs.find(Job => Job.jobID == job.getJobID()).status === 'RUNNING' &&
 								<Button color='#f24236' text='cancel job' onClick={() => {
-                                    console.log(this.props.context.jobContext)
                                     this.props.context.jobContext.cancelJob(job.getJobID())
                                 }}></Button>
+                            }
 								<div className='buttonSpacer'></div>
 								<JobPageButton className='jobButton' jobID={job.getJobID()}></JobPageButton>
 							</React.Fragment>
