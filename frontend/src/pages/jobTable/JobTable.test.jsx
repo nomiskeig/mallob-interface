@@ -1,4 +1,8 @@
-import { JOBS_SUCCESSFULLY_CANCELED, JobTable } from './JobTable';
+import {
+	JOBS_PARTLY_CANCELED_BEGIN,
+	JOBS_SUCCESSFULLY_CANCELED,
+	JobTable,
+} from './JobTable';
 import {
 	screen,
 	render,
@@ -8,7 +12,11 @@ import {
 } from '@testing-library/react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { JobContext } from '../../context/JobContextProvider';
-import { InfoContext, TYPE_INFO } from '../../context/InfoContextProvider';
+import {
+	InfoContext,
+	TYPE_INFO,
+	TYPE_WARNING,
+} from '../../context/InfoContextProvider';
 import {
 	ROLE_ADMIN,
 	ROLE_USER,
@@ -140,7 +148,8 @@ test('Can cancel jobs sucessfully', async () => {
 	const axiosCallParameters = axios.mock.calls[0][0];
 
 	expect(axiosCallParameters).toEqual(
-		expect.objectContaining({ data: expect.objectContaining({
+		expect.objectContaining({
+			data: expect.objectContaining({
 				jobs: expect.arrayContaining([1, 2]),
 			}),
 		})
@@ -154,7 +163,7 @@ test('Can cancel jobs sucessfully', async () => {
 	});
 });
 
-test('Can cancel jobs but only some are actually cancelled', () => {
+test('Can cancel jobs but only some are actually cancelled', async () => {
 	fakeJobProvider.jobs = [
 		{
 			config: { name: 'job1' },
@@ -170,7 +179,7 @@ test('Can cancel jobs but only some are actually cancelled', () => {
 			cancelled: [1],
 		},
 	});
-    customRender(<JobTable jobs={fakeJobProvider.jobs}/>)
+	customRender(<JobTable jobs={fakeJobProvider.jobs} />);
 	expect(screen.getAllByText(/^job[1,2]$/)).toHaveLength(2);
 	const checkboxJob1 = screen.getByTestId('rowCheckbox-1');
 	fireEvent.click(checkboxJob1);
@@ -181,10 +190,89 @@ test('Can cancel jobs but only some are actually cancelled', () => {
 	);
 	fireEvent.click(cancelButton);
 	expect(axios).toHaveBeenCalledTimes(1);
-    await waitFor(() => {
-        expect(fakeInfoProvider.handleInformation).toHaveBeenCalledTimes(1);
-        expect( w)
-    })
-
-
+	await waitFor(() => {
+		expect(fakeInfoProvider.handleInformation).toHaveBeenCalledTimes(1);
+		expect(fakeInfoProvider.handleInformation).toHaveBeenCalledWith(
+			JOBS_PARTLY_CANCELED_BEGIN + '2',
+			TYPE_WARNING
+		);
+	});
 });
+
+test('Unselecting a job works and buttons are disabled if no job is selected', () => {
+	fakeJobProvider.jobs.push({ config: { name: 'job1' }, jobID: 1 });
+	customRender(<JobTable jobs={fakeJobProvider.jobs} />);
+	expect(screen.getAllByText('job1')).toHaveLength(1);
+	const cancelButton = screen.getByTestId(
+		'dropdownOption-Cancel selected jobs'
+	);
+	const downloadButton = screen.getByTestId(
+		'dropdownOption-Download results of selected jobs'
+	);
+	expect(cancelButton).toBeDisabled();
+	expect(downloadButton).toBeDisabled();
+	const checkboxJob1 = screen.getByTestId('rowCheckbox-1');
+	fireEvent.click(checkboxJob1);
+	expect(cancelButton).not.toBeDisabled();
+	expect(downloadButton).not.toBeDisabled();
+	fireEvent.click(checkboxJob1);
+	expect(cancelButton).toBeDisabled();
+	expect(downloadButton).toBeDisabled();
+});
+
+test('Column can be removed again', async () => {
+	fakeJobProvider.jobs.push({
+		config: {
+			name: 'job1',
+		},
+		jobID: 1,
+	});
+
+	customRender(<JobTable jobs={fakeJobProvider.jobs} />);
+	fireEvent.click(screen.getByTestId('dropdownOption-Priority'));
+	await waitFor(() => {
+		const removeButton = screen.getByTestId('remove-priority');
+		expect(removeButton).not.toBeNull();
+		fireEvent.click(removeButton);
+        const nextRemoveButton = screen.queryByTestId('remove-priority');
+		expect(nextRemoveButton).toBeNull();
+	});
+});
+
+
+test('Can download results', async () =>{
+	fakeJobProvider.jobs = [
+		{
+			config: { name: 'job1' },
+			jobID: 1,
+		},
+		{
+			config: { name: 'job2' },
+			jobID: 2,
+		},
+	];
+	axios.mockResolvedValueOnce({
+		data: new Blob([JSON.stringify('data')])
+	});
+    global.URL.createObjectURL = jest.fn();
+	customRender(<JobTable jobs={fakeJobProvider.jobs} />);
+	expect(screen.getAllByText(/^job[1,2]$/)).toHaveLength(2);
+	const checkboxJob1 = screen.getByTestId('rowCheckbox-1');
+	fireEvent.click(checkboxJob1);
+	const checkboxJob2 = screen.getByTestId('rowCheckbox-2');
+	fireEvent.click(checkboxJob2);
+	const downloadButton = screen.getByTestId(
+		'dropdownOption-Download results of selected jobs'
+	);
+	fireEvent.click(downloadButton);
+	expect(axios).toHaveBeenCalledTimes(1);
+	const axiosCallParameters = axios.mock.calls[0][0];
+	expect(axiosCallParameters).toEqual(
+		expect.objectContaining({
+			data: expect.objectContaining({
+				jobs: expect.arrayContaining([1, 2]),
+			}),
+		})
+	);
+});
+

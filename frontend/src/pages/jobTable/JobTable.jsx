@@ -89,7 +89,6 @@ export function JobTable(props) {
 			},
 		})
 			.then((res) => {
-				console.log(res.data);
 				if (res.data.cancelled.length === jobsToCancel.length) {
                     console.log(infoContext.handleInformation)
 					infoContext.handleInformation(JOBS_SUCCESSFULLY_CANCELED, TYPE_INFO);
@@ -104,14 +103,16 @@ export function JobTable(props) {
 				}
 			})
 			.catch((e) => {
+                infoContext.handleInformation('Could not cancel the selected jobs. \n Reason: '+ e.message);
 				console.log(e);
 			});
 	}
 	function downloadSelectedResults() {
+        console.log(selectedJobs)
 		axios({
-			method: 'get',
+			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/solution',
-			params: {
+			data: {
 				jobs: [...selectedJobs],
 			},
 			headers: {
@@ -134,6 +135,7 @@ export function JobTable(props) {
 				<React.Fragment>
 					<div disabled className='removeButton'>
 						<svg
+                            data-testid={'remove-' + internalName}
 							onClick={() =>
 								setSelectedIndices(
 									selectedIndices.filter((indexFromArray) => {
@@ -201,9 +203,6 @@ export function JobTable(props) {
 	});
 
 	// calculate rows
-	if (!props.jobs) {
-		return;
-	}
 	let jobs = props.jobs;
 	if (filterUser) {
 		jobs = jobs.filter((job) => {
@@ -257,7 +256,7 @@ export function JobTable(props) {
 					title={'Choose action'}
 					items={[
 						{
-							name: 'Download results of selected Jobs',
+							name: 'Download results of selected jobs',
 							onClick: () => downloadSelectedResults(),
 							disabled: !canDownloadResults,
 						},
