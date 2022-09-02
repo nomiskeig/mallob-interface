@@ -12,6 +12,7 @@ export function DependencyTable(props) {
 			{props.input && (
 				<td className='dependencyTableCell dependencyTableLastColumn'>
 					<input
+                        data-testid={'dependencyTableCheckbox-' + job.jobID}
 						className='form-check-input'
 						type='checkbox'
 						checked={props.selectedIDs.includes(job.jobID)}
