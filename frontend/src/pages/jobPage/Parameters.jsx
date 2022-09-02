@@ -124,7 +124,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
-        tooltipText: "Limit for the Wallclock time the job can use. Has to be a number followed by one of ms, s, m, h, d"
+        tooltipText: "Limit for the Wallclock time the job can use. Has to be a number followed by one of ms, s, m, h, d."
 	},
 	{
 		name: 'CPU-Limit',
@@ -153,7 +153,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
-        tooltipText: "Limit for the CPU time the job can use. Has to be a number followed by one of ms, s, m, h, d"
+        tooltipText: "Limit for the CPU time the job can use. Has to be a number followed by one of ms, s, m, h, d."
 	},
 	{
 		name: 'Arrival',
@@ -170,7 +170,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
-        tooltipText: "The date and time when the job gets run."
+        tooltipText: "The date and time when the job gets run. Input has to be in your local time zone."
 	},
 	{
 		name: 'Dependencies',

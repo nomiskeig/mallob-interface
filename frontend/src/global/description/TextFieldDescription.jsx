@@ -25,7 +25,7 @@ export function TextFieldDescription(props) {
 	let textFieldPickerButtons = descriptions.map((description, index) => {
 		return (
 			<button
-                key={index}
+				key={index}
 				className={`btn ${
 					index === currentDescription
 						? 'btn-primary disabled'
@@ -38,7 +38,10 @@ export function TextFieldDescription(props) {
 		);
 	});
 	return (
-		<div data-testid="textFieldDescription" className='textFieldDescriptionContainer d-flex flex-column'>
+		<div
+			data-testid='textFieldDescription'
+			className='textFieldDescriptionContainer d-flex flex-column'
+		>
 			<div className='textFieldPickerButtons d-flex flex-wrap'>
 				{textFieldPickerButtons}
 				{!props.displayOnly && (
@@ -60,13 +63,13 @@ export function TextFieldDescription(props) {
 				)}
 			</div>
 			<textarea
+                data-testid='descriptionTextArea'
 				className='textFieldTextArea'
 				value={descriptions[currentDescription]}
 				onChange={(e) => {
-                    console.log(e.target.value);
-					setSpecificDescription(currentDescription, e.target.value)
-                }
-				}
+					console.log(e.target.value);
+					setSpecificDescription(currentDescription, e.target.value);
+				}}
 				readOnly={props.displayOnly ? true : false}
 			></textarea>
 		</div>

@@ -14,27 +14,39 @@ export function FileDescription(props) {
 		let newFiles = [...files];
 		plainFiles.forEach((file) => newFiles.push(file));
 		setFiles(newFiles);
-        props.setDescriptions(newFiles)
+		props.setDescriptions(newFiles);
 		clear();
-	}, [plainFiles, clear, files]);
-	let selectedFilesDisplay = files.map((file) => {
-		return <div className='selectedFileDisplay'>{file.name}</div>;
+	}, [plainFiles]);
+	let selectedFilesDisplay = files.map((file,index) => {
+		return <div key={index} className='selectedFileDisplay'>{file.name}</div>;
 	});
 
 	return (
-		<div data-testid="fileDescription" className='fileDescriptionContainer d-flex flex-column'>
+		<div
+			data-testid='fileDescription'
+			className='fileDescriptionContainer d-flex flex-column'
+		>
 			<button
 				className='btn btn-primary addDescriptionButton'
 				onClick={() => openFileSelector()}
 			>
 				Add description
 			</button>
+			<button
+				style={{ display: 'none' }}
+				data-testid='fileDescriptionTestButton'
+				onClick={() => {
+                    plainFiles = [1]
+                    let newFiles = [...files];
+                    newFiles.push(new File(['some file data'], 'testFile.cnf'))
+					setFiles(newFiles)
+                    
+				}}
+			/>
 			{selectedFilesDisplay.length >= 1 && (
 				<React.Fragment>
 					<div className='selectedFilesHeader'>Selected files:</div>
-					<div className='selectedFilesContainer'>
-						{selectedFilesDisplay}
-					</div>
+					<div className='selectedFilesContainer'>{selectedFilesDisplay}</div>
 				</React.Fragment>
 			)}
 		</div>

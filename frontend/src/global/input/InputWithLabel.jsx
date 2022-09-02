@@ -5,6 +5,7 @@ export function InputWithLabel(props) {
 		<div data-testid={props.dataTestID} className='inputWithLabelContainer d-flex flex-column align-items-start'>
 			<label className='inputWithLabelLabel'>{props.labelText}</label>
 			<input
+                data-testid={'input-' + props.labelText}
 				className='form-control'
                 type={props.datetime ? 'datetime-local': 'text'}
 				disabled={props.disabled ? true : false}

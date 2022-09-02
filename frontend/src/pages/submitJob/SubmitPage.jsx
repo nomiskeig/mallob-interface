@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import './SubmitPage.scss';
 import axios from 'axios';
+import format from 'date-fns/format'
 import { useNavigate } from 'react-router-dom';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
@@ -64,6 +65,7 @@ export function SubmitPage(props) {
 		if (jobContext.jobToRestart === null) {
 			return;
 		}
+		// fill up the page with the config of the job to restart
 		let submittedJob = jobContext.jobs.filter(
 			(job) => job.jobID == jobContext.jobToRestart
 		)[0];
@@ -72,6 +74,15 @@ export function SubmitPage(props) {
 			delete submittedJob.config.dependencies;
 		}
 		setJobToSubmit(submittedJob.config);
+		if (submittedJob.config['arrival']) {
+            try {
+			let newJobToSubmit = submittedJob.config;
+			newJobToSubmit['arrival'] = format(new Date(submittedJob.config['arrival']), "yyyy-MM-dd'T'HH:mm");
+            setJobToSubmit(newJobToSubmit);
+            } catch (e) {
+                console.log(e.message)
+            }
+		}
 		let newSelectionOptionalIndices = selectedOptionalIndices;
 		configParameters
 			.filter((param) => !param.required)
@@ -91,7 +102,6 @@ export function SubmitPage(props) {
 			}
 			setAdditionalConfig([...newAdditionalConfig]);
 		}
-
 		setSelectedOptionalIndices([...newSelectionOptionalIndices]);
 		jobContext.setJobToRestart(null);
 	}, []);
@@ -123,14 +133,16 @@ export function SubmitPage(props) {
 		}
 
 		let job = { ...jobToSubmit };
+
 		if (job.arrival) {
-			job.arrival = new Date(job.arrival);
+			job.arrival = new Date(job.arrival).toISOString();
 		}
 		job['description'] = [...descriptions];
 		if (dependencies.length > 0) {
 			job['dependencies'] = [...dependencies];
 		}
 		job = addAddtionalParametersToJob(job);
+		job = castParametersToCorrectTypes(job);
 		axios({
 			method: 'post',
 			url:
@@ -186,7 +198,14 @@ export function SubmitPage(props) {
 	function submitJobExclusiveConfig(descriptionID) {
 		let job = { ...jobToSubmit };
 		job['descriptionID'] = descriptionID;
+		if (dependencies.length > 0) {
+			job['dependencies'] = [...dependencies];
+		}
 		job = addAddtionalParametersToJob(job);
+		job = castParametersToCorrectTypes(job);
+		if (job.arrival) {
+			job.arrival = new Date(job.arrival).toISOString();
+		}
 
 		axios({
 			method: 'post',
@@ -216,15 +235,30 @@ export function SubmitPage(props) {
 		});
 		return job;
 	}
+	function castParametersToCorrectTypes(job) {
+		if (job['priority']) {
+			job['priority'] = Number(job['priority']);
+		}
+		if (job['precursor']) {
+			job['precursor'] = Number(job['precursor']);
+		}
+		if (job['maxDemand']) {
+			job['maxDemand'] = Number(job['maxDemand']);
+		}
+		return job;
+	}
 
 	function getInputBasedOnParam(param) {
 		switch (param.inputType) {
 			case INPUT_TYPE_TEXT:
 				return (
-					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+					<Tooltip
+						key={getIndexByParam(param)}
+						title={param.tooltipText}
+						enterDelay={TOOLTIP_ENTER_DELAY}
+					>
 						<div>
 							<InputWithLabel
-								key={getIndexByParam(param)}
 								labelText={param.name}
 								value={
 									jobToSubmit[param.internalName]
@@ -243,7 +277,11 @@ export function SubmitPage(props) {
 				);
 			case INPUT_TYPE_SELECT:
 				return (
-					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+					<Tooltip
+						key={getIndexByParam(param)}
+						title={param.tooltipText}
+						enterDelay={TOOLTIP_ENTER_DELAY}
+					>
 						<div>
 							<DropdownComponent
 								key={getIndexByParam(param)}
@@ -269,13 +307,15 @@ export function SubmitPage(props) {
 					setJobToSubmit(newJobToSubmit);
 				}
 				return (
-					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
-						<div
-							key={getIndexByParam}
-							className='d-flex flex-column align-items-start booleanInputContainer'
-						>
+					<Tooltip
+						key={getIndexByParam(param)}
+						title={param.tooltipText}
+						enterDelay={TOOLTIP_ENTER_DELAY}
+					>
+						<div className='d-flex flex-column align-items-start booleanInputContainer'>
 							<label className='booleanInputLabel'>{param.name}</label>
 							<input
+								data-testid={'inputCheckbox-' + param.name}
 								type='checkbox'
 								className='form-check-input booleanInputCheckbox'
 								checked={jobToSubmit[param.internalName]}
@@ -292,7 +332,11 @@ export function SubmitPage(props) {
 
 			case INPUT_TYPE_DATETIME:
 				return (
-					<Tooltip title={param.tooltipText} enterDelay={TOOLTIP_ENTER_DELAY}>
+					<Tooltip
+						key={getIndexByParam(param)}
+						title={param.tooltipText}
+						enterDelay={TOOLTIP_ENTER_DELAY}
+					>
 						<div>
 							<InputWithLabel
 								labelText={'Arrival'}
@@ -301,7 +345,6 @@ export function SubmitPage(props) {
 									let newJobToSubmit = { ...jobToSubmit };
 									newJobToSubmit[param.internalName] = newValue;
 									setJobToSubmit(newJobToSubmit);
-									console.log(newValue);
 								}}
 								value={
 									jobToSubmit[param.internalName]
@@ -324,9 +367,10 @@ export function SubmitPage(props) {
 	let optionalParamInputs = selectedOptionalIndices.map((index) =>
 		getInputBasedOnParam(configParameters[index])
 	);
-	additionalConfig.forEach((config) => {
+	additionalConfig.forEach((config, index) => {
 		optionalParamInputs.push(
 			<AdditionalParam
+				dataTestID={'inputAdditionalParam-' + index}
 				keyValue={config.key}
 				valueValue={config.value}
 				onKeyChange={(newKey) => {
@@ -377,7 +421,7 @@ export function SubmitPage(props) {
 	});
 
 	return (
-		<div className='submitPageContainer'>
+		<div data-testid='baseDiv' className='submitPageContainer'>
 			<div className='marginContainer'>
 				<div className='row g-0 submitPageRow'>
 					<div className='col submitPageCol'>

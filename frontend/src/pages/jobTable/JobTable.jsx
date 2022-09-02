@@ -108,7 +108,6 @@ export function JobTable(props) {
 			});
 	}
 	function downloadSelectedResults() {
-        console.log(selectedJobs)
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/solution',
