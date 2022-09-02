@@ -401,6 +401,7 @@ def submit_job_external(testCase):
     filePath = commandLineArguments[ARG_2]
     if not exists(filePath):
         printError("Given filepath " + str(filePath) + " was not valid")
+        return
 
     url = BASE_URL + URL_MAPPINGS.get(testCase)
 
@@ -585,7 +586,7 @@ def setHeader(token):
     global HEADER, ALL_ACTIVE_USERS, CURRENT_ACTIVE_USER_INDEX
     CURRENT_ACTIVE_TOKEN = token
     userIndex = len(ALL_ACTIVE_USERS)
-    printWarning("User is now authenticated. Refer to this user as 'user" + str(userIndex) + "'")
+    printSystemMessage("User is now authenticated. Refer to this user as 'user" + str(userIndex) + "'")
     CURRENT_ACTIVE_USER_INDEX = userIndex
 
     #expand the array for latest saved job-id and description-id
@@ -632,6 +633,9 @@ def printError(message):
 
 def printWarning(message):
     print(bcolors.WARNING + message + bcolors.ENDC)
+
+def printSystemMessage(message):
+    print(bcolors.OKBLUE + message + bcolors.ENDC)
 
 def printHelp():
     tutorialText = """
@@ -730,17 +734,17 @@ def tryExtraCommandLineFuncion():
     
     if commandLineArguments[ARG_1].lower() == "togglePrintBody".lower():
         PRINT_REQ_JSON_BODY = not PRINT_REQ_JSON_BODY
-        printWarning("Print JSON_BODY : " + str(PRINT_REQ_JSON_BODY))
+        printSystemMessage("Print JSON_BODY : " + str(PRINT_REQ_JSON_BODY))
         return True
     
     if commandLineArguments[ARG_1].lower() == "toggleCatchReqError".lower():
         CATCH_REQUEST_ERROR = not CATCH_REQUEST_ERROR
-        printWarning("Catch Request- Error : " + str(CATCH_REQUEST_ERROR))
+        printSystemMessage("Catch Request- Error : " + str(CATCH_REQUEST_ERROR))
         return True
 
     if commandLineArguments[ARG_1].lower() == "togglePrintResponse".lower():
         PRINT_RESPONSE_JSON = not PRINT_RESPONSE_JSON
-        printWarning("Print response-json : " + str(PRINT_RESPONSE_JSON))
+        printSystemMessage("Print response-json : " + str(PRINT_RESPONSE_JSON))
         return True
 
     if commandLineArguments[ARG_1].lower() == SHOW_ALL_TESTS.lower():
@@ -776,6 +780,9 @@ def executeRunLoop():
 
 def runTestsFromFile():
     global commandLineArguments
+    if (not exists(commandLineArguments[ARG_2])):
+        printError("Given file does not exist.")
+        return
     testSpecificationFile = open(commandLineArguments[ARG_2], "r")
     lines = testSpecificationFile.readlines()
     for line in lines:
