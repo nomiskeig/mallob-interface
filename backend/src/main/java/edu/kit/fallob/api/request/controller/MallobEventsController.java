@@ -39,6 +39,7 @@ public class MallobEventsController {
         try {
             events = mallobCommands.getEvents(timeLowerBound, timeUpperBound);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -64,6 +65,7 @@ public class MallobEventsController {
         try {
             state = mallobCommands.getSystemState(formattedTime);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }

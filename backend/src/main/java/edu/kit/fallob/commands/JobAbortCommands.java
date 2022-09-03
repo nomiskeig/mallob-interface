@@ -59,7 +59,7 @@ public class JobAbortCommands {
 		try {
 			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
 		} catch (IOException e) {
-			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e);
 		}
         
 		return true;
@@ -72,6 +72,7 @@ public class JobAbortCommands {
 				abortSingleJob(username, id);
 				canceledJobs.add(id);
 			} catch (FallobException e) {
+				e.printStackTrace();
 				continue;
 			}
 		}

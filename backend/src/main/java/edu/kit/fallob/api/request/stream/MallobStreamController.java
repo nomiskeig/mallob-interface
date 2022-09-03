@@ -48,6 +48,7 @@ public class MallobStreamController {
         try {
             initializer.startEventStream(emitter);
         } catch (FallobException e) {
+            e.printStackTrace();
             FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
             try {
                 emitter.send(warning);

@@ -41,7 +41,7 @@ public final class DatabaseConnectionFactory {
         try {
             return DriverManager.getConnection(path, username, password);
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_MESSAGE);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_MESSAGE, e);
         }
     }
 }

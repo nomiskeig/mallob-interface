@@ -98,6 +98,7 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
         try {
             jobId = this.jobDao.getJobIdByMallobId(mallobId);
         } catch (FallobException e) {
+            e.printStackTrace();
             System.out.println("An sql error occurred while accessing the database");
         }
 

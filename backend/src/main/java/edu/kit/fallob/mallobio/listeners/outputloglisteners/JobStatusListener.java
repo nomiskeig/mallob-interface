@@ -48,6 +48,7 @@ public class JobStatusListener implements OutputLogLineListener, BufferFunction<
 		try {
 			jobId = this.jobDao.getJobIdByMallobId(outputUpdate.getJobID());
 		} catch (FallobException e) {
+			e.printStackTrace();
 			System.out.println("An sql error occurred while accessing the database");
 		}
 

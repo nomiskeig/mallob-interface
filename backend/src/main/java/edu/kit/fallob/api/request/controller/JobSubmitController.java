@@ -73,6 +73,7 @@ public class JobSubmitController {
         try {
             jobId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
@@ -90,6 +91,7 @@ public class JobSubmitController {
         try {
             jobNewId = jobSubmitCommand.submitJobWithDescriptionID(username, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration());
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
@@ -134,6 +136,7 @@ public class JobSubmitController {
         try {
             jobNewId = jobSubmitCommand.restartCanceledJob(username, jobId);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -162,6 +165,7 @@ public class JobSubmitController {
         try {
             descriptionId = jobSubmitCommand.saveJobDescription(username, jobDescription);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
