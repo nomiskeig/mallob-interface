@@ -1,0 +1,11 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser2.json
+toggleCatchReqError
+
+
+#actual test-scenario
+
+#authenticate
+login testingResources/request-bodys/loginBodyUser2.json

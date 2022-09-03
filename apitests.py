@@ -808,8 +808,7 @@ def executeTestCase(testCaseIdentifier):
     elif testCaseIdentifier == GET_EVENTS:
         getEvents(GET_EVENTS)
     else:
-        print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
-
+        printError("Seems like the Test-case given has not yet been implemented, or is just wrong all together.")
 
 #Tries if the user wanted to use an extra function 
 def tryExtraCommandLineFuncion():
@@ -888,7 +887,11 @@ def runTestCase(testCase):
         executeTestCase(testCase)
 
 def executeRunLoop():
-    if tryExtraCommandLineFuncion():
+    try:
+        if tryExtraCommandLineFuncion():
+            return
+    except:
+        printError("Something went wrong with your request.")
         return
 
     runTestCase(commandLineArguments[ARG_1])
@@ -915,7 +918,10 @@ def loadScenarios():
 def main():
     global commandLineArguments, PRINT_REQ_JSON_BODY
     setAfterRequestFuncitons()
-    loadScenarios()
+    try:
+        loadScenarios()
+    except:
+        noFunction()
 
     while(RUNNING):
         userInput = input(bcolors.OKCYAN + bcolors.BOLD + "Fallob-API-Tests> " + bcolors.ENDC)
