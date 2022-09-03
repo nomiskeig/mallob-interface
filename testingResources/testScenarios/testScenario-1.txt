@@ -1,0 +1,20 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser1.json
+toggleCatchReqError
+
+
+#actual test-scenario
+
+
+login testingResources/loginBodyUser1.json
+toggleCatchReqError
+#faulty job
+toggleCatchReqError
+
+submitDescription testingResources/cnf/description2.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+cancelJob /single/
+submitDescription testingResources/cnf/description.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID

@@ -62,10 +62,10 @@ SUBMIT_JOB_EXTERNAL = "submitJob_external"
 CANCEL_JOB = "cancelJob"
 GET_SYSTEM_CONFIG = "getSystemConfig"
 GET_MALLOB_INFO = "getMallobInfo"
-
+GET_RESULT = "getResult"
 
 #not yet implemented
-GET_RESULT = "getResult"
+
 
 AVAILABLE_TESTS = [REGISTER,
 LOGIN,
@@ -88,7 +88,8 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 SUBMIT_JOB_EXTERNAL : "/api/v1/jobs/submit/exclusive/config",
                 CANCEL_JOB : "/api/v1/jobs/cancel",
                 GET_SYSTEM_CONFIG : "/api/v1/system/config",
-                GET_MALLOB_INFO : "/api/v1/system/mallobInfo"}
+                GET_MALLOB_INFO : "/api/v1/system/mallobInfo",
+                GET_RESULT : "/api/v1/jobs/solution"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
@@ -99,7 +100,8 @@ AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 SUBMIT_JOB_EXTERNAL : True,
                 CANCEL_JOB : True,
                 GET_SYSTEM_CONFIG : True,
-                GET_MALLOB_INFO : True
+                GET_MALLOB_INFO : True,
+                GET_RESULT : True
 }
 
 
@@ -121,7 +123,8 @@ def setAfterRequestFuncitons():
         SUBMIT_JOB_EXTERNAL : afterJobInclude,
         CANCEL_JOB : noFunction,
         GET_SYSTEM_CONFIG : printResponse,
-        GET_MALLOB_INFO : printResponse
+        GET_MALLOB_INFO : printResponse,
+        GET_RESULT : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -134,7 +137,8 @@ def setAfterRequestFuncitons():
         SUBMIT_JOB_EXTERNAL : submitJob_descriptionExcluded_help,
         CANCEL_JOB : cancel_job_help,
         GET_SYSTEM_CONFIG : getConfig_help,
-        GET_MALLOB_INFO : getMallobInfo_help
+        GET_MALLOB_INFO : getMallobInfo_help,
+        GET_RESULT : getResult_help
     }
 
 
@@ -259,7 +263,7 @@ def submitJob_descriptionIncluded_help():
 
 def getJobInfo_help():
     getJobInfo_help_text = """
-        ------------------------------Get information of a single job - API - Test----------------------------------------
+        ------------------------------Get information of a job - API - Test----------------------------------------
 
         1. Function  + Usage 
             Tries to get the information of a job (or multiple)
@@ -305,7 +309,7 @@ def descriptionUpload_help():
 
 def downloadDescription_help():
     getJobInfo_help_text = """
-        ------------------------------Get information of a single job - API - Test----------------------------------------
+        ------------------------------Get Description of a job - API - Test----------------------------------------
 
         1. Function  + Usage 
             Tries to download description of a job (or multiple)
@@ -315,7 +319,7 @@ def downloadDescription_help():
             [arg2] == /all or [arg2] == /single/(id)
 
             Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
-            to a json-body [arg2]. Because in this case you are requesting multiple job-informations. See API-Spec.
+            to a json-body [arg2]. Because in this case you are requesting multiple job-descriptions. See API-Spec.
 
             If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
             If you don't the LATEST_SAVED_JOB_ID is used.
@@ -394,6 +398,29 @@ def getMallobInfo_help():
             No params required 
     """
     print(getMallobInfo_help_text)
+
+def getResult_help():
+    getResult_help_text = """
+        ------------------------------Download result of a job - API - Test----------------------------------------
+
+        1. Function  + Usage 
+            Tries to download result of a job (or multiple)
+            The path sepcified for this test is only /api/v1/jobs/solution
+
+            You actually have to specify in [arg2] what kind of request you want. Possible values :
+            [arg2] == /all or [arg2] == /single/(id)
+
+            Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
+            to a json-body [arg2]. Because in this case you are requesting multiple job-results. See API-Spec.
+
+            If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
+            If you don't the LATEST_SAVED_JOB_ID is used.
+        
+        3. Response
+            The test will print the json-body as a response. 
+        """
+    print(getResult_help_text)
+
 
 #------------------------------------------------------submitting a job with external description needed and extra method...
 
@@ -721,6 +748,8 @@ def executeTestCase(testCaseIdentifier):
         generalGetRequest(GET_SYSTEM_CONFIG, None, False, False)
     elif testCaseIdentifier == GET_MALLOB_INFO:
         generalGetRequest(GET_MALLOB_INFO, None, False, False)
+    elif testCaseIdentifier == GET_RESULT:
+        generalGetRequest(GET_RESULT, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
     else:
         print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
 
