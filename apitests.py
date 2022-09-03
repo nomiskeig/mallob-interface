@@ -1,10 +1,12 @@
 import requests
 import sys
-from os.path import exists, basename
+from os.path import exists, basename, isfile
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+from os import listdir
 import socket
 import json
+import time
 
 
 
@@ -34,6 +36,10 @@ PRINT_REQ_JSON_BODY = False
 CATCH_REQUEST_ERROR = False
 PRINT_RESPONSE_JSON = True
 RUNNING = True
+
+#This is a relative Path to the scenarios. This path is hardcoded. Notice, it might not work
+SCENARIO_PATH = "testingResources/testScenarios/"
+SCENARIOS = []
 
 BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + ":8080"
 print(bcolors.OKGREEN + "Base-URL for API requests : "  + str(BASE_URL) + bcolors.ENDC)
@@ -736,6 +742,14 @@ def printHelp():
                 After you use switchUser, every request you do comes form the user-token you just switched to.
 
 
+            c) Scenario quick-select.
+
+                This feature use the SCENARIO_PATH variable and loads all files in this scenario into SCENARIOS. You can
+                use the command "scenarios" in order to list all available scenarios. 
+                With the command "scenario [scenarioname]" you can then execute this scenario.
+                This is equal to typing : runTestsFromFile SCENARIO_PATH+[scenarioname]
+
+
         2. Args
 
             [arg1] is the type of test you want to execue. 
@@ -749,6 +763,7 @@ def printHelp():
                 ..."toggleCatchReqError" - toggles catching the error.
                 ..."togglePrintResponse" - if true, prints the response json, if false, it doesn't
                 ..."printComment" - let the system print a comment, everything after the comment is printed 
+                ..."wait". Set [arg2] to the amount of seconds you want THIS program to wait 
                 ..."exit" to leave the program
 
 
@@ -798,7 +813,7 @@ def executeTestCase(testCaseIdentifier):
 
 #Tries if the user wanted to use an extra function 
 def tryExtraCommandLineFuncion():
-    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON, RUNNING
+    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON, RUNNING, commandLineArguments
     if requestsHelp(commandLineArguments[ARG_1]):
         printHelp()
         return True
@@ -835,6 +850,23 @@ def tryExtraCommandLineFuncion():
     
     if commandLineArguments[ARG_1].lower() == "printComment".lower():
         printComment()
+        return True
+    
+    if (commandLineArguments[ARG_1].lower()) == "wait".lower():
+        printSystemMessage("Sleeping for " + commandLineArguments[ARG_2] + " seconds.")
+        time.sleep(int(commandLineArguments[ARG_2]))
+        return True
+
+    if (commandLineArguments[ARG_1].lower()) == "scenarios".lower():
+        print(SCENARIOS)
+        return True
+
+    if (commandLineArguments[ARG_1] == "scenario".lower()):
+        if (exists(SCENARIO_PATH + commandLineArguments[ARG_2])):
+            commandLineArguments = ("runTestsFromFile " + SCENARIO_PATH + commandLineArguments[ARG_2]).split()
+            runTestsFromFile()
+        else:
+            printError("Scenario not found. Maybe scenario path was wrong")
         return True
 
 
@@ -876,10 +908,15 @@ def runTestsFromFile():
             continue
         executeRunLoop()
 
+def loadScenarios():
+    global SCENARIOS
+    SCENARIOS = listdir(SCENARIO_PATH)
+
 def main():
     global commandLineArguments, PRINT_REQ_JSON_BODY
     setAfterRequestFuncitons()
-    
+    loadScenarios()
+
     while(RUNNING):
         userInput = input(bcolors.OKCYAN + bcolors.BOLD + "Fallob-API-Tests> " + bcolors.ENDC)
         commandLineArguments = userInput.split()
@@ -891,7 +928,7 @@ def main():
 
 
 def testting():
-    print(bcolors.PURPLE + "  expected : " + bcolors.ENDC)
+    loadScenarios()
 main()
  
 #testting()
