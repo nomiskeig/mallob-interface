@@ -8,7 +8,7 @@ toggleCatchReqError
 #actual test-scenario
 
 
-login testingResources/loginBodyUser1.json
+login testingResources/request-bodys/loginBodyUser1.json
 toggleCatchReqError
 #faulty job
 toggleCatchReqError
@@ -18,3 +18,4 @@ submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescri
 cancelJob /single/
 submitDescription testingResources/cnf/description.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+exit

@@ -32,6 +32,7 @@ ARG_3 = 2
 PRINT_REQ_JSON_BODY = False
 CATCH_REQUEST_ERROR = False
 PRINT_RESPONSE_JSON = True
+RUNNING = True
 
 BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + ":8080"
 print(bcolors.OKGREEN + "Base-URL for API requests : "  + str(BASE_URL) + bcolors.ENDC)
@@ -756,9 +757,13 @@ def executeTestCase(testCaseIdentifier):
 
 #Tries if the user wanted to use an extra function 
 def tryExtraCommandLineFuncion():
-    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON
+    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON, RUNNING
     if requestsHelp(commandLineArguments[ARG_1]):
         printHelp()
+        return True
+    
+    if commandLineArguments[ARG_1] == "runTestsFromFile":
+        runTestsFromFile()
         return True
     
     if commandLineArguments[ARG_1].lower() == "togglePrintBody".lower():
@@ -783,6 +788,10 @@ def tryExtraCommandLineFuncion():
     if commandLineArguments[ARG_1].lower() == "switchUser".lower():
         switchUser()
         return True
+    if commandLineArguments[ARG_1].lower() == "exit":
+        RUNNING = False
+        return True
+
 
     return False
 
@@ -825,24 +834,12 @@ def main():
     global commandLineArguments, PRINT_REQ_JSON_BODY
     setAfterRequestFuncitons()
     
-    running = True
-    while(running):
+    while(RUNNING):
         userInput = input(bcolors.OKCYAN + bcolors.BOLD + "Fallob-API-Tests> " + bcolors.ENDC)
         commandLineArguments = userInput.split()
 
         if not commandLineArguments:
             continue
-    
-        if commandLineArguments[ARG_1] == "exit":
-            running = False
-            continue
-    
-        
-
-        if commandLineArguments[ARG_1] == "runTestsFromFile":
-            runTestsFromFile()
-            continue
-
         executeRunLoop()
 
 
