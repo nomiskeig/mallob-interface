@@ -3,14 +3,14 @@
     "maxJobsTotal" : 100,
     "maxJobsUser": 10,
     "client-processes" : [0],
+    "maxJobPriority" : 100.0,
+    "minJobPriority" : 0.000001,
     "storage": {
     "garbageCollectorInterval": 10,
     "jobStorageTime": 10,
     "eventStorageTime": 10,
     "warningStorageTime": 10,
-    "maxDescriptionStorageSize": 10,
-    "maxJobPriority" : 100,
-    "minJobPriority" : 0.000001
+    "maxDescriptionStorageSize": 10
     },
     "defaults": {
         "priority": 1.0,
