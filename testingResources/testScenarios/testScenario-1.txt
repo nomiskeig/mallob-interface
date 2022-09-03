@@ -10,7 +10,8 @@ toggleCatchReqError
 
 login testingResources/request-bodys/loginBodyUser1.json
 toggleCatchReqError
-#faulty job
+submitDescription testingResources/cnf/description.cnf
+submitJob_external testingResources/request-bodys/noNameJob_externalDescription.json useLastDescriptionID
 toggleCatchReqError
 
 submitDescription testingResources/cnf/description2.cnf
