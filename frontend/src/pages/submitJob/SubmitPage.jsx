@@ -356,7 +356,7 @@ export function SubmitPage(props) {
 					</Tooltip>
 				);
 			default:
-				return <div></div>;
+				return <div key={getIndexByParam(param)}></div>;
 		}
 	}
 	let requiredParamsInputs = configParameters
@@ -370,6 +370,7 @@ export function SubmitPage(props) {
 	additionalConfig.forEach((config, index) => {
 		optionalParamInputs.push(
 			<AdditionalParam
+                key={-index -1}
 				dataTestID={'inputAdditionalParam-' + index}
 				keyValue={config.key}
 				valueValue={config.value}
@@ -438,6 +439,7 @@ export function SubmitPage(props) {
 									{optionalParamInputs}
 									{selectAdditionalParamsItems.length >= 1 && (
 										<DropdownComponent
+                                            key={'addParameterDropdown'}
 											title={'Add option'}
 											items={selectAdditionalParamsItems}
 										/>

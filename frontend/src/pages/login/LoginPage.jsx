@@ -3,7 +3,7 @@ import { InfoContext } from '../../context/InfoContextProvider';
 import { UserContext } from '../../context/UserContextProvider';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../global/buttons/Button';
-import { InputLabel } from '../../global/textfields/Textfield';
+import { InputField } from '../../global/textfields/InputField';
 import './LoginPage.scss';
 import { TYPE_ERROR } from '../../context/InfoContextProvider';
 import axios from 'axios';
@@ -17,14 +17,14 @@ export function LoginPage(props) {
 	const username = 'username';
 	const password = 'password';
 
-	let [usernameContent, setUsernameContext] = useState('');
+	let [usernameContent, setUsernameContent] = useState('');
 	let [passwordContent, setPasswordContent] = useState('');
 	//let usernameContent = '';
 	//let passwordContent = '';
 
 	const handleChangeUsername = (event) => {
 		//	usernameContent = event.target.value;J
-		setUsernameContext(event.target.value);
+		setUsernameContent(event.target.value);
 	};
 
 	const handleChangePassword = (event) => {
@@ -69,16 +69,16 @@ export function LoginPage(props) {
 		//TODO : testing, error handling if pw was wrong, forward user onto job-page, tidy up login page (make it look nice )
 	}
 
-	function getInputLabel(placeholder, id, changeHandler, inputType) {
+	function getInputField(placeholder, id, changeHandler, inputType) {
 		return (
-			<div class='form-outline mb-3'>
-				<InputLabel
+			<div className='form-outline mb-3'>
+				<InputField
 					placeholder={placeholder}
 					id={id}
 					onChange={changeHandler}
 					type={inputType}
 					className='form-control form-control-lg'
-				></InputLabel>
+				></InputField>
 			</div>
 		);
 	}
@@ -94,8 +94,8 @@ export function LoginPage(props) {
 					id='logindiv'
 				>
 					<div>
-						{getInputLabel(username, username, handleChangeUsername, 'text')}
-						{getInputLabel(
+						{getInputField(username, username, handleChangeUsername, 'text')}
+						{getInputField(
 							password,
 							password,
 							handleChangePassword,
@@ -104,7 +104,7 @@ export function LoginPage(props) {
 
 						<div></div>
 
-						<div class='d-flex justify-content-between align-items-center '>
+						<div className='d-flex justify-content-between align-items-center '>
 							<Button
 								text={btext}
 								onClick={login}
@@ -113,54 +113,12 @@ export function LoginPage(props) {
 							<Button
 								className='btn btn-primary btn-lg btn-block'
 								text={'Register'}
-								onClick={() => navigate('/register/')}
+								onClick={() => navigate('/register')}
 							></Button>
 						</div>
 					</div>
 				</div>
-				<div>
-					<button onClick={loginAdmin}>Log in as admin</button>
-					<button onClick={loginUser}>Login in as user</button>
-					<button onClick={loginUnverifiedUser}>
-						Login as unverified user
-					</button>
-				</div>
 			</div>
 		</div>
 	);
-
-	function loginAdmin() {
-		userContext.login(
-			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwidmVyaWZpZWQiOiJ0cnVlIn0.9eR-rtIsjVmygEFa9CYKd9v3B5erW5lfK3kaENnNf9s'
-		);
-		navigate('/jobs');
-	}
-	function loginUser() {
-		userContext.login(
-			'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzaW1vbiIsImV4cCI6MTY2Mjg5MTgxNiwiaWF0IjoxNjYxMDkxODE2LCJhdXRob3JpdGllcyI6IltOT1JNQUxfVVNFUiwgVmVyaWZpZWRdIn0.4RTbqcPdDCaR658s5tGJ2b92tY2fyOaq6sT_5GWPYXfAdYjPChviLrhFVoKelMWHqig7yG3t3oFn-wzJaMnzpA'
-		);
-		navigate('/jobs');
-	}
-	function loginUnverifiedUser() {
-		userContext.login(
-			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6InVzZXIiLCJ2ZXJpZmllZCI6ImZhbHNlIn0.Bq-zHXYMFc8-yGZL1iumHMiLV7Mm6aaxM4K1IZJQPj4'
-		);
-		navigate('/jobs');
-	}
-
-	/**
-     * Approach like outlined in the first gui-sketches ;
-     <div class="mb-3 row">
-    <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
-    <div class="col-sm-10">
-      <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com">
-    </div>
-  </div>
-  <div class="mb-3 row">
-    <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
-    <div class="col-sm-10">
-      <input type="password" class="form-control" id="inputPassword">
-    </div>
-  </div>
-     */
 }

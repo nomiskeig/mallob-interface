@@ -3,7 +3,7 @@ import {InfoContext, TYPE_ERROR, TYPE_INFO} from '../../context/InfoContextProvi
 
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../global/buttons/Button';
-import { InputLabel } from '../../global/textfields/Textfield';
+import { InputField } from '../../global/textfields/InputField';
 import './../login/LoginPage.scss';
 import axios from 'axios'
 
@@ -53,15 +53,15 @@ export function RegisterPage(props) {
         })
 	}
 
-	function getInputLabel(placeholder, changeHandler, inputType) {
+	function getInputField(placeholder, changeHandler, inputType) {
 		return (
 			<div class='form-outline mb-4'>
-				<InputLabel
+				<InputField
 					placeholder={placeholder}
 					onChange={changeHandler}
 					type={inputType}
 					className='form-control form-control-lg'
-				></InputLabel>
+				></InputField>
 			</div>
 		);
 	}
@@ -81,10 +81,10 @@ export function RegisterPage(props) {
 					id='logindiv'
 				>
 					<div>
-						{getInputLabel('youremail@bsp.exmpl', handleChangeEmail, 'email')}
-						{getInputLabel('username', handleChangeUsername, 'text')}
-						{getInputLabel('password', handleChangePassword, 'password')}
-						{getInputLabel(
+						{getInputField('youremail@bsp.exmpl', handleChangeEmail, 'email')}
+						{getInputField('username', handleChangeUsername, 'text')}
+						{getInputField('password', handleChangePassword, 'password')}
+						{getInputField(
 							'confirm password',
 							handleChangeConfirmPassword,
 							'password'
