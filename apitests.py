@@ -1,6 +1,6 @@
 import requests
 import sys
-from os.path import exists
+from os.path import exists, basename
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import socket
@@ -821,6 +821,7 @@ def runTestsFromFile():
     if (not exists(commandLineArguments[ARG_2])):
         printError("Given file does not exist.")
         return
+    printSystemMessage("Executing Test-File : " + basename(commandLineArguments[ARG_2]))
     testSpecificationFile = open(commandLineArguments[ARG_2], "r")
     lines = testSpecificationFile.readlines()
     for line in lines:
