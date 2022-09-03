@@ -387,14 +387,7 @@ public class JobDaoImpl implements JobDao{
     @Override
     public JobInformation getJobInformation(int jobId) throws FallobException {
         JobConfiguration configuration = this.getJobConfiguration(jobId);
-        ResultMetaData metaData;
-        //check if meta data is already available and set to null if not
-        try {
-            metaData = this.getResultMetaData(jobId);
-        } catch (FallobException e) {
-            e.printStackTrace();
-            metaData = null;
-        }
+        ResultMetaData metaData = this.getResultMetaData(jobId);
         JobStatus status = this.getJobStatus(jobId);
 
         try {
@@ -681,8 +674,8 @@ public class JobDaoImpl implements JobDao{
     /**
      * gets the meta data of the result of a specific job
      * @param jobId the id of the job for which the result meta data should be returned
-     * @return the result meta data
-     * @throws FallobException if an error occurs while accessing the database or if the job couldn't be found
+     * @return the result meta data or null if the job couldn't be found
+     * @throws FallobException if an error occurs while accessing the database
      */
     private ResultMetaData getResultMetaData(int jobId) throws FallobException {
         try {
@@ -702,7 +695,7 @@ public class JobDaoImpl implements JobDao{
 
                 return new ResultMetaData(timeParsing, timeProcessing, timeScheduling, timeTotal, usedCpuSeconds, usedWallclockSeconds);
             } else {
-                throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
+                return null;
             }
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
