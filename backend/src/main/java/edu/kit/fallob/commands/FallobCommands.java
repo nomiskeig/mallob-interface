@@ -7,6 +7,7 @@ import edu.kit.fallob.dataobjects.NormalUser;
 import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,8 +28,6 @@ public class FallobCommands implements UserDetailsService {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	private static final String DUPLICATE_USERNAME = "Username already exists";
-
-	private static final String DUPLICATE_EMAIL = "Email already exists";
 	
 	
 	public FallobCommands() throws FallobException {
@@ -48,7 +47,12 @@ public class FallobCommands implements UserDetailsService {
 		try {
 			user = userDao.getUserByUsername(username);
 		} catch (FallobException e) {
+			e.printStackTrace();
 			throw new UsernameNotFoundException(e.getMessage());
+		}
+
+		if (user == null) {
+			throw new UsernameNotFoundException("Error, the user could not be found on the database");
 		}
 
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -63,6 +67,12 @@ public class FallobCommands implements UserDetailsService {
     
     
     public boolean register(String username, String password, String email) throws FallobException {
+		//check if the username is already taken
+		User user = userDao.getUserByUsername(username);
+
+		if (user != null) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, DUPLICATE_USERNAME);
+		}
 
 		String encodedPassword = passwordEncoder.encode(password);
 		userDao.save(new NormalUser(username, encodedPassword, email));

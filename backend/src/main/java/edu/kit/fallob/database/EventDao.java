@@ -47,8 +47,8 @@ public interface EventDao {
 
     /**
      * returns the time of the earliest stored event
-     * @return the time of the event
-     * @throws FallobException if an error occurs in the database or if no event could be found
+     * @return the time of the event or if no event could be found
+     * @throws FallobException if an error occurred in the database
      */
     public LocalDateTime getTimeOfFirstEvent() throws FallobException;
 }
