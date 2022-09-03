@@ -20,6 +20,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    PURPLE = '\033[95m'
 
     
 commandLineArguments = sys.argv
@@ -66,6 +67,7 @@ GET_MALLOB_INFO = "getMallobInfo"
 GET_RESULT = "getResult"
 
 #not yet implemented
+GET_EVENTS = "getEvents"
 
 
 AVAILABLE_TESTS = [REGISTER,
@@ -78,7 +80,8 @@ SUBMIT_JOB_EXTERNAL,
 CANCEL_JOB ,
 GET_SYSTEM_CONFIG ,
 GET_MALLOB_INFO, 
-GET_RESULT]
+GET_RESULT,
+GET_EVENTS]
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
@@ -90,7 +93,8 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 CANCEL_JOB : "/api/v1/jobs/cancel",
                 GET_SYSTEM_CONFIG : "/api/v1/system/config",
                 GET_MALLOB_INFO : "/api/v1/system/mallobInfo",
-                GET_RESULT : "/api/v1/jobs/solution"}
+                GET_RESULT : "/api/v1/jobs/solution",
+                GET_EVENTS : " /api/v1/events"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
@@ -102,7 +106,8 @@ AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 CANCEL_JOB : True,
                 GET_SYSTEM_CONFIG : True,
                 GET_MALLOB_INFO : True,
-                GET_RESULT : True
+                GET_RESULT : True,
+                GET_EVENTS : True
 }
 
 
@@ -125,7 +130,8 @@ def setAfterRequestFuncitons():
         CANCEL_JOB : noFunction,
         GET_SYSTEM_CONFIG : printResponse,
         GET_MALLOB_INFO : printResponse,
-        GET_RESULT : printResponse
+        GET_RESULT : printResponse,
+        GET_EVENTS : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -139,7 +145,8 @@ def setAfterRequestFuncitons():
         CANCEL_JOB : cancel_job_help,
         GET_SYSTEM_CONFIG : getConfig_help,
         GET_MALLOB_INFO : getMallobInfo_help,
-        GET_RESULT : getResult_help
+        GET_RESULT : getResult_help,
+        GET_EVENTS : getEvents_help
     }
 
 
@@ -422,7 +429,22 @@ def getResult_help():
         """
     print(getResult_help_text)
 
+def getEvents_help():
+    getEvents_help_text = """
+        ------------------------------Get Events and System State - HELP ----------------------------------------
 
+        1. get System State
+            set [arg2] == /state?time=(time)
+            See API-Spec for further specification
+        
+        2. Get past events
+            Set [arg2] == /events?startTime=(startTime)&endTime=(endTime)
+            See API-Spec for further specification
+        
+        3. Answer
+            Print the response, if possible
+    """
+    print(getEvents_help_text)
 #------------------------------------------------------submitting a job with external description needed and extra method...
 
 def submit_job_external(testCase):
@@ -465,9 +487,16 @@ def cancelJob(testCase):
         r = requests.post(url, json=readFileAsPythonDict(filePath), headers=HEADER)
     printStatusCode(r.status_code)
     printResponse(r)
+
+def getEvents(testCase):
+    url = BASE_URL + URL_MAPPINGS.get(testCase) + commandLineArguments[ARG_2]
+    r = requests.post(url, headers=HEADER)
+    printStatusCode(r.status_code)
+    afterFucntion = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
+    afterFucntion()
+    
     
 #------------------------------------------------------API, main, and other helping methods 
-#runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
 
 """
 This request is a general get-request for mostly all GET requests of our API..
@@ -665,6 +694,15 @@ def printWarning(message):
 def printSystemMessage(message):
     print(bcolors.OKBLUE + message + bcolors.ENDC)
 
+def printUserComment(message):
+    print(bcolors.PURPLE + message + bcolors.ENDC)
+
+def  printComment():
+    message = ""
+    for i in range(1, len(commandLineArguments)):
+        message += commandLineArguments[i] + " "
+    printUserComment(message)
+
 def printHelp():
     tutorialText = """
     --------------------------------This is a script for automating testruns with the API-----------------
@@ -709,7 +747,8 @@ def printHelp():
                 ..."showAllTests" and a list of all possible tests is printed
                 ..."togglePrintBody" - toggles printing the request-body before each request - 
                 ..."toggleCatchReqError" - toggles catching the error.
-                ...."togglePrintResponse" - if true, prints the response json, if false, it doesn't
+                ..."togglePrintResponse" - if true, prints the response json, if false, it doesn't
+                ..."printComment" - let the system print a comment, everything after the comment is printed 
                 ..."exit" to leave the program
 
 
@@ -751,6 +790,8 @@ def executeTestCase(testCaseIdentifier):
         generalGetRequest(GET_MALLOB_INFO, None, False, False)
     elif testCaseIdentifier == GET_RESULT:
         generalGetRequest(GET_RESULT, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
+    elif testCaseIdentifier == GET_EVENTS:
+        getEvents(GET_EVENTS)
     else:
         print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
 
@@ -790,6 +831,10 @@ def tryExtraCommandLineFuncion():
         return True
     if commandLineArguments[ARG_1].lower() == "exit":
         RUNNING = False
+        return True
+    
+    if commandLineArguments[ARG_1].lower() == "printComment".lower():
+        printComment()
         return True
 
 
@@ -846,10 +891,7 @@ def main():
 
 
 def testting():
-    print({"dicEntry" : 2, "dicentry" : "he"})
-    with open(commandLineArguments[2]) as handle:
-        dictdump = json.loads(handle.read())
-    print(dictdump)
+    print(bcolors.PURPLE + "  expected : " + bcolors.ENDC)
 main()
  
 #testting()
