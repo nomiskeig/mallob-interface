@@ -1,6 +1,7 @@
 package edu.kit.fallob.commands;
 
 
+import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.database.UserDao;
@@ -54,6 +55,9 @@ public class JobSubmitCommands {
 	
 	
 	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
+		if (!jobConfigIsOk(jobConfiguration)) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+		}
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID;
@@ -68,6 +72,15 @@ public class JobSubmitCommands {
 		}
 		mallobOutput.removeOutputLogLineListener(submitter);
 		return mallobID;
+	}
+	
+	
+	private boolean jobConfigIsOk(JobConfiguration jobConfiguration) {
+		if (jobConfiguration.getPriority() < FallobConfiguration.getInstance().getMinJobPriority()
+				|| jobConfiguration.getPriority() > FallobConfiguration.getInstance().getMaxDescriptionStorageSize()) {
+			return false;
+		}
+		return true;
 	}
 	
 	
@@ -98,6 +111,7 @@ public class JobSubmitCommands {
 		jobConfiguration.setDescriptionID(jobdescriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 	}
+	
 	
 	public int restartCanceledJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {

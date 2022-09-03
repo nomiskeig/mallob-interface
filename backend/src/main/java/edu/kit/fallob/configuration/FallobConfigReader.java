@@ -52,6 +52,8 @@ public class FallobConfigReader {
 		c.setAmountProcesses(json.getInt("amountProcesses"));
 		c.setMaxJobsTotal(json.getInt("maxJobsTotal"));
 		c.setMaxJobsUser(json.getInt("maxJobsUser"));
+		c.setMaxJobPriority(json.getDouble("maxJobPriority"));
+		c.setMinJobPriority(json.getDouble("minJobPriority"));
 		
 		//int-array is a little bit more complicated
 		JSONArray arr = json.getJSONArray("client-processes");
