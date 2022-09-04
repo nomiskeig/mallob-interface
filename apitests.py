@@ -126,7 +126,7 @@ def setAfterRequestFuncitons():
     global HELP_FUNCTION_MAPPINGS
 
     AFTER_REQUEST_FUNCTION_MAPPINGS = {
-        REGISTER : noFunction,
+        REGISTER : printResponse,
         LOGIN : afterLogin,
         JOBSUBMIT_INCLUDE : afterJobInclude,
         GET_JOB_INFO : printResponse,
