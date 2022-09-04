@@ -2,6 +2,7 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.commands.JobSubmitCommands;
 import edu.kit.fallob.configuration.FallobConfiguration;
+import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.SubmitType;
 import edu.kit.fallob.springConfig.FallobException;
@@ -69,27 +70,38 @@ public class JobSubmitController {
     }
 
     private ResponseEntity<Object> getInclusiveCommandResponse(@RequestBody SubmitJobRequest request, String username, JobDescription jobDescription) {
-        int jobId;
-        try {
-            jobId = jobSubmitCommand.submitJobWithDescriptionInclusive(username, jobDescription, request.getJobConfiguration());
-        } catch (FallobException exception) {
-            exception.printStackTrace();
-            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        } catch (NullPointerException exception) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        }
+        boolean isInclusive = true;
+        return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
 
-        return ResponseEntity.ok(new SubmitJobResponse(jobId));
     }
 
     @PostMapping("/exclusive/config")
     public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
-        int jobNewId;
-        try {
-            jobNewId = jobSubmitCommand.submitJobWithDescriptionID(username, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration());
+        boolean isInclusive = false;
+        return submitJob(username, null, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration(), isInclusive);
+
+    }
+    
+    /**
+     * Method for submitting of jobs
+     * 
+     * @param username
+     * @param description
+     * @param descriptionID
+     * @param config
+     * @param isInclusive if TRUE descriptionID is ignored and description is used. If FALSE description is ignored and 
+     * descriptionID is used.
+     * @return
+     */
+    private ResponseEntity<Object> submitJob(String username, JobDescription description, int descriptionID, JobConfiguration config, boolean isInclusive) {
+    	int newJobID;
+    	try {
+    		if (isInclusive) {
+    			newJobID = jobSubmitCommand.submitJobWithDescriptionInclusive(username, description, config);
+    		} else {
+        		newJobID = jobSubmitCommand.submitJobWithDescriptionID(username, descriptionID, config);
+    		}
         } catch (FallobException exception) {
             exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
@@ -97,9 +109,12 @@ public class JobSubmitController {
         } catch (NullPointerException exception) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+        } catch(IllegalArgumentException exception) {
+        	FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
 
-        return ResponseEntity.ok(new SubmitJobResponse(jobNewId));
+        return ResponseEntity.ok(new SubmitJobResponse(newJobID));
     }
 
     @PostMapping("/inclusive")
