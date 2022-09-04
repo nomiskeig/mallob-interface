@@ -56,7 +56,7 @@ public class JobSubmitCommands {
 	
 	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 		if (!jobConfigIsOk(jobConfiguration)) {
-			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+			throw new IllegalArgumentException("Illegal Argument in Job-Configuraiton.");
 		}
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
@@ -97,6 +97,7 @@ public class JobSubmitCommands {
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 		
 	}
+
 	
 	public int submitJobWithDescriptionID(String username, int jobdescriptionID, JobConfiguration jobConfiguration) throws FallobException {
 //		if (!userDao.getUserByUsername(username).isVerified()) {
