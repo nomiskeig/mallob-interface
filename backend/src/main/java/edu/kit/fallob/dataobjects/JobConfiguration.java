@@ -20,10 +20,12 @@ public class JobConfiguration {
 	private String application;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationIntFilter.class)
 	private int maxDemand;
+    @JsonProperty("wallclockLimit")
     @JsonInclude(Include.NON_NULL)
 	private String wallClockLimit;
     @JsonInclude(Include.NON_NULL)
 	private String cpuLimit;
+    @JsonInclude(Include.NON_NULL)
 	private String arrival;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationDependencyFilter.class)
 	private Integer[] dependencies;

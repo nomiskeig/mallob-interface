@@ -67,9 +67,11 @@ public class SubmitJobRequest implements Serializable {
     public void setMaxDemand(int maxDemand) {
         jobConfiguration.setMaxDemand(maxDemand);
     }
+
     public String getWallClockLimit() {
         return jobConfiguration.getWallClockLimit();
     }
+    @JsonProperty("wallclockLimit")
     public void setWallClockLimit(String wallClockLimit) {
         jobConfiguration.setWallClockLimit(wallClockLimit);
     }
