@@ -28,7 +28,7 @@ public class JobDescription {
 	public void setDescriptionFiles(List<File> descriptionFiles) {
 		this.descriptionFiles = descriptionFiles;
 	}
-
+	/*
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof JobDescription) {
@@ -36,4 +36,5 @@ public class JobDescription {
 		}
 		return false;
 	}
+	*/
 }
