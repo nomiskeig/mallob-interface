@@ -54,7 +54,7 @@ public class JobSubmitCommands {
 	}
 	
 	
-	private int submitJob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
+	private int submitJobToMallob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 		if (!jobConfigIsOk(jobConfiguration)) {
 			throw new IllegalArgumentException("Illegal Argument in Job-Configuraiton.");
 		}
@@ -74,14 +74,35 @@ public class JobSubmitCommands {
 		return mallobID;
 	}
 	
-	
+	/**
+	 * Set default parameter of jobConfiguration if not set, or check if parameteres are correct, if set
+	 * @param jobConfiguration
+	 * @return
+	 */
 	private boolean jobConfigIsOk(JobConfiguration jobConfiguration) {
+		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
+			jobConfiguration.setPriority(FallobConfiguration.getInstance().getDefaultJobPriority());
+		}
+		if (jobConfiguration.getWallClockLimit() == JobConfiguration.OBJECT_NOT_SET) {
+			jobConfiguration.setWallClockLimit(FallobConfiguration.getInstance().getDefaultWallClockLimit());
+		}
+		if (jobConfiguration.getContentMode() == JobConfiguration.OBJECT_NOT_SET) {
+			jobConfiguration.setContentMode(FallobConfiguration.getInstance().getDefaultContentMode());
+		}
+		
+		//perform checks 
 		if (jobConfiguration.getPriority() < FallobConfiguration.getInstance().getMinJobPriority()
 				|| jobConfiguration.getPriority() > FallobConfiguration.getInstance().getMaxDescriptionStorageSize()) {
 			return false;
 		}
+		if (jobConfiguration.getName() == JobConfiguration.OBJECT_NOT_SET || 
+				jobConfiguration.getApplication() == JobConfiguration.OBJECT_NOT_SET) {
+			return false;
+		}
+
 		return true;
 	}
+	
 	
 	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
@@ -91,7 +112,7 @@ public class JobSubmitCommands {
 //		}
 		formatConfiguration(username, jobConfiguration);
 
-		int mallobID = submitJob(username, jobDescription, jobConfiguration);
+		int mallobID = submitJobToMallob(username, jobDescription, jobConfiguration);
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
@@ -108,7 +129,7 @@ public class JobSubmitCommands {
 		}
 		JobDescription jobDescription = jobDao.getJobDescription(jobdescriptionID);
 		formatConfiguration(username, jobConfiguration);
-		int mallobID = submitJob(username, jobDescription, jobConfiguration);
+		int mallobID = submitJobToMallob(username, jobDescription, jobConfiguration);
 		jobConfiguration.setDescriptionID(jobdescriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 	}
@@ -124,7 +145,7 @@ public class JobSubmitCommands {
 		JobConfiguration jobConfiguration = jobDao.getJobConfiguration(jobID);
 		JobDescription jobDescription = jobDao.getJobDescription(jobConfiguration.getDescriptionID());
 		jobConfiguration.setName(formatRestartJobName(jobConfiguration.getName()));
-		int mallobID = submitJob(username, jobDescription, jobConfiguration);
+		int mallobID = submitJobToMallob(username, jobDescription, jobConfiguration);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 	}
 	
