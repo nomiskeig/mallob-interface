@@ -15,6 +15,12 @@ public class FallobException extends Exception{
         this.setMessage(message);
     }
 
+	public FallobException(HttpStatus status, String message, Throwable cause) {
+		this.setStatus(status);
+		this.setMessage(message);
+		this.initCause(cause);
+	}
+
 	public HttpStatus getStatus() {
 		return status;
 	}
@@ -29,5 +35,14 @@ public class FallobException extends Exception{
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	@Override
+	public void printStackTrace() {
+		if (this.getCause() != null) {
+			this.getCause().printStackTrace();
+		} else {
+			super.printStackTrace();
+		}
 	}
 }

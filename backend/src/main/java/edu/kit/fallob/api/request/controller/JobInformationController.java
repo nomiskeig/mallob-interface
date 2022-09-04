@@ -60,6 +60,7 @@ public class JobInformationController {
         try {
             jobInformation = jobInformationCommand.getSingleJobInformation(username, jobId);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -81,6 +82,7 @@ public class JobInformationController {
         try {
             jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobs());
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
@@ -108,6 +110,7 @@ public class JobInformationController {
         try {
             jobInformations = jobInformationCommand.getAllJobInformation(username);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -132,6 +135,7 @@ public class JobInformationController {
         try {
             jobInformations = jobInformationCommand.getAllGlobalJobInformation(username);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -157,6 +161,7 @@ public class JobInformationController {
         try {
             jobDescriptions = jobDescriptionCommand.getSingleJobDescription(username, jobId);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -207,6 +212,7 @@ public class JobInformationController {
         try {
             jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobs());
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
@@ -230,6 +236,7 @@ public class JobInformationController {
         try {
             jobDescriptions = jobDescriptionCommand.getAllJobDescription(username);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -250,6 +257,7 @@ public class JobInformationController {
         try {
             jobResult = jobResultCommand.getSingleJobResult(username, jobId);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -270,6 +278,7 @@ public class JobInformationController {
         try {
             jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobs());
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
@@ -293,6 +302,7 @@ public class JobInformationController {
         try {
             jobResults = jobResultCommand.getAllJobResult(username);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -305,6 +315,7 @@ public class JobInformationController {
         try {
             jobResult = jobPendingCommmand.waitForJob(username, jobId);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }

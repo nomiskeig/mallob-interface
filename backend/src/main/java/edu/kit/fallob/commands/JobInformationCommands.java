@@ -48,6 +48,7 @@ public class JobInformationCommands {
 			try {
 				jobInformations.add(getSingleJobInformation(username, id));
 			} catch (FallobException e) {
+				e.printStackTrace();
 				continue;
 			}
 		}

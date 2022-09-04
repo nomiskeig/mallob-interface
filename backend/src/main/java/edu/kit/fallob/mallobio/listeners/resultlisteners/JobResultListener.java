@@ -94,6 +94,7 @@ public class JobResultListener implements ResultObjectListener, BufferFunction<R
 		try {
 			jobId = this.jobDao.getJobIdByMallobId(mallobID);
 		} catch (FallobException e) {
+			e.printStackTrace();
 			System.out.println("An sql error occurred while accessing the database");
 		}
 

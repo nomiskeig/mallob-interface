@@ -1,0 +1,17 @@
+
+
+#authnticate Mulitple users and switch between them
+
+login testingResources/request-bodys/loginBodyUser1.json
+login testingResources/request-bodys/loginBodyUser2.json
+
+
+switchUser 0
+submitJob_include testingResources/request-bodys/submitJobInclude1Body.json
+getJobInfo /single/
+
+
+switchUser 1
+submitDescription testingResources/cnf/description2.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+getJobInfo /single/
