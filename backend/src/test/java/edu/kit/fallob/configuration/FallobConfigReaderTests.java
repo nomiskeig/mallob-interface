@@ -95,11 +95,6 @@ public class FallobConfigReaderTests {
 		database.put("databasePassword", DB_PW);
 		o.put("database", database);
 		
-		JSONObject readerSetup = new JSONObject();
-		readerSetup.put("readingIntervalPerReadingThread",  50);
-		readerSetup.put("amountReaderThreads", 2);
-        o.put("readerSetup", readerSetup);
-
 
         JSONObject readerSetup = new JSONObject();
         readerSetup.put("readingIntervalPerReadingThread",READING_INTERVAL);
