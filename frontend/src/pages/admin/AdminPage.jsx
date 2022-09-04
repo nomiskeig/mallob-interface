@@ -15,7 +15,7 @@ export function AdminPage(props) {
 			method: 'get',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/system/mallobInfo',
 			headers: {
-				Authorisation: 'Bearer ' + userContext.user.token,
+				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		})
 			.then((res) => {
@@ -23,7 +23,7 @@ export function AdminPage(props) {
 
 			})
 			.catch((res) => {
-				//something went wrong with the request
+                setWarnings([...warnings]);
 			});
 	}, []);
 
@@ -56,12 +56,12 @@ export function AdminPage(props) {
 
 	function getIndividualWarnings() {
 		const items = [];
-		const warnings = getWarnings();
-		if (warnings == null) {
-			return createWarning('No warnings available', 0);
+		const localWarnings = getWarnings();
+		if (localWarnings == null) {
+			return createWarning({message:'No warnings available'}, 0);
 		}
-		for (let i = 0; i < warnings.length; i++) {
-			items.push(createWarning(warnings[i], i));
+		for (let i = 0; i < localWarnings.length; i++) {
+			items.push(createWarning(localWarnings[i], i));
 		}
 		return items;
 	}
