@@ -31,6 +31,7 @@ public class WarningDaoImpl implements WarningDao{
     private static final String GET_QUERY = "SELECT * FROM warning";
     //the index of the result that describes where the message of the warning is stored
     private static final int MESSAGE_INDEX = 3;
+    private static final int TIME_INDEX = 2;
 
     private final Connection conn;
 
@@ -52,8 +53,8 @@ public class WarningDaoImpl implements WarningDao{
         try {
             PreparedStatement statement = this.conn.prepareStatement(INSERT_STATEMENT);
 
-            statement.setObject(1, LocalDateTime.now(ZoneOffset.UTC));
-            statement.setString(2, warning.getLogLine());
+            statement.setObject(1, warning.getTime());
+            statement.setString(2, warning.getMessage());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -95,7 +96,9 @@ public class WarningDaoImpl implements WarningDao{
             ResultSet resultSet = statement.executeQuery(GET_QUERY);
 
             while (resultSet.next()) {
-                Warning warning = new Warning(resultSet.getString(MESSAGE_INDEX));
+                LocalDateTime time  = resultSet.getTimestamp(TIME_INDEX).toLocalDateTime();
+                String message = resultSet.getString(MESSAGE_INDEX);
+                Warning warning = new Warning(message, time);
                 warnings.add(warning);
             }
         } catch (SQLException e) {
