@@ -17,6 +17,7 @@ import {
 } from '../../global/statusLabel/StatusLabel';
 import './JobPage.scss';
 import axios from 'axios';
+import { InfoContext, TYPE_ERROR, TYPE_WARNING } from '../../context/InfoContextProvider';
 //import { InfoContext} from '../../context/InfoContextProvider';
 function getStatus(job) {
 	let status;
@@ -45,7 +46,7 @@ export function JobPage(props) {
 	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
 	let userContext = useContext(UserContext);
-	//let infoContext = useContext(InfoContext);
+	let infoContext = useContext(InfoContext);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
@@ -55,7 +56,16 @@ export function JobPage(props) {
 	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
 		if (!loaded) {
-			jobContext.loadSingleJob(jobID);
+            jobContext.getSingleJobInfo(jobID).catch(res => {
+                console.log(res);
+                if (res.response.status === 403) {
+                    infoContext.handleInformation('You have no permission to access this job.', TYPE_ERROR);
+                } else {
+                    infoContext.handleInformation('Could not load the job.', TYPE_WARNING);
+                }
+                navigate('/jobs')
+
+            })
 			setLoaded(true);
 		}
 		if (!loadedDependencies) {

@@ -5,8 +5,6 @@ import axios from 'axios';
 
 function reducer(jobs, action) {
 	switch (action.type) {
-		case 'addJob':
-			return [...jobs, action.newJob];
 		case 'addOrReplaceJob':
 			let index = jobs.findIndex((job) => job.jobID === action.newJob.jobID);
 			if (index !== -1) {
@@ -26,7 +24,6 @@ export const JobContext = createContext({});
 export function JobContextProvider({ children }) {
 	let userContext = useContext(UserContext);
 	let infoContext = useContext(InfoContext);
-	//	const [jobs, setJobs] = useState([]);
 
 	const [jobs, dispatch] = useReducer(reducer, []);
 	let [jobToRestart, setJobToRestart] = useState(null);
@@ -125,10 +122,10 @@ export function JobContextProvider({ children }) {
 						},
 					})
 						.then((res) => {
-							dispatch({ type: 'addJob', newJob: res.data });
+							dispatch({ type: 'addOrReplaceJob', newJob: res.data });
 							resolve(res.data);
 						})
-						.catch((res) => reject(null));
+						.catch((res) => reject(res));
 				}
 			}
 		});

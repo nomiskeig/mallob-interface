@@ -62,6 +62,7 @@ export function SubmitPage(props) {
 	let [descriptionKind, setDescriptionKind] = useState(DESCRIPTION_TEXT_FIELD);
 	let [additionalConfig, setAdditionalConfig] = useState([]);
 	useEffect(() => {
+		jobContext.loadAllJobsOfUser();
 		if (jobContext.jobToRestart === null) {
 			return;
 		}
@@ -104,16 +105,6 @@ export function SubmitPage(props) {
 		}
 		setSelectedOptionalIndices([...newSelectionOptionalIndices]);
 		jobContext.setJobToRestart(null);
-	}, []);
-	useEffect(() => {
-		if (!userContext.user.isVerified) {
-			navigate('/jobs');
-			infoContext.handleInformation(
-				'You can not submit a job as an unverified user.',
-				TYPE_ERROR
-			);
-		}
-		jobContext.loadAllJobsOfUser();
 	}, []);
 	let ownJobs = jobContext.jobs.filter(
 		(job) => job.user === userContext.user.username
