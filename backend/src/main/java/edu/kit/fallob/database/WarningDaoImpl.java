@@ -58,7 +58,7 @@ public class WarningDaoImpl implements WarningDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -76,7 +76,7 @@ public class WarningDaoImpl implements WarningDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
 
     }
@@ -102,7 +102,7 @@ public class WarningDaoImpl implements WarningDao{
                 warnings.add(warning);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
 
         return warnings;

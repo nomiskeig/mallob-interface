@@ -76,7 +76,7 @@ public class EventDaoImpl implements EventDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -115,7 +115,7 @@ public class EventDaoImpl implements EventDao{
             return load1Events;
 
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -135,7 +135,7 @@ public class EventDaoImpl implements EventDao{
 
             return this.getEvents(statement);
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -157,7 +157,7 @@ public class EventDaoImpl implements EventDao{
                 return null;
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
 
     }
@@ -187,7 +187,7 @@ public class EventDaoImpl implements EventDao{
 
             return events;
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 }

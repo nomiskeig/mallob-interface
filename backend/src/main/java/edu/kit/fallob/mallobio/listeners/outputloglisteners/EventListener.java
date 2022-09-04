@@ -50,6 +50,7 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 		try {
 			jobID = this.jobDao.getJobIdByMallobId(outputUpdate.getMallobJobID());
 		} catch (FallobException e) {
+			e.printStackTrace();
 			System.out.println("An error occurred while accessing the database");
 		}
 		if (jobID > 0) {
@@ -58,6 +59,7 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 			try {
 				eventDao.save(outputUpdate);
 			} catch (FallobException e) {
+				e.printStackTrace();
 				System.out.println("Event could not be saved : " + e.getMessage());
 			}
 			return true;

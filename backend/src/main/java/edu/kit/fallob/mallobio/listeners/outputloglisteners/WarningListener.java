@@ -26,6 +26,7 @@ public class WarningListener implements OutputLogLineListener {
 			try {
 				warningDao.save(new Warning(line));
 			} catch (FallobException e) {
+				e.printStackTrace();
 				System.out.println(e.getMessage());
 			}
 		}

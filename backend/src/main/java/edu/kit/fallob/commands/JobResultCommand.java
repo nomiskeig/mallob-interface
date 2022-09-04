@@ -46,6 +46,7 @@ public class JobResultCommand {
 			try {
 				jobResults.add(getSingleJobResult(username, id));
 			} catch (FallobException e) {
+				e.printStackTrace();
 				continue;
 			}
 		}
@@ -57,12 +58,8 @@ public class JobResultCommand {
 	
 	public List<JobResult> getAllJobResult(String username) throws FallobException{
 		int[] jobIDs = jobDao.getAllJobIds(username);
-		List<JobResult> jobResults = new ArrayList<>();
-		try {
-			jobResults = getMultipleJobResult(username, jobIDs);
-		} catch (FallobException e) {
-			
-		}
+		List<JobResult> jobResults;
+		jobResults = getMultipleJobResult(username, jobIDs);
 		return jobResults;
 	}
 

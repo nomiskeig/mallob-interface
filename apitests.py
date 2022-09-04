@@ -460,8 +460,8 @@ def submit_job_external(testCase):
     if (len(commandLineArguments) > 2 and commandLineArguments[ARG_3].lower() == "useLastDescriptionID".lower()):
         jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] 
 
-#    r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
-    r = requests.post(url, json=jsonContent, headers=HEADER)
+    r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+
 
 def cancelJob(testCase):
     filePath = commandLineArguments[ARG_2]

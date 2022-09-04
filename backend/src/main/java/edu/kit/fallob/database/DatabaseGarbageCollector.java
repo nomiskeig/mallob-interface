@@ -30,6 +30,7 @@ public class DatabaseGarbageCollector implements Runnable{
         try {
             this.daoFactory = new DaoFactory();
         } catch (FallobException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
