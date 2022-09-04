@@ -129,15 +129,15 @@ def setAfterRequestFuncitons():
         REGISTER : printResponse,
         LOGIN : afterLogin,
         JOBSUBMIT_INCLUDE : afterJobInclude,
-        GET_JOB_INFO : printResponse,
+        GET_JOB_INFO : noFunction,
         SUBMIT_DESCRIPTION : afterDescriptionUpload,
-        DOWNLOAD_DESCRIPTION : printResponse,
+        DOWNLOAD_DESCRIPTION : noFunction,
         SUBMIT_JOB_EXTERNAL : afterJobInclude,
         CANCEL_JOB : noFunction,
-        GET_SYSTEM_CONFIG : printResponse,
-        GET_MALLOB_INFO : printResponse,
-        GET_RESULT : printResponse,
-        GET_EVENTS : printResponse
+        GET_SYSTEM_CONFIG : noFunction,
+        GET_MALLOB_INFO : noFunction,
+        GET_RESULT : noFunction,
+        GET_EVENTS : noFunction
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -160,15 +160,12 @@ def setAfterRequestFuncitons():
 def noFunction(r):
     pass
 
-def printResponseJSON(responseJSON):
-    if PRINT_RESPONSE_JSON:
-        print(json.dumps(responseJSON, indent=4))
 
 def printResponse(r):
     responseJSON = convertRequestToJSON(r)
     if responseJSON == None:
         return
-    printResponseJSON(responseJSON)
+    print(json.dumps(responseJSON, indent=4))
 
 
 def afterLogin(request):
@@ -176,7 +173,6 @@ def afterLogin(request):
     responseJSON = convertRequestToJSON(request)
     if responseJSON == None:
         return
-    printResponseJSON(responseJSON)
     
     if LATEST_STATUS_CODE == 200:
         #set the global header variable;
@@ -188,7 +184,6 @@ def afterJobInclude(request):
     if responseJSON == None:
         return    
     LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] = responseJSON.get("jobID")
-    printResponseJSON(responseJSON)
 
 def afterDescriptionUpload(request):
     global LATEST_SAVED_DESCRIPTION_ID
@@ -196,7 +191,6 @@ def afterDescriptionUpload(request):
     if responseJSON == None:
         return
     LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] = responseJSON.get("descriptionID")
-    printResponseJSON(responseJSON)
 
 #Converts the given response into a json (python dict), if possible. and returns it. if not it Throws an error-message and returns None.
 def convertRequestToJSON(request):
@@ -460,20 +454,14 @@ def submit_job_external(testCase):
         return
 
     url = BASE_URL + URL_MAPPINGS.get(testCase)
-
-
     jsonContent = readFileAsPythonDict(filePath)
 
     #modify json-content and use the latest description ID that has been submitted
     if (len(commandLineArguments) > 2 and commandLineArguments[ARG_3].lower() == "useLastDescriptionID".lower()):
         jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] 
 
-    r = requests.post(url, json=jsonContent, headers=HEADER)
-    printStatusCode(r.status_code)
+    r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
 
-    if r != None:
-        afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
-        afterFunction(r)
 
 def cancelJob(testCase):
     filePath = commandLineArguments[ARG_2]
@@ -488,18 +476,14 @@ def cancelJob(testCase):
                 url += commandLineArguments[ARG_3]
             else:
                 url += str(LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX]) 
-        r = requests.post(url, headers=HEADER)
+        r = doRequest(requests.post, url, None, None, True, None)
     else:
-        r = requests.post(url, json=readFileAsPythonDict(filePath), headers=HEADER)
-    printStatusCode(r.status_code)
-    printResponse(r)
+        r = doRequest(requests.post, url, readFileAsPythonDict(filePath), None, True, None)
+
 
 def getEvents(testCase):
     url = BASE_URL + URL_MAPPINGS.get(testCase) + commandLineArguments[ARG_2]
-    r = requests.post(url, headers=HEADER)
-    printStatusCode(r.status_code)
-    afterFucntion = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
-    afterFucntion()
+    r = doRequest(requests.post, url, None, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
     
     
 #------------------------------------------------------API, main, and other helping methods 
@@ -537,15 +521,13 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
 
     if hasBody:
         filePath = commandLineArguments[ARG_2]
-        if (exists()):
-            r = requests.get(url, json=readFileAsPythonDict(filePath), headers=HEADER)
+        if (exists(filePath)):
+            r = doRequest(requests.get, url, readFileAsPythonDict(filePath), True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
         else:
             printError("Given filepath " + str(filePath) + " was not valid")
 
     else:
-        r = requests.get(url, headers=HEADER)
-    printStatusCode(r.status_code)
-    printResponse(r)
+        r = doRequest(requests.get, url, None, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
 
 
 """
@@ -596,20 +578,41 @@ def doPostRequest(pathToJsonFileContainingBody, url, authentication):
     if authentication and HEADER == None:
         printError("You are not authenticated. Please authenticate yourself first - by using login")
         return None
-    if exists(pathToJsonFileContainingBody):
-        if PRINT_REQ_JSON_BODY:
-            print("Json-Body for this request ; \n" + str(readFile(pathToJsonFileContainingBody)))
-        #r = requests.post(registerURL, json=fileContent)
-        if authentication:
-            r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody), headers=HEADER)
-        else:
-            r = requests.post(url, json=readFileAsPythonDict(pathToJsonFileContainingBody))
-        printStatusCode(r.status_code)
+    if exists(pathToJsonFileContainingBody):       
 
-        return r
+        return doRequest(requests.post, url, readFileAsPythonDict(pathToJsonFileContainingBody), None, authentication, None)
     else:
         printError("Given filepath " + str(pathToJsonFileContainingBody) + " was not valid")
         return None
+
+
+def doRequest(reqFunction, url, bodyAsJson, fileDict, header, afterFunction):
+    if PRINT_REQ_JSON_BODY and bodyAsJson != None:
+        print("Json-Body for this request ; \n"+ json.dumps(bodyAsJson, indent=4))
+    if header:
+        if bodyAsJson == None and fileDict == None:
+            response = reqFunction(url, headers=HEADER)
+        if bodyAsJson != None and fileDict == None:
+            response = reqFunction(url, json=bodyAsJson, headers=HEADER)
+        if fileDict != None and bodyAsJson == None:
+            response = reqFunction(url, files=fileDict, headers=HEADER)
+        else:
+            response = reqFunction(url, json=bodyAsJson, files=fileDict, headers=HEADER)
+    else:
+        if bodyAsJson == None and fileDict == None:
+            response = reqFunction(url)
+        elif bodyAsJson != None and fileDict == None:
+            response = reqFunction(url, json=bodyAsJson)
+        elif fileDict != None and bodyAsJson == None:
+            response = reqFunction(url, files=fileDict)
+        else:
+            response = reqFunction(url, json=bodyAsJson, files=fileDict)
+    printStatusCode(response.status_code)
+    if PRINT_RESPONSE_JSON:
+        printResponse(response)
+    if afterFunction != None and response != None:
+        afterFunction(response)
+    return response
 
 """
 
@@ -627,12 +630,9 @@ def multiPartFileRequest(testCase):
             fileDict["file" + str(i)] = (open(commandLineArguments[i], "rb"))
 
     #actually issue the request
-    r = requests.post(url, headers=HEADER, files=fileDict)
-    printStatusCode(r.status_code)
+    r = doRequest(requests.post, url, None, fileDict, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
         
-    if r != None:
-        afterFunction = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
-        afterFunction(r)
+
         
 
 

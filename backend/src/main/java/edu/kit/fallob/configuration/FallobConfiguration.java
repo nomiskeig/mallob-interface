@@ -21,6 +21,8 @@ public class FallobConfiguration {
 	private int maxJobsUser;
 	private int[] clientProcesses;
 	private int garbageCollectorInterval;
+	private double minPriority;
+	private double maxPriority;
 	private long jobStorageTime;
 	private long eventStorageTime;
 	private long warningStorageTime;
@@ -69,6 +71,20 @@ public class FallobConfiguration {
 	
 	public int getAmountReaderThreads() {
 		return this.amountReaderThreads;
+	}
+	
+	public double getMaxJobPriority() {
+		return this.maxPriority;
+	}
+	public double getMinJobPriority() {
+		return this.minPriority;
+	}
+	
+	public void setMaxJobPriority(double prio) {
+		this.maxPriority = prio;
+	}
+	public void setMinJobPriority(double prio) {
+		this.minPriority = prio;
 	}
 	
 	public void setReadingIntervalPerReadingThread(int readingInterval) {

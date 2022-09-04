@@ -64,6 +64,8 @@ public class FallobConfigReaderTests {
 		o.put("maxJobsTotal", MAX_JOBS);
 		o.put("maxJobsUser", MAXJOBSUSER);
 		o.put("client-processes", new JSONArray(CLIENT_PROCESSES));
+		o.put("minJobPriority", 0.1);
+		o.put("maxJobPriority", 100);
 
 		JSONObject storage = new JSONObject();
 		storage.put("garbageCollectorInterval", GARBAGECOLLECTINTERVAL);
@@ -90,6 +92,11 @@ public class FallobConfigReaderTests {
 		database.put("databaseUsername", DB_USERNAME);
 		database.put("databasePassword", DB_PW);
 		o.put("database", database);
+		
+		JSONObject readerSetup = new JSONObject();
+		readerSetup.put("readingIntervalPerReadingThread",  50);
+		readerSetup.put("amountReaderThreads", 2);
+        o.put("readerSetup", readerSetup);
 
 		return o;
 	}
