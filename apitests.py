@@ -1,10 +1,12 @@
 import requests
 import sys
-from os.path import exists, basename
+from os.path import exists, basename, isfile
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+from os import listdir
 import socket
 import json
+import time
 
 
 
@@ -20,6 +22,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    PURPLE = '\033[95m'
 
     
 commandLineArguments = sys.argv
@@ -33,6 +36,10 @@ PRINT_REQ_JSON_BODY = False
 CATCH_REQUEST_ERROR = False
 PRINT_RESPONSE_JSON = True
 RUNNING = True
+
+#This is a relative Path to the scenarios. This path is hardcoded. Notice, it might not work
+SCENARIO_PATH = "testingResources/testScenarios/"
+SCENARIOS = []
 
 BASE_URL = "http://" + socket.gethostbyname(socket.gethostname() + ".local") + ":8080"
 print(bcolors.OKGREEN + "Base-URL for API requests : "  + str(BASE_URL) + bcolors.ENDC)
@@ -66,6 +73,7 @@ GET_MALLOB_INFO = "getMallobInfo"
 GET_RESULT = "getResult"
 
 #not yet implemented
+GET_EVENTS = "getEvents"
 
 
 AVAILABLE_TESTS = [REGISTER,
@@ -78,7 +86,8 @@ SUBMIT_JOB_EXTERNAL,
 CANCEL_JOB ,
 GET_SYSTEM_CONFIG ,
 GET_MALLOB_INFO, 
-GET_RESULT]
+GET_RESULT,
+GET_EVENTS]
 
 URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 LOGIN : "/api/v1/users/login",
@@ -90,7 +99,8 @@ URL_MAPPINGS = {REGISTER : "/api/v1/users/register",
                 CANCEL_JOB : "/api/v1/jobs/cancel",
                 GET_SYSTEM_CONFIG : "/api/v1/system/config",
                 GET_MALLOB_INFO : "/api/v1/system/mallobInfo",
-                GET_RESULT : "/api/v1/jobs/solution"}
+                GET_RESULT : "/api/v1/jobs/solution",
+                GET_EVENTS : " /api/v1/events"}
 
 AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 LOGIN : False,
@@ -102,7 +112,8 @@ AUTHENTICATION_MAPPINGS = {REGISTER : False,
                 CANCEL_JOB : True,
                 GET_SYSTEM_CONFIG : True,
                 GET_MALLOB_INFO : True,
-                GET_RESULT : True
+                GET_RESULT : True,
+                GET_EVENTS : True
 }
 
 
@@ -125,7 +136,8 @@ def setAfterRequestFuncitons():
         CANCEL_JOB : noFunction,
         GET_SYSTEM_CONFIG : printResponse,
         GET_MALLOB_INFO : printResponse,
-        GET_RESULT : printResponse
+        GET_RESULT : printResponse,
+        GET_EVENTS : printResponse
     }
 
     HELP_FUNCTION_MAPPINGS = {
@@ -139,7 +151,8 @@ def setAfterRequestFuncitons():
         CANCEL_JOB : cancel_job_help,
         GET_SYSTEM_CONFIG : getConfig_help,
         GET_MALLOB_INFO : getMallobInfo_help,
-        GET_RESULT : getResult_help
+        GET_RESULT : getResult_help,
+        GET_EVENTS : getEvents_help
     }
 
 
@@ -422,7 +435,22 @@ def getResult_help():
         """
     print(getResult_help_text)
 
+def getEvents_help():
+    getEvents_help_text = """
+        ------------------------------Get Events and System State - HELP ----------------------------------------
 
+        1. get System State
+            set [arg2] == /state?time=(time)
+            See API-Spec for further specification
+        
+        2. Get past events
+            Set [arg2] == /events?startTime=(startTime)&endTime=(endTime)
+            See API-Spec for further specification
+        
+        3. Answer
+            Print the response, if possible
+    """
+    print(getEvents_help_text)
 #------------------------------------------------------submitting a job with external description needed and extra method...
 
 def submit_job_external(testCase):
@@ -465,9 +493,16 @@ def cancelJob(testCase):
         r = requests.post(url, json=readFileAsPythonDict(filePath), headers=HEADER)
     printStatusCode(r.status_code)
     printResponse(r)
+
+def getEvents(testCase):
+    url = BASE_URL + URL_MAPPINGS.get(testCase) + commandLineArguments[ARG_2]
+    r = requests.post(url, headers=HEADER)
+    printStatusCode(r.status_code)
+    afterFucntion = AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase)
+    afterFucntion()
+    
     
 #------------------------------------------------------API, main, and other helping methods 
-#runTestsFromFile /home/siwi/pse_dev/filesForTesting/multipleTests.txt
 
 """
 This request is a general get-request for mostly all GET requests of our API..
@@ -665,6 +700,15 @@ def printWarning(message):
 def printSystemMessage(message):
     print(bcolors.OKBLUE + message + bcolors.ENDC)
 
+def printUserComment(message):
+    print(bcolors.PURPLE + message + bcolors.ENDC)
+
+def  printComment():
+    message = ""
+    for i in range(1, len(commandLineArguments)):
+        message += commandLineArguments[i] + " "
+    printUserComment(message)
+
 def printHelp():
     tutorialText = """
     --------------------------------This is a script for automating testruns with the API-----------------
@@ -698,6 +742,14 @@ def printHelp():
                 After you use switchUser, every request you do comes form the user-token you just switched to.
 
 
+            c) Scenario quick-select.
+
+                This feature use the SCENARIO_PATH variable and loads all files in this scenario into SCENARIOS. You can
+                use the command "scenarios" in order to list all available scenarios. 
+                With the command "scenario [scenarioname]" you can then execute this scenario.
+                This is equal to typing : runTestsFromFile SCENARIO_PATH+[scenarioname]
+
+
         2. Args
 
             [arg1] is the type of test you want to execue. 
@@ -709,7 +761,9 @@ def printHelp():
                 ..."showAllTests" and a list of all possible tests is printed
                 ..."togglePrintBody" - toggles printing the request-body before each request - 
                 ..."toggleCatchReqError" - toggles catching the error.
-                ...."togglePrintResponse" - if true, prints the response json, if false, it doesn't
+                ..."togglePrintResponse" - if true, prints the response json, if false, it doesn't
+                ..."printComment" - let the system print a comment, everything after the comment is printed 
+                ..."wait". Set [arg2] to the amount of seconds you want THIS program to wait 
                 ..."exit" to leave the program
 
 
@@ -751,13 +805,14 @@ def executeTestCase(testCaseIdentifier):
         generalGetRequest(GET_MALLOB_INFO, None, False, False)
     elif testCaseIdentifier == GET_RESULT:
         generalGetRequest(GET_RESULT, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
+    elif testCaseIdentifier == GET_EVENTS:
+        getEvents(GET_EVENTS)
     else:
-        print(bcolors.FAIL + "Seems like the Test-case given has not yet been implemented, or is just wrong all together." + bcolors.ENDC)
-
+        printError("Seems like the Test-case given has not yet been implemented, or is just wrong all together.")
 
 #Tries if the user wanted to use an extra function 
 def tryExtraCommandLineFuncion():
-    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON, RUNNING
+    global PRINT_REQ_JSON_BODY, CATCH_REQUEST_ERROR, PRINT_RESPONSE_JSON, RUNNING, commandLineArguments
     if requestsHelp(commandLineArguments[ARG_1]):
         printHelp()
         return True
@@ -791,6 +846,27 @@ def tryExtraCommandLineFuncion():
     if commandLineArguments[ARG_1].lower() == "exit":
         RUNNING = False
         return True
+    
+    if commandLineArguments[ARG_1].lower() == "printComment".lower():
+        printComment()
+        return True
+    
+    if (commandLineArguments[ARG_1].lower()) == "wait".lower():
+        printSystemMessage("Sleeping for " + commandLineArguments[ARG_2] + " seconds.")
+        time.sleep(int(commandLineArguments[ARG_2]))
+        return True
+
+    if (commandLineArguments[ARG_1].lower()) == "scenarios".lower():
+        print(SCENARIOS)
+        return True
+
+    if (commandLineArguments[ARG_1] == "scenario".lower()):
+        if (exists(SCENARIO_PATH + commandLineArguments[ARG_2])):
+            commandLineArguments = ("runTestsFromFile " + SCENARIO_PATH + commandLineArguments[ARG_2]).split()
+            runTestsFromFile()
+        else:
+            printError("Scenario not found. Maybe scenario path was wrong")
+        return True
 
 
     return False
@@ -811,7 +887,11 @@ def runTestCase(testCase):
         executeTestCase(testCase)
 
 def executeRunLoop():
-    if tryExtraCommandLineFuncion():
+    try:
+        if tryExtraCommandLineFuncion():
+            return
+    except:
+        printError("Something went wrong with your request.")
         return
 
     runTestCase(commandLineArguments[ARG_1])
@@ -831,10 +911,18 @@ def runTestsFromFile():
             continue
         executeRunLoop()
 
+def loadScenarios():
+    global SCENARIOS
+    SCENARIOS = listdir(SCENARIO_PATH)
+
 def main():
     global commandLineArguments, PRINT_REQ_JSON_BODY
     setAfterRequestFuncitons()
-    
+    try:
+        loadScenarios()
+    except:
+        noFunction()
+
     while(RUNNING):
         userInput = input(bcolors.OKCYAN + bcolors.BOLD + "Fallob-API-Tests> " + bcolors.ENDC)
         commandLineArguments = userInput.split()
@@ -846,10 +934,7 @@ def main():
 
 
 def testting():
-    print({"dicEntry" : 2, "dicentry" : "he"})
-    with open(commandLineArguments[2]) as handle:
-        dictdump = json.loads(handle.read())
-    print(dictdump)
+    loadScenarios()
 main()
  
 #testting()

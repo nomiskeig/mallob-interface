@@ -7,16 +7,29 @@ toggleCatchReqError
 
 #actual test-scenario
 
-
+#authenticate
 login testingResources/request-bodys/loginBodyUser1.json
+
+printComment Introduce a faulty job to the system. Error is expeced.
 toggleCatchReqError
 submitDescription testingResources/cnf/description.cnf
 submitJob_external testingResources/request-bodys/noNameJob_externalDescription.json useLastDescriptionID
 toggleCatchReqError
 
+
+printComment Submit Job with seperate Job-Description and cancel 
 submitDescription testingResources/cnf/description2.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
 cancelJob /single/
+
+printComment Submit Job with seperate Job-Description
 submitDescription testingResources/cnf/description.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
-exit
+
+getJobInfo /single/ 
+#1150 is not possible with this program.
+downloadDescription /single/
+
+getResult /single/
+#get system State : getEvents /state?time=(time)
+#get previous events : getEvents /events?startTime=(startTime)&endTime=(endTime)
