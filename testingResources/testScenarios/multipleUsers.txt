@@ -1,4 +1,5 @@
-
+register testingResources/request-bodys/registerBodyUser1.json
+register testingResources/request-bodys/registerBodyUser2.json
 
 #authnticate Mulitple users and switch between them
 

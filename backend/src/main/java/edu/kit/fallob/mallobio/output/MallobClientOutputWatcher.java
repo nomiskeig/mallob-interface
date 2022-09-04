@@ -90,15 +90,14 @@ public class MallobClientOutputWatcher implements Runnable {
 			
 			
 			for (WatchEvent<?> event : nextKey.pollEvents()) {
-				
 				if (event.kind() != StandardWatchEventKinds.ENTRY_CREATE) {
 					continue;
 				}
-								
 				WatchEvent<Path> ev = (WatchEvent<Path>)event;
 		        Path filename = ev.context();
 		        		        
 				if (isResult(filename.toString())){
+
 			        this.pushResultObject(generateResultObject());
 			        retreivedResult = true;
 				}
