@@ -34,8 +34,8 @@ public class MallobInputTests {
 	public static final String TEST_MALLOB_IN_DIRECTORY = MallobFilePathGenerator.generatePathToMallobSubmitDirectory(TEST_DIRECTORY_PATH, CLIENT_PROCESS_ID);
 	public static final String TEST_DESCRIPTIONFILE = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "testFileDescription.cnf";
 	
-	public static final String ABSOLUTE_SUBMIT_FILE_PATH = TEST_MALLOB_IN_DIRECTORY + File.separator + MallobInputImplementation.NEW_JOB_FILENAME + MallobInputImplementation.JSON_FILE_EXTENSION;
-	public static final String ABSOLUTE_ABORT_FILE_PATH = TEST_MALLOB_IN_DIRECTORY + File.separator + MallobInputImplementation.ABORT_FILENAME + MallobInputImplementation.JSON_FILE_EXTENSION;
+	public static final String ABSOLUTE_SUBMIT_FILE_PATH = TEST_MALLOB_IN_DIRECTORY + File.separator + MallobInputImplementation.NEW_JOB_FILENAME + "%d"+ MallobInputImplementation.JSON_FILE_EXTENSION;
+	public static final String ABSOLUTE_ABORT_FILE_PATH = TEST_MALLOB_IN_DIRECTORY + File.separator + MallobInputImplementation.ABORT_FILENAME + "%d" + MallobInputImplementation.JSON_FILE_EXTENSION;
 
 	
 	public static final int[] CLIENT_PROCESSES = {CLIENT_PROCESS_ID};
@@ -66,6 +66,11 @@ public class MallobInputTests {
 	
 	
 	public static File descriptionFile;
+	private static int filesSubmitted = 0;
+	
+	private static String getFilePath(String basepath) {
+		return String.format(basepath, filesSubmitted);
+	}
 
 	
 	//this is how the contents of the json file should look like after generation by mallobinput
@@ -77,11 +82,13 @@ public class MallobInputTests {
 	private static JobConfiguration config;
 	private static JobDescription description;
 	
+	
 	@Test
 	public void testJobFileExistanceSubmit() throws IOException {
 		mInput.submitJobToMallob(USERNAME, config, description);
+		filesSubmitted++;
 		//assert true that json file is in correct directory
-		assertTrue(new File(ABSOLUTE_SUBMIT_FILE_PATH).exists()); 
+		assertTrue(new File(getFilePath(ABSOLUTE_SUBMIT_FILE_PATH)).exists()); 
 	}
 	
 	
@@ -89,15 +96,16 @@ public class MallobInputTests {
 	public void testJobFileExistanceAbort() throws IOException {
 		
 		mInput.abortJob(USERNAME, JOB_NAME);
+		filesSubmitted++;
 		String expectedJSONContent = 
 				"{\""  + MallobAttributeNames.MALLOB_JOB_NAME + "\":\"" + JOB_NAME + "\","
 				+ "\"" + MallobAttributeNames.MALLOB_INTERRUPT + "\":true,"
 				+ "\"" + MallobAttributeNames.MALLOB_USER + "\":\"" + USERNAME + "\"}";
 		
 		
-		String jsonContent = Files.readString(Path.of(ABSOLUTE_ABORT_FILE_PATH));
+		String jsonContent = Files.readString(Path.of(getFilePath(ABSOLUTE_ABORT_FILE_PATH)));
 		assertTrue(jsonContent.equals(expectedJSONContent));
-		assertTrue(new File(ABSOLUTE_ABORT_FILE_PATH).exists()); 
+		assertTrue(new File(getFilePath(ABSOLUTE_ABORT_FILE_PATH)).exists()); 
 	}
 	
 	@Test
