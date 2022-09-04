@@ -460,7 +460,12 @@ def submit_job_external(testCase):
     if (len(commandLineArguments) > 2 and commandLineArguments[ARG_3].lower() == "useLastDescriptionID".lower()):
         jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] 
 
-    r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+    #r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+    r = requests.post(url, json=jsonContent, headers=HEADER)
+    afterJobInclude(r)
+    printStatusCode(r.status_code)
+    if PRINT_RESPONSE_JSON:
+        printResponse(r)
 
 
 def cancelJob(testCase):
@@ -518,7 +523,6 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
                     url += str(commandLineArguments[ARG_3])
                 else:
                     url += str(parameter)
-
     if hasBody:
         filePath = commandLineArguments[ARG_2]
         if (exists(filePath)):
@@ -585,9 +589,11 @@ def doPostRequest(pathToJsonFileContainingBody, url, authentication):
         printError("Given filepath " + str(pathToJsonFileContainingBody) + " was not valid")
         return None
 
-
+#r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+#r = requests.post(url, json=jsonContent, headers=HEADER)
 def doRequest(reqFunction, url, bodyAsJson, fileDict, header, afterFunction):
     if PRINT_REQ_JSON_BODY and bodyAsJson != None:
+        print("URL : " + url)
         print("Json-Body for this request ; \n"+ json.dumps(bodyAsJson, indent=4))
     if header:
         if bodyAsJson == None and fileDict == None:
