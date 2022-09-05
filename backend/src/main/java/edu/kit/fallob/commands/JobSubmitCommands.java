@@ -95,10 +95,7 @@ public class JobSubmitCommands {
 				|| jobConfiguration.getPriority() > FallobConfiguration.getInstance().getMaxDescriptionStorageSize()) {
 			return false;
 		}
-		if (jobConfiguration.getName() == JobConfiguration.OBJECT_NOT_SET || 
-				jobConfiguration.getApplication() == JobConfiguration.OBJECT_NOT_SET) {
-			return false;
-		}
+
 
 		return true;
 	}
