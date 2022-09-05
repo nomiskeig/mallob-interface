@@ -277,11 +277,14 @@ def getJobInfo_help():
             Tries to get the information of a job (or multiple)
             The path sepcified for this test is only api/v1/jobs/info
 
-            You actually have to specify in [arg2] what kind of request you want. Possible values :
-            [arg2] == /all or [arg2] == /global or [arg2] == /single/(id)
+            a) Single and All
+                You actually have to specify in [arg2] what kind of request you want. Possible values :
+                [arg2] == /all or [arg2] == /single/(id)
 
-            Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
-            to a json-body [arg2]. Because in this case you are requesting multiple job-informations. See API-Spec.
+            b) Multiple
+                You can either set [arg2] to a filepath to a .json containing the body, as specified in API.
+                Or you can set it to 'useSingleAsMultiple'. In this case, the multiple request is used,
+                but with the LATEST_SAVED_JOB_ID (like in the single request)
 
             If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
             If you don't the LATEST_SAVED_JOB_ID is used.
@@ -323,11 +326,14 @@ def downloadDescription_help():
             Tries to download description of a job (or multiple)
             The path sepcified for this test is only /api/v1/jobs/description
 
-            You actually have to specify in [arg2] what kind of request you want. Possible values :
-            [arg2] == /all or [arg2] == /single/(id)
+            a) Single and All
+                You actually have to specify in [arg2] what kind of request you want. Possible values :
+                [arg2] == /all or [arg2] == /single/(id)
 
-            Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
-            to a json-body [arg2]. Because in this case you are requesting multiple job-descriptions. See API-Spec.
+            b) Multiple
+                You can either set [arg2] to a filepath to a .json containing the body, as specified in API.
+                Or you can set it to 'useSingleAsMultiple'. In this case, the multiple request is used,
+                but with the LATEST_SAVED_JOB_ID (like in the single request)
 
             If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
             If you don't the LATEST_SAVED_JOB_ID is used.
@@ -415,11 +421,14 @@ def getResult_help():
             Tries to download result of a job (or multiple)
             The path sepcified for this test is only /api/v1/jobs/solution
 
-            You actually have to specify in [arg2] what kind of request you want. Possible values :
-            [arg2] == /all or [arg2] == /single/(id)
+            a) Single and All
+                You actually have to specify in [arg2] what kind of request you want. Possible values :
+                [arg2] == /all or [arg2] == /single/(id)
 
-            Now, if you do not provide [arg2] with one of the operions above, you actually have to give a file-path
-            to a json-body [arg2]. Because in this case you are requesting multiple job-results. See API-Spec.
+            b) Multiple
+                You can either set [arg2] to a filepath to a .json containing the body, as specified in API.
+                Or you can set it to 'useSingleAsMultiple'. In this case, the multiple request is used,
+                but with the LATEST_SAVED_JOB_ID (like in the single request)
 
             If you choose to use the /single/ option, you can set [arg3] = (id). If you do that, it will be used.
             If you don't the LATEST_SAVED_JOB_ID is used.
@@ -511,10 +520,14 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
     url = BASE_URL + URL_MAPPINGS.get(testCase)
     hasBody = False
     if urlModification:
-        if exists(commandLineArguments[ARG_2]):
+        if exists(commandLineArguments[ARG_2]) or commandLineArguments[ARG_2] == "useSingleAsMultiple":
             #in this case [arg2] was a filepath to a json body and the url is done already
             #multiple-option was used
             hasBody = True
+            if commandLineArguments[ARG_2] == "useSingleAsMultiple":
+                body = {"jobs" : [parameter]}
+            else:
+                body = readFileAsPythonDict(commandLineArguments[ARG_2])
         else:
             url += commandLineArguments[ARG_2]
             #/single/ optio was used 
@@ -524,12 +537,7 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
                 else:
                     url += str(parameter)
     if hasBody:
-        filePath = commandLineArguments[ARG_2]
-        if (exists(filePath)):
-            r = doRequest(requests.post, url, readFileAsPythonDict(filePath), None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
-        else:
-            printError("Given filepath " + str(filePath) + " was not valid")
-
+        r = doRequest(requests.post, url, body, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
     else:
         r = doRequest(requests.get, url, None, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
 
