@@ -526,7 +526,7 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
     if hasBody:
         filePath = commandLineArguments[ARG_2]
         if (exists(filePath)):
-            r = doRequest(requests.get, url, readFileAsPythonDict(filePath), True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+            r = doRequest(requests.post, url, readFileAsPythonDict(filePath), None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
         else:
             printError("Given filepath " + str(filePath) + " was not valid")
 
@@ -896,8 +896,8 @@ def executeRunLoop():
     try:
         if tryExtraCommandLineFuncion():
             return
-    except:
-        printError("Something went wrong with your request.")
+    except Exception as e:
+        printError("Something went wrong with your request : " + str(e))
         return
 
     runTestCase(commandLineArguments[ARG_1])
