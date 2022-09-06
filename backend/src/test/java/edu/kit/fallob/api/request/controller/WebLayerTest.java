@@ -848,11 +848,15 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
     public void getWarnings() throws Exception {
-        Warning warning = new Warning(LOG_LINE_PLACE);
+        LocalDateTime time = LocalDateTime.now(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        ZonedDateTime timeWithZone = time.atZone(ZoneOffset.UTC);
+
+        Warning warning = new Warning(LOG_LINE_PLACE, time);
         when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
 
         this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"logLine\":\"" + LOG_LINE_PLACE + "\"}]}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"timestamp\":\"" + timeWithZone.format(formatter) + "\",\"message\":\"" + LOG_LINE_PLACE + "\"}]}"));
     }
 
 
