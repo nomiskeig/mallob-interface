@@ -470,6 +470,9 @@ def submit_job_external(testCase):
         jsonContent["descriptionID"] = LATEST_SAVED_DESCRIPTION_ID[CURRENT_ACTIVE_USER_INDEX] 
 
     #r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+    if PRINT_REQ_JSON_BODY :
+        print("URL : " + url)
+        print("Json-Body for this request ; \n"+ json.dumps(jsonContent, indent=4))
     r = requests.post(url, json=jsonContent, headers=HEADER)
     afterJobInclude(r)
     printStatusCode(r.status_code)
