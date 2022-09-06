@@ -1,8 +1,8 @@
 {
-    "name": "jobWithShortWallclockLimit",
+    "name": "jobWithShortCPULimit",
     "priority": 4.3,
     "application": "SAT",
     "contentMode": "text",
     "descriptionID" : 5,
-    "wallclockLimit": "1s"
+    "cpuLimit": "1s"
 }

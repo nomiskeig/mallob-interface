@@ -12,7 +12,7 @@ getJobInfo /single/
 wait 2 
 getJobInfo /single/
 
-submitJob_external testingResources/request-bodys/jobExcludedShortCpuLimit.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExcludedShortCPUTime.json useLastDescriptionID
 getJobInfo /single/
 wait 2
 getJobInfo /single/
