@@ -5,6 +5,8 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SubmitJobRequest implements Serializable {
     private List<String> description;
 
