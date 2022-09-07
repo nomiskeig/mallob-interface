@@ -126,7 +126,7 @@ def setAfterRequestFuncitons():
     global HELP_FUNCTION_MAPPINGS
 
     AFTER_REQUEST_FUNCTION_MAPPINGS = {
-        REGISTER : printResponse,
+        REGISTER : noFunction,
         LOGIN : afterLogin,
         JOBSUBMIT_INCLUDE : afterJobInclude,
         GET_JOB_INFO : noFunction,
@@ -479,6 +479,25 @@ def submit_job_external(testCase):
     if PRINT_RESPONSE_JSON:
         printResponse(r)
 
+def submit_job_include(testCase):
+    filePath = commandLineArguments[ARG_2]
+    if not exists(filePath):
+        printError("Given filepath " + str(filePath) + " was not valid")
+        return
+
+    url = BASE_URL + URL_MAPPINGS.get(testCase)
+    jsonContent = readFileAsPythonDict(filePath)
+
+    #r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
+    if PRINT_REQ_JSON_BODY :
+        print("URL : " + url)
+        print("Json-Body for this request ; \n"+ json.dumps(jsonContent, indent=4))
+    r = requests.post(url, json=jsonContent, headers=HEADER)
+    afterJobInclude(r)
+    printStatusCode(r.status_code)
+    if PRINT_RESPONSE_JSON:
+        printResponse(r)
+
 
 def cancelJob(testCase):
     filePath = commandLineArguments[ARG_2]
@@ -796,7 +815,7 @@ def executeTestCase(testCaseIdentifier):
             helperFunction()
             return
     except:
-        noFunction()
+        noFunction(0)
 
     #this is only written so supid because i want to prevent 
     if testCaseIdentifier == REGISTER:
@@ -804,7 +823,7 @@ def executeTestCase(testCaseIdentifier):
     elif testCaseIdentifier == LOGIN:
         generalPostRequest(LOGIN)
     elif testCaseIdentifier == JOBSUBMIT_INCLUDE:
-        generalPostRequest(JOBSUBMIT_INCLUDE)
+        submit_job_include(JOBSUBMIT_INCLUDE)
     elif testCaseIdentifier == SUBMIT_DESCRIPTION:
         multiPartFileRequest(SUBMIT_DESCRIPTION)
     elif testCaseIdentifier == SUBMIT_JOB_EXTERNAL:
@@ -938,7 +957,7 @@ def main():
     try:
         loadScenarios()
     except:
-        noFunction()
+        noFunction(0)
 
     while(RUNNING):
         userInput = input(bcolors.OKCYAN + bcolors.BOLD + "Fallob-API-Tests> " + bcolors.ENDC)

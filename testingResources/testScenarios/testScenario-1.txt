@@ -30,6 +30,7 @@ getJobInfo /single/
 #1150 is not possible with this program.
 downloadDescription /single/
 
+wait 3
 getResult /single/
 #get system State : getEvents /state?time=(time)
 #get previous events : getEvents /events?startTime=(startTime)&endTime=(endTime)
