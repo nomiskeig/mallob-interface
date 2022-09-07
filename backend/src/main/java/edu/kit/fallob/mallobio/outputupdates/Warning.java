@@ -17,6 +17,9 @@ public class Warning extends OutputUpdate {
 	
 	public static final String WARNING_REGEX = "WARN";
 	private static final Pattern PATTERN = Pattern.compile(WARNING_REGEX);
+
+	private final LocalDateTime time;
+	private final String message;
 	
 	public static boolean isWarning(String logLine) {
 		Matcher matcher = PATTERN.matcher(logLine);
@@ -25,15 +28,22 @@ public class Warning extends OutputUpdate {
 
 	public Warning(String logLine) {
 		super(logLine);
+		int warnIndex = logLine.indexOf(WARNING_REGEX);
+		this.message = logLine.substring(warnIndex - 3);
+		this.time = LocalDateTime.now(ZoneOffset.UTC);
 	}
 	
-	public Warning(String logLine, LocalDateTime time) {
-		super(logLine);
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-		ZonedDateTime zonedTime = time.atZone(ZoneOffset.UTC);
-		int warnIndex = logLine.indexOf(WARNING_REGEX);
-		String formattedLogLine = zonedTime.format(formatter) + " " + logLine.substring(warnIndex - 3);
-		this.logLine = formattedLogLine;
+	public Warning(String message, LocalDateTime time) {
+		super(message);
+		this.message = message;
+		this.time = time;
 	}
 
+	public LocalDateTime getTime() {
+		return time;
+	}
+
+	public String getMessage() {
+		return message;
+	}
 }

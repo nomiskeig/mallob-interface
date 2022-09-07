@@ -41,7 +41,7 @@ public class WarningDaoTests {
 
     @Test
     public void testSaveAndGet() throws FallobException {
-        Warning testWarning = new Warning(TEST_LOG_LINE);
+        Warning testWarning = new Warning(TEST_LOG_LINE, LocalDateTime.now(ZoneOffset.UTC));
 
         this.warningDao.save(testWarning);
 
@@ -76,7 +76,7 @@ public class WarningDaoTests {
 
     @Test
     public void testRemovalSingle() throws FallobException, InterruptedException {
-        Warning testWarning = new Warning(TEST_LOG_LINE);
+        Warning testWarning = new Warning(TEST_LOG_LINE, LocalDateTime.now(ZoneOffset.UTC));
 
         this.warningDao.save(testWarning);
 
@@ -93,13 +93,13 @@ public class WarningDaoTests {
 
     @Test
     public void testRemovalMultiple() throws FallobException, InterruptedException {
-        Warning testWarning1 = new Warning(TEST_LOG_LINE);
-        Warning testWarning2 = new Warning(SECOND_TEST_LOG_LINE);
-
-        this.warningDao.save(testWarning1);
+        Warning testWarning1 = new Warning(TEST_LOG_LINE, LocalDateTime.now(ZoneOffset.UTC));
         Thread.sleep(1000);
         LocalDateTime currentTime = LocalDateTime.now(ZoneOffset.UTC);
         Thread.sleep(1000);
+        Warning testWarning2 = new Warning(SECOND_TEST_LOG_LINE, LocalDateTime.now(ZoneOffset.UTC));
+
+        this.warningDao.save(testWarning1);
         this.warningDao.save(testWarning2);
 
         List<Warning> warningsBeforeDeletion = this.warningDao.getAllWarnings();
