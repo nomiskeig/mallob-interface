@@ -21,6 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A Rest Controller for submitting jobs to Mallob
+ */
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/jobs/submit")
@@ -46,6 +51,14 @@ public class JobSubmitController {
 
     private static int FILENAME_COUNTER = 0;
 
+    /**
+     * An POST endpoint for submitting a job where the description is given as an url
+     * Takes a request, parses the description to a file and forwards it together with the configuration.
+     * It is also responsible for system error handling
+     * @param request a request object containing an url and a configuration object
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the id of the submitted job or an error (including a status code and a message in json format)
+     */
     @PostMapping("/url")
     public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
@@ -70,13 +83,8 @@ public class JobSubmitController {
         }
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.URL);
-        return getInclusiveCommandResponse(request, username, jobDescription);
-    }
-
-    private ResponseEntity<Object> getInclusiveCommandResponse(@RequestBody SubmitJobRequest request, String username, JobDescription jobDescription) {
         boolean isInclusive = true;
         return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
-
     }
 
     @PostMapping("/exclusive/config")
@@ -84,7 +92,6 @@ public class JobSubmitController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         boolean isInclusive = false;
         return submitJob(username, null, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration(), isInclusive);
-
     }
 
     /**
@@ -145,7 +152,8 @@ public class JobSubmitController {
         }
         
         JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
-        return getInclusiveCommandResponse(request, username, jobDescription);
+        boolean isInclusive = true;
+        return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
     }
 
     @PostMapping("/restart/{jobId}")
