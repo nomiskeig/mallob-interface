@@ -1,0 +1,20 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser1.json
+toggleCatchReqError
+login testingResources/request-bodys/loginBodyUser1.json
+
+togglePrintBody
+submitDescription testingResources/cnf/description2.cnf
+submitJob_external testingResources/request-bodys/jobExcludedShortWallclockLimit.json useLastDescriptionID
+getJobInfo /single/
+wait 2 
+getJobInfo /single/
+
+submitJob_external testingResources/request-bodys/jobExcludedShortCPUTime.json useLastDescriptionID
+getJobInfo /single/
+wait 2
+getJobInfo /single/
+exit
+

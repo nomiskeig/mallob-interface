@@ -56,7 +56,7 @@ public class JobSubmitCommands {
 	
 	private int submitJobToMallob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 		if (!jobConfigIsOk(jobConfiguration)) {
-			throw new IllegalArgumentException("Illegal Argument in Job-Configuraiton.");
+			throw new IllegalArgumentException("Illegal Argument in Job-Configuration.");
 		}
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);

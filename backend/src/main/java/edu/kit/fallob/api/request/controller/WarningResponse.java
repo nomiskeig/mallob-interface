@@ -5,13 +5,13 @@ import edu.kit.fallob.mallobio.outputupdates.Warning;
 import java.util.List;
 
 public class WarningResponse {
-    private final List<Warning> warnings;
+    private final List<WarningProxy> warnings;
 
-    public WarningResponse(List<Warning> warnings) {
+    public WarningResponse(List<WarningProxy> warnings) {
         this.warnings = warnings;
     }
 
-    public List<Warning> getWarnings() {
+    public List<WarningProxy> getWarnings() {
         return warnings;
     }
 }

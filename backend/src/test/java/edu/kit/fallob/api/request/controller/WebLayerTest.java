@@ -127,8 +127,8 @@ public class WebLayerTest {
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
     private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
-            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
-            "\"incremental\":true,\"additionalParameter\":\"parameter\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
+            "\"maxDemand\":1,\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
+            "\"incremental\":true,\"additionalParameter\":\"parameter\",\"wallclockLimit\":\"1.0\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
             "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
@@ -848,11 +848,15 @@ public class WebLayerTest {
     @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
     public void getWarnings() throws Exception {
-        Warning warning = new Warning(LOG_LINE_PLACE);
+        LocalDateTime time = LocalDateTime.now(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        ZonedDateTime timeWithZone = time.atZone(ZoneOffset.UTC);
+
+        Warning warning = new Warning(LOG_LINE_PLACE, time);
         when(mallobCommands.getWarnings()).thenReturn(Collections.singletonList(warning));
 
         this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"logLine\":\"" + LOG_LINE_PLACE + "\"}]}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"timestamp\":\"" + timeWithZone.format(formatter) + "\",\"message\":\"" + LOG_LINE_PLACE + "\"}]}"));
     }
 
 
