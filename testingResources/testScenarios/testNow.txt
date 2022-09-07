@@ -1,0 +1,25 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser1.json
+toggleCatchReqError
+
+
+#actual test-scenario
+
+
+login testingResources/request-bodys/loginBodyUser1.json
+
+
+toggleCatchReqError
+submitDescription testingResources/cnf/description.cnf
+printComment Introducing faulty job to system; Error expeced
+submitJob_external testingResources/request-bodys/noNameJob_externalDescription.json useLastDescriptionID
+toggleCatchReqError
+
+submitDescription testingResources/cnf/description2.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+cancelJob /single/
+submitDescription testingResources/cnf/description.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+exit

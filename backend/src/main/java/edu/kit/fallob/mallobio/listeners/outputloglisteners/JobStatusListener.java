@@ -33,6 +33,7 @@ public class JobStatusListener implements OutputLogLineListener, BufferFunction<
 	@Override
 	public void processLine(String line) {
 		if (StatusUpdate.isJobStatus(line)) {
+            System.out.println(line);
 			StatusUpdate statusUpdate = new StatusUpdate(line);
 
 			this.buffer.tryToExecuteBufferFunciton(statusUpdate);
@@ -48,12 +49,13 @@ public class JobStatusListener implements OutputLogLineListener, BufferFunction<
 		try {
 			jobId = this.jobDao.getJobIdByMallobId(outputUpdate.getJobID());
 		} catch (FallobException e) {
+			e.printStackTrace();
 			System.out.println("An sql error occurred while accessing the database");
 		}
 
 		if (jobId > 0) {
 			try {
-				this.jobDao.updateJobStatus(outputUpdate.getJobID(), outputUpdate.getJobStatus());
+				this.jobDao.updateJobStatus(jobId, outputUpdate.getJobStatus());
 			} catch (FallobException e) {
 				System.out.println("Job status could not be updated: " + e.getMessage());
 			}

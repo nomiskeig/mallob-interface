@@ -28,7 +28,7 @@ public class JobInformationCommands {
 
 	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The jobInformation could not be printed, as " +
 			"either the user has no access to it or the job could not be found";
-	
+
 	
 	public JobInformationCommands() throws FallobException{
 		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
@@ -68,6 +68,7 @@ public class JobInformationCommands {
 				else if (e.getStatus().equals(HttpStatus.FORBIDDEN)) {
 					statusForbiddenCounter++;
 				}
+				e.printStackTrace();
 			}
 		}
 

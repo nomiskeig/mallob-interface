@@ -1,6 +1,8 @@
 package edu.kit.fallob.backend.database;
 
 import edu.kit.fallob.database.FileHandler;
+import edu.kit.fallob.springConfig.FallobException;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,7 @@ public class FileHandlerTests {
      * test the correct saving of a file
      */
     @Test
-    public void testSave() {
+    public void testSave() throws FallobException{
         File initialFile = new File(INITIAL_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
         Assertions.assertTrue(initialFile.isFile());
 

@@ -78,7 +78,6 @@ public class JobAbortCommands {
 			username = userDao.getUsernameByJobId(jobID);
 		}
 		JobInformation jobInfo = jobDao.getJobInformation(jobID);
-
 		try {
 			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
 		} catch (IOException e) {
@@ -98,6 +97,7 @@ public class JobAbortCommands {
 				abortSingleJob(username, id);
 				canceledJobs.add(id);
 			} catch (FallobException e) {
+				e.printStackTrace();
 				if (e.getStatus().equals(HttpStatus.CONFLICT)) {
 					statusConflictCounter++;
 				}

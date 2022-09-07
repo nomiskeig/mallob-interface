@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,9 +27,16 @@ public class WarningController {
         try {
             warnings = warningCommand.getWarnings();
         } catch (FallobException e) {
+            e.printStackTrace();
             FallobWarning warning = new FallobWarning(e.getStatus(), e.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        return ResponseEntity.ok(new WarningResponse(warnings));
+
+        List<WarningProxy> warningProxies = new ArrayList<>();
+        for (Warning warning: warnings) {
+            warningProxies.add(new WarningProxy(warning));
+        }
+
+        return ResponseEntity.ok(new WarningResponse(warningProxies));
     }
 }

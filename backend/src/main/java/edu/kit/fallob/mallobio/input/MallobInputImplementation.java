@@ -36,7 +36,7 @@ public class MallobInputImplementation implements MallobInput {
 	private int[] clientProcessIDs;
 	private int amountClientProcesses;
 	private boolean allProcessesAreClient;
-	
+	private int fileCounter;
 	
 	//these round-robin counters ensure that all requests are uniformly distributed amongst all client-processes; see getNextProcess()
 	private int lastUsedClientProcess = 0;
@@ -48,7 +48,7 @@ public class MallobInputImplementation implements MallobInput {
 		return mii;
 	}
 	
-	private MallobInputImplementation() {};
+	private MallobInputImplementation() {fileCounter = 0;};
 	
 	
 	/**
@@ -89,7 +89,7 @@ public class MallobInputImplementation implements MallobInput {
 		
 		int processID = this.getNextProcess();
 		String filePath = MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID) 
-				+ ABORT_FILENAME + JSON_FILE_EXTENSION;
+				+ getFileName(ABORT_FILENAME) + JSON_FILE_EXTENSION;
 		
 		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(), filePath);
 		return processID;
@@ -115,10 +115,10 @@ public class MallobInputImplementation implements MallobInput {
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
-				+ NEW_JOB_FILENAME + JSON_FILE_EXTENSION;
+				+ getFileName(NEW_JOB_FILENAME) + JSON_FILE_EXTENSION;
 
 		this.writeJsonInDirectory(json, absoluteFilePath);
-		System.out.println("Wrote Job-Json in directory : " + absoluteFilePath);
+		
 		return processID;
 	}
 	
@@ -134,9 +134,14 @@ public class MallobInputImplementation implements MallobInput {
 		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
 		writer.write(json);
 		writer.close();
+		System.out.println("Wrote file in directory : " + path);
 	}
 	
-
+	private String getFileName(String fileBaseName) {
+		fileCounter++;
+		return fileBaseName + Integer.toString(fileCounter);
+		
+	}
 
 	
 	private JSONObject createSubmitJSON(String userName, 
@@ -150,12 +155,7 @@ public class MallobInputImplementation implements MallobInput {
 		json.put(MallobAttributeNames.MALLOB_USER, userName);
 		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
 		addJobDescription(json, jobDescription);
-		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
-			json.put(MallobAttributeNames.MALLOB_PRIORTIY, FallobConfiguration.getInstance().getDefaultJobPriority());
-		} else {
-			json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
-		}
-		
+		json.put(MallobAttributeNames.MALLOB_PRIORTIY, jobConfiguration.getPriority());
 		json.put(MallobAttributeNames.MALLOB_APPLICATION, jobConfiguration.getApplication());		
 		
 		

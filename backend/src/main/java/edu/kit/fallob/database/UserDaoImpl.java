@@ -60,7 +60,7 @@ public class UserDaoImpl implements UserDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -77,15 +77,15 @@ public class UserDaoImpl implements UserDao{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
     /**
      * getter for a user that is identified by the username
      * @param username the name of the user that should be returned
-     * @return the suer object that contains the data
-     * @throws FallobException if an error occurs while accessing the database or if the user couldn't be found
+     * @return the suer object that contains the data or null if the user couldn't be found
+     * @throws FallobException if an error occurs while accessing the database
      */
     @Override
     public User getUserByUsername(String username) throws FallobException {
@@ -110,7 +110,7 @@ public class UserDaoImpl implements UserDao{
                 } else {
                     returnUser = new NormalUser(username, password, email);
                 }
-                JobDao jobDao = new JobDaoImpl();
+                JobDao jobDao = new DaoFactory().getJobDao();
                 List<Integer> jobIDs = new ArrayList<>();
                 for (Integer i : jobDao.getAllJobIds(username)) {
                 	jobIDs.add(i);
@@ -121,10 +121,10 @@ public class UserDaoImpl implements UserDao{
 
                 return returnUser;
             } else {
-                throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
+                return null;
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 
@@ -170,7 +170,7 @@ public class UserDaoImpl implements UserDao{
                 throw new FallobException(HttpStatus.NOT_FOUND, DATABASE_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
     }
 }

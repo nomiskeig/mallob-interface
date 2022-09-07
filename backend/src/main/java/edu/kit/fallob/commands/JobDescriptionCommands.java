@@ -25,7 +25,7 @@ public class JobDescriptionCommands {
 
 	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The description could not be printed, as " +
 			"either the user has no access to it or the job could not be found";
-	
+
 	public JobDescriptionCommands() throws FallobException{
 		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
@@ -64,6 +64,7 @@ public class JobDescriptionCommands {
 				else if (e.getStatus().equals(HttpStatus.FORBIDDEN)) {
 					statusForbiddenCounter++;
 				}
+				e.printStackTrace();
 			}
 		}
 
@@ -82,12 +83,8 @@ public class JobDescriptionCommands {
 	
 	public List<JobDescription> getAllJobDescription(String username) throws FallobException {
 		int[] jobIDs = jobDao.getAllJobIds(username);
-		List<JobDescription> jobDescriptions = new ArrayList<>();
-		try {
-			jobDescriptions = getMultipleJobDescription(username, jobIDs);
-		} catch (FallobException ignored) {
-			
-		}
+		List<JobDescription> jobDescriptions;
+		jobDescriptions = getMultipleJobDescription(username, jobIDs);
 		return jobDescriptions;
 	}
 

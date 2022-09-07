@@ -5,6 +5,8 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SubmitJobRequest implements Serializable {
     private List<String> description;
 
@@ -64,9 +66,11 @@ public class SubmitJobRequest implements Serializable {
     public void setMaxDemand(int maxDemand) {
         jobConfiguration.setMaxDemand(maxDemand);
     }
+
     public String getWallClockLimit() {
         return jobConfiguration.getWallClockLimit();
     }
+    @JsonProperty("wallclockLimit")
     public void setWallClockLimit(String wallClockLimit) {
         jobConfiguration.setWallClockLimit(wallClockLimit);
     }

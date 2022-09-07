@@ -33,7 +33,8 @@ public class FallobCommands implements UserDetailsService {
 	private static final int USERNAME_LOWER_BOUND = 4;
 	private static final int USERNAME_UPPER_BOUND = 25;
 	private static final int PASSWORD_LOWER_BOUND = 8;
-	
+	private static final String DUPLICATE_USERNAME = "Username already exists";
+
 	
 	public FallobCommands() throws FallobException {
 		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
@@ -52,6 +53,7 @@ public class FallobCommands implements UserDetailsService {
 		try {
 			user = userDao.getUserByUsername(username);
 		} catch (FallobException e) {
+			e.printStackTrace();
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 
@@ -73,9 +75,17 @@ public class FallobCommands implements UserDetailsService {
 		if (password.length() < PASSWORD_LOWER_BOUND) {
 			throw new FallobException(HttpStatus.BAD_REQUEST, PASSWORD_TOO_SHORT);
 		}
+		//check if the username is already taken
+		User user = userDao.getUserByUsername(username);
+
+		if (user != null) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, DUPLICATE_USERNAME);
+		}
+
 		String encodedPassword = passwordEncoder.encode(password);
 		userDao.save(new NormalUser(username, encodedPassword, email));
 		return true;
+
     }
     
     

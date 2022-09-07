@@ -64,6 +64,7 @@ public class AbortJobController {
             }
             successfullyAborted = jobAbortCommand.abortMultipleJobs(username, jobIds);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         } catch (NullPointerException exception) {
@@ -91,6 +92,7 @@ public class AbortJobController {
         try {
             successfullyAborted = jobAbortCommand.abortAllJobs(username);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -111,6 +113,7 @@ public class AbortJobController {
         try {
             successfullyAborted = jobAbortCommand.abortAllGlobalJob(username);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
@@ -142,6 +145,7 @@ public class AbortJobController {
         try {
             successful = jobAbortCommand.abortSingleJob(username, jobId);
         } catch (FallobException exception) {
+            exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }

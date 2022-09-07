@@ -2,7 +2,9 @@ package edu.kit.fallob.commands;
 
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.UserDao;
+import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
+import org.springframework.http.HttpStatus;
 
 /**
  * This class provides methods which check the access permissions and the user type of a User.
@@ -12,6 +14,8 @@ import edu.kit.fallob.springConfig.FallobException;
  *
  */
 public class UserActionAuthentificater {
+
+	private static final String NOT_FOUND_ERROR = "Error, the user could not be found in the database";
 	
 	private UserDao userDao;
 	
@@ -21,31 +25,67 @@ public class UserActionAuthentificater {
 	
 	
 	public boolean hasAbortAccess(String username, int jobID) throws FallobException {
-		return userDao.getUserByUsername(username).hasAbortAccess(jobID);
+		User user = userDao.getUserByUsername(username);
+
+		if (user == null) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_ERROR);
+		}
+
+		return user.hasAbortAccess(jobID);
 	}
 	
 	
 	public boolean hasInformationAccess(String username, int jobID) throws FallobException {
-		return userDao.getUserByUsername(username).hasInformationAccess(jobID);
+		User user = userDao.getUserByUsername(username);
+
+		if (user == null) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_ERROR);
+		}
+
+		return user.hasInformationAccess(jobID);
 	}
 	
 	
 	public boolean hasResultAccess(String username, int jobID) throws FallobException {
-		return userDao.getUserByUsername(username).hasResultAccess(jobID);
+		User user = userDao.getUserByUsername(username);
+
+		if (user == null) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_ERROR);
+		}
+
+		return user.hasResultAccess(jobID);
 	}
 	
 	
 	public boolean hasDescriptionAccessViaJobID(String username, int jobID) throws FallobException {
-		return userDao.getUserByUsername(username).hasDescriptionAccess(jobID);
+		User user = userDao.getUserByUsername(username);
+
+		if (user == null) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_ERROR);
+		}
+
+		return user.hasDescriptionAccess(jobID);
 	}
 	
 	
 	public boolean isOwnerOfJob(String username, int jobID) throws FallobException {
-		return userDao.getUserByUsername(username).isOwnerOfJob(jobID);
+		User user = userDao.getUserByUsername(username);
+
+		if (user == null) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_ERROR);
+		}
+
+		return user.isOwnerOfJob(jobID);
 	}
 	
 	public boolean isAdmin(String username) throws FallobException {
-		return userDao.getUserByUsername(username).isAdmin(); 
+		User user = userDao.getUserByUsername(username);
+
+		if (user == null) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_ERROR);
+		}
+
+		return user.isAdmin();
 	}
 	
 	
