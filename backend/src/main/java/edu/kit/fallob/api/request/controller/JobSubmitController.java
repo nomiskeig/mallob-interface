@@ -33,6 +33,8 @@ public class JobSubmitController {
 
     private static final String FILE_ERROR = "An error occurred while creating a file with the job description.";
 
+    private static final String DESCRIPTION_IS_EMPTY = "The description can not be empty";
+
     private static final String FILE_NAME = "jobDescription";
 
     private static final String FILE_EXTENSION = ".cnf";
@@ -108,6 +110,10 @@ public class JobSubmitController {
         List<File> files = new ArrayList<>();
         try {
             List<String> lines = request.getDescription();
+            if (lines.isEmpty()) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, DESCRIPTION_IS_EMPTY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
             for (String line : lines) {
                 File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME + FILENAME_COUNTER + FILE_EXTENSION);
                 FileWriter myWriter = new FileWriter(file.getAbsolutePath());

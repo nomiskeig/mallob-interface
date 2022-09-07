@@ -19,6 +19,15 @@ public class JobInformationCommands {
 	private UserActionAuthentificater uaa;
 	private DaoFactory daoFactory;
 	private JobDao jobDao;
+
+	private static final String CONTAINS_INCORRECT_JOBID = "A jobId can not be null";
+
+	private static final String NOT_FOUND_MESSAGE = "No jobs were found that match the given ids";
+
+	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs";
+
+	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The jobInformation could not be printed, as " +
+			"either the user has no access to it or the job could not be found";
 	
 	
 	public JobInformationCommands() throws FallobException{
@@ -35,6 +44,9 @@ public class JobInformationCommands {
 	
 	
 	public JobInformation getSingleJobInformation(String username, int jobID) throws FallobException {
+		if (jobID <= 0) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, CONTAINS_INCORRECT_JOBID);
+		}
 		if (!uaa.hasInformationAccess(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
@@ -44,12 +56,30 @@ public class JobInformationCommands {
 
 	public List<JobInformation> getMultipleJobInformation(String username, int[] jobIDs) throws FallobException {
 		List<JobInformation> jobInformations = new ArrayList<>();
+		int statusForbiddenCounter = 0;
+		int statusNotFoundCounter = 0;
 		for (Integer id : jobIDs) {
 			try {
 				jobInformations.add(getSingleJobInformation(username, id));
 			} catch (FallobException e) {
-				continue;
+				if (e.getStatus().equals(HttpStatus.NOT_FOUND)) {
+					statusNotFoundCounter++;
+				}
+				else if (e.getStatus().equals(HttpStatus.FORBIDDEN)) {
+					statusForbiddenCounter++;
+				}
 			}
+		}
+
+		if (statusForbiddenCounter == jobIDs.length) {
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
+		}
+		else if (statusNotFoundCounter == jobIDs.length) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
+		}
+
+		if (jobInformations.isEmpty()) {
+			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 		return jobInformations;
 	}

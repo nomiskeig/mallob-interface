@@ -32,7 +32,17 @@ public class JobAbortCommands {
 	private JobDao jobDao;
 
 	private UserDao userDao;
-	
+
+	private static final String CONTAINS_INCORRECT_JOBID = "A jobId can not be null";
+
+	private static final String NOT_FOUND_MESSAGE = "No jobs were found that match the given ids";
+
+	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs";
+
+	private static final String CONFLICT_MESSAGE = "No jobs could be cancelled, as they are not active";
+
+	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The jobs could not be cancelled, where " +
+			"either the user has no access to it, the job could not be found or it is not running";
 	
 	public JobAbortCommands() throws FallobException{
 		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
@@ -52,6 +62,10 @@ public class JobAbortCommands {
 	
 	
 	public boolean abortSingleJob(String username, int jobID) throws FallobException {
+		if (jobID <= 0) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, CONTAINS_INCORRECT_JOBID);
+		}
+
 		if (!uaa.hasAbortAccess(username, jobID)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
@@ -68,7 +82,7 @@ public class JobAbortCommands {
 		try {
 			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
 		} catch (IOException e) {
-			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
         
 		return true;
@@ -76,16 +90,37 @@ public class JobAbortCommands {
 	
 	public List<Integer> abortMultipleJobs(String username, int[] jobIDs) throws FallobException {
 		List<Integer> canceledJobs = new ArrayList<>();
+		int statusConflictCounter = 0;
+		int statusForbiddenCounter = 0;
+		int statusNotFoundCounter = 0;
 		for (Integer id : jobIDs) {
 			try {
 				abortSingleJob(username, id);
 				canceledJobs.add(id);
 			} catch (FallobException e) {
-				continue;
+				if (e.getStatus().equals(HttpStatus.CONFLICT)) {
+					statusConflictCounter++;
+				}
+				else if (e.getStatus().equals(HttpStatus.NOT_FOUND)) {
+					statusNotFoundCounter++;
+				}
+				else if (e.getStatus().equals(HttpStatus.FORBIDDEN)) {
+					statusForbiddenCounter++;
+				}
 			}
 		}
+		if (statusConflictCounter == jobIDs.length) {
+			throw new FallobException(HttpStatus.CONFLICT, CONFLICT_MESSAGE);
+		}
+		else if (statusForbiddenCounter == jobIDs.length) {
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
+		}
+		else if (statusNotFoundCounter == jobIDs.length) {
+			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
+		}
+
 		if (canceledJobs.isEmpty()) {
-			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 		return canceledJobs;
 	}

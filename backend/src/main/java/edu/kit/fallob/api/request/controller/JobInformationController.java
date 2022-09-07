@@ -46,6 +46,8 @@ public class JobInformationController {
 
     private static final String FILE_CORRUPT = "One of the files is corrupted or could not be parsed";
 
+    private static final String EMPTY_ARRAY = "The array must contain at least one jobId";
+
     /**
      * An GET endpoint for getting Information about a single job
      * Takes a request with the id and username for a single job and forwards it. It is also responsible for system error handling
@@ -79,7 +81,12 @@ public class JobInformationController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobInformation> jobInformations;
         try {
-            jobInformations = jobInformationCommand.getMultipleJobInformation(username, request.getJobs());
+            int[] jobIds = request.getJobs();
+            if (jobIds.length == 0) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, EMPTY_ARRAY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            jobInformations = jobInformationCommand.getMultipleJobInformation(username, jobIds);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -205,7 +212,12 @@ public class JobInformationController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobDescription> jobDescriptions;
         try {
-            jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, request.getJobs());
+            int[] jobIds = request.getJobs();
+            if (jobIds.length == 0) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, EMPTY_ARRAY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            jobDescriptions = jobDescriptionCommand.getMultipleJobDescription(username, jobIds);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
@@ -268,7 +280,12 @@ public class JobInformationController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<JobResult> jobResults;
         try {
-            jobResults = jobResultCommand.getMultipleJobResult(username, request.getJobs());
+            int[] jobIds = request.getJobs();
+            if (jobIds.length == 0) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, EMPTY_ARRAY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            jobResults = jobResultCommand.getMultipleJobResult(username, jobIds);
         } catch (FallobException exception) {
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());

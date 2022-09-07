@@ -27,9 +27,6 @@ public class FallobCommands implements UserDetailsService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	private static final String DUPLICATE_USERNAME = "Username already exists";
-
-	private static final String DUPLICATE_EMAIL = "Email already exists";
 	private static final String USERNAME_REQUIREMENTS = "Username must be between 4 and 25 characters";
 
 	private static final String PASSWORD_TOO_SHORT = "Password must be at least 8 characters";
