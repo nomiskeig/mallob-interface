@@ -9,20 +9,19 @@ import edu.kit.fallob.dataobjects.SubmitType;
 import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
 import org.junit.jupiter.api.*;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.mockConstruction;
 
 public class UserDaoTests {
     private static final String TEST_USERNAME = "test";
     private static final User TEST_USER = new NormalUser(TEST_USERNAME, "123", "test@test.com");
     private static final String TEST_USERNAME_ADMIN = "admin";
     private static final User TEST_ADMIN = new Admin(TEST_USERNAME_ADMIN, "456", "admin@test.com");
+    private static final JobConfiguration TEST_JOB = new JobConfiguration("Test job", 0.0, "SAT");
 
     private String databasePath;
     private Connection connection;
@@ -48,30 +47,33 @@ public class UserDaoTests {
     }
 
     @Test
-    @Disabled
     public void testSaveAndGetSingle() throws FallobException {
         this.userDao.save(TEST_USER);
 
-        User returnedUser = this.userDao.getUserByUsername(TEST_USERNAME);
+        try(MockedStatic<DatabaseConnectionFactory> factoryMock = Mockito.mockStatic(DatabaseConnectionFactory.class)) {
+            factoryMock.when(DatabaseConnectionFactory::getConnection).thenReturn(this.connection);
 
-        Assertions.assertTrue(this.compareUsers(TEST_USER, returnedUser));
+            User returnedUser = this.userDao.getUserByUsername(TEST_USERNAME);
+
+            Assertions.assertTrue(this.compareUsers(TEST_USER, returnedUser));
+        }
     }
 
     @Test
-    @Disabled
     public void testSaveAndGetMultiple() throws FallobException {
         this.userDao.save(TEST_USER);
         this.userDao.save(TEST_ADMIN);
-//        int[] jobIds = new int[]{1, 2, 3, 4};
-//        MockedConstruction<JobDaoImpl> mock = mockConstruction(JobDaoImpl.class);
-//        JobDao jobDao1 = Mockito.mock(JobDao.class);
-//        Mockito.when(jobDao1.getAllJobIds(TEST_USERNAME)).thenReturn(jobIds);
 
-        User returnedUser = this.userDao.getUserByUsername(TEST_USERNAME);
-        User returnedAdmin = this.userDao.getUserByUsername(TEST_USERNAME_ADMIN);
+        try(MockedStatic<DatabaseConnectionFactory> factoryMock = Mockito.mockStatic(DatabaseConnectionFactory.class)) {
+            factoryMock.when(DatabaseConnectionFactory::getConnection).thenReturn(this.connection);
 
-        Assertions.assertTrue(this.compareUsers(TEST_USER, returnedUser));
-        Assertions.assertTrue(this.compareUsers(TEST_ADMIN, returnedAdmin));
+            User returnedUser = this.userDao.getUserByUsername(TEST_USERNAME);
+            User returnedAdmin = this.userDao.getUserByUsername(TEST_USERNAME_ADMIN);
+
+            Assertions.assertTrue(this.compareUsers(TEST_USER, returnedUser));
+            Assertions.assertTrue(this.compareUsers(TEST_ADMIN, returnedAdmin));
+
+        }
     }
 
     @Test
@@ -79,9 +81,9 @@ public class UserDaoTests {
         this.userDao.save(TEST_USER);
         this.userDao.remove(TEST_USERNAME);
 
-        Assertions.assertThrows(FallobException.class, () -> {
-            this.userDao.getUserByUsername(TEST_USERNAME);
-        });
+        User user = this.userDao.getUserByUsername(TEST_USERNAME);
+
+        Assertions.assertNull(user);
     }
 
     @Test

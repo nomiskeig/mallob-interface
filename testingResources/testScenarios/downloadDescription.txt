@@ -1,0 +1,4 @@
+login testingResources/request-bodys/loginBodyUser1.json
+submitJob_include testingResources/request-bodys/submitJobInclude1Body.json
+downloadDescription /single/
+downloadDescription /all

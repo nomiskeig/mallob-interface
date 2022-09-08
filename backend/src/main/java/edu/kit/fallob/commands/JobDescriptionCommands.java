@@ -44,6 +44,7 @@ public class JobDescriptionCommands {
 			try {
 				jobDescriptions.add(getSingleJobDescription(username, id));
 			} catch (FallobException e) {
+				e.printStackTrace();
 				continue;
 			}
 		}
@@ -55,12 +56,8 @@ public class JobDescriptionCommands {
 	
 	public List<JobDescription> getAllJobDescription(String username) throws FallobException {
 		int[] jobIDs = jobDao.getAllJobIds(username);
-		List<JobDescription> jobDescriptions = new ArrayList<>();
-		try {
-			jobDescriptions = getMultipleJobDescription(username, jobIDs);
-		} catch (FallobException e) {
-			
-		}
+		List<JobDescription> jobDescriptions;
+		jobDescriptions = getMultipleJobDescription(username, jobIDs);
 		return jobDescriptions;
 	}
 

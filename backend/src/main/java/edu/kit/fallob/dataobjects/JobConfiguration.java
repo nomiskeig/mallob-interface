@@ -1,6 +1,7 @@
 package edu.kit.fallob.dataobjects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class JobConfiguration {
@@ -18,10 +19,12 @@ public class JobConfiguration {
 	private String application;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationIntFilter.class)
 	private int maxDemand;
+    @JsonProperty("wallclockLimit")
     @JsonInclude(Include.NON_NULL)
 	private String wallClockLimit;
     @JsonInclude(Include.NON_NULL)
 	private String cpuLimit;
+    @JsonInclude(Include.NON_NULL)
 	private String arrival;
     @JsonInclude(value = Include.CUSTOM, valueFilter = JobConfigurationDependencyFilter.class)
 	private Integer[] dependencies;

@@ -3,8 +3,11 @@ package edu.kit.fallob;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
+import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.DatabaseGarbageCollector;
+import edu.kit.fallob.database.EventDao;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +18,6 @@ import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.CentralOutputLogListener;
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
 
@@ -24,7 +26,6 @@ public class BackendApplication {
 
 
 	public static void main(String[] args) throws FallobException {
-		
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		String pathToFallobConfigFile = args[0];
@@ -48,11 +49,19 @@ public class BackendApplication {
 		FallobConfiguration config = FallobConfiguration.getInstance();
 
 
+		//set the right start time in the configuration
+		EventDao eventDao = new DaoFactory().getEventDao();
+		LocalDateTime firstEventTime = eventDao.getTimeOfFirstEvent();
+
+		if (firstEventTime != null) {
+			config.setStartTime(firstEventTime);
+		}
+
 		//start the database garbage collector
 		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
 		Thread garbageCollectorThread = new Thread(garbageCollector);
 		garbageCollectorThread.start();
-		
+
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
 		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 

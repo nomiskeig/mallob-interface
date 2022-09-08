@@ -24,8 +24,9 @@ public class WarningListener implements OutputLogLineListener {
 	public void processLine(String line) {
 		if (Warning.isWarning(line)) {
 			try {
-				warningDao.save(new Warning(line, LocalDateTime.now()));
+				warningDao.save(new Warning(line));
 			} catch (FallobException e) {
+				e.printStackTrace();
 				System.out.println(e.getMessage());
 			}
 		}
