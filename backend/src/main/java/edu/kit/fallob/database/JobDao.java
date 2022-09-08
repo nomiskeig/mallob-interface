@@ -46,6 +46,12 @@ public interface JobDao {
     public void removeOldestJobDescription() throws FallobException;
 
     /**
+     * removes all job-descriptions from the database and the file system
+     * @throws FallobException if an error occurs in the database during the process
+     */
+    public void removeAllJobDescriptions() throws FallobException;
+
+    /**
      * removes all job related data from the database for the jobs which were submitted before the given time
      * @param time the time from where on the job data is removed from the database
      * @throws FallobException if an error occurs while accessing the database

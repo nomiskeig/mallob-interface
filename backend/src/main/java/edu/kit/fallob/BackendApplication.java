@@ -57,11 +57,6 @@ public class BackendApplication {
 			config.setStartTime(firstEventTime);
 		}
 
-		//start the database garbage collector
-		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
-		Thread garbageCollectorThread = new Thread(garbageCollector);
-		garbageCollectorThread.start();
-
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
 		int readingIntervalPerReadingThread = config.getReadingIntervalPerReadingThread(); 
@@ -80,6 +75,11 @@ public class BackendApplication {
 			MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
 			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
 		}
+
+		//start the database garbage collector
+		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
+		Thread garbageCollectorThread = new Thread(garbageCollector);
+		garbageCollectorThread.start();
 
 		
 		//-----------------------add additional file-readers here 

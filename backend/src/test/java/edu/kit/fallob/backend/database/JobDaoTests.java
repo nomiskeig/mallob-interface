@@ -117,6 +117,26 @@ public class JobDaoTests {
     }
 
     @Test
+    public void testRemoveAllJobDescriptions() throws FallobException, InterruptedException {
+        List<File> descriptionFiles = new ArrayList<>();
+        File descriptionFile = new File(this.testFilePath);
+        Assertions.assertTrue(descriptionFile.isFile());
+        descriptionFiles.add(descriptionFile);
+
+        JobDescription testDescription1 = new JobDescription(new ArrayList<>(), SubmitType.EXCLUSIVE);
+        JobDescription testDescription2 = new JobDescription(descriptionFiles, SubmitType.URL);
+
+        int descriptionId1 = this.jobDao.saveJobDescription(testDescription1, TEST_USERNAME);
+        Thread.sleep(1000);
+        int descriptionId2 = this.jobDao.saveJobDescription(testDescription2, TEST_USERNAME);
+
+        this.jobDao.removeAllJobDescriptions();
+
+        Assertions.assertThrows(FallobException.class, () -> this.jobDao.getJobDescription(descriptionId1));
+        Assertions.assertThrows(FallobException.class, () -> this.jobDao.getJobDescription(descriptionId2));
+    }
+
+    @Test
     public void testSaveAndGetJobConfiguration() throws FallobException {
         JobDescription testDescription = new JobDescription(new ArrayList<>(), SubmitType.URL);
         int descriptionId = this.jobDao.saveJobDescription(testDescription, TEST_USERNAME);

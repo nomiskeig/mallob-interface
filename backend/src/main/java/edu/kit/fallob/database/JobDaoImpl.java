@@ -43,6 +43,7 @@ public class JobDaoImpl implements JobDao{
 
     //constants for different regex and strings that are required for handling file paths
     private static final String SINGLE_FILE_REGEX = "%d.*";
+    private static final String ALL_FILES_REGEX = ".*";
     private static final String DESCRIPTION_FILES_REGEX = "%s\\d+\\..*";
     private static final String FILE_EXTENSION_REGEX = "\\.";
     private static final String DIRECTORY_SEPARATOR = "/";
@@ -64,6 +65,7 @@ public class JobDaoImpl implements JobDao{
     private static final String DELETE_FROM_JOB = "DELETE FROM job WHERE jobID=?";
     private static final String DELETE_FROM_JOB_CONFIGURATION = "DELETE FROM jobConfiguration WHERE jobId=?";
     private static final String DELETE_FROM_JOB_DESCRIPTION = "DELETE FROM jobDescription WHERE descriptionId = ?";
+    private static final String DELETE_FROM_JOB_DESCRIPTION_ALL = "DELETE FROM jobDescription";
     private static final String DELETE_FROM_META_DATA = "DELETE FROM resultMetaData WHERE jobId=?";
     private static final String GET_ALL_JOBIDS = "SELECT jobId FROM job WHERE username=?";
     private static final String GET_SUBMIT_TYPE = "SELECT submitType FROM jobDescription WHERE descriptionId=?";
@@ -191,6 +193,25 @@ public class JobDaoImpl implements JobDao{
         String regex = String.format(DESCRIPTION_FILES_REGEX, descriptionId + NAME_SEPARATOR);
 
         FileHandler.deleteFilesByRegex(path, regex);
+    }
+
+    /**
+     * removes all job-descriptions from the database and the file system
+     * @throws FallobException if an error occurs in the database during the process
+     */
+    @Override
+    public void removeAllJobDescriptions() throws FallobException {
+        //remove all the entries from the database
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(DELETE_FROM_JOB_DESCRIPTION_ALL);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
+        }
+
+        //remove all the description files from the file system
+        String path = this.configuration.getDescriptionsbasePath();
+        FileHandler.deleteFilesByRegex(path, ALL_FILES_REGEX);
     }
 
     /**

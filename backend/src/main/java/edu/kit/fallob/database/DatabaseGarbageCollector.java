@@ -18,7 +18,10 @@ public class DatabaseGarbageCollector implements Runnable{
 
     private final int timeIntervall;
     private final FallobConfiguration configuration;
-    private final DaoFactory daoFactory;
+
+    private JobDao jobDao;
+    private EventDao eventDao;
+    private WarningDao warningDao;
 
     /**
      * the constructor of the class
@@ -28,10 +31,21 @@ public class DatabaseGarbageCollector implements Runnable{
         this.timeIntervall = timeIntervall;
         this.configuration = FallobConfiguration.getInstance();
         try {
-            this.daoFactory = new DaoFactory();
+            DaoFactory daoFactory = new DaoFactory();
+            this.jobDao = daoFactory.getJobDao();
+            this.eventDao = daoFactory.getEventDao();
+            this.warningDao = daoFactory.getWarningDao();
+
+            //remove all entries from the database except the users
+            LocalDateTime currentTime = LocalDateTime.now(ZoneOffset.UTC);
+
+            this.jobDao.removeAllJobsBeforeTime(currentTime);
+            this.jobDao.removeAllJobDescriptions();
+            this.eventDao.removeEventsBeforeTime(currentTime);
+            this.warningDao.removeAllWarningsBeforeTime(currentTime);
         } catch (FallobException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            new RuntimeException(e);
         }
     }
 
@@ -64,12 +78,11 @@ public class DatabaseGarbageCollector implements Runnable{
      * removes the old job-configurations and other job data from the database
      */
     private void removeOldJobConfigurations() {
-        JobDao jobDao = this.daoFactory.getJobDao();
         long storageTime = this.configuration.getJobStorageTime();
         LocalDateTime deletionTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(storageTime);
 
         try {
-            jobDao.removeAllJobsBeforeTime(deletionTime);
+            this.jobDao.removeAllJobsBeforeTime(deletionTime);
         } catch (FallobException e) {
             e.printStackTrace();
         }
@@ -79,13 +92,12 @@ public class DatabaseGarbageCollector implements Runnable{
      * removes the old job-descriptions from the filesystem and the database
      */
     private void removeOldJobDescriptions() {
-        JobDao jobDao = this.daoFactory.getJobDao();
         long maxSize = this.configuration.getMaxDescriptionStorageSize();
 
         //keep deleting the oldest job description until the total size is smaller than the configured maximum
         while (jobDao.getSizeOfAllJobDescriptions() >= maxSize) {
             try {
-                jobDao.removeOldestJobDescription();
+                this.jobDao.removeOldestJobDescription();
             } catch (FallobException e) {
                 e.printStackTrace();
             }
@@ -96,12 +108,11 @@ public class DatabaseGarbageCollector implements Runnable{
      * removes the old events from the database
      */
     private void removeOldEvents() {
-        EventDao eventDao = this.daoFactory.getEventDao();
         long storageTime = this.configuration.getEventStorageTime();
         LocalDateTime deletionTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(storageTime);
 
         try {
-            eventDao.removeEventsBeforeTime(deletionTime);
+            this.eventDao.removeEventsBeforeTime(deletionTime);
 
             //update the staring time in the configuration
             LocalDateTime timeFirstEvent = eventDao.getTimeOfFirstEvent();
@@ -118,12 +129,11 @@ public class DatabaseGarbageCollector implements Runnable{
      * removes the old warnings from the database
      */
     private void removeOldWarnings() {
-        WarningDao warningDao = this.daoFactory.getWarningDao();
         long storageTime = this.configuration.getWarningStorageTime();
         LocalDateTime deletionTime = LocalDateTime.now(ZoneOffset.UTC).minusHours(storageTime);
 
         try {
-            warningDao.removeAllWarningsBeforeTime(deletionTime);
+            this.warningDao.removeAllWarningsBeforeTime(deletionTime);
         } catch (FallobException e) {
             e.printStackTrace();
         }
