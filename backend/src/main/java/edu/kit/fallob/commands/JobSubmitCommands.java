@@ -81,6 +81,7 @@ public class JobSubmitCommands {
 		int mallobID = submitJob(username, jobDescription, jobConfiguration);
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
+		System.out.println(descriptionID);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 		
 	}

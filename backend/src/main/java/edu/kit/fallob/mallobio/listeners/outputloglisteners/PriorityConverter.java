@@ -1,6 +1,7 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.springConfig.FallobException;
 
 /**
@@ -28,7 +29,7 @@ public class PriorityConverter {
 	 * @return a double p with the following property : 0 <= p <= 1
 	 */
 	public double getPriorityForMallob(String username, double jobPriority) throws FallobException {
-		if (jobPriority == 0.0) {
+		if (jobPriority == JobConfiguration.DOUBLE_NOT_SET) {
 			return factory.getUserDao().getUserByUsername(username).getPriority();
 		}
 		return jobPriority * factory.getUserDao().getUserByUsername(username).getPriority();

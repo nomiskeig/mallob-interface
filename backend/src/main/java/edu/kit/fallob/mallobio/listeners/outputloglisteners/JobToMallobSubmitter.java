@@ -28,7 +28,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 	private final static int JOB_IS_NOT_VALID = 2;
 	private final static String OLD_VALID_JOB_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
 	private final static String VALID_JOB_REGEX = "Introducing job #[0-9]+";
-	private final static String NOT_VALID_JOB_REGEX = "I [WARN] Job file missing essential field(s). Ignoring this file.";
+	private final static String NOT_VALID_JOB_REGEX = "I [WARN] Job file missing essential field(s). Ignoring this file.|I [WARN] Modification of a file I already parsed! Ignoring.";
 	
 	private String username;
 	private int jobID;
