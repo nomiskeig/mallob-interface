@@ -25,7 +25,7 @@ import edu.kit.fallob.springConfig.FallobException;
 public class BackendApplication {
 
 
-	public static void main(String[] args) throws FallobException {
+	public static void main(String[] args) throws FallobException, InterruptedException {
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		String pathToFallobConfigFile = args[0];
@@ -76,11 +76,6 @@ public class BackendApplication {
 			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
 		}
 
-		//start the database garbage collector
-		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
-		Thread garbageCollectorThread = new Thread(garbageCollector);
-		garbageCollectorThread.start();
-
 		
 		//-----------------------add additional file-readers here 
 		//mallobio.addIrregularReaders(<yourfilepath>);
@@ -88,6 +83,15 @@ public class BackendApplication {
 		mallobio.addIrregularReaders(MallobFilePathGenerator.generatePathToJobMappingsLogFile(config.getMallobBasePath(), config.getAmountProcesses() - 1));
 		
 		mallobio.startMallobio();
+
+		//wait a bit to make sure the readers have read all the old log lines before deleting the old entries
+		Thread.sleep(3000);
+
+		//start the database garbage collector
+		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
+		Thread garbageCollectorThread = new Thread(garbageCollector);
+		garbageCollectorThread.start();
+
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
