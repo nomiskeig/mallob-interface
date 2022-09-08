@@ -24,4 +24,5 @@ submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescri
 printComment If this fails because of unauthorized access; its because the job-IDs in the json body are hard-coded. They have to match the ons returned in the requests above
 getJobInfo useSingleAsMultiple
 downloadDescription useSingleAsMultiple
+wait 3
 getResult useSingleAsMultiple

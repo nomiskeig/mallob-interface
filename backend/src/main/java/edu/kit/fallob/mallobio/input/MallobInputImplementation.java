@@ -120,7 +120,7 @@ public class MallobInputImplementation implements MallobInput {
 				+ getFileName(NEW_JOB_FILENAME) + JSON_FILE_EXTENSION;
 
 		this.writeJsonInDirectory(json, absoluteFilePath);
-		System.out.println("Wrote Job-Json in directory : " + absoluteFilePath);
+		
 		return processID;
 	}
 	
@@ -136,6 +136,7 @@ public class MallobInputImplementation implements MallobInput {
 		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
 		writer.write(json);
 		writer.close();
+		System.out.println("Wrote file in directory : " + path);
 	}
 	
 	private String getFileName(String fileBaseName) {
