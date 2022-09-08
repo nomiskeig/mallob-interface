@@ -422,8 +422,8 @@ test('Displays warning if name is missing', () =>{
     
     expect(fakeInfoProvider.handleInformation).toHaveBeenCalledTimes(1);
 })
-
-test('Unverified user can not access the submit page', ()=>{
+// TODO: move this to require auth tests
+/*test('Unverified user can not access the submit page', ()=>{
     fakeUserProvider = {
         user: {
             username: 'username',
@@ -434,5 +434,5 @@ test('Unverified user can not access the submit page', ()=>{
     expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
     expect(mockedUseNavigate).toHaveBeenCalledWith('/jobs');
     expect(fakeInfoProvider.handleInformation).toHaveBeenCalledTimes(1);
-
 })
+*/

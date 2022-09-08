@@ -28,11 +28,13 @@ beforeEach(() => {
 		jobs: [],
 		fetchMostJobsPossible: jest.fn(),
 		loadAllJobOfUser: jest.fn(),
-        loadSingleJob: jest.fn()
+        loadSingleJob: jest.fn(),
+        getSingleJobInfo: jest.fn()
 	};
 	fakeUserProvider = {
 		user: {},
 	};
+    fakeJobProvider.getSingleJobInfo.mockResolvedValueOnce({})
 });
 
 test('loads the jobs from the api on load', () => {

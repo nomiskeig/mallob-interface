@@ -9,11 +9,12 @@ export function RequireAuth({ children }) {
     let jobContext = useContext(JobContext);
 	let location = useLocation();
 	let navigate = useNavigate();
+    let checked = false;
 
 	useEffect(() => {
 		if (!userContext.user.isLoaded) {
 			infoContext.handleInformation(
-				'Only logged in users can access the requested page'
+				'Only logged in users can access the requested page.', TYPE_ERROR
 			);
 			navigate('/login');
 		}
@@ -35,7 +36,8 @@ export function RequireAuth({ children }) {
 			);
 			navigate('/jobs');
 		}
+        checked = true;
 	}, []);
 
-	return children;
+	return (<React.Fragment>{checked && children}</React.Fragment>);
 }

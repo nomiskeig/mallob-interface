@@ -54,12 +54,15 @@ beforeEach(() => {
 		],
 		loadSingleJob: jest.fn(),
 		cancelJob: jest.fn(),
+        getSingleJobInfo: jest.fn(),
 	};
 	fakeUserProvider = {
 		user: {
 			username: 'user1',
 		},
 	};
+    fakeJobProvider.getSingleJobInfo.mockResolvedValueOnce({})
+    
 });
 test('Displays the name of the job', () => {
 	customRender(<JobPage jobID={3} />);
@@ -74,8 +77,8 @@ test('Displays the name of the job if embedded', () =>{
 
 test('Tries to load dependendencies and display dependencies', () => {
 	customRender(<JobPage jobID={2} />);
-	expect(fakeJobProvider.loadSingleJob).toHaveBeenCalledTimes(2);
-	expect(fakeJobProvider.loadSingleJob.mock.calls).toEqual([[2], [3]]);
+	expect(fakeJobProvider.loadSingleJob).toHaveBeenCalledTimes(1);
+	expect(fakeJobProvider.loadSingleJob.mock.calls).toEqual([[3]]);
 	expect(screen.getByText(/^job3/)).not.toBeNull();
 });
 
@@ -125,7 +128,7 @@ test('Displays the cancelled state', () => {
 	customRender(<JobPage jobID={1} />);
 	expect(screen.getByText('cancelled')).not.toBeNull();
 });
-test('Displays the cancelled state', () => {
+test('Displays the done state', () => {
 	let privateJobProvider = { ...fakeJobProvider };
 	privateJobProvider.jobs.push({
 		jobID: 1,
