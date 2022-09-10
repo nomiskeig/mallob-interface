@@ -518,11 +518,20 @@ public class WebLayerTest {
 
     @Test
     @WithMockUser
-    public void abortIncrementalJob() throws Exception {
+    public void abortIncrementalJobSuccessfully() throws Exception {
         when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(true);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/incremental/{jobId}", 1)).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(OK_JSON));
+    }
+
+    @Test
+    @WithMockUser
+    public void abortIncrementalJobException() throws Exception {
+        when(jobAbortCommands.abortSingleJob(null, 1)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
+
+        this.mockMvc.perform(post("/api/v1/jobs/cancel/incremental/{jobId}", 1)).andDo(print())
+                .andExpect(status().isForbidden()).andExpect(content().string(JSON_DOES_NOT_OWN_JOB));
     }
 
     @Test
