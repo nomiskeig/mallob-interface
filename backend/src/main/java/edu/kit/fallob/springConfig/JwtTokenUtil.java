@@ -20,6 +20,8 @@ public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 100000;
 
+    private static final String AUTHORITIES = "authorities";
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -35,7 +37,7 @@ public class JwtTokenUtil implements Serializable {
 
     public String getAuthorities(String token) {
         Claims claims = getAllClaimsFromToken(token);
-        return (String) claims.get("authorities");
+        return (String) claims.get(AUTHORITIES);
     }
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
@@ -65,7 +67,7 @@ public class JwtTokenUtil implements Serializable {
     //   compaction of the JWT to a URL-safe string
     private String doGenerateToken(Map<String, Object> claims, String subject, String authorities) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY)).claim("authorities", authorities)
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY)).claim(AUTHORITIES, authorities)
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
