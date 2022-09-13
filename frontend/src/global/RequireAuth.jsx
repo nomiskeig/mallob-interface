@@ -1,5 +1,5 @@
 import { ROLE_ADMIN, UserContext } from '../context/UserContextProvider';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect,useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { InfoContext, TYPE_ERROR } from '../context/InfoContextProvider';
 import {JobContext} from '../context/JobContextProvider';
@@ -9,7 +9,8 @@ export function RequireAuth({ children }) {
     let jobContext = useContext(JobContext);
 	let location = useLocation();
 	let navigate = useNavigate();
-    let checked = false;
+
+    let [checked, setChecked] = useState(false);
 
 	useEffect(() => {
 		if (!userContext.user.isLoaded) {
@@ -36,7 +37,7 @@ export function RequireAuth({ children }) {
 			);
 			navigate('/jobs');
 		}
-        checked = true;
+        setChecked(true);
 	}, []);
 
 	return (<React.Fragment>{checked && children}</React.Fragment>);
