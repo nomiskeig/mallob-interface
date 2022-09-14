@@ -1,12 +1,10 @@
 import { ROLE_ADMIN, UserContext } from '../context/UserContextProvider';
 import React, { useContext, useEffect,useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { InfoContext, TYPE_ERROR } from '../context/InfoContextProvider';
-import {JobContext} from '../context/JobContextProvider';
 export function RequireAuth({ children }) {
 	let infoContext = useContext(InfoContext);
 	let userContext = useContext(UserContext);
-    let jobContext = useContext(JobContext);
 	let location = useLocation();
 	let navigate = useNavigate();
 

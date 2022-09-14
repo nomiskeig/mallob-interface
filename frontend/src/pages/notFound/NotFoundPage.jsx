@@ -1,5 +1,4 @@
 import React, {useContext, useEffect}  from 'react';
-import {Navigate } from 'react-router-dom';
 import {UserContext} from '../../context/UserContextProvider';
 import {InfoContext, TYPE_ERROR} from '../../context/InfoContextProvider';
 import {useNavigate} from 'react-router-dom';
