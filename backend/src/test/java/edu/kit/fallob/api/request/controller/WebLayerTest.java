@@ -12,6 +12,7 @@ import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,12 +128,12 @@ public class WebLayerTest {
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
     private static final String JSON_JOB_CONFIG = "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
-            "\"maxDemand\":1,\"wallClockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
+            "\"maxDemand\":1,\"wallclockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
             "\"incremental\":true,\"additionalConfig\":{\"key1\":\"value1\",\"key2\":\"value2\"}, \"descriptionID\": 1}";
 
     private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
             "\"maxDemand\":1,\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
-            "\"incremental\":true,\"additionalParameter\":\"parameter\",\"wallclockLimit\":\"1.0\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
+            "\"incremental\":true,\"wallclockLimit\":\"1.0\",\"additionalConfig\":{\"key1\":\"value1\",\"key2\":\"value2\"}},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
             "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";

@@ -44,7 +44,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         else {
             response.setStatus(UNAUTHORIZED_CODE);
             status = STATUS_401;
-            message = MESSAGE_BEGINNING + authException.getMessage();
+            message = MESSAGE_BEGINNING + "\"" +authException.getMessage() + "\"";
         }
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
