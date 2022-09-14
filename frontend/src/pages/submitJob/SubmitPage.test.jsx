@@ -1,5 +1,7 @@
 import { SubmitPage } from './SubmitPage';
 import { within, prettyDOM } from '@testing-library/dom';
+import format from 'date-fns/format'
+import roundToNearestMinutes from 'date-fns/roundToNearestMinutes'
 
 import React from 'react';
 import {
@@ -67,8 +69,16 @@ const priority = 2.5;
 const maxDemand = 10;
 const wallclockLimit = '100s';
 const cpuLimit = '200s';
-const arrivalInput = '2022-09-02T14:47';
-const arrival = '2022-09-02T12:47:00.000Z';
+
+let arrivalInput;
+let arrival;
+beforeAll(() => {
+const date = new Date('2022-09-02T12:47:00.000Z');
+arrivalInput = format(date, "yyyy-MM-dd'T'HH:mm");
+arrival = roundToNearestMinutes(date, {roundingMethod: 'floor'}).toISOString();
+    console.log(arrival)
+
+})
 const precursor = 1;
 const contentMode = 'raw';
 const key1 = 'key1';
