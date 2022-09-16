@@ -112,6 +112,8 @@ public class MallobInputImplementation implements MallobInput {
 		if (jobConfiguration.getAdditionalParameter() != JobConfiguration.OBJECT_NOT_SET) {
 			json = addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
 		}
+        System.out.println("final json:\n" + json);
+
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
@@ -238,7 +240,8 @@ public class MallobInputImplementation implements MallobInput {
 	private void addJobDescription(JSONObject jobJSON, JobDescription jobDescription) {
 		String[] descriptionPaths = new String[jobDescription.getDescriptionFiles().size()];
 		for (int i = 0; i < descriptionPaths.length; i++) {
-			descriptionPaths[i] = jobDescription.getDescriptionFiles().get(i).getAbsolutePath();
+			descriptionPaths[i] = "./descriptions/" +jobDescription.getDescriptionFiles().get(i).getName();
+             
 		}
 		jobJSON.put(MallobAttributeNames.MALLOB_DESCRIPTION, new JSONArray(descriptionPaths));
 	}
