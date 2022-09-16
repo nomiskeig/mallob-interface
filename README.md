@@ -4,7 +4,7 @@ The only supported way to use fall is to use docker.
 
 #### Prerequisites
 
-Docker and Docker compose have to be installed.
+Docker and Docker compose have to be installed. The build and start Scripts are bash files, so you need to be able to run them. 
 
 #### Building
 

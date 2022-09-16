@@ -39,15 +39,6 @@ then
     mallobTarget="/app${mallobSource:1}"
     mallobSource=$(pwd)${mallobSource:1}
 fi
-echo $databaseSource
-echo $descriptionsSource
-echo $resultsSource
-echo $mallobSource
-echo $descriptionsTarget
-echo $resultsTarget
-echo $databaseTarget
-echo $mallobTarget
-echo $file
 
 
 MALLOB_DIR_SOURCE=$mallobSource MALLOB_DIR_TARGET=$mallobTarget CONFIG_FILE_SOURCE=$file RESULT_DIR_SOURCE=$resultsSource RESULT_DIR_TARGET=$resultsTarget DESCRIPTION_DIR_SOURCE=$descriptionsSource DESCRIPTION_DIR_TARGET=$descriptionsTarget DATABASE_SOURCE=$databaseSource DATABASE_TARGET=$databaseTarget docker compose up
