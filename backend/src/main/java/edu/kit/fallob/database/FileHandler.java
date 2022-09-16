@@ -22,6 +22,8 @@ import edu.kit.fallob.springConfig.FallobException;
  */
 public final class FileHandler {
 
+    private static final String PATH_ERROR = "An error occurred while retrieving the requested files from the filesystem";
+
     private static final double BIT_TO_MB_RATIO = 1000000;
 
     /**
@@ -48,7 +50,7 @@ public final class FileHandler {
      * @return a list of all files whose filename matches the regex pattern
      */
 
-    public static List<File> getFilesByRegex(String directoryPath, String regex) {
+    public static List<File> getFilesByRegex(String directoryPath, String regex) throws FallobException {
         File directory = new File(directoryPath);
 
         Pattern pattern = Pattern.compile(regex);
@@ -69,7 +71,7 @@ public final class FileHandler {
             }
             return files;
         } else {
-            throw new RuntimeException();
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, PATH_ERROR);
         }
     }
 
@@ -81,7 +83,7 @@ public final class FileHandler {
      * @param regex a string that contains the regex pattern that is used to
      *              determine the files that should be removed
      */
-    public static void deleteFilesByRegex(String path, String regex) {
+    public static void deleteFilesByRegex(String path, String regex) throws FallobException {
         File directory = new File(path);
 
         if (directory.isDirectory()) {
@@ -100,7 +102,7 @@ public final class FileHandler {
                 }
             }
         } else {
-            throw new RuntimeException();
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, PATH_ERROR);
         }
     }
 
@@ -110,7 +112,7 @@ public final class FileHandler {
      * @param path the path that points to the directory
      * @return the size of the files in megabytes
      */
-    public static long getSizeOfDirectory(String path) {
+    public static long getSizeOfDirectory(String path) throws FallobException {
         File directory = new File(path);
 
         if (directory.isDirectory()) {
@@ -125,7 +127,7 @@ public final class FileHandler {
 
             return (long) (size / BIT_TO_MB_RATIO);
         } else {
-            throw new RuntimeException();
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, PATH_ERROR);
         }
 
     }

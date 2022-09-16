@@ -83,12 +83,12 @@ public class DatabaseGarbageCollector implements Runnable{
         long maxSize = this.configuration.getMaxDescriptionStorageSize();
 
         //keep deleting the oldest job description until the total size is smaller than the configured maximum
-        while (jobDao.getSizeOfAllJobDescriptions() >= maxSize) {
-            try {
+        try {
+            while (jobDao.getSizeOfAllJobDescriptions() >= maxSize) {
                 jobDao.removeOldestJobDescription();
-            } catch (FallobException e) {
-                e.printStackTrace();
             }
+        } catch (FallobException e) {
+            e.printStackTrace();
         }
     }
 
