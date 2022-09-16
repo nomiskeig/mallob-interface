@@ -42,7 +42,7 @@ public class MallobStartStopController {
         return startMallobHelper(request);
     }
 
-    private ResponseEntity<Object> startMallobHelper(@RequestBody MallobStartStopRequest request) {
+    private ResponseEntity<Object> startMallobHelper(MallobStartStopRequest request) {
         boolean successful;
         try {
             successful = mallobCommands.startMallob(request.getParams());

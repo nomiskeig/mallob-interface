@@ -30,6 +30,9 @@ public class AbortJobController {
 
     private static final String USERNAME = "username";
 
+    private static final String EMPTY_ARRAY = "The array must contain at least one jobId";
+
+
     /**
      * An POST endpoint for aborting the processing of a single job
      * Takes a request, parses the data needed to abort a single job and forwards it. It is also responsible for system error handling
@@ -54,7 +57,12 @@ public class AbortJobController {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
         try {
-            successfullyAborted = jobAbortCommand.abortMultipleJobs(username, request.getJobs());
+            int[] jobIds = request.getJobs();
+            if (jobIds.length == 0) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, EMPTY_ARRAY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            successfullyAborted = jobAbortCommand.abortMultipleJobs(username, jobIds);
         } catch (FallobException exception) {
             exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
