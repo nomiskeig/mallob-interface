@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -eq 0 ]
 then 
-    file=./fallob-data/fallob-configuration-defaultPaths.json
+    file=./fallob-data/fallob-configuration.json
 else 
     file=$1
 fi
