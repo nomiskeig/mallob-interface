@@ -94,7 +94,7 @@ For example:
 
 # Deleting stored data
 
-Deleting files within the result or description folder or deleting/resetting the database-file will lead to undefined behavior.
+Deleting files within the result or description folder or deleting/resetting the database-file without clearing the result and description folders will lead to undefined behavior.
 <!---
 # Reseting 
 
