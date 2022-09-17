@@ -1,9 +1,12 @@
 package edu.kit.fallob.mallobio.listeners.resultlisteners;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.Buffer;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.BufferFunction;
 import org.json.JSONObject;
@@ -37,12 +40,17 @@ public class JobResultListener implements ResultObjectListener, BufferFunction<R
 	
     private static final String STATS_KEY = "stats";
     private static final String TIME_KEY = "time";
+	private static final String RESULT_KEY = "result";
+
+	private static final String DIR_SEPARATOR = "/";
 	
-	
+
+	private final FallobConfiguration configuration;
 	private JobDao jobDao;
 	private final Buffer<ResultAvailableObject> buffer;
 	
 	public JobResultListener(JobDao dao) {
+		this.configuration = FallobConfiguration.getInstance();
 		this.jobDao = dao;
 		this.buffer = new Buffer<>(this);
 
@@ -56,7 +64,25 @@ public class JobResultListener implements ResultObjectListener, BufferFunction<R
 	}
 
 	private void saveResult(ResultAvailableObject rao, JSONObject result, int jobId) {
-		JobResult newJobResult = new JobResult(rao.getResult());
+		//create the new result file
+		File resultFile = new File(this.configuration.getResultBasePath() + DIR_SEPARATOR + rao.getResult().getName());
+
+		//get the data from the json object and write it to the file
+		JSONObject newResultObject = new JSONObject();
+		newResultObject.put(RESULT_KEY, result.getJSONObject(RESULT_KEY));
+
+		try {
+			FileWriter writer = new FileWriter(resultFile);
+			writer.write(newResultObject.toString());
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		JobResult newJobResult = new JobResult(resultFile);
+
+		//remove the old result file from the filesystem
+		rao.getResult().delete();
 
 		JSONObject stats = (JSONObject) result.get(STATS_KEY);
 		JSONObject time = (JSONObject) stats.get(TIME_KEY);
