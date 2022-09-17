@@ -68,7 +68,7 @@ public class JobSubmitCommands {
 			throw e;
 		} catch (IOException eio) {
 			mallobOutput.removeOutputLogLineListener(submitter);
-			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not access the file: "+  eio.getMessage());
 		}
 		mallobOutput.removeOutputLogLineListener(submitter);
 		return mallobID;
@@ -106,12 +106,11 @@ public class JobSubmitCommands {
 
 //		if (!userDao.getUserByUsername(username).isVerified()) {
 //			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-//		}
 		formatConfiguration(username, jobConfiguration);
-
-		int mallobID = submitJobToMallob(username, jobDescription, jobConfiguration);
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
+        JobDescription newDescrption = jobDao.getJobDescription(descriptionID);
+		int mallobID = submitJobToMallob(username, newDescrption, jobConfiguration);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 		
 	}
