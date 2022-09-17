@@ -136,8 +136,9 @@ public interface JobDao {
     /**
      * gives the size of all the job-description files
      * @return the size off all the files in megabytes
+     * @throws FallobException if an error occurs while accessing the file system
      */
-    public long getSizeOfAllJobDescriptions();
+    public long getSizeOfAllJobDescriptions() throws FallobException;
 
     /**
      * returns a list with the ids of all the jobs that are running at the current time

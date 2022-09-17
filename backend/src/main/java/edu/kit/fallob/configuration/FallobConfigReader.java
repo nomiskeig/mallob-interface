@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -83,13 +84,32 @@ public class FallobConfigReader {
 		c.setDefaultWallClockLimit(defaultsJson.getString("wallclockLimit"));
 		c.setDefaultContentMode(defaultsJson.getString("contentMode"));
 
-		//get the json object for the path values
+		//get the json object for the path values and make relative paths absolute
 		JSONObject pathsJson = json.getJSONObject("paths");
-
-		c.setDescriptionsbasePath(pathsJson.getString("descriptionsBasePath"));
-		c.setDatabaseBasePath(pathsJson.getString("databaseBasePath"));
-		c.setMallobBasePath(pathsJson.getString("mallobBasePath"));
-		c.setResultBasePath(pathsJson.getString("resultBasePath"));
+        String descriptionsBasePath = pathsJson.getString("descriptionsBasePath");
+        if (descriptionsBasePath.startsWith(".")) {
+            descriptionsBasePath = descriptionsBasePath.substring(2);
+            descriptionsBasePath = Paths.get(descriptionsBasePath).toAbsolutePath().toString();
+        }
+        c.setDescriptionsbasePath(descriptionsBasePath);
+        String databaseBasePath = pathsJson.getString("databaseBasePath");
+        if (databaseBasePath.startsWith(".")) {
+            databaseBasePath = databaseBasePath.substring(2);
+            databaseBasePath = Paths.get(databaseBasePath).toAbsolutePath().toString();
+        }
+		c.setDatabaseBasePath(databaseBasePath);
+        String mallobBasePath = pathsJson.getString("mallobBasePath");
+        if (mallobBasePath.startsWith(".")) {
+            mallobBasePath = databaseBasePath.substring(2);
+            mallobBasePath = Paths.get(mallobBasePath).toAbsolutePath().toString();
+        }
+		c.setMallobBasePath(mallobBasePath);
+        String resultBasePath = pathsJson.getString("resultBasePath");
+        if (resultBasePath.startsWith(".")) {
+            resultBasePath = resultBasePath.substring(2);
+            resultBasePath = Paths.get(resultBasePath).toAbsolutePath().toString();
+        }
+		c.setResultBasePath(resultBasePath);
 
 		//get the json object for the database values
 		JSONObject databaseJson = json.getJSONObject("database");
