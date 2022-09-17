@@ -214,7 +214,7 @@ public class WebLayerTest {
     public void saveEmptyDescriptionFile() throws Exception {
         File file = new File(FILE_NAME);
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
-        MockMultipartFile multipartFile = new MockMultipartFile("file1", FILE_NAME,
+        MockMultipartFile multipartFile = new MockMultipartFile("file", FILE_NAME,
                 MediaType.TEXT_PLAIN_VALUE, "".getBytes());
 
         when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
