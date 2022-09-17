@@ -14,7 +14,7 @@
     },
     "defaults": {
         "priority": 1.0,
-        "wallclockLimit": "1",
+        "wallclockLimit": "5m",
         "contentMode": "text"
         },
     "paths": {
