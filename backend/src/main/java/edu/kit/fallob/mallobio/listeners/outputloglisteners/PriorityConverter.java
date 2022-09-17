@@ -1,6 +1,7 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import edu.kit.fallob.database.DaoFactory;
+import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.User;
 import edu.kit.fallob.springConfig.FallobException;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class PriorityConverter {
 		if (user == null) {
 			throw new FallobException(HttpStatus.NOT_FOUND, "Error, the user could not be found in the database");
 		}
-		if (jobPriority == 0.0) {
+		if (jobPriority == JobConfiguration.DOUBLE_NOT_SET) {
 			return user.getPriority();
 		}
 		return jobPriority * user.getPriority();
