@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.database.DatabaseGarbageCollector;
 import edu.kit.fallob.database.EventDao;
+
+import org.json.JSONException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -39,11 +41,10 @@ public class BackendApplication {
 		
 		try {
 			reader.setupFallobConfig();
-		} catch (IOException e) {
+		} catch (IOException | JSONException e) {
 			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
-			return;
-		}
+        }
 
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();
