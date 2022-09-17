@@ -15,11 +15,17 @@ services:
       - "8080"
     volumes:
         - type: bind
-          source: ${CONFIG_FILE} 
+          source: ${CONFIG_FILE_SOURCE} 
           target: /app/config.json
         - type: bind
-          source: ${WORKING_DIR}
-          target: ${WORKING_DIR} 
+          source: ${RESULT_DIR_SOURCE}
+          target: ${RESULT_DIR_TARGET} 
         - type: bind
-          source: ${MALLOB_DIR}
-          target: ${MALLOB_DIR} 
+          source: ${DESCRIPTION_DIR_SOURCE}
+          target: ${DESCRIPTION_DIR_TARGET} 
+        - type: bind
+          source: ${MALLOB_DIR_SOURCE}
+          target: ${MALLOB_DIR_TARGET}
+        - type: bind
+          source: ${DATABASE_SOURCE}
+          target: ${DATABASE_TARGET}
