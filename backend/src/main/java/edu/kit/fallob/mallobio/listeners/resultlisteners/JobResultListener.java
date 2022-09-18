@@ -72,7 +72,7 @@ public class JobResultListener implements ResultObjectListener, BufferFunction<R
 
         try {
             FileWriter writer = new FileWriter(resultFile);
-            writer.write(newResultObject.toString());
+            writer.write(newResultObject.toString(2));
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
