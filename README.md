@@ -62,7 +62,7 @@ The start-Script does not check the provided parameters of the config. Thus, a w
 All the paths in the configuration file can be either absolute or relative. Relative paths begin in the mallob-interface-folder.
 Provided relative Paths will internally be converted into absolute paths, which might not work correctly on all machines. It's only tested on Arch Linux, but should work on most Unix-Based operating systems. Wrong behavior because of wrong translation of paths will most likely not be caught and might not be immediately noticeable.
 
-Some specific notes on the paths which have to be set in the configuration file:
+Here are some specific notes on the paths which have to be set in the configuration file:
 
 #### databaseBasePath
 
@@ -89,12 +89,48 @@ Alternatively, an alternative configuration-File can be provided by passing it's
 
 For example:
 ```
-.\start.sh /path/to/alternative/config/file.json
+./start.sh /path/to/alternative/config/file.json
 ```
 
 # Deleting stored data
 
 Deleting files within the result or description folder or deleting/resetting the database-file without clearing the result and description folders will lead to undefined behavior.
+
+
+
+# Modifying users in the database
+
+A script is provided to make an user an administrator or a normal user and to verify/unverify a user in the database.
+The script uses the configuration file to get the location of the database as well as the username and password for the database.
+The script does not provide any ways to add or remove users, it can only modify existing users. In order to add users, use the Web-Interface or API to register.
+
+### Usage
+Internally, the script uses docker, so before we can use the script, the docker container has to be built.
+This can be done by running 
+```
+./buildModifyUser.sh
+```
+You may have to give the start.sh file permission to execute. This can be done with the following command:
+```
+chmod +x ./buildModifyUser.sh
+```
+
+Afterwards, the actual script can be run. There are two required parameters:
+- The first one is the action performed. Must be one of the following:
+    - 'setVerified': Makes the given user verified.
+    - 'setUnverified': Makes the given user unverified.
+    - 'setAdmin': Makes the given user an administrator.
+    - 'setNormalUser': Makes the given user a normal user.
+- The second parameter is the name of the user to modify.
+- If a configuration file at another location than the default configuration file is used, its path must be passed in as the third argument.
+Example usage with optional path to the configuration file:
+```
+./modifyUser.sh setAdmin user /path/to/configuration/file.json
+```
+You may have to give the start.sh file permission to execute. This can be done with the following command:
+```
+chmod +x ./modifyUser.sh
+```
 <!---
 # Reseting 
 

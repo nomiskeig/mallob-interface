@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Kaloyan Enev
  * @version 1.0
- * A Rest Controller for submitting jobs to Mallob
+ *          A Rest Controller for submitting jobs to Mallob
  */
 @RestController
 @CrossOrigin
@@ -52,15 +52,21 @@ public class JobSubmitController {
     private static int FILENAME_COUNTER = 0;
 
     /**
-     * An POST endpoint for submitting a job where the description is given as an url
-     * Takes a request, parses the description to a file and forwards it together with the configuration.
+     * An POST endpoint for submitting a job where the description is given as an
+     * url
+     * Takes a request, parses the description to a file and forwards it together
+     * with the configuration.
      * It is also responsible for system error handling
-     * @param request a request object containing an url and a configuration object
+     * 
+     * @param request     a request object containing an url and a configuration
+     *                    object
      * @param httpRequest a servlet request that contains the username of the sender
-     * @return sends a response with the id of the submitted job or an error (including a status code and a message in json format)
+     * @return sends a response with the id of the submitted job or an error
+     *         (including a status code and a message in json format)
      */
     @PostMapping("/url")
-    public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> submitJobWithUrlDescription(@RequestBody SubmitJobRequest request,
+            HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         URL url;
         File file;
@@ -68,8 +74,8 @@ public class JobSubmitController {
             url = new URL(request.getUrl());
             file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + url.getFile());
             try (InputStream in = url.openStream();
-                 BufferedInputStream bis = new BufferedInputStream(in);
-                 FileOutputStream fos = new FileOutputStream(file.getName())) {
+                    BufferedInputStream bis = new BufferedInputStream(in);
+                    FileOutputStream fos = new FileOutputStream(file.getName())) {
 
                 byte[] data = new byte[1024];
                 int count;
@@ -84,14 +90,16 @@ public class JobSubmitController {
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.URL);
         boolean isInclusive = true;
-        return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
+        return submitJob(username, jobDescription, -1, request.getJobConfiguration(), isInclusive);
     }
 
     @PostMapping("/exclusive/config")
-    public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request,
+            HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         boolean isInclusive = false;
-        return submitJob(username, null, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration(), isInclusive);
+        return submitJob(username, null, request.getJobConfiguration().getDescriptionID(),
+                request.getJobConfiguration(), isInclusive);
     }
 
     /**
@@ -101,18 +109,20 @@ public class JobSubmitController {
      * @param description
      * @param descriptionID
      * @param config
-     * @param isInclusive if TRUE descriptionID is ignored and description is used. If FALSE description is ignored and
-     * descriptionID is used.
+     * @param isInclusive   if TRUE descriptionID is ignored and description is
+     *                      used. If FALSE description is ignored and
+     *                      descriptionID is used.
      * @return
      */
-    private ResponseEntity<Object> submitJob(String username, JobDescription description, int descriptionID, JobConfiguration config, boolean isInclusive) {
-    	int newJobID;
-    	try {
-    		if (isInclusive) {
-    			newJobID = jobSubmitCommand.submitJobWithDescriptionInclusive(username, description, config);
-    		} else {
-        		newJobID = jobSubmitCommand.submitJobWithDescriptionID(username, descriptionID, config);
-    		}
+    private ResponseEntity<Object> submitJob(String username, JobDescription description, int descriptionID,
+            JobConfiguration config, boolean isInclusive) {
+        int newJobID;
+        try {
+            if (isInclusive) {
+                newJobID = jobSubmitCommand.submitJobWithDescriptionInclusive(username, description, config);
+            } else {
+                newJobID = jobSubmitCommand.submitJobWithDescriptionID(username, descriptionID, config);
+            }
         } catch (FallobException exception) {
             exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
@@ -126,7 +136,8 @@ public class JobSubmitController {
     }
 
     @PostMapping("/inclusive")
-    public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request,
+            HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<File> files = new ArrayList<>();
         try {
@@ -136,7 +147,8 @@ public class JobSubmitController {
                 return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
             }
             for (String line : lines) {
-                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME + FILENAME_COUNTER + FILE_EXTENSION);
+                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
+                        + FILENAME_COUNTER + FILE_EXTENSION);
                 FileWriter myWriter = new FileWriter(file.getAbsolutePath());
                 myWriter.write(line);
                 FILENAME_COUNTER++;
@@ -150,10 +162,10 @@ public class JobSubmitController {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        
+
         JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
         boolean isInclusive = true;
-        return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
+        return submitJob(username, jobDescription, -1, request.getJobConfiguration(), isInclusive);
     }
 
     @PostMapping("/restart/{jobId}")
@@ -173,29 +185,38 @@ public class JobSubmitController {
     }
 
     @PostMapping("/exclusive/description")
-    public ResponseEntity<Object> saveDescription(@RequestParam("file1") MultipartFile file, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> saveDescription(@RequestParam("file") MultipartFile[] requestFiles,
+            HttpServletRequest httpRequest) {
+        List<File> files = new ArrayList<>();
+        for (int i = 0; i < requestFiles.length; i++) {
+            if (requestFiles[i].isEmpty()) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            File newFile = new File(
+                    configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + "file" + FILENAME_COUNTER + ".cnf");
+            FILENAME_COUNTER++;
+            try {
+                requestFiles[i].transferTo(newFile);
+            } catch (IOException e) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, e.getMessage());
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            files.add(newFile);
+        }
         String username = (String) httpRequest.getAttribute(USERNAME);
-        if (file.isEmpty()) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        }
+        JobDescription jobDescription = new JobDescription(files, SubmitType.EXCLUSIVE);
         int descriptionId;
-        File file1 = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + file.getOriginalFilename());
         try {
-            file.transferTo(file1);
-        } catch (IOException ioException) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        }
-
-        JobDescription jobDescription = new JobDescription(Collections.singletonList(file1), SubmitType.EXCLUSIVE);
-        try {
-            descriptionId = jobSubmitCommand.saveJobDescription(username, jobDescription);
+            descriptionId = jobSubmitCommand.saveJobDescription(username,
+                    jobDescription);
         } catch (FallobException exception) {
             exception.printStackTrace();
-            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
+            FallobWarning warning = new FallobWarning(exception.getStatus(),
+                    exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         return ResponseEntity.ok(new SubmitDescriptionResponse(descriptionId));
+
     }
 }
