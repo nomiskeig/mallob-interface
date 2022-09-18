@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.nio.file.Paths;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,6 +68,13 @@ public class App {
             return;
         }
         Connection conn;
+        if (databasePath.endsWith(".mv.db")) {
+            databasePath = databasePath.substring(0, databasePath.length() - 6);
+        }
+        if (databasePath.startsWith(".")) {
+            databasePath = databasePath.substring(2);
+            databasePath = Paths.get(databasePath).toAbsolutePath().toString();
+        }
 
         try {
             conn = DriverManager.getConnection("jdbc:h2:" + databasePath + ";IFEXISTS=TRUE", dbUser, dbPassword);
