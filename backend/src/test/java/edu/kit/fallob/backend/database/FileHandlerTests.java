@@ -53,7 +53,7 @@ public class FileHandlerTests {
      * test the correct retrieval of a file
      */
     @Test
-    public void testGetFile() {
+    public void testGetFile() throws FallobException {
         File file = new File(INITIAL_FILE_PATH + FILE_COPY_NAME + FILE_EXTENSION);
 
         String regex = String.format(FILE_REGEX, FILE_COPY_NAME);
@@ -68,7 +68,7 @@ public class FileHandlerTests {
      * test the correct removal of a file
      */
     @Test
-    public void testRemove() {
+    public void testRemove() throws FallobException {
         File file = new File(INITIAL_FILE_PATH + FILE_COPY_NAME +FILE_EXTENSION);
         Assertions.assertTrue(file.isFile());
 

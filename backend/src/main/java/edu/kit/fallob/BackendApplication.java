@@ -44,8 +44,7 @@ public class BackendApplication {
 		} catch (IOException  | JSONException e) {
 			System.out.println("Missing arguments in Fallob-Configuration file. Please check for correct spelling of arguments and completeness.");
 			e.printStackTrace();
-			return;
-		}
+        }
 
 		
 		FallobConfiguration config = FallobConfiguration.getInstance();

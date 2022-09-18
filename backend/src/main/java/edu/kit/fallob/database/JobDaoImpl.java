@@ -547,9 +547,10 @@ public class JobDaoImpl implements JobDao{
     /**
      * gives the size of all the job-description files
      * @return the size off all the files in megabytes
+     * @throws FallobException if an error occurs while accessing the file system
      */
     @Override
-    public long getSizeOfAllJobDescriptions() {
+    public long getSizeOfAllJobDescriptions() throws FallobException {
         String path = this.configuration.getDescriptionsbasePath();
         return FileHandler.getSizeOfDirectory(path);
     }
