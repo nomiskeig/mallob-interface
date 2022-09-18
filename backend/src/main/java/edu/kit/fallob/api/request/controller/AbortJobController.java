@@ -19,7 +19,7 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/jobs/cancel")
+@RequestMapping("/api/v1/jobs")
 public class AbortJobController {
     @Autowired
     private JobAbortCommands jobAbortCommand;
@@ -40,7 +40,7 @@ public class AbortJobController {
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the aborted job or an error (including a status code and a message in json format)
      */
-    @PostMapping("/single/{jobId}")
+    @PostMapping("/cancel/single/{jobId}")
     public ResponseEntity<Object> abortSingleJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         return abortJob(jobId, httpRequest);
     }
@@ -52,7 +52,7 @@ public class AbortJobController {
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
-    @PostMapping("/multiple")
+    @PostMapping("/cancel")
     public ResponseEntity<Object> abortMultipleJobs(@RequestBody AbortJobRequest request, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
@@ -85,7 +85,7 @@ public class AbortJobController {
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
-    @PostMapping("/all")
+    @PostMapping("/cancel/all")
     public ResponseEntity<Object> abortAllJobs(HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
@@ -106,7 +106,7 @@ public class AbortJobController {
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
-    @PostMapping("/global")
+    @PostMapping("/cancel/global")
     public ResponseEntity<Object> abortAllGlobalJobs(HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<Integer> successfullyAborted;
