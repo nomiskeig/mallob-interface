@@ -146,7 +146,7 @@ export function JobPage(props) {
 			let url = window.URL.createObjectURL(new Blob([res.data]));
 			let link = document.createElement('a');
 			link.href = url;
-			link.setAttribute('download', 'description.zip');
+			link.setAttribute('download', 'result.zip');
 			document.body.appendChild(link);
 			link.click();
 		});
