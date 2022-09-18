@@ -55,7 +55,8 @@ public class JobSubmitController {
      * A POST endpoint for submitting a job where the description is given as an url
      * Takes a request, parses the description to a file and forwards it together with the configuration.
      * It is also responsible for system error handling
-     * @param request a request object containing an url and a configuration object
+     *
+     * @param request     a request object containing an url and a configuration object
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the submitted job or an error (including a status code and a message in json format)
      */
@@ -84,43 +85,47 @@ public class JobSubmitController {
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.URL);
         boolean isInclusive = true;
-        return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
+        return submitJob(username, jobDescription, -1, request.getJobConfiguration(), isInclusive);
     }
 
     /**
      * A POST endpoint for submitting a jobConfiguration
      * Takes a request, parses the configuration and forwards it.
      * It is also responsible for system error handling
-     * @param request a request object containing the configuration attributes
+     *
+     * @param request     a request object containing the configuration attributes
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the submitted job or an error (including a status code and a message in json format)
      */
     @PostMapping("/exclusive/config")
-    public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> submitJobWithSeparateDescription(@RequestBody SubmitJobRequest request,
+                                                                   HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         boolean isInclusive = false;
-        return submitJob(username, null, request.getJobConfiguration().getDescriptionID(), request.getJobConfiguration(), isInclusive);
+        return submitJob(username, null, request.getJobConfiguration().getDescriptionID(),
+                request.getJobConfiguration(), isInclusive);
     }
 
     /**
      * Method for submitting the jobs
      *
-     * @param username the username of the user submitting the job
-     * @param description the jobDescription
+     * @param username      the username of the user submitting the job
+     * @param description   the jobDescription
      * @param descriptionID a description id if the description is already in the system
-     * @param config the jobConfiguration
-     * @param isInclusive if TRUE descriptionID is ignored and description is used. If FALSE description is ignored and
-     * descriptionID is used.
+     * @param config        the jobConfiguration
+     * @param isInclusive   if TRUE descriptionID is ignored and description is used. If FALSE description is ignored and
+     *                      descriptionID is used.
      * @return returns a response with the id of the submitted job or an error (including a status code and a message in json format)
      */
-    private ResponseEntity<Object> submitJob(String username, JobDescription description, int descriptionID, JobConfiguration config, boolean isInclusive) {
-    	int newJobID;
-    	try {
-    		if (isInclusive) {
-    			newJobID = jobSubmitCommand.submitJobWithDescriptionInclusive(username, description, config);
-    		} else {
-        		newJobID = jobSubmitCommand.submitJobWithDescriptionID(username, descriptionID, config);
-    		}
+    private ResponseEntity<Object> submitJob(String username, JobDescription description, int descriptionID,
+                                             JobConfiguration config, boolean isInclusive) {
+        int newJobID;
+        try {
+            if (isInclusive) {
+                newJobID = jobSubmitCommand.submitJobWithDescriptionInclusive(username, description, config);
+            } else {
+                newJobID = jobSubmitCommand.submitJobWithDescriptionID(username, descriptionID, config);
+            }
         } catch (FallobException exception) {
             exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
@@ -137,12 +142,14 @@ public class JobSubmitController {
      * A POST endpoint for submitting a job where the description is included in the SubmitJobRequest
      * Takes a request, parses the description to a file and forwards it together with the configuration.
      * It is also responsible for system error handling
-     * @param request a request object containing a list of Strings as the description and a configuration object
+     *
+     * @param request     a request object containing a list of Strings as the description and a configuration object
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the submitted job or an error (including a status code and a message in json format)
      */
     @PostMapping("/inclusive")
-    public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> submitJobWithIncludedDescription(@RequestBody SubmitJobRequest request,
+                                                                   HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         List<File> files = new ArrayList<>();
         try {
@@ -152,7 +159,8 @@ public class JobSubmitController {
                 return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
             }
             for (String line : lines) {
-                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME + filenameCounter + FILE_EXTENSION);
+                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
+                        + filenameCounter + FILE_EXTENSION);
                 try (FileWriter myWriter = new FileWriter(file.getAbsolutePath())) {
                     myWriter.write(line);
                     filenameCounter++;
@@ -166,16 +174,17 @@ public class JobSubmitController {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
-        
+
         JobDescription jobDescription = new JobDescription(files, SubmitType.INCLUSIVE);
         boolean isInclusive = true;
-        return submitJob(username, jobDescription, -1 ,request.getJobConfiguration(), isInclusive);
+        return submitJob(username, jobDescription, -1, request.getJobConfiguration(), isInclusive);
     }
 
     /**
      * A POST endpoint for restarting an aborted single job
      * Takes a jobId as a path variable and forwards it. It is also responsible for system error handling
-     * @param jobId the job id of the job, that is to be restarted
+     *
+     * @param jobId       the job id of the job, that is to be restarted
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the restarted job or an error (including a status code and a message in json format)
      */
@@ -199,27 +208,34 @@ public class JobSubmitController {
      * A POST endpoint for submitting a jobDescription separately
      * Takes a file, transforms it and forwards it.
      * It is also responsible for system error handling
-     * @param file a multipart file containing the description
+     *
+     * @param file        a multipart file containing the description
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the submitted description or an error (including a status code and a message in json format)
      */
     @PostMapping("/exclusive/description")
-    public ResponseEntity<Object> saveDescription(@RequestParam("file1") MultipartFile file, HttpServletRequest httpRequest) {
+    public ResponseEntity<Object> saveDescription(@RequestParam("file") MultipartFile[] requestFiles,
+                                                  HttpServletRequest httpRequest) {
+        List<File> files = new ArrayList<>();
+        for (MultipartFile requestFile : requestFiles) {
+            if (requestFile.isEmpty()) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            File newFile = new File(
+                    configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + "file" + filenameCounter + ".cnf");
+            filenameCounter++;
+            try {
+                requestFile.transferTo(newFile);
+            } catch (IOException e) {
+                FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, e.getMessage());
+                return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
+            }
+            files.add(newFile);
+        }
         String username = (String) httpRequest.getAttribute(USERNAME);
-        if (file.isEmpty()) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        }
+        JobDescription jobDescription = new JobDescription(files, SubmitType.EXCLUSIVE);
         int descriptionId;
-        File file1 = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + file.getOriginalFilename());
-        try {
-            file.transferTo(file1);
-        } catch (IOException ioException) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
-            return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
-        }
-
-        JobDescription jobDescription = new JobDescription(Collections.singletonList(file1), SubmitType.EXCLUSIVE);
         try {
             descriptionId = jobSubmitCommand.saveJobDescription(username, jobDescription);
         } catch (FallobException exception) {

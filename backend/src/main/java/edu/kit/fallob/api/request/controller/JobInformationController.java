@@ -396,7 +396,7 @@ public class JobInformationController {
     private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
-        response.setHeader("Content-disposition", "attachment; filename=solutions.zip");
+        response.setHeader("Content-disposition", "attachment; filename=result.zip");
 
         // Creating byteArray stream, making it bufferable and passing this buffer to ZipOutputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
