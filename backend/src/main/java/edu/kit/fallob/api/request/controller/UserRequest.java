@@ -1,5 +1,10 @@
 package edu.kit.fallob.api.request.controller;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A request class for json parsing
+ */
 public class UserRequest {
     private String username;
     private String password;

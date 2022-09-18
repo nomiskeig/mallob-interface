@@ -37,7 +37,6 @@ public class FallobCommands implements UserDetailsService {
 
 	
 	public FallobCommands() throws FallobException {
-		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
 			daoFactory = new DaoFactory();
 			userDao = daoFactory.getUserDao();
@@ -55,6 +54,10 @@ public class FallobCommands implements UserDetailsService {
 		} catch (FallobException e) {
 			e.printStackTrace();
 			throw new UsernameNotFoundException(e.getMessage());
+		}
+
+		if (user == null) {
+			throw new UsernameNotFoundException("No user with this username was found in the database");
 		}
 
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();

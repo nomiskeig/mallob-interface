@@ -35,7 +35,7 @@ public class FallobConfigurationsResponse {
      * @return the start time
      */
     public String getStartTime() {
-        return startTime.toString();
+        return startTime;
     }
 
     /**

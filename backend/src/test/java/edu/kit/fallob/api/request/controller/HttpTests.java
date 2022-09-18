@@ -109,7 +109,7 @@ public class HttpTests {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 createURLWithPort("/api/v1/jobs/info/global"), HttpMethod.GET, request, String.class);
         String response = responseEntity.getBody();
-        Assertions.assertEquals(response, "Status: 401 Unauthorized\nMessage: Full authentication is required to access this resource");
+        Assertions.assertEquals("Status: 401 Unauthorized\nMessage: Full authentication is required to access this resource", response);
     }
 
     @Test

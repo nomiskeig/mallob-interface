@@ -63,11 +63,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 System.out.println(JWT_EXPIRED);
             }
-        } else {
+        } else if (!request.getRequestURI().endsWith("register") && !request.getRequestURI().endsWith("login")) {
             logger.warn(BEARER_WARNING);
-            if (!request.getRequestURI().endsWith("register") && !request.getRequestURI().endsWith("login")) {
-                logger.warn("JWT Token does not begin with Bearer String");
-            }
         }
 
         // Once we get the token validate it.

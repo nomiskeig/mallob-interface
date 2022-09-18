@@ -1,6 +1,5 @@
 package edu.kit.fallob.api.request.controller;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import edu.kit.fallob.mallobio.outputupdates.Warning;
 
 import java.time.LocalDateTime;

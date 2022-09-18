@@ -9,7 +9,6 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
-import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.PriorityConverter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
@@ -17,9 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 /**
  * This class provides methods which submit a new Job, restart a canceled Job or save a new Jobdescription.
@@ -34,17 +30,19 @@ public class JobSubmitCommands {
 
 	private DaoFactory daoFactory;
 
+	private UserDao userDao;
 	private JobDao jobDao;
 	private MallobOutput mallobOutput;
 	private UserActionAuthentificater uaa;
 
+	private static final String USER_NOT_VERIFIED = "User not verified";
 	private static final String RESTART_SUFFIX = "_restart";
 	
 	
-	public JobSubmitCommands() throws FallobException{
-		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
+	public JobSubmitCommands() throws FallobException {
 		try {
 			daoFactory = new DaoFactory();
+			this.userDao = daoFactory.getUserDao();
 			this.jobDao = daoFactory.getJobDao();
 			uaa = new UserActionAuthentificater(daoFactory);
 		} catch (Exception e) {
@@ -90,23 +88,19 @@ public class JobSubmitCommands {
 		if (jobConfiguration.getContentMode() == JobConfiguration.OBJECT_NOT_SET) {
 			jobConfiguration.setContentMode(FallobConfiguration.getInstance().getDefaultContentMode());
 		}
-		
+
 		//perform checks 
-		if (jobConfiguration.getPriority() < FallobConfiguration.getInstance().getMinJobPriority()
-				|| jobConfiguration.getPriority() > FallobConfiguration.getInstance().getMaxDescriptionStorageSize()) {
-			return false;
-		}
-
-
-		return true;
+		return jobConfiguration.getPriority() >= FallobConfiguration.getInstance().getMinJobPriority()
+				|| jobConfiguration.getPriority() <= FallobConfiguration.getInstance().getMaxJobPriority();
 	}
 	
 	
 	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
 
-//		if (!userDao.getUserByUsername(username).isVerified()) {
-//			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		if (!userDao.getUserByUsername(username).isVerified()) {
+			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		}
 		formatConfiguration(username, jobConfiguration);
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
@@ -118,9 +112,9 @@ public class JobSubmitCommands {
 
 	
 	public int submitJobWithDescriptionID(String username, int jobdescriptionID, JobConfiguration jobConfiguration) throws FallobException {
-//		if (!userDao.getUserByUsername(username).isVerified()) {
-//			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-//		}
+		if (!userDao.getUserByUsername(username).isVerified()) {
+			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		}
 		if (!uaa.hasDescriptionAccessViaDescriptionID(username, jobdescriptionID)) {
 			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
 		}
@@ -147,9 +141,9 @@ public class JobSubmitCommands {
 	}
 	
 	public int saveJobDescription(String username, JobDescription jobDescription) throws FallobException {
-//		if (!userDao.getUserByUsername(username).isVerified()) {
-//			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-//		}
+		if (!userDao.getUserByUsername(username).isVerified()) {
+			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
+		}
 		return jobDao.saveJobDescription(jobDescription, username);
 	}
 	

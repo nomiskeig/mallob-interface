@@ -34,7 +34,7 @@ public class AbortJobController {
 
 
     /**
-     * An POST endpoint for aborting the processing of a single job
+     * A POST endpoint for aborting the processing of a single job
      * Takes a request, parses the data needed to abort a single job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, that is to be aborted
      * @param httpRequest a servlet request that contains the username of the sender
@@ -46,7 +46,7 @@ public class AbortJobController {
     }
 
     /**
-     * An POST endpoint for aborting the processing of multiple jobs
+     * A POST endpoint for aborting the processing of multiple jobs
      * Takes a request, parses the data needed to abort multiple jobs and forwards it. It is also responsible for system error handling
      * @param request an AbortJobRequest object containing the job ids of the jobs, that are to be aborted
      * @param httpRequest a servlet request that contains the username of the sender
@@ -80,7 +80,7 @@ public class AbortJobController {
     }
 
     /**
-     * An POST endpoint for aborting the processing of all owned jobs
+     * A POST endpoint for aborting the processing of all owned jobs
      * Takes a request, parses the data needed to abort all owned jobs and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
@@ -101,7 +101,7 @@ public class AbortJobController {
     }
 
     /**
-     * An POST endpoint for aborting the processing of all jobs in the system (Available only for admins)
+     * A POST endpoint for aborting the processing of all jobs in the system (Available only for admins)
      * Takes a request, parses the data needed to abort all jobs and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
@@ -122,7 +122,7 @@ public class AbortJobController {
     }
 
     /**
-     * An POST endpoint for aborting the processing of an incremental job
+     * A POST endpoint for aborting the processing of an incremental job
      * Takes a request, parses the data needed to abort an incremental job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, that is to be aborted
      * @param httpRequest a servlet request that contains the username of the sender

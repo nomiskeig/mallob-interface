@@ -9,6 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A Rest Controller for managing Mallob
+ */
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/system/mallob")
@@ -21,6 +26,12 @@ public class MallobStartStopController {
     @Autowired
     private MallobCommands mallobCommands;
 
+    /**
+     * A POST endpoint for starting Mallob
+     * Takes a request, parses the data needed to abort a single job and forwards it. It is also responsible for system error handling
+     * @param request a servlet request that contains the username of the sender
+     * @return sends a response with the id of the aborted job or an error (including a status code and a message in json format)
+     */
     @PostMapping("/start")
     public ResponseEntity<Object> startMallob(@RequestBody MallobStartStopRequest request) {
         return startMallobHelper(request);
