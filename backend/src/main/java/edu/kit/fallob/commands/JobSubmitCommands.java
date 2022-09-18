@@ -9,6 +9,7 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.PriorityConverter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
@@ -16,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * This class provides methods which submit a new Job, restart a canceled Job or save a new Jobdescription.
@@ -30,12 +34,10 @@ public class JobSubmitCommands {
 
 	private DaoFactory daoFactory;
 
-	private UserDao userDao;
 	private JobDao jobDao;
 	private MallobOutput mallobOutput;
 	private UserActionAuthentificater uaa;
 
-	private static final String USER_NOT_VERIFIED = "User not verified";
 	private static final String RESTART_SUFFIX = "_restart";
 	
 	
@@ -43,7 +45,6 @@ public class JobSubmitCommands {
 		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
 			daoFactory = new DaoFactory();
-			this.userDao = daoFactory.getUserDao();
 			this.jobDao = daoFactory.getJobDao();
 			uaa = new UserActionAuthentificater(daoFactory);
 		} catch (Exception e) {
@@ -68,7 +69,7 @@ public class JobSubmitCommands {
 			throw e;
 		} catch (IOException eio) {
 			mallobOutput.removeOutputLogLineListener(submitter);
-			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not access the file: "+  eio.getMessage());
 		}
 		mallobOutput.removeOutputLogLineListener(submitter);
 		return mallobID;
@@ -106,13 +107,11 @@ public class JobSubmitCommands {
 
 //		if (!userDao.getUserByUsername(username).isVerified()) {
 //			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
-//		}
 		formatConfiguration(username, jobConfiguration);
-
-		int mallobID = submitJobToMallob(username, jobDescription, jobConfiguration);
 		int descriptionID = jobDao.saveJobDescription(jobDescription, username);
 		jobConfiguration.setDescriptionID(descriptionID);
-		System.out.println(descriptionID);
+        JobDescription newDescrption = jobDao.getJobDescription(descriptionID);
+		int mallobID = submitJobToMallob(username, newDescrption, jobConfiguration);
 		return jobDao.saveJobConfiguration(jobConfiguration, username, mallobID);
 		
 	}
@@ -167,15 +166,6 @@ public class JobSubmitCommands {
 		if (precursor != JobConfiguration.INT_NOT_SET) {
 			jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
 		}
-		/*if (jobConfiguration.getArrival() != JobConfiguration.DOUBLE_NOT_SET) {
-			LocalDateTime arrivalTime = LocalDateTime.parse(jobConfiguration.getArrival());
-			MallobTimeListener timeListener = MallobTimeListener.getInstance();
-			double secondsSinceMallobStart = timeListener.getAmountOfSecondsSinceStart();
-			LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
-			Duration duration = Duration.between(arrivalTime, now);
-			double arrivalTimeSeconds = secondsSinceMallobStart + duration.getSeconds();
-			jobConfiguration.setArrivalInSeconds(arrivalTimeSeconds);
-		}*/
 		if (jobConfiguration.getPriority() != JobConfiguration.DOUBLE_NOT_SET) {
 			PriorityConverter prioConverter = new PriorityConverter(daoFactory);
 			jobConfiguration.setPriority(prioConverter.getPriorityForMallob(username, jobConfiguration.getPriority()));

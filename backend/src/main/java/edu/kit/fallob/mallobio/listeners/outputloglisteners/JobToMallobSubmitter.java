@@ -27,33 +27,38 @@ import edu.kit.fallob.springConfig.FallobException;
  */
 public class JobToMallobSubmitter implements OutputLogLineListener {
 
-
-    private final static int JOB_IS_SUBMITTING = 0;
-    private final static int JOB_IS_VALID = 1;
-    private final static int JOB_IS_NOT_VALID = 2;
-    private final static String OLD_VALID_JOB_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
-    private final static String VALID_JOB_REGEX = "Introducing job #[0-9]+";
-    private final static String NOT_VALID_JOB_REGEX = "I [WARN] Job file missing essential field(s). Ignoring this file.";
-
-    private String username;
-    private int jobID;
-    private MallobInput mallobInput;
-    private Object monitor;
-    private int jobStatus = JOB_IS_SUBMITTING;
-    private Pattern validJobPattern;
-    private Pattern notValidJobPattern;
-
-    public JobToMallobSubmitter(String username) {
-        this.username = username;
-        this.mallobInput = MallobInputImplementation.getInstance();
-        this.monitor = new Object();
-
-        // String formattedValidJobRegex = String.format(VALID_JOB_REGEX, username);
-        validJobPattern = Pattern.compile(VALID_JOB_REGEX);
-        notValidJobPattern = Pattern.compile(NOT_VALID_JOB_REGEX);
-    }
-
-    public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription)
+	
+	private final static int JOB_IS_SUBMITTING = 0;
+	private final static int JOB_IS_VALID = 1;
+	private final static int JOB_IS_NOT_VALID = 2;
+	private final static String JOB_ID_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
+	private final static String VALID_JOB_REGEX = "Introducing job #[0-9]+";
+	private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission %s.* - reason:";
+	
+	private String username;
+	private int jobID;
+	private MallobInput mallobInput;
+	private Object monitor;
+	private int jobStatus = JOB_IS_SUBMITTING;
+	private Pattern validJobPattern;
+	private Pattern notValidJobPattern;
+	private Pattern jobIdPattern;
+	private String errorMessage;
+	
+	public JobToMallobSubmitter(String username) {
+		this.username = username;
+		this.mallobInput = MallobInputImplementation.getInstance();
+		this.monitor = new Object();
+		
+		String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX, username);
+		String formattedJobIdPattern = String.format(JOB_ID_REGEX, username);
+		validJobPattern = Pattern.compile(VALID_JOB_REGEX);
+		notValidJobPattern = Pattern.compile(formattedNotValidJobPattern);
+		jobIdPattern = Pattern.compile(formattedJobIdPattern);
+	}
+	
+	
+	public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription)
             throws IOException, FallobException {
         // copy over the descriptions
         String mallobFolder = FallobConfiguration.getInstance().getMallobBasePath();
@@ -87,7 +92,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
             }
         }
         if (jobStatus == JOB_IS_NOT_VALID) {
-            throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+            throw new FallobException(HttpStatus.BAD_REQUEST, errorMessage);
         }
 
         // job is valid and result can be detected
@@ -98,24 +103,31 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
     }
 
-    @Override
-    public void processLine(String line) {
-        Matcher validJobMatcher = validJobPattern.matcher(line);
-        if (validJobMatcher.find()) {
-            jobStatus = JOB_IS_VALID;
-            jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1, line.indexOf('#') + 2));
-            synchronized (monitor) {
-                monitor.notify();
-            }
-        }
-        Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
-        if (notValidJobMatcher.find()) {
-            jobStatus = JOB_IS_NOT_VALID;
-            synchronized (monitor) {
-                monitor.notify();
-            }
-        }
 
-    }
+	@Override
+	public void processLine(String line) {
+		Matcher jobIdMatcher = jobIdPattern.matcher(line);
+		if (jobIdMatcher.find()) {
+			jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1));
+		}
+		Matcher validJobMatcher = validJobPattern.matcher(line);
+		if (validJobMatcher.find()) {
+			jobStatus = JOB_IS_VALID;
+			synchronized(monitor) {
+				monitor.notify();
+			}
+		}
+		Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
+		if (notValidJobMatcher.find()) {
+			jobStatus = JOB_IS_NOT_VALID;
+			errorMessage = line.substring(line.indexOf("reason") + 8);
+			synchronized(monitor) {
+				monitor.notify();
+			}
+		}
+		
+	}
+
+   
 
 }
