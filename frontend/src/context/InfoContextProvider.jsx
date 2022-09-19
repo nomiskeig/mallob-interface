@@ -59,7 +59,7 @@ export function InfoContextProvider({ children }) {
 						<button
 							type='button'
 							className='btn-close'
-							//data-bs-dismiss='alert'
+                            data-testid='alertCloseButton'
 							aria-label='Close'
 							onClick={() => dismissInformation('')}
 						></button>

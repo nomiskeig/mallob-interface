@@ -77,6 +77,7 @@ export function JobContextProvider({ children }) {
 			},
 		})
 			.then((res) => {
+                console.log(res.data.information);
 				dispatch({ type: 'setJobs', jobs: res.data.information });
 				if (callback) {
 					callback(res.data.information);
@@ -93,7 +94,7 @@ export function JobContextProvider({ children }) {
 			});
 	}
 	function loadAllJobsOfUser() {
-		this.fetchMostJobsPossible(true);
+		fetchMostJobsPossible(true, null);
 	}
 
 	// loads a single job from the backend and stores it into state;
