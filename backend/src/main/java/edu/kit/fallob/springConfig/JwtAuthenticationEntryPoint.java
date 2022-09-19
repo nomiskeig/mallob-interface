@@ -18,10 +18,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     private static final long serialVersionUID = -7858869558953243875L;
 
-    private static final String MESSAGE_BEGINNING = "\"Message\":";
-    private static final String STATUS_BEGINNING = "\"Status\":";
-    private static final String STATUS_401 = STATUS_BEGINNING + "\"401 Unauthorized\"";
-    private static final String STATUS_403 = STATUS_BEGINNING + "\"403 Forbidden\"";
+    private static final String MESSAGE_BEGINNING = "\"message\":";
+    private static final String STATUS_BEGINNING = "\"status\":";
+    private static final String STATUS_401 = STATUS_BEGINNING + "\"UNAUTHORIZED\"";
+    private static final String STATUS_403 = STATUS_BEGINNING + "\"FORBIDDEN\"";
 
     private static final String NOT_VERIFIED_OR_CORRUPT_TOKEN = MESSAGE_BEGINNING + "\"User is not verified or the token is corrupt.\"";
 

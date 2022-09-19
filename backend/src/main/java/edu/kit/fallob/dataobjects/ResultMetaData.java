@@ -1,12 +1,16 @@
 package edu.kit.fallob.dataobjects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ResultMetaData {
 	
 	private double parsingTime;
 	private double processingTime;
 	private double schedulingTime;
 	private double totalTime;
+    @JsonProperty("usedCpuSeconds")
 	private double cpuSeconds;
+    @JsonProperty("usedWallclockSeconds")
 	private double wallclockSeconds;
 	
 	public ResultMetaData(double parsingTime, double processingTime, 
