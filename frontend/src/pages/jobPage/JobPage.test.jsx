@@ -11,23 +11,27 @@ import {
 } from '@testing-library/react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { JobContext } from '../../context/JobContextProvider';
+import { InfoContext } from '../../context/InfoContextProvider';
 import { ROLE_ADMIN, UserContext } from '../../context/UserContextProvider';
 import axios from 'axios';
 jest.mock('axios');
 
 let fakeJobProvider;
 let fakeUserProvider;
+let fakeInfoProvider;
 const customRender = (ui, jobProvider, userProvider) => {
 	return render(
 		<UserContext.Provider
 			value={userProvider ? userProvider : fakeUserProvider}
 		>
 			<JobContext.Provider value={jobProvider ? jobProvider : fakeJobProvider}>
-				<BrowserRouter>
-					<Routes>
-						<Route path='/' element={ui} />
-					</Routes>
-				</BrowserRouter>
+				<InfoContext.Provider value={fakeInfoProvider}>
+					<BrowserRouter>
+						<Routes>
+							<Route path='/' element={ui} />
+						</Routes>
+					</BrowserRouter>
+				</InfoContext.Provider>
 			</JobContext.Provider>
 		</UserContext.Provider>
 	);
@@ -54,26 +58,25 @@ beforeEach(() => {
 		],
 		loadSingleJob: jest.fn(),
 		cancelJob: jest.fn(),
-        getSingleJobInfo: jest.fn(),
+		getSingleJobInfo: jest.fn(),
 	};
 	fakeUserProvider = {
 		user: {
 			username: 'user1',
 		},
 	};
-    fakeJobProvider.getSingleJobInfo.mockResolvedValueOnce({})
-    
+	fakeJobProvider.getSingleJobInfo.mockResolvedValueOnce({});
+	fakeInfoProvider = { handleInformation: jest.fn() };
 });
 test('Displays the name of the job', () => {
 	customRender(<JobPage jobID={3} />);
 	expect(screen.getByText(/^job3/)).not.toBeNull();
 });
 
-test('Displays the name of the job if embedded', () =>{ 
-    customRender(<JobPage embedded={true} jobID={3}/>);
-    expect(screen.getByText(/^job3/)).not.toBeNull();
-
-})
+test('Displays the name of the job if embedded', () => {
+	customRender(<JobPage embedded={true} jobID={3} />);
+	expect(screen.getByText(/^job3/)).not.toBeNull();
+});
 
 test('Tries to load dependendencies and display dependencies', () => {
 	customRender(<JobPage jobID={2} />);
@@ -234,7 +237,9 @@ test('Displays the cancel button and can cancel jobs if user who owns the job is
 		user: 'user1',
 		status: 'RUNNING',
 	});
-	axios.mockRejectedValue(new Error('test error'));
+	axios.mockRejectedValue({
+		response: { data: { message: 'Could not cancel job' } },
+	});
 	customRender(<JobPage jobID={1} />);
 	const button = screen.getByRole('button', { name: 'Cancel job' });
 	expect(button).not.toBeNull();
@@ -259,19 +264,19 @@ test('Displays the download button if user who owns the job is logged in and can
 		user: 'user1',
 		status: 'DONE',
 	});
-	axios.mockRejectedValueOnce(new Error('test error'));
+	axios.mockRejectedValueOnce({
+		response: { data: { message: 'Could not download' } },
+	});
 	customRender(<JobPage jobID={1} />);
 	const button = screen.getByRole('button', { name: 'Download result' });
 	expect(button).not.toBeNull();
-    expect(axios).toHaveBeenCalledTimes(1);
+	expect(axios).toHaveBeenCalledTimes(1);
 	axios.mockResolvedValueOnce({
 		headers: {
 			'content-type': 'application/json',
 		},
-		data: new Blob([
-			JSON.stringify({ result: 'result' }),
-		]),
+		data: new Blob([JSON.stringify({ result: 'result' })]),
 	});
 	fireEvent.click(button);
-    expect(axios).toHaveBeenCalledTimes(2);
+	expect(axios).toHaveBeenCalledTimes(2);
 });

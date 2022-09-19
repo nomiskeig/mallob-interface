@@ -90,7 +90,9 @@ test('Displays error status code is not 200', async () => {
 	fireEvent.change(screen.getByTestId('inputField-password'), {
 		target: { value: password },
 	});
-	axios.post.mockRejectedValueOnce({ response: { status: 404 } });
+	axios.post.mockRejectedValueOnce({
+		response: { data: { message: 'Unable to log in' } },
+	});
 
 	await waitFor(() => {
 		fireEvent.click(screen.getByRole('button', { name: 'Login' }));
