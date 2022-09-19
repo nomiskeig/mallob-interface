@@ -126,7 +126,12 @@ export function JobPage(props) {
 				}
 			})
 			.catch((err) => {
-				console.log(err.message);
+				infoContext.handleInformation(
+					`Could not load the description.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
 	}, [jobID, loaded, job]);
 
@@ -146,10 +151,25 @@ export function JobPage(props) {
 			let url = window.URL.createObjectURL(new Blob([res.data]));
 			let link = document.createElement('a');
 			link.href = url;
-			link.setAttribute('download', 'result.zip');
+			link.setAttribute('download', 'result-' + jobID + '.zip');
 			document.body.appendChild(link);
 			link.click();
-		});
+		}).catch((err) => {
+                console.log(err)
+				let fr = new FileReader();
+				fr.onload = function () {
+					let result = JSON.parse(fr.result);
+					infoContext.handleInformation(
+						`Could not download the result.\nReason: ${
+							result.message
+								? result.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+				};
+                fr.readAsText(err.response.data);
+            });
 	}
 
 	function cancelJob() {

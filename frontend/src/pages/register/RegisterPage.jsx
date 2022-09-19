@@ -36,7 +36,7 @@ export function RegisterPage(props) {
 		process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/register';
 	function register() {
 		if (passwordContent !== confirmPasswordContent) {
-            infoContext.handleInformation('The passwords do not match.', TYPE_ERROR);
+            infoContext.handleInformation('Could not register.\nReason: The passwords do not match.', TYPE_ERROR);
             return;
 		}
 		axios.post(registerURL, {
@@ -49,7 +49,12 @@ export function RegisterPage(props) {
             infoContext.handleInformation('Account successfully created.', TYPE_INFO);
 			navigate('/login');
         }).catch((err) => {
-           infoContext.handleInformation('Username not available', TYPE_ERROR);
+				infoContext.handleInformation(
+					`Could not register.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
         })
 	}
 

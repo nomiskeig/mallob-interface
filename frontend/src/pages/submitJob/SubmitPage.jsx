@@ -148,7 +148,14 @@ export function SubmitPage(props) {
 				navigate('/job/' + res.data.jobID);
 			})
 			.catch((err) => {
-				infoContext.handleInformation('Job could not be submitted', TYPE_ERROR);
+					infoContext.handleInformation(
+						`Job could not be submitted.\nReason: ${
+							err.response.data.message
+								? err.response.data.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
 			});
 	}
 
@@ -158,6 +165,7 @@ export function SubmitPage(props) {
 			errors.forEach((error) =>
 				infoContext.handleInformation(error, TYPE_WARNING)
 			);
+            return;
 		}
 
 		if (descriptions.length === 0) {
@@ -167,8 +175,8 @@ export function SubmitPage(props) {
 
 		// submit description
 		let formData = new FormData();
-		descriptions.forEach((file, index) => {
-			formData.append('file' + (index + 1), file);
+		descriptions.forEach((file) => {
+			formData.append('file', file);
 		});
 
 		axios({
@@ -183,7 +191,18 @@ export function SubmitPage(props) {
 			},
 		}).then((res) => {
 			submitJobExclusiveConfig(res.data.descriptionID);
-		});
+		}).catch((err) => {;
+					infoContext.handleInformation(
+						`Job could not be submitted.\nReason: ${
+							err.response.data.message
+								? err.response.data.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+            
+                return;
+            });
 	}
 
 	function submitJobExclusiveConfig(descriptionID) {
@@ -210,7 +229,16 @@ export function SubmitPage(props) {
 		}).then((res) => {
 			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
 			navigate('/job/' + res.data.jobID);
-		});
+		}).catch((err) => {
+					infoContext.handleInformation(
+						`Job could not be submitted.\nReason: ${
+							err.response.data.message
+								? err.response.data.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+            });
 	}
 	function addAddtionalParametersToJob(job) {
 		if (additionalConfig.length === 0) {

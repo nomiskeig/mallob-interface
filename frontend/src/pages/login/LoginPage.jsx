@@ -55,18 +55,13 @@ export function LoginPage(props) {
 				return;
 			})
 			.catch((err) => {
-				if (err.response.status === 404) {
-					//user not found
-					infoContext.handleInformation('Username not found', TYPE_ERROR);
-				} else {
-					infoContext.handleInformation(
-						'Username or password wrong',
-						TYPE_ERROR
-					);
-				}
+				infoContext.handleInformation(
+					`Could not log in.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
-
-		//TODO : testing, error handling if pw was wrong, forward user onto job-page, tidy up login page (make it look nice )
 	}
 
 	function getInputField(placeholder, id, changeHandler, inputType) {

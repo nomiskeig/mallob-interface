@@ -5,7 +5,7 @@ import { UserContext } from './UserContextProvider';
 import { useNavigate } from 'react-router-dom';
 export const SettingsContext = createContext({});
 export function SettingsContextProvider({ children }) {
-	const [settings, setSettings] = useState({ test: 'test' });
+	const [settings, setSettings] = useState({});
 	const [isLoaded, setLoaded] = useState(false);
 	const infoContext = useContext(InfoContext);
 	const userContext = useContext(UserContext);
@@ -23,17 +23,24 @@ export function SettingsContextProvider({ children }) {
 					setSettings(res.data);
 					setLoaded(true);
 				})
-				.catch((error) => {
-					if (error.response.status === 403) {
+				.catch((err) => {
+					if (err.response.status === 403) {
 						infoContext.handleInformation(
 							'The stored token is invalid.',
 							TYPE_ERROR
 						);
 						userContext.logout();
 						navigate('/login');
-                        return;
+						return;
 					}
-					infoContext.handleInformation('Could not get settings', TYPE_ERROR);
+					infoContext.handleInformation(
+						`Could not load settings.\nReason: ${
+							err.response.data.message
+								? err.response.data.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
 				});
 		}
 		if (userContext.user.isLoaded) {

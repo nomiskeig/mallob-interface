@@ -4,7 +4,6 @@ import {InfoContext, TYPE_ERROR} from '../../context/InfoContextProvider';
 import {useNavigate} from 'react-router-dom';
 
 export function NotFoundPage(props) {
-    // TODO: send user to login page if user is not logged in
     let userContext = useContext(UserContext);
     let infoContext = useContext(InfoContext);
     let navigate  = useNavigate();

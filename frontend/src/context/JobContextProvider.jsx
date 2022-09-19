@@ -1,6 +1,11 @@
 import React, { useState, useContext, createContext, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
-import { InfoContext, TYPE_ERROR, TYPE_INFO, TYPE_WARNING } from './InfoContextProvider';
+import {
+	InfoContext,
+	TYPE_ERROR,
+	TYPE_INFO,
+	TYPE_WARNING,
+} from './InfoContextProvider';
 import axios from 'axios';
 
 function reducer(jobs, action) {
@@ -48,8 +53,10 @@ export function JobContextProvider({ children }) {
 			})
 			.catch((err) => {
 				infoContext.handleInformation(
-					'Could not cancel the job.',
-					TYPE_WARNING
+					`Could not cancel the job.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
 				);
 			});
 	}
@@ -78,7 +85,9 @@ export function JobContextProvider({ children }) {
 			.catch((err) => {
 				console.log(err);
 				infoContext.handleInformation(
-					'Could not load any of the jobs.',
+					`Could not load any of the jobs.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
 					TYPE_ERROR
 				);
 			});

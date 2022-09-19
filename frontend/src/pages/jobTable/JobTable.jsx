@@ -9,6 +9,7 @@ import { StatusLabel } from '../../global/statusLabel/StatusLabel';
 import { UserContext } from '../../context/UserContextProvider';
 import {
 	InfoContext,
+	TYPE_ERROR,
 	TYPE_INFO,
 	TYPE_WARNING,
 } from '../../context/InfoContextProvider';
@@ -77,23 +78,23 @@ export function JobTable(props) {
 	}
 
 	function cancelSelectedJobs() {
-		let jobsToCancel = selectedJobs;
+		console.log(selectedJobs);
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/cancel',
 			data: {
-				jobs: [...jobsToCancel],
+				jobs: [...selectedJobs],
 			},
 			headers: {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		})
 			.then((res) => {
-				if (res.data.cancelled.length === jobsToCancel.length) {
-                    console.log(infoContext.handleInformation)
+				if (res.data.cancelled.length === selectedJobs.length) {
+					console.log(infoContext.handleInformation);
 					infoContext.handleInformation(JOBS_SUCCESSFULLY_CANCELED, TYPE_INFO);
 				} else {
-					let notCancelled = jobsToCancel.filter(
+					let notCancelled = selectedJobs.filter(
 						(id) => !res.data.cancelled.includes(id)
 					);
 					let message = JOBS_PARTLY_CANCELED_BEGIN;
@@ -102,9 +103,14 @@ export function JobTable(props) {
 					infoContext.handleInformation(message, TYPE_WARNING);
 				}
 			})
-			.catch((e) => {
-                infoContext.handleInformation('Could not cancel the selected jobs. \n Reason: '+ e.message);
-				console.log(e);
+			.catch((err) => {
+                console.log(err)
+				infoContext.handleInformation(
+					`Could not cancel the selected jobs.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
 	}
 	function downloadSelectedResults() {
@@ -118,14 +124,30 @@ export function JobTable(props) {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
 			responseType: 'blob',
-		}).then((res) => {
-			let url = window.URL.createObjectURL(new Blob([res.data]));
-			let link = document.createElement('a');
-			link.href = url;
-			link.setAttribute('download', 'descriptions.zip');
-			document.body.appendChild(link);
-			link.click();
-		});
+		})
+			.then((res) => {
+				let url = window.URL.createObjectURL(new Blob([res.data]));
+				let link = document.createElement('a');
+				link.href = url;
+				link.setAttribute('download', 'results.zip');
+				document.body.appendChild(link);
+				link.click();
+			})
+			.catch((err) => {
+				let fr = new FileReader();
+				fr.onload = function () {
+					let result = JSON.parse(fr.result);
+					infoContext.handleInformation(
+						`Could not download the results of the selected jobs.\nReason: ${
+							result.message
+								? result.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+				};
+                fr.readAsText(err.response.data);
+			});
 	}
 	function getHeaderButtons(index, name, internalName) {
 		return (
@@ -134,7 +156,7 @@ export function JobTable(props) {
 				<React.Fragment>
 					<div disabled className='removeButton'>
 						<svg
-                            data-testid={'remove-' + internalName}
+							data-testid={'remove-' + internalName}
 							onClick={() =>
 								setSelectedIndices(
 									selectedIndices.filter((indexFromArray) => {

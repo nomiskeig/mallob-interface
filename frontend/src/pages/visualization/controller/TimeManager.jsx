@@ -116,13 +116,11 @@ export class TimeManager {
 				);
 				this.#lastTimeMeasured = currentTime;
 				let millisToAdd = differenceInMillis * this.#multiplier;
-				// TODO: this can at most be the current time or at least the startTime
 				let nextTime = addMilliseconds(this.#lastTime, millisToAdd);
 				if (isAfter(nextTime, new Date())) {
 					nextTime = new Date();
 				}
 				this.#nextTime = nextTime;
-				// set to live so that the stream is used again when next time is current enough
 			}
 		}
 		if (
