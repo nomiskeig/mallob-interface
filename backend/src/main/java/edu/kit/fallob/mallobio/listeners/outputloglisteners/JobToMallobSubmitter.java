@@ -70,20 +70,8 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
             Files.copy(description.toPath(),
                     Path.of(mallobFolder + "/descriptions/" + description.getName()));
         }
-        int clientProcessID;
-        try {
-            clientProcessID = mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
-        } catch (IllegalArgumentException e) {
-            // remove the descriptions again
-            for (File description : descriptions) {
-                File fileToDelete = new File(mallobFolder + "/descriptions/" + description.getName());
-                if (fileToDelete.exists()) {
-                    fileToDelete.delete();
-                }
-            }
-            throw new FallobException(HttpStatus.BAD_REQUEST, e.getMessage());
+        int clientProcessID = mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
 
-        }
 
         synchronized (monitor) {
             while (jobStatus == JOB_IS_SUBMITTING || !hasMapping) {
