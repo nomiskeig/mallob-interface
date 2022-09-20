@@ -37,7 +37,7 @@ public class FallobConfiguration {
 	private String resultBasePath;
 	private String dataBaseUsername;
 	private String databasePassword;
-
+	
 	private int amountReaderThreads;
 	private int  readingIntervalPerReadingThread;
 
