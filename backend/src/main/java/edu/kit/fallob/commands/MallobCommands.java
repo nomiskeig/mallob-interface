@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -38,15 +39,15 @@ public class MallobCommands {
 	}
 	
 	public SystemState getSystemState(LocalDateTime time) throws FallobException {
-		if (time.isBefore(fallobConfiguration.getStartTime()) || time.isAfter(LocalDateTime.now())) {
+		if (time.isBefore(fallobConfiguration.getStartTime()) || time.isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
 			throw new FallobException(HttpStatus.NOT_FOUND, EVENT_MESSAGE);
 		}
 		return new SystemState(time);
 	}
 	
 	public List<Event> getEvents(LocalDateTime lowerBound, LocalDateTime upperBound) throws FallobException {
-		if (lowerBound.isBefore(fallobConfiguration.getStartTime()) || lowerBound.isAfter(LocalDateTime.now())
-		|| upperBound.isBefore(fallobConfiguration.getStartTime()) || upperBound.isAfter(LocalDateTime.now())) {
+		if (lowerBound.isBefore(fallobConfiguration.getStartTime()) || lowerBound.isAfter(LocalDateTime.now(ZoneOffset.UTC))
+		|| upperBound.isBefore(fallobConfiguration.getStartTime()) || upperBound.isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
 			throw new FallobException(HttpStatus.NOT_FOUND, EVENT_MESSAGE);
 		}
 		return eventDao.getEventsBetweenTime(lowerBound, upperBound);

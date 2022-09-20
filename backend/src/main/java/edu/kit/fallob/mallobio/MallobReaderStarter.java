@@ -8,6 +8,7 @@ import edu.kit.fallob.database.DaoFactory;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.EventListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobStatusListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobRestartListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.WarningListener;
 import edu.kit.fallob.mallobio.listeners.resultlisteners.JobResultListener;
@@ -218,6 +219,7 @@ public class MallobReaderStarter {
 		this.mallobOutput.addOutputLogLineListener(new JobStatusListener());
 		this.mallobOutput.addOutputLogLineListener(MallobTimeListener.getInstance());
 		this.mallobOutput.addOutputLogLineListener(new WarningListener(dao.getWarningDao()));
+		this.mallobOutput.addOutputLogLineListener(new MallobRestartListener());
 	}
 	
 	
