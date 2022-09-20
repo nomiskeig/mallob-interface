@@ -95,7 +95,7 @@ public class JobInformationCommands {
 		if (!uaa.isAdmin(username)) {
 			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
 		}
-		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); //provisorisch
+		List<Integer> allGlobalJobIDs = jobDao.getAllJobIds();
 		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];
 		for (int i = 0; i < allGlobalJobIDs.size(); i++) {
 			allGlobalJobIDsArray[i] = allGlobalJobIDs.get(i);
