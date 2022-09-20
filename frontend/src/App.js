@@ -7,7 +7,7 @@ import { SettingsContextProvider } from './context/SettingsContextProvider';
 import { UserContextProvider } from './context/UserContextProvider';
 import { InfoContextProvider } from './context/InfoContextProvider';
 import { AllContext, AllContextProvider } from './context/AllContextProvider';
-import { RequireAuth } from './global/RequireAuth';
+import { RequireAuth } from './global/requireAuth/RequireAuth';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import {
 	Navbar,
@@ -22,7 +22,7 @@ import { AdminPage } from './pages/admin/AdminPage';
 import { JobPage } from './pages/jobPage/JobPage';
 import { JobTablePage } from './pages/jobTable/JobTablePage';
 import { SubmitPage } from './pages/submitJob/SubmitPage';
-import { JobPageRedirect } from './pages/jobPage/jobPageRedirect';
+import { JobPageRedirect } from './pages/jobPage/JobPageRedirect';
 import { RegisterPage } from './pages/register/RegisterPage';
 
 class App extends React.Component {

@@ -14,7 +14,6 @@ export const configParameters = [
 		inputType: INPUT_TYPE_TEXT,
 		showOnJobPage: true,
 		validateValue: (value) => {
-			console.log(value);
 			if (value === undefined) {
 				return {
 					isValid: true,

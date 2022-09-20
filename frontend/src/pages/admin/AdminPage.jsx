@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../context/UserContextProvider';
+import {InfoContext, TYPE_ERROR} from '../../context/InfoContextProvider'
 import './AdminPage.scss';
 //import { Button } from '../../global/buttons/Button';
 import axios from 'axios';
@@ -7,6 +8,7 @@ import format from 'date-fns/format'
 
 export function AdminPage(props) {
 	let userContext = useContext(UserContext);
+    let infoContext = useContext(InfoContext);
 	let [warnings, setWarnings] = useState([]);
 
 	//contact API to get Warnings
@@ -21,7 +23,15 @@ export function AdminPage(props) {
 			.then((res) => {
 				setWarnings(res.data.warnings);
 			})
-			.catch((res) => {
+			.catch((err) => {
+					infoContext.handleInformation(
+						`Warnings could not be loaded.\nReason: ${
+							err.response.data.message
+								? err.response.data.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
 				setWarnings([...warnings]);
 			});
 	}, []);

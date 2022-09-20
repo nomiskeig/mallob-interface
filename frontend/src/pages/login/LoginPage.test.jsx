@@ -82,7 +82,7 @@ test('Checks that neither password or username are empty', () => {
 	expect(fakeInfoProvider.handleInformation).toHaveBeenCalledTimes(1);
 });
 
-test('Displays error status code is not 200', async () => {
+test('Displays error if status code is not 200', async () => {
 	customRender(<LoginPage />);
 	fireEvent.change(screen.getByTestId('inputField-username'), {
 		target: { value: username },

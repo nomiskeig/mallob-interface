@@ -72,7 +72,9 @@ export function UserContextProvider({ children }) {
             payload['role'] = ROLE_USER;
         } else {
             payload['role'] = ROLE_ADMIN
+
         }
+        console.log(payload)
 
 		return payload;
 	}

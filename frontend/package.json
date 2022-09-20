@@ -72,7 +72,7 @@
 			"text"
 		],
         "coveragePathIgnorePatterns": [
-            "/src/index.js", "/src/reportWebVitals.js"
+            "/src/index.js", "/src/reportWebVitals.js", "/plugin/"
         ]
 	}
 }

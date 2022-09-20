@@ -1,7 +1,7 @@
-import { ROLE_ADMIN, UserContext } from '../context/UserContextProvider';
+import { ROLE_ADMIN, UserContext } from '../../context/UserContextProvider';
 import React, { useContext, useEffect,useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { InfoContext, TYPE_ERROR } from '../context/InfoContextProvider';
+import { InfoContext, TYPE_ERROR } from '../../context/InfoContextProvider';
 export function RequireAuth({ children }) {
 	let infoContext = useContext(InfoContext);
 	let userContext = useContext(UserContext);
