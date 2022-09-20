@@ -664,6 +664,8 @@ def multiPartFileRequest(testCase):
     for i in range(1, len(commandLineArguments)):
         if exists(commandLineArguments[i]):
             fileDict["file"] = (open(commandLineArguments[i], "rb"))
+        else:
+            printError("File '" + commandLineArguments[i] + "' not found")
 
     #actually issue the request
     r = doRequest(requests.post, url, None, fileDict, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))

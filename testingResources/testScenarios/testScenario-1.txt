@@ -18,7 +18,7 @@ submitJob_external testingResources/request-bodys/noNameJob_externalDescription.
 
 
 printComment Submit Job with seperate Job-Description and cancel 
-submitDescription testingResources/cnf/description2.cnf
+submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
 cancelJob /single/
 

@@ -36,6 +36,7 @@ public class PeriodicBufferChecker implements Runnable {
 
 	@Override
 	public void run() {
+		System.out.println("Periodic-Buffer-Checker running");
 		while (forceRetry) {
 			for (Buffer<?> buffer : buffers) {
 				buffer.retryBufferedFunction();
