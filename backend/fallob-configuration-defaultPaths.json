@@ -10,7 +10,7 @@
     "jobStorageTime": 10,
     "eventStorageTime": 10,
     "warningStorageTime": 10,
-    "maxDescriptionStorageSize": 10
+    "maxDescriptionStorageSize": 100000
     },
     "defaults": {
         "priority": 1.0,
