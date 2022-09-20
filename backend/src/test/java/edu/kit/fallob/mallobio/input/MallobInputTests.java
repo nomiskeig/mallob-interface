@@ -95,7 +95,7 @@ public class MallobInputTests {
 	@Test
 	public void testJobFileExistanceAbort() throws IOException {
 		
-		mInput.abortJob(USERNAME, JOB_NAME);
+		mInput.abortJob(USERNAME, JOB_NAME, false);
 		filesSubmitted++;
 		String expectedJSONContent = 
 				"{\""  + MallobAttributeNames.MALLOB_JOB_NAME + "\":\"" + JOB_NAME + "\","

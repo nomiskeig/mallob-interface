@@ -3,6 +3,7 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,6 +18,7 @@ import edu.kit.fallob.mallobio.input.MallobInput;
 import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.mallobio.output.MallobOutputWatcherManager;
 import edu.kit.fallob.springConfig.FallobException;
+
 
 /**
  * This class provides the functionality to submit a Job in Mallob.
@@ -72,7 +74,8 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         }
         for (File description : descriptions) {
             Files.copy(description.toPath(),
-                    Path.of(mallobFolder + "/descriptions/" + description.getName()));
+                    Path.of(mallobFolder + "/descriptions/" + description.getName()), StandardCopyOption.REPLACE_EXISTING
+                    );
         }
         int clientProcessID = mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
 
