@@ -1,0 +1,27 @@
+toggleCatchReqError
+register testingResources/request-bodys/loginAndRegister/registerBodyUser1.json
+register testingResources/request-bodys/loginAndRegister/registerBodyUser2.json
+register testingResources/request-bodys/loginAndRegister/registerBodyUser3.json
+register testingResources/request-bodys/loginAndRegister/registerBodyUser4.json
+toggleCatchReqError
+
+
+
+#user 1 loggt sich ein und reicht einen sehr langen Job ein
+login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/noNameJob_externalDescription.json useLastDescriptionID
+
+#user 2 loggt sich ein und reicht eine beschreibung ein
+login testingResources/request-bodys/loginAndRegister/loginBodyUser2.json
+
+#user 1 erkundigt sich nach seinem Job
+switchUser 0
+getJobInfo /single/
+
+#user 3 loggt sich ein und reicht einen Job inkl. beschreibung ein
+login testingResources/request-bodys/loginAndRegister/loginBodyUser3.json
+
+
+
+login testingResources/request-bodys/loginAndRegister/loginBodyUser4.json
