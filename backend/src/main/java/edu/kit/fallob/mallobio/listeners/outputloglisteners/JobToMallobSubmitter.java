@@ -33,6 +33,8 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     private final static String JOB_ID_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
     private final static String VALID_JOB_REGEX = "Introducing job #[0-9]+";
     private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission %s.* - reason:";
+    private final static String SAME_JOB_NAME_REGEX = "\\[WARN\\] Modification of a file I already parsed! Ignoring.";
+    private final static String SAME_JOB_NAME_ERROR = "A job with this name is already parsed and still running.";
 
     private String username;
     private int jobID;
@@ -42,6 +44,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     private Pattern validJobPattern;
     private Pattern notValidJobPattern;
     private Pattern jobIdPattern;
+    private Pattern sameJobNamePattern;
     private String errorMessage;
     private boolean hasMapping = false;
 
@@ -55,6 +58,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         validJobPattern = Pattern.compile(VALID_JOB_REGEX);
         notValidJobPattern = Pattern.compile(formattedNotValidJobPattern);
         jobIdPattern = Pattern.compile(formattedJobIdPattern);
+        sameJobNamePattern = Pattern.compile(SAME_JOB_NAME_REGEX);
     }
 
     public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription)
@@ -127,7 +131,14 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
                 monitor.notify();
             }
         }
-
+        Matcher sameJobNameMatcher = sameJobNamePattern.matcher(line);
+        if (sameJobNameMatcher.find()) {
+        	jobStatus = JOB_IS_NOT_VALID;
+            errorMessage = SAME_JOB_NAME_ERROR;
+            synchronized (monitor) {
+                monitor.notify();
+            }
+        }
     }
 
 }
