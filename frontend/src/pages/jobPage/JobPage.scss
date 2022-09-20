@@ -78,7 +78,7 @@
 .parameterDisplay {
     width: 70%;
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
     gap: 20px;
     align-content: flex-start
 }
@@ -95,7 +95,7 @@
 
 .embeddedPageContainer {
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
     padding: $panelPadding;
 }
 

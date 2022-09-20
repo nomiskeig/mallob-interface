@@ -1,13 +1,29 @@
 import React from 'react';
 import './GlobalStatsComponent.scss'
 
+/**
+ * This class displays the global statistics.
+ *
+ * @author Simon Giek
+ * @extends React.Component
+ */
 export class GlobalStatsComponent extends React.Component {
 	#globalStats;
+    /**
+     * The construcor
+     *
+     * @param {Object} props
+     * @param {GlobalStats} props.globalStats - Instance of GlobalStats to use.
+     */
 	constructor(props) {
 		super(props);
 		this.#globalStats = props.globalStats;
 	}
 
+    /**
+     * Updates the displayed information.
+     *
+     */
 	update() {
 		this.forceUpdate();
 	}

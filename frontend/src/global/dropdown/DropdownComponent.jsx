@@ -15,6 +15,7 @@ export function DropdownComponent(props) {
 			<div className='dropdownLabel'>{props.title}</div>
 			<div className='dropdown'>
 				<button
+                    data-testid={'dropdownSelected-' + props.title}
 					className='btn btn-secondary dropdown-toggle dropdownButton'
 					data-bs-toggle='dropdown'
 					aria-haspopup='true'
@@ -32,6 +33,7 @@ export function DropdownComponent(props) {
 						return (
 							<li key={index}>
 								<button
+                                    data-testid={'dropdownOption-'+ item.name}
 									disabled={item.disabled ? true : false}
 									className='dropdown-item'
 									type='button'

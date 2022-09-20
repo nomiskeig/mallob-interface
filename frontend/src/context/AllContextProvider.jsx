@@ -7,7 +7,7 @@ import { JobContext } from './JobContextProvider';
 import { InfoContext } from './InfoContextProvider';
 
 
-export const AllContext = createContext({asdfsdfkj: 'asdfkj'});
+export const AllContext = createContext({allContext: 'allContext'});
 export function AllContextProvider({ children }) {
 	return (
 		<UserContext.Consumer>
