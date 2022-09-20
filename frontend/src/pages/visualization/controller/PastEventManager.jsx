@@ -92,9 +92,6 @@ export class PastEventManager extends EventManager {
 	}
 
 	async getSystemState(userContext) {
-		//if (process.env.NODE_ENV === 'development') {
-		//	return null;
-		//}
 
 		let nextTime = this.timeManager.getNextTime();
 		this.#forwardBuffer = nextTime;

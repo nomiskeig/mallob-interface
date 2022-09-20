@@ -1,18 +1,17 @@
-import './JobTable.scss';
-import { configParameters } from '../jobPage/Parameters';
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
-import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
-import { ROLE_ADMIN } from '../../context/UserContextProvider';
-import { StatusLabel } from '../../global/statusLabel/StatusLabel';
-import { UserContext } from '../../context/UserContextProvider';
+import axios from 'axios';
+import React, { useContext, useState } from 'react';
 import {
 	InfoContext,
 	TYPE_ERROR,
 	TYPE_INFO,
-	TYPE_WARNING,
+	TYPE_WARNING
 } from '../../context/InfoContextProvider';
+import { ROLE_ADMIN, UserContext } from '../../context/UserContextProvider';
+import { DropdownComponent } from '../../global/dropdown/DropdownComponent';
+import { StatusLabel } from '../../global/statusLabel/StatusLabel';
+import { configParameters } from '../jobPage/Parameters';
+import './JobTable.scss';
 export const JOBS_SUCCESSFULLY_CANCELED =
 	'Successfully cancelled the selected jobs.';
 export const JOBS_PARTLY_CANCELED_BEGIN =
@@ -31,18 +30,11 @@ export function JobTable(props) {
 
 	let isAdmin = userContext.user.role === ROLE_ADMIN;
 
-	let filteredConfigParams = configParameters.filter((param) => {
-		if (!selectedIndices.includes(param.index)) {
-			return false;
-		}
-		return true;
-	});
-	let possibleParams = configParameters.filter((param) => {
-		if (selectedIndices.includes(param.index)) {
-			return false;
-		}
-		return true;
-	});
+	let filteredConfigParams = configParameters.filter((param) => 
+		selectedIndices.includes(param.index))
+	let possibleParams = configParameters.filter((param) => 
+		!selectedIndices.includes(param.index))
+
 	let paramDropdownItems = possibleParams.map((param) => {
 		return {
 			onClick: () => {
@@ -80,7 +72,7 @@ export function JobTable(props) {
 	function cancelSelectedJobs() {
         if (!window.confirm("Cancel the selected jobs?")) {
             return;
-        };
+        }
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/cancel',
@@ -116,7 +108,7 @@ export function JobTable(props) {
 	function downloadSelectedResults() {
         if (!window.confirm("Download results of the selected jobs?")) {
             return;
-        };
+        }
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/solution',
@@ -160,13 +152,8 @@ export function JobTable(props) {
 							data-testid={'remove-' + internalName}
 							onClick={() =>
 								setSelectedIndices(
-									selectedIndices.filter((indexFromArray) => {
-										if (index === indexFromArray) {
-											return false;
-										}
-										return true;
-									})
-								)
+									selectedIndices.filter((indexFromArray) => 
+										index !== indexFromArray))
 							}
 							xmlns='http://www.w3.org/2000/svg'
 							width='16'
@@ -227,24 +214,18 @@ export function JobTable(props) {
 	// calculate rows
 	let jobs = props.jobs;
 	if (filterUser) {
-		jobs = jobs.filter((job) => {
-			if (job.user == userContext.user.username) {
-				return true;
-			}
-			return false;
-		});
+		jobs = jobs.filter((job) => 
+			job.user == userContext.user.username)
 	}
 	let rows = jobs.map((job) => {
 		let row = { id: job.jobID, status: job.status };
 		filteredConfigParams.forEach((param) => {
 			let value = job;
 			param.path.forEach((path) => {
-                console.log(path, value)
 				if (value == undefined) {
 					return;
 				}
 				value = value[path];
-                console.log(value)
 			});
 
 			row[param.internalName] = value !== undefined ? param.transformOutput(value) : '';

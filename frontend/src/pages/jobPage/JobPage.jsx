@@ -18,8 +18,7 @@ import {
 import './JobPage.scss';
 import axios from 'axios';
 import { InfoContext, TYPE_ERROR, TYPE_WARNING } from '../../context/InfoContextProvider';
-//import { InfoContext} from '../../context/InfoContextProvider';
-function getStatus(job) {
+ function getStatus(job) {
 	let status;
 	switch (job.status) {
 		case 'DONE':
@@ -50,6 +49,7 @@ export function JobPage(props) {
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
+    let [showDescription, setShowDescription] = useState(false);
 
 	let navigate = useNavigate();
 
@@ -77,6 +77,7 @@ export function JobPage(props) {
 
 	// load description
 	useEffect(() => {
+        setShowDescription(false);
 		if (!loaded || !job) {
 			return;
 		}
@@ -98,6 +99,7 @@ export function JobPage(props) {
 			},
 		})
 			.then((res) => {
+                setShowDescription(true);
 				if (res.headers['content-type'].startsWith('application/json')) {
 					// convert the blob to json so we can display the description
 					let fr = new FileReader();
@@ -125,13 +127,20 @@ export function JobPage(props) {
 				}
 			})
 			.catch((err) => {
-				infoContext.handleInformation(
-					`Could not load the description.\nReason: ${
-						err.response.data.message ? err.response.data.message : err.message
-					}`,
-					TYPE_ERROR
-				);
-			});
+				let fr = new FileReader();
+				fr.onload = function () {
+					let result = JSON.parse(fr.result);
+					infoContext.handleInformation(
+						`Could not load the description.\nReason: ${
+							result.message
+								? result.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+				};
+                fr.readAsText(err.response.data);
+            });
 	}, [jobID, loaded, job]);
 
 	function downloadResult() {
@@ -157,6 +166,7 @@ export function JobPage(props) {
 				let fr = new FileReader();
 				fr.onload = function () {
 					let result = JSON.parse(fr.result);
+                    console.log(result)
 					infoContext.handleInformation(
 						`Could not download the result.\nReason: ${
 							result.message
@@ -189,7 +199,6 @@ export function JobPage(props) {
 					value = value[path];
 				});
 				if (value !== undefined) {
-                    console.log(param.internalName, value)
 					parameterDisplayList.push(
 						<div key={getIndexByParam(param)} className='singleParamDisplay'>
 							<InputWithLabel
@@ -295,6 +304,7 @@ export function JobPage(props) {
 					}
 				>
 					<div className={embedded ? '' : 'col-12 col-md-6'}>
+                        {(showDescription || !embedded) &&
 						<div
 							className={
 								embedded
@@ -304,7 +314,7 @@ export function JobPage(props) {
 						>
 							<Header title={'Description'} />
 							{descriptionDisplay}
-						</div>
+						</div>}
 					</div>
 					<div className={embedded ? '' : 'col-12 col-md-6'}>
 						<div
