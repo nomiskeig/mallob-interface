@@ -222,12 +222,10 @@ export function JobTable(props) {
 		filteredConfigParams.forEach((param) => {
 			let value = job;
 			param.path.forEach((path) => {
-                console.log(path, value)
 				if (value == undefined) {
 					return;
 				}
 				value = value[path];
-                console.log(value)
 			});
 
 			row[param.internalName] = value !== undefined ? param.transformOutput(value) : '';
