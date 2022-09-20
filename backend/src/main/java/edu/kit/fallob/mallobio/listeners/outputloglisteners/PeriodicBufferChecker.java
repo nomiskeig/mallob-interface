@@ -3,7 +3,9 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeriodicBufferChecker extends Thread {
+import edu.kit.fallob.configuration.FallobConfiguration;
+
+public class PeriodicBufferChecker implements Runnable {
 	
 	
 	private static PeriodicBufferChecker pbc;
@@ -21,7 +23,7 @@ public class PeriodicBufferChecker extends Thread {
 	private List<Buffer<?>> buffers;
 	
 	private PeriodicBufferChecker() {
-		//this.interval = FallobConfigurations.getInstance().getBufferRetryInterval();
+		this.interval = FallobConfiguration.getInstance().getBufferRetryInterval();
 		buffers = new ArrayList<>();
 		forceRetry = true;
 	}
