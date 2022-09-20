@@ -71,6 +71,9 @@ public class JobInformationCommands {
 				e.printStackTrace();
 			}
 		}
+        if (jobIDs.length == 0) {
+            return jobInformations;
+        }
 
 		if (statusForbiddenCounter == jobIDs.length) {
 			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);

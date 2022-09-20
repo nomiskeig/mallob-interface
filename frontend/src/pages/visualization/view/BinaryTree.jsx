@@ -1,7 +1,13 @@
 import Two from 'two.js';
+import { JobUpdateListener } from '../model/JobUpdateListener';
 import { BinaryTreeNode } from './BinaryTreeNode';
 import { CoordPair } from './CoordPair';
-export class BinaryTree {
+/**
+ * This class displays the binary tree. Uses Two.js.
+ * 
+ * @author Simon Giek
+ */
+export class BinaryTree extends JobUpdateListener {
 	#displayedJobID;
 	#jobStorage;
 	#canvas;
@@ -11,7 +17,15 @@ export class BinaryTree {
 	#processes;
 	#clickedTreeIndex;
     #maxDepth;
+    /**
+     * The constructor.
+     *
+     * @param {JobStorage} jobStorage - The instance of the JObStorage to use.
+     * @param {HTMLElement} canvas - The HTMLElement the binary is rendered on.
+     * @param {int} processes - The maximum amount of processes.
+     */
 	constructor(jobStorage, canvas, processes) {
+        super();
 		this.#jobStorage = jobStorage;
 		this.#canvas = canvas;
 		this.#processes = processes;
@@ -44,10 +58,14 @@ export class BinaryTree {
 		this.#two.update();
 	}
 
-	totalUpdate() {
+	totalUpdate(jobs) {
 		this.clearTree();
 	}
 
+    /**
+     * Removes the displayed tree.
+     *
+     */
 	clearTree() {
 		this.#displayedJobID = null;
 		for (let i = 0; i < this.#processes; i++) {
@@ -57,6 +75,12 @@ export class BinaryTree {
 		this.#two.update();
 	}
 
+    /**
+     * Displays the binary tree of job with the given ID.
+     *
+     * @param {int} jobID - The ID of the job to display.
+     * @param {int} clickedTreeIndex - The index of the vertex to highlight.
+     */
 	displayTree(jobID, clickedTreeIndex) {
 		if (clickedTreeIndex == null) {
 			return;
@@ -72,7 +96,7 @@ export class BinaryTree {
 		vertices.forEach((vertex) => {
 			let index = vertex.getTreeIndex();
 			let node = this.#nodes[index];
-			let coords = this.getCoords(index, biggestIndex);
+			let coords = this.#getCoords(index, biggestIndex);
 			node.setX(coords.getX());
 			node.setY(coords.getY());
 			node.setToJobTreeVertex(vertex, job);
@@ -82,7 +106,7 @@ export class BinaryTree {
 			// set the line to parent, if parent exists
 			let parentVertex = job.getParent(index);
 			if (parentVertex) {
-				let parentCoords = this.getCoords(
+				let parentCoords = this.#getCoords(
 					parentVertex.getTreeIndex(),
 					biggestIndex
 				);
@@ -99,6 +123,14 @@ export class BinaryTree {
 		this.#two.update();
 	}
 
+    /**
+     * Sets the given line to the other given Parameters.
+     *
+     * @param {Line} line - The line to modify.
+     * @param {CoordPair} coords - The coordinates of the index.
+     * @param {CoordPair} parentCoords - The coordinates of the parent index.
+     * @param {Job} job - The job associated with the line.
+     */
 	#setLineToVertex(line, coords, parentCoords, job) {
 		line.stroke = job.getColor();
 		line.linewidth = 4;
@@ -128,14 +160,14 @@ export class BinaryTree {
 		if (add) {
 			// display vertex
 			this.#nodes[updatedTreeIndex].setToJobTreeVertex(vertex, job);
-			let coords = this.getCoords(updatedTreeIndex, biggestIndex);
+			let coords = this.#getCoords(updatedTreeIndex, biggestIndex);
 			this.#nodes[updatedTreeIndex].setX(coords.getX());
 			this.#nodes[updatedTreeIndex].setY(coords.getY());
 			let subtree = job.getSubtree(this.#clickedTreeIndex);
 
 			let parent = job.getParent(updatedTreeIndex);
 			if (parent) {
-				let parentCoords = this.getCoords(parent.getTreeIndex(), biggestIndex);
+				let parentCoords = this.#getCoords(parent.getTreeIndex(), biggestIndex);
 				this.#setLineToVertex(
 					this.#lines[updatedTreeIndex],
 					coords,
@@ -148,7 +180,7 @@ export class BinaryTree {
 			}
 			let leftChild = job.getLeftChild(updatedTreeIndex);
 			if (leftChild) {
-				let childCoords = this.getCoords(
+				let childCoords = this.#getCoords(
 					leftChild.getTreeIndex(),
 					biggestIndex
 				);
@@ -164,7 +196,7 @@ export class BinaryTree {
 			}
 			let rightChild = job.getRightChild(updatedTreeIndex);
 			if (rightChild) {
-				let childCoords = this.getCoords(
+				let childCoords = this.#getCoords(
 					rightChild.getTreeIndex(),
 					biggestIndex
 				);
@@ -194,7 +226,14 @@ export class BinaryTree {
 		this.#two.update();
 	}
 
-	getCoords(treeIndex, highestIndex) {
+    /**
+     * Returns a instance of CoordPair with the coordinates of where the given tree index should be displayed.
+     *
+     * @param {int} treeIndex - The index to get the coords of.
+     * @param {int} highestIndex - The highesete intex a vertex in the binary tree has.
+     * @returns {CoordPair} An instance of CoordPair with the coordinates.
+     */
+	#getCoords(treeIndex, highestIndex) {
 		function getDepth(index) {
 			return Math.trunc(Math.log2(index + 1));
 		}

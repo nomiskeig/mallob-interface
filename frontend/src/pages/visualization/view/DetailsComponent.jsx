@@ -2,20 +2,42 @@ import React from 'react';
 import './DetailsComponent.scss';
 import { Button } from '../../../global/buttons/Button';
 import { JobPageButton } from '../../../global/buttons/JobPageButton';
+/**
+ * This class displays details for the job which is is clicked on in the visualization.
+ * 
+ * @author Simon Giek
+ * @extends React.Component
+ */
 export class DetailsComponent extends React.Component {
 	#jobStorage;
 	#clickedTreeIndex;
 	#jobID;
 
+    /**
+     * The constructor.
+     *
+     * @param {Object} props 
+     * @param {JobStorage} props.jobStorage - The instance of JobStorage to use.
+     */
 	constructor(props) {
 		super(props);
 		this.#jobStorage = props.jobStorage;
 	}
 
+    /**
+     * Sets the private attributes jobID and clickedTreeIndex.
+     *
+     * @param {int} jobID - The ID of the job which was clicked on.
+     * @param {int} clickedTreeIndex - The index of the vertex which was clicked on.
+     */
 	setClicked(jobID, clickedTreeIndex) {
 		this.#jobID = jobID;
 		this.#clickedTreeIndex = clickedTreeIndex;
 	}
+    /**
+     * Updates the displayed information.
+     *
+     */
 	update() {
 		this.forceUpdate();
 	}

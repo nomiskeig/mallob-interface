@@ -1,4 +1,4 @@
-export function InputLabel(props) {
+export function InputField(props) {
 	let id = props.id;
 
 	/* 
@@ -9,6 +9,7 @@ export function InputLabel(props) {
     */
 	return (
 		<input
+            data-testid={'inputField-' + id}
 			placeholder={props.placeholder}
 			id={id}
 			onChange={props.onChange}
