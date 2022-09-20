@@ -79,7 +79,7 @@ public class JobAbortCommands {
 		}
 		JobInformation jobInfo = jobDao.getJobInformation(jobID);
 		try {
-			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
+			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName(), jobInfo.getJobConfiguration().isDone());
 		} catch (IOException e) {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}

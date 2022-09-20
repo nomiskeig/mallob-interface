@@ -19,6 +19,7 @@ import edu.kit.fallob.configuration.FallobConfigReader;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
+import edu.kit.fallob.mallobio.input.MallobInputImplementation;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.CentralOutputLogListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.PeriodicBufferChecker;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
@@ -32,6 +33,7 @@ public class BackendApplication {
 		
 		 //-----------------------Production code.Ddo not use until integration-tests begin--------------------------
 		String pathToFallobConfigFile = args[0];
+		
 		FallobConfigReader reader;
 		try {
 			 reader = new FallobConfigReader(pathToFallobConfigFile);
@@ -82,11 +84,7 @@ public class BackendApplication {
 		//add all listeners to mallobio
 		mallobio.addStaticListeners();
 		
-		if (args.length > 1 && args[1].equals("printMallobLogsToConsole")) {
-			CentralOutputLogListener consolePrinter = new CentralOutputLogListener();
-			MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
-			MallobOutput.getInstance().addResultObjectListener(consolePrinter);
-		}
+		
 
 		
 		//-----------------------add additional file-readers here 
@@ -97,8 +95,25 @@ public class BackendApplication {
 		mallobio.startMallobio();
 		
 		
+		manageFallobParameters(args);
 		
 		SpringApplication.run(BackendApplication.class, args);
+	}
+	
+	
+	private static void manageFallobParameters(String[] args) {
+		
+		for (String s : args) {
+			if (s.equals("printMallobLogsToConsole")) {
+				CentralOutputLogListener consolePrinter = new CentralOutputLogListener();
+				MallobOutput.getInstance().addOutputLogLineListener(consolePrinter);
+				MallobOutput.getInstance().addResultObjectListener(consolePrinter);
+			}
+			
+			if (s.equals("t")) {
+				MallobInputImplementation.getInstance().useTilde();
+			}
+		}
 	}
 
 	@Bean
