@@ -1,14 +1,14 @@
 #Try to register, in case database is new
 
 toggleCatchReqError
-register testingResources/request-bodys/registerBodyUser2.json
+register testingResources/request-bodys/loginAndRegister/registerBodyUser2.json
 toggleCatchReqError
 
 
 #actual test-scenario
 
 #authenticate
-login testingResources/request-bodys/loginBodyUser2.json
+login testingResources/request-bodys/loginAndRegister/loginBodyUser2.json
 
 printComment Introduce Faulty Job, error expeced
 toggleCatchReqError
@@ -18,7 +18,7 @@ toggleCatchReqError
 submitJob_include testingResources/request-bodys/submitJobInclude1Body.json
 
 printComment Submit Job with seperate Job-Description
-submitDescription testingResources/cnf/description2.cnf
+submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
 
 printComment If this fails because of unauthorized access; its because the job-IDs in the json body are hard-coded. They have to match the ons returned in the requests above

@@ -20,6 +20,7 @@ import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.mallobio.MallobFilePathGenerator;
 import edu.kit.fallob.mallobio.MallobReaderStarter;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.CentralOutputLogListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.PeriodicBufferChecker;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
 
@@ -62,6 +63,11 @@ public class BackendApplication {
 		Runnable garbageCollector = new DatabaseGarbageCollector(config.getGarbageCollectorInterval());
 		Thread garbageCollectorThread = new Thread(garbageCollector);
 		garbageCollectorThread.start();
+		
+		//start PeriodicBufferChecker
+		Thread pbc = new Thread(PeriodicBufferChecker.getInstance());
+		pbc.start();
+		
 
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
@@ -89,6 +95,9 @@ public class BackendApplication {
 		mallobio.addIrregularReaders(MallobFilePathGenerator.generatePathToJobMappingsLogFile(config.getMallobBasePath(), config.getAmountProcesses() - 1));
 		
 		mallobio.startMallobio();
+		
+		
+		
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
