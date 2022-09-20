@@ -239,13 +239,16 @@ export function JobTable(props) {
 		filteredConfigParams.forEach((param) => {
 			let value = job;
 			param.path.forEach((path) => {
-				if (!value) {
+                console.log(path, value)
+				if (value == undefined) {
 					return;
 				}
 				value = value[path];
+                console.log(value)
 			});
 
-			row[param.internalName] = value ? param.transformOutput(value) : '';
+			row[param.internalName] = value !== undefined ? param.transformOutput(value) : '';
+
 		});
 		return row;
 	});

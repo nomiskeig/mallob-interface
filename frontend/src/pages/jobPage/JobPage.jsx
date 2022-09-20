@@ -183,12 +183,13 @@ export function JobPage(props) {
 			.forEach((param) => {
 				let value = job;
 				param.path.forEach((path) => {
-					if (!value) {
+					if (value == undefined) {
 						return;
 					}
 					value = value[path];
 				});
-				if (value) {
+				if (value !== undefined) {
+                    console.log(param.internalName, value)
 					parameterDisplayList.push(
 						<div key={getIndexByParam(param)} className='singleParamDisplay'>
 							<InputWithLabel

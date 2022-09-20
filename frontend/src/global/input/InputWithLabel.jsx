@@ -9,7 +9,7 @@ export function InputWithLabel(props) {
 				className='form-control'
                 type={props.datetime ? 'datetime-local': 'text'}
 				disabled={props.disabled ? true : false}
-				value={props.value ? props.value : ''}
+				value={props.value !== undefined ? props.value : ''}
 				onChange={(e) => props.onChange(e.target.value)}
 			></input>
 		</div>

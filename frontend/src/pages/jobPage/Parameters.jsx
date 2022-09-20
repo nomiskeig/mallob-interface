@@ -292,7 +292,7 @@ export const configParameters = [
 	{
 		name: 'Parsing Time',
 		internalName: 'parsing',
-		path: ['resultData', 'time', 'parsing'],
+		path: ['resultData', 'parsingTime'],
 		index: 10,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
@@ -308,7 +308,7 @@ export const configParameters = [
 	{
 		name: 'Processing Time',
 		internalName: 'processing',
-		path: ['resultData', 'time', 'processing'],
+		path: ['resultData', 'processingTime'],
 		index: 11,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
@@ -324,7 +324,7 @@ export const configParameters = [
 	{
 		name: 'Scheduling Time',
 		internalName: 'scheduling',
-		path: ['resultData', 'time', 'scheduling'],
+		path: ['resultData', 'schedulingTime'],
 		index: 12,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
@@ -340,7 +340,7 @@ export const configParameters = [
 	{
 		name: 'Total Time',
 		internalName: 'totalTime',
-		path: ['resultData', 'time', 'total'],
+		path: ['resultData', 'totalTime'],
 		index: 13,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
