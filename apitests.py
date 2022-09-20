@@ -663,7 +663,7 @@ def multiPartFileRequest(testCase):
     fileDict = {}
     for i in range(1, len(commandLineArguments)):
         if exists(commandLineArguments[i]):
-            fileDict["file" + str(i)] = (open(commandLineArguments[i], "rb"))
+            fileDict["file"] = (open(commandLineArguments[i], "rb"))
 
     #actually issue the request
     r = doRequest(requests.post, url, None, fileDict, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
