@@ -7,7 +7,7 @@ import { SettingsContextProvider } from './context/SettingsContextProvider';
 import { UserContextProvider } from './context/UserContextProvider';
 import { InfoContextProvider } from './context/InfoContextProvider';
 import { AllContext, AllContextProvider } from './context/AllContextProvider';
-import { RequireAuth } from './global/RequireAuth';
+import { RequireAuth } from './global/requireAuth/RequireAuth';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import {
 	Navbar,
@@ -22,8 +22,8 @@ import { AdminPage } from './pages/admin/AdminPage';
 import { JobPage } from './pages/jobPage/JobPage';
 import { JobTablePage } from './pages/jobTable/JobTablePage';
 import { SubmitPage } from './pages/submitJob/SubmitPage';
-import { JobPageRedirect } from './pages/jobPage/jobPageRedirect';
-import { RegisterPage } from './pages/register/RegisterPage'
+import { JobPageRedirect } from './pages/jobPage/JobPageRedirect';
+import { RegisterPage } from './pages/register/RegisterPage';
 
 class App extends React.Component {
 	constructor(props) {
@@ -33,33 +33,33 @@ class App extends React.Component {
 	render() {
 		return (
 			<div className='App'>
-				<InfoContextProvider>
-					<UserContextProvider>
-						<JobContextProvider>
-							<SettingsContextProvider>
-								<BrowserRouter>
+				<BrowserRouter>
+					<InfoContextProvider>
+						<UserContextProvider>
+							<JobContextProvider>
+								<SettingsContextProvider>
 									<Routes>
 										<Route path='/login' element={<LoginPage />} />
 										<Route path='/register' element={<RegisterPage />} />
 										<Route
 											path='/visualization'
 											element={
-													<AllContextProvider>
-														<Navbar highlight={PAGE_VIZ} />
-														<AllContext.Consumer>
-															{(context) => (
-																<RequireAuth>
-																	{context.settingsContext.isLoaded && (
-																		<VisualizationPageManager
-																			vpmref={this.vpmref}
-																			ref={this.vpmref}
-																			context={context}
-																		></VisualizationPageManager>
-																	)}
-																</RequireAuth>
-															)}
-														</AllContext.Consumer>
-													</AllContextProvider>
+												<AllContextProvider>
+													<Navbar highlight={PAGE_VIZ} />
+													<AllContext.Consumer>
+														{(context) => (
+															<RequireAuth>
+																{context.settingsContext.isLoaded && (
+																	<VisualizationPageManager
+																		vpmref={this.vpmref}
+																		ref={this.vpmref}
+																		context={context}
+																	></VisualizationPageManager>
+																)}
+															</RequireAuth>
+														)}
+													</AllContext.Consumer>
+												</AllContextProvider>
 											}
 										/>
 										<Route
@@ -117,11 +117,11 @@ class App extends React.Component {
 										/>
 										<Route path='*' element={<NotFoundPage />} />
 									</Routes>
-								</BrowserRouter>
-							</SettingsContextProvider>
-						</JobContextProvider>
-					</UserContextProvider>
-				</InfoContextProvider>
+								</SettingsContextProvider>
+							</JobContextProvider>
+						</UserContextProvider>
+					</InfoContextProvider>
+				</BrowserRouter>
 			</div>
 		);
 	}

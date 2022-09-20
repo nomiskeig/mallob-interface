@@ -317,6 +317,27 @@ public class JobDaoTests {
         Assertions.assertEquals(jobId2, runningAfterUpdate.get(0));
     }
 
+    @Test
+    public void testGetAllJobIdsGlobal() throws FallobException {
+        JobDescription testDescription1 = new JobDescription(new ArrayList<>(), SubmitType.URL);
+        int descriptionId1 = this.jobDao.saveJobDescription(testDescription1, TEST_USERNAME);
+        JobDescription testDescription2 = new JobDescription(new ArrayList<>(), SubmitType.EXCLUSIVE);
+        int descriptionId2 = this.jobDao.saveJobDescription(testDescription2, TEST_USERNAME);
+
+        JobConfiguration config1 = new JobConfiguration("test1", 1.0, "SAT");
+        config1.setDescriptionID(descriptionId1);
+        JobConfiguration config2 = new JobConfiguration("test2", 0.5, "SAT");
+        config2.setDescriptionID(descriptionId2);
+
+        int jobId1 = this.jobDao.saveJobConfiguration(config1, TEST_USERNAME, 1);
+        int jobId2 = this.jobDao.saveJobConfiguration(config2, TEST_USERNAME, 2);
+
+        List<Integer> allJobIds = this.jobDao.getAllJobIds();
+
+        Assertions.assertEquals(allJobIds.get(0), jobId1);
+        Assertions.assertEquals(allJobIds.get(1), jobId2);
+    }
+
     @AfterEach
     public void cleanup() throws IOException {
         TestUtility.removeDatabaseCopy(this.databasePath);

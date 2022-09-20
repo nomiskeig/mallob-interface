@@ -1,11 +1,21 @@
 import { Job } from './Job';
 import { JobTreeVertex } from './JobTreeVertex';
 import { GlobalStats } from './GlobalStats';
+/**
+ * This class is stores and mananges the jobs currenlty in the System. The context is used to set Name and Color of the job, as well as the username and the email of the user.
+ * 
+ * @author Simon Giek
+ */
 export class JobStorage {
 	#jobUpdateListeners;
 	#jobs;
 	#context;
 	#globalStats;
+    /**
+     * The constructor.
+     *
+     * @param {Context} context - The context.
+     */
 	constructor(context) {
 		this.#jobUpdateListeners = [];
 		this.#jobs = [];
@@ -18,20 +28,30 @@ export class JobStorage {
 		this.#globalStats.setActiveJobs(0);
 	}
 
+    /**
+     * Updates the stored context.
+     *
+     * @param {Context} context - The new context.
+     */
 	updateContext(context) {
 		this.#context = context;
 	}
 
+    /**
+     * Deletes the stored jobs.
+     *
+     */
 	reset() {
 		this.#jobs = [];
 		this.#globalStats.setUsedProcesses(0);
 		this.#globalStats.setActiveJobs(0);
 	}
 
-	/**
-	 * @param {Event} events - the events to add
-	 *
-	 */
+    /**
+     * Modifies the stored jobs based on the given events and notifies the the registered JobUpdateListeners about the changes.
+     *
+     * @param {Event[]} events - The events to process.
+     */
 	addEvents(events) {
 		function getSeededRandom(a) {
 			var t = (a += 0x6d2b79f5);
@@ -179,21 +199,42 @@ export class JobStorage {
 		}
 	}
 
+    /**
+     * Registers the given JobUpdateListener.
+     *
+     * @param {JobUpdateListener} jul - The listener to register.
+     */
 	addJobUpdateListener(jul) {
 		this.#jobUpdateListeners.push(jul);
 	}
 
+    /**
+     * Removes the given JobUpdateListener.
+     *
+     * @param {JobUpdateListener} jul - The JobUpdateListener to remove.
+     */
 	removeJobUpdateListener(jul) {
 		let index = this.#jobUpdateListeners.findIndex((e) => e === jul);
-		if (index !== undefined) {
+		if (index !== -1) {
 			this.#jobUpdateListeners.splice(index, 1);
 		}
 	}
 
+    /**
+     * Returns all the currently stored jobs.
+     *
+     * @returns {Job[]} The currently stored jobs.
+     */
 	getAllJobs() {
 		return this.#jobs;
 	}
 
+    /**
+     * Returns the job with the given ID.
+     *
+     * @param {int} jobID - The ID of the job to return.
+     * @returns {Job} The job with the given ID. Returns null if there is no job with the given ID.
+     */
 	getJob(jobID) {
 		let job = this.#jobs.find((e) => e.getJobID() === jobID);
 		if (job === undefined) {
@@ -202,6 +243,11 @@ export class JobStorage {
 		return job;
 	}
 
+    /**
+     * Getter for the instance of the GlobalStats.
+     *
+     * @returns {GlobalStats} The stored instance of GlobalStats.
+     */
 	getGlobalStats() {
 		return this.#globalStats;
 	}

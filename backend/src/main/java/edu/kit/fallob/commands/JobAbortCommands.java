@@ -88,14 +88,14 @@ public class JobAbortCommands {
 	}
 	
 	public List<Integer> abortMultipleJobs(String username, int[] jobIDs) throws FallobException {
-		List<Integer> canceledJobs = new ArrayList<>();
+		List<Integer> cancelledJobs = new ArrayList<>();
 		int statusConflictCounter = 0;
 		int statusForbiddenCounter = 0;
 		int statusNotFoundCounter = 0;
 		for (Integer id : jobIDs) {
 			try {
 				abortSingleJob(username, id);
-				canceledJobs.add(id);
+				cancelledJobs.add(id);
 			} catch (FallobException e) {
 				e.printStackTrace();
 				if (e.getStatus().equals(HttpStatus.CONFLICT)) {
@@ -109,6 +109,9 @@ public class JobAbortCommands {
 				}
 			}
 		}
+        if (jobIDs.length == 0) {
+            return cancelledJobs;
+        }
 		if (statusConflictCounter == jobIDs.length) {
 			throw new FallobException(HttpStatus.CONFLICT, CONFLICT_MESSAGE);
 		}
@@ -119,10 +122,10 @@ public class JobAbortCommands {
 			throw new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MESSAGE);
 		}
 
-		if (canceledJobs.isEmpty()) {
+		if (cancelledJobs.isEmpty()) {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
-		return canceledJobs;
+		return cancelledJobs;
 	}
 	
 	public List<Integer> abortAllJobs(String username) throws FallobException {

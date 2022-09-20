@@ -100,7 +100,7 @@ public class MallobInputImplementation implements MallobInput {
 	@Override
 	public int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) throws IOException, IllegalArgumentException
+			JobDescription jobDescription) throws IOException
 	{
 		
 		int processID = this.getNextProcess();
@@ -112,6 +112,8 @@ public class MallobInputImplementation implements MallobInput {
 		if (jobConfiguration.getAdditionalParameter() != JobConfiguration.OBJECT_NOT_SET) {
 			json = addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
 		}
+        System.out.println("final json:\n" + json);
+
 		
 		String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
@@ -146,11 +148,8 @@ public class MallobInputImplementation implements MallobInput {
 	
 	private JSONObject createSubmitJSON(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) throws IllegalArgumentException
+			JobDescription jobDescription) 
 	{
-		if (userName == null || jobConfiguration.getName() == null || jobConfiguration.getApplication() == null) {
-			throw new IllegalArgumentException("Username, JobName and Application name have to be given");
-		}
 		JSONObject json = new JSONObject();
 		json.put(MallobAttributeNames.MALLOB_USER, userName);
 		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
@@ -221,10 +220,13 @@ public class MallobInputImplementation implements MallobInput {
 	 */
 	private String addAdditionalParameters(String additionalParameter, String json) {
 		//remove json-closing bracket 
-		String newJson = json.toString().substring(0, json.length());
+		String newJson = json.toString().substring(0, json.length()- 1);
 		
+        System.out.println("additionalParameter");
+        System.out.println(additionalParameter);
 		//add additional-parameter tag 
-		return newJson += "," + additionalParameter + "}";
+        String trimmedParameter = additionalParameter.substring(1, additionalParameter.length() -1);
+		return newJson += "," + trimmedParameter + "}";
 	}
 
 
@@ -238,7 +240,8 @@ public class MallobInputImplementation implements MallobInput {
 	private void addJobDescription(JSONObject jobJSON, JobDescription jobDescription) {
 		String[] descriptionPaths = new String[jobDescription.getDescriptionFiles().size()];
 		for (int i = 0; i < descriptionPaths.length; i++) {
-			descriptionPaths[i] = jobDescription.getDescriptionFiles().get(i).getAbsolutePath();
+			descriptionPaths[i] = "./descriptions/" +jobDescription.getDescriptionFiles().get(i).getName();
+             
 		}
 		jobJSON.put(MallobAttributeNames.MALLOB_DESCRIPTION, new JSONArray(descriptionPaths));
 	}

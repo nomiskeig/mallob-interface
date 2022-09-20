@@ -66,6 +66,7 @@ public class JobDaoImpl implements JobDao{
     private static final String DELETE_FROM_JOB_DESCRIPTION = "DELETE FROM jobDescription WHERE descriptionId = ?";
     private static final String DELETE_FROM_META_DATA = "DELETE FROM resultMetaData WHERE jobId=?";
     private static final String GET_ALL_JOBIDS = "SELECT jobId FROM job WHERE username=?";
+    private static final String GET_ALL_JOBIDS_GLOBAL = "SELECT jobId FROM job";
     private static final String GET_SUBMIT_TYPE = "SELECT submitType FROM jobDescription WHERE descriptionId=?";
     private static final String GET_JOB_CONFIGURATION = "SELECT * FROM jobConfiguration WHERE jobId=?";
     private static final String GET_DESCRIPTION_ID = "SELECT descriptionId FROM job WHERE jobId=?";
@@ -581,6 +582,32 @@ public class JobDaoImpl implements JobDao{
         } catch (SQLException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
+    }
+
+    /**
+     * returns a list with all job-ids that are currently stored in the database
+     * @return the list with the job ids
+     * @throws FallobException if an error occurs while accessing the database
+     */
+    @Override
+    public List<Integer> getAllJobIds() throws FallobException {
+        List<Integer> allJobIds = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(GET_ALL_JOBIDS_GLOBAL);
+
+            ResultSet result = statement.executeQuery();
+
+            //iterate over the result
+            while (result.next()) {
+                int jobId = result.getInt(1);
+                allJobIds.add(jobId);
+            }
+        } catch (SQLException e) {
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
+        }
+
+        return allJobIds;
     }
 
 

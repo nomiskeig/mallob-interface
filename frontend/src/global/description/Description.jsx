@@ -41,7 +41,7 @@ export function Description(props) {
             specificDescription = <React.Fragment></React.Fragment>
 	}
 	return (
-		<div className='descriptionContainer d-flex flex-column'>
+		<div data-testid='description' className='descriptionContainer d-flex flex-column'>
 			<DropdownComponent
 				title=''
 				items={dropdownItems}

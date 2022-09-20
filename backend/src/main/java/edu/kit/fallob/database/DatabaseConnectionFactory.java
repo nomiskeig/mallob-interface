@@ -34,7 +34,13 @@ public final class DatabaseConnectionFactory {
     public static Connection getConnection() throws FallobException {
         FallobConfiguration configuration = FallobConfiguration.getInstance();
 
-        String path = String.format(DATABASE_PATH_FORMAT, configuration.getDatabaseBasePath());
+        String databasePath = configuration.getDatabaseBasePath();
+        if (databasePath.endsWith(".mv.db")) {
+           databasePath =  databasePath.substring(0, databasePath.length() - 6);
+            
+        }
+        
+        String path = String.format(DATABASE_PATH_FORMAT, databasePath);
         String username = configuration.getDataBaseUsername();
         String password = configuration.getDatabasePassword();
 

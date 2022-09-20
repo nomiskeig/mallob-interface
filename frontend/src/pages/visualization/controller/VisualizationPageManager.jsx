@@ -9,6 +9,12 @@ import { TimelineComponent } from '../view/TimelineComponent';
 import { GlobalStatsComponent } from '../view/GlobalStatsComponent';
 import { DetailsComponent } from '../view/DetailsComponent';
 import { BinaryTree } from '../view/BinaryTree';
+/**
+ * This class is responsivle for updating the whole page and managing all the parts.
+ *
+ * @author Simon Giek
+ * @extends React.Component
+ */
 export class VisualizationPageManager extends React.Component {
 	#timeManager;
 	#eventManager;
@@ -24,8 +30,13 @@ export class VisualizationPageManager extends React.Component {
 	#binaryTree;
 	#binaryTreeRef;
 	#showDetailsPanel;
+    /**
+     * The constructor.
+     *
+     * @param {Object} props 
+     * @param {Object} props.context - The context used by the page.
+     */
 	constructor(props) {
-
 		super(props);
 		this.#context = props.context;
 		this.#timeManager = new TimeManager();
@@ -37,7 +48,6 @@ export class VisualizationPageManager extends React.Component {
 		this.#globalStatsComponent = React.createRef();
 		this.#detailsComponent = React.createRef();
 		this.#stateLoaded = false;
-		this.#shouldUpdate = true;
 		this.#showDetailsPanel = true;
         this.#shouldUpdate = false;
 	}
@@ -83,6 +93,10 @@ export class VisualizationPageManager extends React.Component {
 		this.#eventManager = null;
 		this.#jobStorage = null;
 	}
+    /**
+     * Updates the displayed view.
+     *
+     */
 	update() {
 		if (!this.#shouldUpdate) {
 			return;
@@ -130,11 +144,13 @@ export class VisualizationPageManager extends React.Component {
 			}
 		}
 	}
-	toggleDetailsPanel() {
-		this.#showDetailsPanel = !this.#showDetailsPanel;
-		this.forceUpdate();
-	}
 
+    /**
+     * Tells the class BinaryTree and DetailsComponent which job and which index has been clicked on in the binarytree.
+     *
+     * @param {int} jobID - The ID of the job which was clicked on.
+     * @param {int} treeIndex - The index of the vertex which was clicked on.
+     */
 	onClick(jobID, treeIndex) {
 		this.#detailsComponent.setClicked(jobID, treeIndex);
 		if (jobID !== null) {
@@ -164,7 +180,10 @@ export class VisualizationPageManager extends React.Component {
 								timeManager={this.#timeManager}
 								context={this.#context}
 								ref={(el) => (this.#timeLineComponent = el)}
-								toggleDetails={this.toggleDetailsPanel.bind(this)}
+                                toggleDetails={() =>{ 
+                                    this.#showDetailsPanel = !this.#showDetailsPanel;
+                                    this.forceUpdate();
+                                }}
 							></TimelineComponent>
 							<GlobalStatsComponent
 								ref={(el) => (this.#globalStatsComponent = el)}

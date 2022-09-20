@@ -14,7 +14,6 @@ export const configParameters = [
 		inputType: INPUT_TYPE_TEXT,
 		showOnJobPage: true,
 		validateValue: (value) => {
-			console.log(value);
 			if (value === undefined) {
 				return {
 					isValid: true,
@@ -77,7 +76,7 @@ export const configParameters = [
 				return {
 					isValid: true,
 				};
-			} else if (!Number.isInteger) {
+			} else if (!Number.isInteger(value * 1)) {
                 return {
                     isValid: false,
                     reason: 'Maximum Demand has to be an integer.'
@@ -124,7 +123,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
-        tooltipText: "Limit for the Wallclock time the job can use. Has to be a number followed by one of ms, s, m, h, d"
+        tooltipText: "Limit for the Wallclock time the job can use. Has to be a number followed by one of ms, s, m, h, d."
 	},
 	{
 		name: 'CPU-Limit',
@@ -153,7 +152,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
-        tooltipText: "Limit for the CPU time the job can use. Has to be a number followed by one of ms, s, m, h, d"
+        tooltipText: "Limit for the CPU time the job can use. Has to be a number followed by one of ms, s, m, h, d."
 	},
 	{
 		name: 'Arrival',
@@ -170,7 +169,7 @@ export const configParameters = [
 			};
 		},
 		transformOutput: (value) => value,
-        tooltipText: "The date and time when the job gets run."
+        tooltipText: "The date and time when the job gets run. Input has to be in your local time zone."
 	},
 	{
 		name: 'Dependencies',
@@ -220,7 +219,7 @@ export const configParameters = [
                     isValid: true
                 };
             }
-            if (!Number.isInteger(value)) {
+            if (!Number.isInteger(value *1)) {
                 return {
                     isValid: false,
                     reason: "Precursor has to be an integer."
@@ -293,7 +292,7 @@ export const configParameters = [
 	{
 		name: 'Parsing Time',
 		internalName: 'parsing',
-		path: ['resultData', 'time', 'parsing'],
+		path: ['resultData', 'parsingTime'],
 		index: 10,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
@@ -309,7 +308,7 @@ export const configParameters = [
 	{
 		name: 'Processing Time',
 		internalName: 'processing',
-		path: ['resultData', 'time', 'processing'],
+		path: ['resultData', 'processingTime'],
 		index: 11,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
@@ -325,7 +324,7 @@ export const configParameters = [
 	{
 		name: 'Scheduling Time',
 		internalName: 'scheduling',
-		path: ['resultData', 'time', 'scheduling'],
+		path: ['resultData', 'schedulingTime'],
 		index: 12,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,
@@ -341,7 +340,7 @@ export const configParameters = [
 	{
 		name: 'Total Time',
 		internalName: 'totalTime',
-		path: ['resultData', 'time', 'total'],
+		path: ['resultData', 'totalTime'],
 		index: 13,
 		width: 200,
 		inputType: INPUT_TYPE_NONE,

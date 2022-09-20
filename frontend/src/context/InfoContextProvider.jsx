@@ -55,11 +55,11 @@ export function InfoContextProvider({ children }) {
 						style={{ top: '90px', zIndex: 10}}
 						role='alert'
 					>
-						<div>{text}</div>
+						<div className='textDiv'>{text}</div>
 						<button
 							type='button'
 							className='btn-close'
-							//data-bs-dismiss='alert'
+                            data-testid='alertCloseButton'
 							aria-label='Close'
 							onClick={() => dismissInformation('')}
 						></button>
