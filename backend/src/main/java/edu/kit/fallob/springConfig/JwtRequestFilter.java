@@ -36,8 +36,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static final String BEARER_WARNING = "JWT Token does not begin with Bearer String";
 
-    private static final int FORBIDDEN_CODE = 403;
-
     private static final String USERNAME = "username";
 
     private static final String AUTHORITY = "authority";

@@ -44,10 +44,10 @@ public class JobResultCommand {
 			throw new FallobException(HttpStatus.BAD_REQUEST, CONTAINS_INCORRECT_JOBID);
 		}
 		if (!uaa.hasResultAccess(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, "Can not access the job.");
 		}
-		if (jobDao.getJobStatus(jobID) == JobStatus.RUNNING) {
-			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
+		if (jobDao.getJobStatus(jobID) != JobStatus.DONE) {
+			throw new FallobException(HttpStatus.NOT_FOUND, "Job is not done.");
 		}
 		return jobDao.getJobResult(jobID);
 	}
@@ -69,6 +69,9 @@ public class JobResultCommand {
 				e.printStackTrace();
 			}
 		}
+        if (jobIDs.length == 0) {
+            return jobResults;
+        }
 
 		if (statusForbiddenCounter == jobIDs.length) {
 			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);

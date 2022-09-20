@@ -146,4 +146,11 @@ public interface JobDao {
      * @throws FallobException if an error occurs while accessing the database
      */
     public List<Integer> getAllRunningJobs() throws FallobException;
+
+    /**
+     * returns a list with all job-ids that are currently stored in the database
+     * @return the list with the job ids
+     * @throws FallobException if an error occurs while accessing the database
+     */
+    public List<Integer> getAllJobIds() throws FallobException;
 }

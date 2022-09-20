@@ -9,6 +9,7 @@ import edu.kit.fallob.dataobjects.JobConfiguration;
 import edu.kit.fallob.dataobjects.JobDescription;
 import edu.kit.fallob.dataobjects.JobStatus;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.JobToMallobSubmitter;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.MallobTimeListener;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.PriorityConverter;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.springConfig.FallobException;
@@ -16,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * This class provides methods which submit a new Job, restart a canceled Job or save a new Jobdescription.
@@ -54,9 +58,10 @@ public class JobSubmitCommands {
 	
 	
 	private int submitJobToMallob(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
-		if (!jobConfigIsOk(jobConfiguration)) {
-			throw new IllegalArgumentException("Illegal Argument in Job-Configuration.");
-		}
+        if (username == null) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "Username can not be null");
+        }
+		jobConfigIsOk(jobConfiguration);
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID;
@@ -78,7 +83,7 @@ public class JobSubmitCommands {
 	 * @param jobConfiguration
 	 * @return
 	 */
-	private boolean jobConfigIsOk(JobConfiguration jobConfiguration) {
+	private void jobConfigIsOk(JobConfiguration jobConfiguration) throws FallobException{
 		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
 			jobConfiguration.setPriority(FallobConfiguration.getInstance().getDefaultJobPriority());
 		}
@@ -88,12 +93,25 @@ public class JobSubmitCommands {
 		if (jobConfiguration.getContentMode() == JobConfiguration.OBJECT_NOT_SET) {
 			jobConfiguration.setContentMode(FallobConfiguration.getInstance().getDefaultContentMode());
 		}
+		if (jobConfiguration.getName() == null) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "Name is required but not provided.");
 
-		//perform checks 
-		return jobConfiguration.getPriority() >= FallobConfiguration.getInstance().getMinJobPriority()
-				|| jobConfiguration.getPriority() <= FallobConfiguration.getInstance().getMaxJobPriority();
-	}
-	
+        }
+        if (jobConfiguration.getApplication() == null) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "Application is required but not provided");
+		}
+
+		//perform checks
+        double minPrio = FallobConfiguration.getInstance().getMinJobPriority();
+        double maxPrio = FallobConfiguration.getInstance().getMaxJobPriority();
+		if (jobConfiguration.getPriority() < minPrio
+				|| jobConfiguration.getPriority() > maxPrio) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "The priority has to be between " + minPrio + " and " + maxPrio);
+
+		}
+    }
+
+
 	
 	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {

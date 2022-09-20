@@ -6,6 +6,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,11 +18,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     private static final long serialVersionUID = -7858869558953243875L;
 
-    private static final String MESSAGE_BEGINNING = "Message: ";
-    private static final String STATUS_BEGINNING = "Status: ";
-    private static final String STATUS_401 = STATUS_BEGINNING + "401 Unauthorized";
-    private static final String STATUS_403 = STATUS_BEGINNING + "403 Forbidden";
-    private static final String NOT_ADMIN_MESSAGE = MESSAGE_BEGINNING + "User is not an admin, access denied";
+    private static final String MESSAGE_BEGINNING = "\"message\":";
+    private static final String STATUS_BEGINNING = "\"status\":";
+    private static final String STATUS_401 = STATUS_BEGINNING + "\"UNAUTHORIZED\"";
+    private static final String STATUS_403 = STATUS_BEGINNING + "\"FORBIDDEN\"";
+
+    private static final String NOT_ADMIN_MESSAGE = MESSAGE_BEGINNING + "\"User is not an admin, access denied.\"";
 
     private static final int FORBIDDEN_CODE = 403;
 
@@ -31,11 +33,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         response.setStatus(UNAUTHORIZED_CODE);
-        String message = MESSAGE_BEGINNING + authException.getMessage();
+        String message = MESSAGE_BEGINNING + "\"" +authException.getMessage() + "\"";
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(STATUS_401 + "\n" + message);
+        out.print("{" + STATUS_401 + "," + message + "}");
         out.flush();
     }
 
@@ -45,7 +47,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(STATUS_403 + "\n" + NOT_ADMIN_MESSAGE);
+        out.print("{" + STATUS_403 + "," + NOT_ADMIN_MESSAGE + "}");
         out.flush();
     }
 }

@@ -82,7 +82,7 @@ public class HttpTests {
 
     private static HttpEntity<String> request;
 
-    private static String FORBIDDEN_MESSAGE = "Status: 403 Forbidden\nMessage: User is not an admin, access denied";
+    private static String FORBIDDEN_MESSAGE = "{\"status\":\"FORBIDDEN\",\"message\":\"User is not an admin, access denied.\"}";
 
 
     @BeforeAll
@@ -109,7 +109,7 @@ public class HttpTests {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 createURLWithPort("/api/v1/jobs/info/global"), HttpMethod.GET, request, String.class);
         String response = responseEntity.getBody();
-        Assertions.assertEquals("Status: 401 Unauthorized\nMessage: Full authentication is required to access this resource", response);
+        Assertions.assertEquals(response, "{\"status\":\"UNAUTHORIZED\",\"message\":\"Full authentication is required to access this resource\"}");
     }
 
     @Test

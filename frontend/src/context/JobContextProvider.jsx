@@ -1,12 +1,14 @@
 import React, { useState, useContext, createContext, useReducer } from 'react';
 import { ROLE_ADMIN, ROLE_USER, UserContext } from './UserContextProvider';
-import { InfoContext, TYPE_ERROR, TYPE_INFO, TYPE_WARNING } from './InfoContextProvider';
+import {
+	InfoContext,
+	TYPE_ERROR,
+	TYPE_INFO,
+} from './InfoContextProvider';
 import axios from 'axios';
 
 function reducer(jobs, action) {
 	switch (action.type) {
-		case 'addJob':
-			return [...jobs, action.newJob];
 		case 'addOrReplaceJob':
 			let index = jobs.findIndex((job) => job.jobID === action.newJob.jobID);
 			if (index !== -1) {
@@ -26,17 +28,10 @@ export const JobContext = createContext({});
 export function JobContextProvider({ children }) {
 	let userContext = useContext(UserContext);
 	let infoContext = useContext(InfoContext);
-	//	const [jobs, setJobs] = useState([]);
 
 	const [jobs, dispatch] = useReducer(reducer, []);
 	let [jobToRestart, setJobToRestart] = useState(null);
 
-	async function fetchJobs() {
-		await axios
-			.get('/api/v1/jobs/all')
-			.then((res) => {}) // setJobs(res))
-			.catch((err) => console.log(err));
-	}
 	function cancelJob(jobID) {
 		axios({
 			method: 'post',
@@ -57,14 +52,15 @@ export function JobContextProvider({ children }) {
 			})
 			.catch((err) => {
 				infoContext.handleInformation(
-					'Could not cancel the job.',
-					TYPE_WARNING
+					`Could not cancel the job.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
 				);
 			});
 	}
 
 	function fetchMostJobsPossible(restrictToOwnJobs, callback) {
-		console.log(userContext.user.token);
 		let apiAddress;
 		if (userContext.user.role === ROLE_USER || restrictToOwnJobs) {
 			apiAddress = '/api/v1/jobs/info/all';
@@ -85,15 +81,16 @@ export function JobContextProvider({ children }) {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
 				infoContext.handleInformation(
-					'Could not load any of the jobs.',
+					`Could not load any of the jobs.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
 					TYPE_ERROR
 				);
 			});
 	}
 	function loadAllJobsOfUser() {
-		this.fetchMostJobsPossible(true);
+		fetchMostJobsPossible(true, null);
 	}
 
 	// loads a single job from the backend and stores it into state;
@@ -131,10 +128,10 @@ export function JobContextProvider({ children }) {
 						},
 					})
 						.then((res) => {
-							dispatch({ type: 'addJob', newJob: res.data });
+							dispatch({ type: 'addOrReplaceJob', newJob: res.data });
 							resolve(res.data);
 						})
-						.catch((res) => reject(null));
+						.catch((res) => reject(res));
 				}
 			}
 		});
@@ -147,7 +144,6 @@ export function JobContextProvider({ children }) {
 				setJobToRestart: setJobToRestart,
 				jobToRestart: jobToRestart,
 				cancelJob: cancelJob,
-				fetchJobs: fetchJobs,
 				fetchMostJobsPossible: fetchMostJobsPossible,
 				getSingleJobInfo: getSingleJobInfo,
 				loadSingleJob: loadSingleJob,

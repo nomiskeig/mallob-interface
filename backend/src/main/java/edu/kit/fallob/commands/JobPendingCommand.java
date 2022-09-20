@@ -22,7 +22,6 @@ public class JobPendingCommand {
 	
 	
 	public JobPendingCommand() throws FallobException{
-		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
 			daoFactory = new DaoFactory();
 			uaa = new UserActionAuthentificater(daoFactory);
@@ -35,10 +34,10 @@ public class JobPendingCommand {
 	
 	public ResultMetaData waitForJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, "This JobID does not belong to the user");
 		}
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
-			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+			throw new FallobException(HttpStatus.BAD_REQUEST, "This Job is not running anymore");
 		}
 		//get mallobID
 		int mallobID = jobDao.getMallobIdByJobId(jobID);
@@ -46,8 +45,14 @@ public class JobPendingCommand {
 		mallobOutput.addOutputLogLineListener(jobListener);
 		jobListener.waitForJob();
 		mallobOutput.removeOutputLogLineListener(jobListener);
-
-		//TODO Temporary fix from kalo (need an ResultMetaData-Object of the job the user is waiting for)
+		ResultMetaData rmd = jobDao.getJobInformation(jobID).getResultMetaData();
+		if (rmd == null) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return jobDao.getJobInformation(jobID).getResultMetaData();
 	}

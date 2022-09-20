@@ -2,13 +2,15 @@ package edu.kit.fallob.api.request.controller;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Kaloyan Enev
  * @version 1.0
  * A response class for json parsing
  */
 public class AbortJobResponse {
-
+    @JsonProperty("cancelled")
     private final List<Integer> jobs;
 
     /**
