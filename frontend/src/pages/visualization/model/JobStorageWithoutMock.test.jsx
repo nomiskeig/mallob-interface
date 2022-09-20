@@ -53,7 +53,6 @@ test('removes a single job correctly', () => {
 	let event = new Event('a time', 3, 2, 1, 1);
 	jobStorage.addEvents([event]);
 	expect(jobStorage.getAllJobs().length).toBe(1);
-	jobStorage.getAllJobs().forEach((job) => console.log(job));
 	let event2 = new Event('a time', 3, 2, 1, 0);
 	jobStorage.addEvents([event2]);
 	expect(jobStorage.getAllJobs().length).toBe(0);

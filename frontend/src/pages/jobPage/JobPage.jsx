@@ -17,6 +17,7 @@ import {
 } from '../../global/statusLabel/StatusLabel';
 import './JobPage.scss';
 import axios from 'axios';
+import { InfoContext, TYPE_ERROR, TYPE_WARNING } from '../../context/InfoContextProvider';
 //import { InfoContext} from '../../context/InfoContextProvider';
 function getStatus(job) {
 	let status;
@@ -45,7 +46,7 @@ export function JobPage(props) {
 	let embedded = props.embedded ? true : false;
 	let jobContext = useContext(JobContext);
 	let userContext = useContext(UserContext);
-	//let infoContext = useContext(InfoContext);
+	let infoContext = useContext(InfoContext);
 	let [loaded, setLoaded] = useState(false);
 	let [loadedDependencies, setLoadedDependencies] = useState(false);
 	let [descriptionDisplay, setDescriptionDisplay] = useState([]);
@@ -55,7 +56,15 @@ export function JobPage(props) {
 	let job = jobContext.jobs.find((job) => job.jobID == jobID);
 	useEffect(() => {
 		if (!loaded) {
-			jobContext.loadSingleJob(jobID);
+            jobContext.getSingleJobInfo(jobID).catch(res => {
+                if (res.response.status === 403) {
+                    infoContext.handleInformation('You have no permission to access this job.', TYPE_ERROR);
+                } else {
+                    infoContext.handleInformation('Could not load the job.', TYPE_WARNING);
+                }
+                navigate('/jobs')
+
+            })
 			setLoaded(true);
 		}
 		if (!loadedDependencies) {
@@ -71,7 +80,7 @@ export function JobPage(props) {
 		if (!loaded || !job) {
 			return;
 		}
-
+ 
 		if (job.user !== userContext.user.username) {
 			setDescriptionDisplay([]);
 			return;
@@ -116,7 +125,12 @@ export function JobPage(props) {
 				}
 			})
 			.catch((err) => {
-				console.log(err.message);
+				infoContext.handleInformation(
+					`Could not load the description.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
 	}, [jobID, loaded, job]);
 
@@ -136,10 +150,24 @@ export function JobPage(props) {
 			let url = window.URL.createObjectURL(new Blob([res.data]));
 			let link = document.createElement('a');
 			link.href = url;
-			link.setAttribute('download', 'description.zip');
+			link.setAttribute('download', 'result-' + jobID + '.zip');
 			document.body.appendChild(link);
 			link.click();
-		});
+		}).catch((err) => {
+				let fr = new FileReader();
+				fr.onload = function () {
+					let result = JSON.parse(fr.result);
+					infoContext.handleInformation(
+						`Could not download the result.\nReason: ${
+							result.message
+								? result.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+				};
+                fr.readAsText(err.response.data);
+            });
 	}
 
 	function cancelJob() {
@@ -155,15 +183,17 @@ export function JobPage(props) {
 			.forEach((param) => {
 				let value = job;
 				param.path.forEach((path) => {
-					if (!value) {
+					if (value == undefined) {
 						return;
 					}
 					value = value[path];
 				});
-				if (value) {
+				if (value !== undefined) {
+                    console.log(param.internalName, value)
 					parameterDisplayList.push(
 						<div key={getIndexByParam(param)} className='singleParamDisplay'>
 							<InputWithLabel
+                                dataTestID={"inputWithLabel-" + param.internalName}
 								disabled={true}
 								value={value}
 								labelText={param.name}
@@ -177,6 +207,7 @@ export function JobPage(props) {
 				parameterDisplayList.push(
 					<div key={key} className='singleParamDisplay'>
 						<InputWithLabel
+                                dataTestID={"inputWithLabel-" + key}
 							disabled={true}
 							value={value}
 							labelText={key}
@@ -202,7 +233,7 @@ export function JobPage(props) {
 	let status = job ? getStatus(job) : null;
 
 	return (
-		<div className={embedded ? 'embeddedPageContainer' : 'jobPageContainer'}>
+		<div data-testid='jobPage' className={embedded ? 'embeddedPageContainer' : 'jobPageContainer'}>
 			<div className={embedded ? '' : 'marginContainer'}>
 				<div className={embedded ? '' : 'row jobPageRow g-0'}>
 					<div className={embedded ? '' : 'col jobPageColumn'}>
@@ -231,7 +262,6 @@ export function JobPage(props) {
 									job.user === userContext.user.username && (
 										<Button
 											onClick={() => {
-                                                console.log(jobID)
 												jobContext.setJobToRestart(jobID);
 												navigate('/submit');
 											}}

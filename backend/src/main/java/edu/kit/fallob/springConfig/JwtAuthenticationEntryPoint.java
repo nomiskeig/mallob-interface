@@ -18,14 +18,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     private static final long serialVersionUID = -7858869558953243875L;
 
-    private static final String MESSAGE_BEGINNING = "Message: ";
-    private static final String STATUS_BEGINNING = "Status: ";
-    private static final String STATUS_401 = STATUS_BEGINNING + "401 Unauthorized";
-    private static final String STATUS_403 = STATUS_BEGINNING + "403 Forbidden";
+    private static final String MESSAGE_BEGINNING = "\"message\":";
+    private static final String STATUS_BEGINNING = "\"status\":";
+    private static final String STATUS_401 = STATUS_BEGINNING + "\"UNAUTHORIZED\"";
+    private static final String STATUS_403 = STATUS_BEGINNING + "\"FORBIDDEN\"";
 
-    private static final String NOT_VERIFIED_OR_CORRUPT_TOKEN = MESSAGE_BEGINNING + "User not verified or corrupt token";
+    private static final String NOT_VERIFIED_OR_CORRUPT_TOKEN = MESSAGE_BEGINNING + "\"User is not verified or the token is corrupt.\"";
 
-    private static final String NOT_ADMIN_MESSAGE = MESSAGE_BEGINNING + "User is not an admin, access denied";
+    private static final String NOT_ADMIN_MESSAGE = MESSAGE_BEGINNING + "\"User is not an admin, access denied.\"";
 
     private static final int FORBIDDEN_CODE = 403;
 
@@ -44,12 +44,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         else {
             response.setStatus(UNAUTHORIZED_CODE);
             status = STATUS_401;
-            message = MESSAGE_BEGINNING + authException.getMessage();
+            message = MESSAGE_BEGINNING + "\"" +authException.getMessage() + "\"";
         }
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(status + "\n" + message);
+        out.print("{" + status + "," + message + "}");
         out.flush();
     }
 
@@ -59,7 +59,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(STATUS_403 + "\n" + NOT_ADMIN_MESSAGE);
+        out.print("{" + STATUS_403 + "," + NOT_ADMIN_MESSAGE + "}");
         out.flush();
     }
 }

@@ -12,6 +12,7 @@ import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,10 +127,14 @@ public class WebLayerTest {
 
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
+    private static final String JSON_JOB_CONFIG = "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
+            "\"maxDemand\":1,\"wallclockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
+            "\"incremental\":true,\"additionalConfig\":{\"key1\":\"value1\",\"key2\":\"value2\"}, \"descriptionID\": 1}";
+
     private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
             "\"maxDemand\":1,\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
-            "\"incremental\":true,\"additionalParameter\":\"parameter\",\"wallclockLimit\":\"1.0\"},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
-            "\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
+            "\"incremental\":true,\"wallclockLimit\":\"1.0\",\"additionalConfig\":{\"key1\":\"value1\",\"key2\":\"value2\"}},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
+            "\"schedulingTime\":1.0,\"totalTime\":1.0,\"usedCpuSeconds\":1.0,\"usedWallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
 
@@ -143,7 +148,7 @@ public class WebLayerTest {
 
     private static final String JOB_ID_JSON = "{\"jobID\":1}";
 
-    private static final String JOB_IDS_JSON = "{\"jobs\":[1,2]}";
+    private static final String JOB_IDS_JSON = "{\"cancelled\":[1,2]}";
     private static final String OK_JSON = "\"OK\"";
 
     private static final String EMAIL = "kalo@student.kit.edu";
@@ -170,7 +175,7 @@ public class WebLayerTest {
         Integer[] dependencies = new Integer[2];
         dependencies[0] = 1;
         dependencies[1] = 2;
-        String params = "parameter";
+        String params = "{\"key1\":\"value1\",\"key2\":\"value2\"}";
         String jobName = "Job1";
         String application = "application";
         jobConfig = new JobConfiguration(jobName, 1, application);
@@ -304,7 +309,7 @@ public class WebLayerTest {
                 });
         SubmitJobRequest submitJobRequest = new SubmitJobRequest(jobConfig);
 
-        this.mockMvc.perform(post("/api/v1/jobs/submit/exclusive/config").content(objectMapper.writeValueAsString(submitJobRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/submit/exclusive/config").content(JSON_JOB_CONFIG)
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
     }
@@ -460,7 +465,7 @@ public class WebLayerTest {
         when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(false);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isConflict()).andExpect(content().string("Job is not active"));
+                .andExpect(status().isConflict()).andExpect(content().string("Job is not active."));
     }
 
     @Test
@@ -470,7 +475,7 @@ public class WebLayerTest {
         when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenReturn(jobIdsList);
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
-        this.mockMvc.perform(post("/api/v1/jobs/cancel/multiple").content(objectMapper.writeValueAsString(abortJobRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/cancel").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JOB_IDS_JSON));
     }
@@ -481,7 +486,7 @@ public class WebLayerTest {
         when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenThrow(new FallobException(HttpStatus.NOT_FOUND, NOT_FOUND_MULTIPLE));
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
-        this.mockMvc.perform(post("/api/v1/jobs/cancel/multiple").content(objectMapper.writeValueAsString(abortJobRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/cancel").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isNotFound()).andExpect(content().string(NOT_FOUND_EXCEPTION_MULTIPLE));
     }
@@ -492,9 +497,9 @@ public class WebLayerTest {
         when(jobAbortCommands.abortMultipleJobs(null, jobIds)).thenReturn(new ArrayList<>());
 
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
-        this.mockMvc.perform(post("/api/v1/jobs/cancel/multiple").content(objectMapper.writeValueAsString(abortJobRequest))
+        this.mockMvc.perform(post("/api/v1/jobs/cancel").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
-                .andExpect(status().isConflict()).andExpect(content().string("No jobs are active"));
+                .andExpect(status().isConflict()).andExpect(content().string("No jobs are active."));
     }
 
     @Test
@@ -842,7 +847,7 @@ public class WebLayerTest {
 
         this.mockMvc.perform(get("/api/v1/jobs/waitFor/{jobId}", 1)).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string("{\"resultMetaData\":{\"parsingTime\":1.0," +
-                        "\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"cpuSeconds\":1.0,\"wallclockSeconds\":1.0}}"));
+                        "\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0,\"usedCpuSeconds\":1.0,\"usedWallclockSeconds\":1.0}}"));
     }
 
     @Test

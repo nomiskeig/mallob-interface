@@ -27,7 +27,7 @@ public class UserController {
     @Autowired
     private FallobCommands fallobCommand;
 
-    private static final String REGISTER_UNSUCCESSFUL = "Registering was unsuccessful";
+    private static final String REGISTER_UNSUCCESSFUL = "Registering was unsuccessful.";
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {

@@ -48,7 +48,6 @@ export function UserContextProvider({ children }) {
 	}
 	function extractPayload(token) {
 		let decoded = jwt.decode(token);
-        console.log('decoded', decoded)
 
 
         if (!decoded) {
@@ -72,6 +71,7 @@ export function UserContextProvider({ children }) {
             payload['role'] = ROLE_USER;
         } else {
             payload['role'] = ROLE_ADMIN
+
         }
 
 		return payload;

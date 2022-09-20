@@ -84,7 +84,7 @@ public class UserDaoImpl implements UserDao{
     /**
      * getter for a user that is identified by the username
      * @param username the name of the user that should be returned
-     * @return the suer object that contains the data or null if the user couldn't be found
+     * @return the user object that contains the data or null if the user couldn't be found
      * @throws FallobException if an error occurs while accessing the database
      */
     @Override
