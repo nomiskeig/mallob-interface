@@ -40,9 +40,7 @@ export class StreamEventManager extends EventManager {
         window.onbeforeunload = () =>  {
             this.closeStream();
         }
-		//if (process.env.NODE_ENV === 'development') {
-		//	return null;
-		//}
+		
 		this.#stream = new XMLHttpRequest();
 		let initialTime = this.timeManager.getNextTime();
 		//TODO: stream authentification

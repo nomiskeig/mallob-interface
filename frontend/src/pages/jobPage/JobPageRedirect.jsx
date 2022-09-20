@@ -1,8 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useContext } from 'react';
 import { JobContext } from '../../context/JobContextProvider';
 import { InfoContext, TYPE_ERROR} from '../../context/InfoContextProvider';
-import { useNavigate } from 'react-router-dom';
 
 export function JobPageRedirect(props) {
 	let { username, jobname } = useParams();

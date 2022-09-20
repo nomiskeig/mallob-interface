@@ -18,8 +18,7 @@ import {
 import './JobPage.scss';
 import axios from 'axios';
 import { InfoContext, TYPE_ERROR, TYPE_WARNING } from '../../context/InfoContextProvider';
-//import { InfoContext} from '../../context/InfoContextProvider';
-function getStatus(job) {
+ function getStatus(job) {
 	let status;
 	switch (job.status) {
 		case 'DONE':
