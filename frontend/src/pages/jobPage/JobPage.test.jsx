@@ -2,12 +2,7 @@ import { JobPage } from './JobPage';
 import '@testing-library/jest-dom';
 import { within } from '@testing-library/dom';
 import React from 'react';
-import {
-	render,
-	screen,
-	waitFor,
-	fireEvent,
-} from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { JobContext } from '../../context/JobContextProvider';
 import { InfoContext } from '../../context/InfoContextProvider';
@@ -200,7 +195,7 @@ test('Does not display the button to download the description if job admin is lo
 	);
 });
 
-test('Displays the input field wiht the description', async () => {
+test('Displays the input field this the description', async () => {
 	fakeJobProvider.jobs.push({
 		jobID: 1,
 		config: {},
@@ -236,9 +231,11 @@ test('Displays the cancel button and can cancel jobs if user who owns the job is
 		user: 'user1',
 		status: 'RUNNING',
 	});
-	axios.mockRejectedValue({
-		response: { data: { message: 'Could not cancel job' } },
-	});
+	axios.mockRejectedValueOnce({
+		response: {
+			data: new Blob([JSON.stringify({ message: 'Could not download' })]),
+		},
+	}),
 	customRender(<JobPage jobID={1} />);
 	const button = screen.getByRole('button', { name: 'Cancel job' });
 	expect(button).not.toBeNull();
@@ -264,9 +261,11 @@ test('Displays the download button if user who owns the job is logged in and can
 		status: 'DONE',
 	});
 	axios.mockRejectedValueOnce({
-		response: { data: { message: 'Could not download' } },
-	});
-	customRender(<JobPage jobID={1} />);
+		response: {
+			data: new Blob([JSON.stringify({ message: 'Could not download' })]),
+		},
+	}),
+		customRender(<JobPage jobID={1} />);
 	const button = screen.getByRole('button', { name: 'Download result' });
 	expect(button).not.toBeNull();
 	expect(axios).toHaveBeenCalledTimes(1);
