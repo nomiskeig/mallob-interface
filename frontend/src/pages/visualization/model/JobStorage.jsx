@@ -1,11 +1,21 @@
 import { Job } from './Job';
 import { JobTreeVertex } from './JobTreeVertex';
 import { GlobalStats } from './GlobalStats';
+/**
+ * This class is stores and mananges the jobs currenlty in the System. The context is used to set Name and Color of the job, as well as the username and the email of the user.
+ * 
+ * @author Simon Giek
+ */
 export class JobStorage {
 	#jobUpdateListeners;
 	#jobs;
 	#context;
 	#globalStats;
+    /**
+     * The constructor.
+     *
+     * @param {Context} context - The context.
+     */
 	constructor(context) {
 		this.#jobUpdateListeners = [];
 		this.#jobs = [];
@@ -18,23 +28,33 @@ export class JobStorage {
 		this.#globalStats.setActiveJobs(0);
 	}
 
+    /**
+     * Updates the stored context.
+     *
+     * @param {Context} context - The new context.
+     */
 	updateContext(context) {
 		this.#context = context;
 	}
 
+    /**
+     * Deletes the stored jobs.
+     *
+     */
 	reset() {
 		this.#jobs = [];
 		this.#globalStats.setUsedProcesses(0);
 		this.#globalStats.setActiveJobs(0);
 	}
 
-	/**
-	 * @param {Event} events - the events to add
-	 *
-	 */
+    /**
+     * Modifies the stored jobs based on the given events and notifies the the registered JobUpdateListeners about the changes.
+     *
+     * @param {Event[]} events - The events to process.
+     */
 	addEvents(events) {
 		function getSeededRandom(a) {
-			var t = (a += 0x6d2b79f5);
+			let t = (a += 0x6d2b79f5);
 			t = Math.imul(t ^ (t >>> 15), t | 1);
 			t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
 			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -65,7 +85,7 @@ export class JobStorage {
 		}
 		function getRandomGrayColor(jobID) {
 			// https://stackoverflow.com/questions/46893750/how-to-generate-random-grey-colors-in-javascript
-			var v = ((getSeededRandom(jobID) * 128) | 0).toString(16);
+			let v = ((getSeededRandom(jobID) * 128) | 0).toString(16);
 			return '#' + v + v + v;
 		}
 		if (!events) {
@@ -89,17 +109,12 @@ export class JobStorage {
 				if (job === undefined) {
 					console.log('non existant job');
                     return;
-					//throw new AppError('Can not stop working on a non-existent job');
 				}
 				if (!job.getVertex(event.getTreeIndex())) {
 					console.log('trying to remove a vertex which is not part of the job');
 					console.log('rank: ' + event.getRank());
 					console.log('treeIndex: ' + event.getTreeIndex());
                     return;
-					//throw new AppError(
-					//	'trying to remove a vertex which is not part of the job.',
-					//	TYPE_UNRECOVERABLE
-					//);
 				}
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() - 1
@@ -157,10 +172,6 @@ export class JobStorage {
 					console.log('trying to add a vertex which is already existent');
 					console.log('rank: ' + rank);
 					console.log('treeIndex ' + treeIndex);
-					//throw new AppError(
-					//	'trying to add a vertex where there is already a vertex existent.',
-					//	TYPE_UNRECOVERABLE
-					//);
 				}
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);
@@ -179,21 +190,42 @@ export class JobStorage {
 		}
 	}
 
+    /**
+     * Registers the given JobUpdateListener.
+     *
+     * @param {JobUpdateListener} jul - The listener to register.
+     */
 	addJobUpdateListener(jul) {
 		this.#jobUpdateListeners.push(jul);
 	}
 
+    /**
+     * Removes the given JobUpdateListener.
+     *
+     * @param {JobUpdateListener} jul - The JobUpdateListener to remove.
+     */
 	removeJobUpdateListener(jul) {
 		let index = this.#jobUpdateListeners.findIndex((e) => e === jul);
-		if (index !== undefined) {
+		if (index !== -1) {
 			this.#jobUpdateListeners.splice(index, 1);
 		}
 	}
 
+    /**
+     * Returns all the currently stored jobs.
+     *
+     * @returns {Job[]} The currently stored jobs.
+     */
 	getAllJobs() {
 		return this.#jobs;
 	}
 
+    /**
+     * Returns the job with the given ID.
+     *
+     * @param {int} jobID - The ID of the job to return.
+     * @returns {Job} The job with the given ID. Returns null if there is no job with the given ID.
+     */
 	getJob(jobID) {
 		let job = this.#jobs.find((e) => e.getJobID() === jobID);
 		if (job === undefined) {
@@ -202,6 +234,11 @@ export class JobStorage {
 		return job;
 	}
 
+    /**
+     * Getter for the instance of the GlobalStats.
+     *
+     * @returns {GlobalStats} The stored instance of GlobalStats.
+     */
 	getGlobalStats() {
 		return this.#globalStats;
 	}

@@ -2,13 +2,11 @@ import './JobTablePage.scss';
 import { JobTable } from './JobTable';
 import { JobPage } from '../jobPage/JobPage';
 import { JobContext } from '../../context/JobContextProvider';
-import { UserContext } from '../../context/UserContextProvider';
 
 import { useEffect, useContext, useState } from 'react';
 
 export function JobTablePage(props) {
 	let jobContext = useContext(JobContext);
-	let userContext = useContext(UserContext);
 
 	useEffect(() => {
 		jobContext.fetchMostJobsPossible();
@@ -24,11 +22,10 @@ export function JobTablePage(props) {
 					<div className='jobTablePagePanel'>
 						<JobTable
 							jobs={jobs}
-							user={userContext.user}
 							setClickedJob={(id) => {
 								setDisplayedJobID(id);
 							}}
-							refresh={() => jobContext.loadAllJobsOfUser()}
+							refresh={() => jobContext.fetchMostJobsPossible(false, null)}
 						></JobTable>
 					</div>
 				</div>

@@ -25,7 +25,10 @@ public class MallobInputImplementation implements MallobInput {
 	
 
 	public static final String NEW_JOB_FILENAME = "newjob";
+	public static final String NEW_JOB_FILENAME_TILDE = "~newjob";
+	
 	public static final String ABORT_FILENAME = "abortjob";
+	public static final String ABORT_FILENAME_TILDE = "~abortjob";
 	
 	public static final String JSON_FILE_EXTENSION = ".json";
 	
@@ -40,6 +43,7 @@ public class MallobInputImplementation implements MallobInput {
 	
 	//these round-robin counters ensure that all requests are uniformly distributed amongst all client-processes; see getNextProcess()
 	private int lastUsedClientProcess = 0;
+	private boolean useTilde = false;
 	
 	public static MallobInputImplementation getInstance() {
 		if (mii == null) {
@@ -85,14 +89,25 @@ public class MallobInputImplementation implements MallobInput {
 	
 
 	@Override
-	public int abortJob(String username, String jobName) throws IOException {
+	public int abortJob(String username, String jobName, boolean isDone) throws IOException {
 		
 		int processID = this.getNextProcess();
+		String abortJson = createAbortJSON(username, jobName, isDone).toString();
 		String filePath = MallobFilePathGenerator.generatePathToMallobAbortDirectory(pathToMallobDirectory, processID) 
 				+ getFileName(ABORT_FILENAME) + JSON_FILE_EXTENSION;
-		
-		this.writeJsonInDirectory(createAbortJSON(username, jobName).toString(), filePath);
-		return processID;
+	
+		if (useTilde) {
+        	String absoluteFilePathTilde =
+    				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
+    				+ getFileName(NEW_JOB_FILENAME_TILDE) + JSON_FILE_EXTENSION;
+
+    		this.writeJsonInDirectoryTilde(abortJson, absoluteFilePathTilde, filePath);
+    		return processID;
+        } else {
+    		this.writeJsonInDirectory(abortJson, filePath);
+    		return processID;
+        }
+
 	}
 	
 
@@ -100,7 +115,7 @@ public class MallobInputImplementation implements MallobInput {
 	@Override
 	public int submitJobToMallob(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) throws IOException, IllegalArgumentException
+			JobDescription jobDescription) throws IOException
 	{
 		
 		int processID = this.getNextProcess();
@@ -113,15 +128,44 @@ public class MallobInputImplementation implements MallobInput {
 			json = addAdditionalParameters(jobConfiguration.getAdditionalParameter(), json);
 		}
         System.out.println("final json:\n" + json);
-
-		
-		String absoluteFilePath =
+        
+        String absoluteFilePath =
 				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
 				+ getFileName(NEW_JOB_FILENAME) + JSON_FILE_EXTENSION;
 
-		this.writeJsonInDirectory(json, absoluteFilePath);
-		
-		return processID;
+        if (useTilde) {
+        	String absoluteFilePathTilde =
+    				MallobFilePathGenerator.generatePathToMallobSubmitDirectory(pathToMallobDirectory, processID)
+    				+ getFileName(NEW_JOB_FILENAME_TILDE) + JSON_FILE_EXTENSION;
+
+    		this.writeJsonInDirectoryTilde(json, absoluteFilePathTilde, absoluteFilePath);
+    		
+    		return processID;
+        }
+        
+        else {
+    		this.writeJsonInDirectory(json, absoluteFilePath);
+    		
+    		return processID;
+        }
+
+	}
+	
+	private void writeJsonInDirectoryTilde(String json, String absoluteFilePathTilde, String absoluteFilePath) throws IOException {
+		File jsonFile = new File(absoluteFilePathTilde);
+		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
+		writer.write(json);
+		writer.close();
+		File fileWithoutTilde = new File(absoluteFilePath);
+		jsonFile.renameTo(fileWithoutTilde);
+	}
+
+	public void useTilde() {
+		this.useTilde = true;
+	}
+	
+	public void dontUseTilde() {
+		this.useTilde = false;
 	}
 	
 	/**
@@ -132,6 +176,7 @@ public class MallobInputImplementation implements MallobInput {
 	 * @throws IOException if writing could not be done 
 	 */
 	private void writeJsonInDirectory(String json, String path) throws IOException {
+		
 		File jsonFile = new File(path);
 		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
 		writer.write(json);
@@ -148,11 +193,8 @@ public class MallobInputImplementation implements MallobInput {
 	
 	private JSONObject createSubmitJSON(String userName, 
 			JobConfiguration jobConfiguration, 
-			JobDescription jobDescription) throws IllegalArgumentException
+			JobDescription jobDescription) 
 	{
-		if (userName == null || jobConfiguration.getName() == null || jobConfiguration.getApplication() == null) {
-			throw new IllegalArgumentException("Username, JobName and Application name have to be given");
-		}
 		JSONObject json = new JSONObject();
 		json.put(MallobAttributeNames.MALLOB_USER, userName);
 		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobConfiguration.getName());
@@ -223,10 +265,13 @@ public class MallobInputImplementation implements MallobInput {
 	 */
 	private String addAdditionalParameters(String additionalParameter, String json) {
 		//remove json-closing bracket 
-		String newJson = json.toString().substring(0, json.length());
+		String newJson = json.toString().substring(0, json.length()- 1);
 		
+        System.out.println("additionalParameter");
+        System.out.println(additionalParameter);
 		//add additional-parameter tag 
-		return newJson += "," + additionalParameter + "}";
+        String trimmedParameter = additionalParameter.substring(1, additionalParameter.length() -1);
+		return newJson += "," + trimmedParameter + "}";
 	}
 
 
@@ -248,11 +293,15 @@ public class MallobInputImplementation implements MallobInput {
 	
 	
 	
-	private JSONObject createAbortJSON(String username, String jobName) {
+	private JSONObject createAbortJSON(String username, String jobName, boolean isDone) {
 		JSONObject json = new JSONObject();
 		json.put(MallobAttributeNames.MALLOB_USER, username);
 		json.put(MallobAttributeNames.MALLOB_JOB_NAME, jobName);
-		json.put(MallobAttributeNames.MALLOB_INTERRUPT, true);
+		if (isDone) {
+			json.put(MallobAttributeNames.MALLOB_DONE, true);
+		} else {
+			json.put(MallobAttributeNames.MALLOB_INTERRUPT, true);
+		}
 		return json;
 	}
 	

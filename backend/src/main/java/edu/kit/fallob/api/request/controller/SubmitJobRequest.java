@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class SubmitJobRequest implements Serializable {
     private List<String> description;
@@ -111,6 +112,8 @@ public class SubmitJobRequest implements Serializable {
     public void setDescriptionID(int decriptionID) {
         jobConfiguration.setDescriptionID(decriptionID);
     }
+    @JsonProperty("additionalConfig") 
+    @JsonDeserialize(using = KeepAsJsonDeserializer.class)
     public String getAdditionalParameter() {
         return jobConfiguration.getAdditionalParameter();
     }

@@ -1,14 +1,15 @@
 import React, { useState, createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
-//import { devSettings } from './devDefaults';
-import { InfoContext, TYPE_WARNING } from './InfoContextProvider';
+import { InfoContext, TYPE_ERROR } from './InfoContextProvider';
 import { UserContext } from './UserContextProvider';
+import { useNavigate } from 'react-router-dom';
 export const SettingsContext = createContext({});
 export function SettingsContextProvider({ children }) {
-	const [settings, setSettings] = useState({ test: 'test' });
+	const [settings, setSettings] = useState({});
 	const [isLoaded, setLoaded] = useState(false);
 	const infoContext = useContext(InfoContext);
 	const userContext = useContext(UserContext);
+	const navigate = useNavigate();
 	useEffect(() => {
 		async function fetchSettings() {
 			await axios({
@@ -22,18 +23,29 @@ export function SettingsContextProvider({ children }) {
 					setSettings(res.data);
 					setLoaded(true);
 				})
-				.catch(() =>
-					infoContext.handleInformation('could not get settings', TYPE_WARNING)
-				);
+				.catch((err) => {
+					if (err.response.status === 401) {
+						infoContext.handleInformation(
+							'The stored token is invalid.',
+							TYPE_ERROR
+						);
+						userContext.logout();
+						navigate('/login');
+						return;
+					}
+					infoContext.handleInformation(
+						`Could not load settings.\nReason: ${
+							err.response.data.message
+								? err.response.data.message
+								: err.message
+						}`,
+						TYPE_ERROR
+					);
+				});
 		}
-		//if (process.env.NODE_ENV === 'development') {
-		//	setSettings(devSettings);
-		//	setLoaded(true);
-		//} else {
 		if (userContext.user.isLoaded) {
 			fetchSettings();
 		}
-		//}
 	}, [infoContext, userContext]);
 
 	return (

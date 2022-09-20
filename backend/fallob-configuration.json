@@ -5,6 +5,7 @@
     "client-processes" : [0],
     "maxJobPriority" : 100.0,
     "minJobPriority" : 0.000001,
+    "buffferRetryInterval" : 500,
     "storage": {
     "garbageCollectorInterval": 10,
     "jobStorageTime": 10,

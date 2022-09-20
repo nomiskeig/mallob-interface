@@ -52,6 +52,6 @@ public interface MallobInput {
 	 * @return ID of the process (mallob) that handled the abortion
 	 * @throws IOException if writing the file was not successful 
 	 */
-	int abortJob(String username, String jobName) throws IOException;
+	int abortJob(String username, String jobName, boolean isDone) throws IOException;
 
 }

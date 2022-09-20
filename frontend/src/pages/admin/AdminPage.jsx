@@ -1,13 +1,14 @@
-import { useContext, useEffect,  useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../context/UserContextProvider';
+import { InfoContext, TYPE_ERROR } from '../../context/InfoContextProvider';
 import './AdminPage.scss';
-//import { Button } from '../../global/buttons/Button';
 import axios from 'axios';
+import format from 'date-fns/format';
 
 export function AdminPage(props) {
 	let userContext = useContext(UserContext);
-    let [warnings, setWarnings ] = useState([])
-
+	let infoContext = useContext(InfoContext);
+	let [warnings, setWarnings] = useState([]);
 
 	//contact API to get Warnings
 	useEffect(() => {
@@ -15,15 +16,20 @@ export function AdminPage(props) {
 			method: 'get',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/system/mallobInfo',
 			headers: {
-				Authorisation: 'Bearer ' + userContext.user.token,
+				Authorization: 'Bearer ' + userContext.user.token,
 			},
 		})
 			.then((res) => {
-                setWarnings(res.data.warnings)
-
+				setWarnings(res.data.warnings);
 			})
-			.catch((res) => {
-				//something went wrong with the request
+			.catch((err) => {
+				setWarnings([...warnings]);
+				infoContext.handleInformation(
+					`Warnings could not be loaded.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
 	}, []);
 
@@ -42,26 +48,36 @@ export function AdminPage(props) {
 	//---------------------------------------functions necessary for warnings-container
 
 	function createWarning(warning, i) {
-		if (i % 2 === 1) {
-			return (
-				<li className='warningsElement warningsElementOne'>
-					{warning.message}
-				</li>
-			);
+		let time;
+		try {
+			time = new Date(warning.timestamp);
+			time = format(time, "MM.dd.yyyy 'at' HH:mm:ss.SSS");
+		} catch (e) {
+			time = '';
 		}
 		return (
-			<li className='warningsElement warningsElementTwo'>{warning.message}</li>
+			<li
+				key={i}
+				className={`warningsElement ${
+					i % 2 === 1 ? 'warningsElementOne' : 'warningsElementTwo'
+				}`}
+			>
+				{time} {warning.message}
+			</li>
 		);
 	}
 
 	function getIndividualWarnings() {
 		const items = [];
-		const warnings = getWarnings();
-		if (warnings == null) {
-			return createWarning('No warnings available', 0);
+		const localWarnings = getWarnings();
+		if (localWarnings == null) {
+			return createWarning(
+				{ message: 'No warnings available', timestamp: '' },
+				0
+			);
 		}
-		for (let i = 0; i < warnings.length; i++) {
-			items.push(createWarning(warnings[i], i));
+		for (let i = 0; i < localWarnings.length; i++) {
+			items.push(createWarning(localWarnings[i], i));
 		}
 		return items;
 	}
@@ -73,7 +89,7 @@ export function AdminPage(props) {
 	function getWarningsElement() {
 		return <nav className='navbar'>{getWarningsAsList()}</nav>;
 	}
-    /*
+	/*
 	//----------------------------------------------------------functions for other containers (windows - e.g. mallob start-button) on the site
 
 	function startMallob() {

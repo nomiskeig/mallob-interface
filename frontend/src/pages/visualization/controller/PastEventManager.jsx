@@ -1,19 +1,24 @@
 import axios from 'axios';
 import { EventManager } from './EventManager';
-import {Event} from './Event'
+import { Event } from './Event';
 import addSeconds from 'date-fns/addSeconds';
 import isAfter from 'date-fns/isAfter';
 import isBefore from 'date-fns/isBefore';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
 
+/**
+ * This class uses the API to get Events of the past and provides them.
+ *
+ * @extends EventManager
+ * @author Simon Giek
+ */
 export class PastEventManager extends EventManager {
 	#forwardBuffer;
-	#backwardBuffer;
-    #isLoading
+	#isLoading;
 	constructor(timeManager) {
 		super(timeManager);
-        this.#isLoading = false;
+		this.#isLoading = false;
 	}
 
 	getNewEvents(userContext) {
@@ -27,9 +32,11 @@ export class PastEventManager extends EventManager {
 						this.#forwardBuffer
 					)
 				) <
-				this.timeManager.getMultiplier() * 5 && !this.#isLoading && !this.timeManager.isPaused()
+					this.timeManager.getMultiplier() * 5 &&
+				!this.#isLoading &&
+				!this.timeManager.isPaused()
 			) {
-                this.#isLoading  =true;
+				this.#isLoading = true;
 				let endTime = addSeconds(
 					this.#forwardBuffer,
 					this.timeManager.getMultiplier() * 20
@@ -44,9 +51,9 @@ export class PastEventManager extends EventManager {
 						startTime: this.#forwardBuffer.toISOString(),
 						endTime: endTime.toISOString(),
 					},
-                    headers: {
-                        Authorization: 'Bearer ' + userContext.user.token,
-                    }
+					headers: {
+						Authorization: 'Bearer ' + userContext.user.token,
+					},
 				}).then((res) => {
 					res.data.events.forEach((event) =>
 						this.events.push(
@@ -64,7 +71,7 @@ export class PastEventManager extends EventManager {
 					});
 
 					this.#forwardBuffer = endTime;
-                        this.#isLoading = false;
+					this.#isLoading = false;
 				});
 			}
 
@@ -80,18 +87,14 @@ export class PastEventManager extends EventManager {
 					isAfter(event.getTime(), this.timeManager.getNextTime()) &&
 					isBefore(event.getTime(), this.timeManager.getLastTime())
 			);
-            return events;
+			return events;
 		}
 	}
 
 	async getSystemState(userContext) {
-		//if (process.env.NODE_ENV === 'development') {
-		//	return null;
-		//}
 
 		let nextTime = this.timeManager.getNextTime();
 		this.#forwardBuffer = nextTime;
-		this.#backwardBuffer = nextTime;
 		this.getNewEvents(userContext);
 		return axios({
 			method: 'get',
@@ -102,20 +105,19 @@ export class PastEventManager extends EventManager {
 			headers: {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
-		})
-			.then((res) => {
-				let result =[];
-				res.data.events.forEach((event) => {
-					let newEvent = new Event(
-						new Date(event.time),
-						event.rank,
-						event.treeIndex,
-						event.jobID,
-						event.load
-					);
-					result.push(newEvent);
-				});
-				return result;
-			})
+		}).then((res) => {
+			let result = [];
+			res.data.events.forEach((event) => {
+				let newEvent = new Event(
+					new Date(event.time),
+					event.rank,
+					event.treeIndex,
+					event.jobID,
+					event.load
+				);
+				result.push(newEvent);
+			});
+			return result;
+		});
 	}
 }

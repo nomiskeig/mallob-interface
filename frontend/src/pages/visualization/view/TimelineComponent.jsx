@@ -5,6 +5,12 @@ import format from 'date-fns/format';
 import addMilliseconds from 'date-fns/addMilliseconds';
 import './TimelineComponent.scss';
 import { TYPE_WARNING } from '../../../context/InfoContextProvider';
+/**
+ * This class displays the timeline and the Pause-/Start-Knopf
+ *
+ * @author Simon Giek
+ * @extends React.Component
+ */
 export class TimelineComponent extends React.Component {
 	#timeManager;
 	#position;
@@ -15,9 +21,18 @@ export class TimelineComponent extends React.Component {
 		this.#context = props.context;
 		this.#timeManager = props.timeManager;
 	}
+    /**
+     * Updates the displayed information.
+     *
+     */
 	update() {
 		this.forceUpdate();
 	}
+    /**
+     * Updates the stored context.
+     *
+     * @param {Context} context - The new context.
+     */
 	updateContext(context) {
 		this.#context = context;
 	}
