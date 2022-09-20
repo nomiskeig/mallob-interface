@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import './SubmitPage.scss';
 import axios from 'axios';
-import format from 'date-fns/format'
+import format from 'date-fns/format';
 import { useNavigate } from 'react-router-dom';
 import { DependencyTable } from '../../global/dependencyTable/DependencyTable';
 import { InputWithLabel } from '../../global/input/InputWithLabel';
@@ -76,13 +76,19 @@ export function SubmitPage(props) {
 		}
 		setJobToSubmit(submittedJob.config);
 		if (submittedJob.config['arrival']) {
-            try {
-			let newJobToSubmit = submittedJob.config;
-			newJobToSubmit['arrival'] = format(new Date(submittedJob.config['arrival']), "yyyy-MM-dd'T'HH:mm");
-            setJobToSubmit(newJobToSubmit);
-            } catch (e) {
-                console.log(e.message)
-            }
+			try {
+				let newJobToSubmit = submittedJob.config;
+				newJobToSubmit['arrival'] = format(
+					new Date(submittedJob.config['arrival']),
+					"yyyy-MM-dd'T'HH:mm"
+				);
+				setJobToSubmit(newJobToSubmit);
+			} catch (err) {
+				infoContext.handleInformation(
+					'Could not parse arrival string.',
+					TYPE_ERROR
+				);
+			}
 		}
 		let newSelectionOptionalIndices = selectedOptionalIndices;
 		configParameters
@@ -148,14 +154,12 @@ export function SubmitPage(props) {
 				navigate('/job/' + res.data.jobID);
 			})
 			.catch((err) => {
-					infoContext.handleInformation(
-						`Job could not be submitted.\nReason: ${
-							err.response.data.message
-								? err.response.data.message
-								: err.message
-						}`,
-						TYPE_ERROR
-					);
+				infoContext.handleInformation(
+					`Job could not be submitted.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
 	}
 
@@ -165,7 +169,7 @@ export function SubmitPage(props) {
 			errors.forEach((error) =>
 				infoContext.handleInformation(error, TYPE_WARNING)
 			);
-            return;
+			return;
 		}
 
 		if (descriptions.length === 0) {
@@ -189,20 +193,20 @@ export function SubmitPage(props) {
 				'Content-Type': 'multipart/form-data',
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
-		}).then((res) => {
-			submitJobExclusiveConfig(res.data.descriptionID);
-		}).catch((err) => {;
-					infoContext.handleInformation(
-						`Job could not be submitted.\nReason: ${
-							err.response.data.message
-								? err.response.data.message
-								: err.message
-						}`,
-						TYPE_ERROR
-					);
-            
-                return;
-            });
+		})
+			.then((res) => {
+				submitJobExclusiveConfig(res.data.descriptionID);
+			})
+			.catch((err) => {
+				infoContext.handleInformation(
+					`Job could not be submitted.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
+
+				return;
+			});
 	}
 
 	function submitJobExclusiveConfig(descriptionID) {
@@ -226,19 +230,19 @@ export function SubmitPage(props) {
 			headers: {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
-		}).then((res) => {
-			infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
-			navigate('/job/' + res.data.jobID);
-		}).catch((err) => {
-					infoContext.handleInformation(
-						`Job could not be submitted.\nReason: ${
-							err.response.data.message
-								? err.response.data.message
-								: err.message
-						}`,
-						TYPE_ERROR
-					);
-            });
+		})
+			.then((res) => {
+				infoContext.handleInformation('Job successfully submitted.', TYPE_INFO);
+				navigate('/job/' + res.data.jobID);
+			})
+			.catch((err) => {
+				infoContext.handleInformation(
+					`Job could not be submitted.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
+			});
 	}
 	function addAddtionalParametersToJob(job) {
 		if (additionalConfig.length === 0) {
@@ -389,7 +393,7 @@ export function SubmitPage(props) {
 	additionalConfig.forEach((config, index) => {
 		optionalParamInputs.push(
 			<AdditionalParam
-                key={-index -1}
+				key={-index - 1}
 				dataTestID={'inputAdditionalParam-' + index}
 				keyValue={config.key}
 				valueValue={config.value}
@@ -458,7 +462,7 @@ export function SubmitPage(props) {
 									{optionalParamInputs}
 									{selectAdditionalParamsItems.length >= 1 && (
 										<DropdownComponent
-                                            key={'addParameterDropdown'}
+											key={'addParameterDropdown'}
 											title={'Add option'}
 											items={selectAdditionalParamsItems}
 										/>

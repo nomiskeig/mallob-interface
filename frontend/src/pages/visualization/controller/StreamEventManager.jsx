@@ -65,7 +65,6 @@ export class StreamEventManager extends EventManager {
 					lastEvent.jobID,
 					lastEvent.load
 				);
-                console.log('first event', newEvent)
 				this.#lastTimeReceived = newEvent.getTime();
 				if (isAfter(newEvent.getTime(), initialTime)) {
 					this.events.push(newEvent);
@@ -76,7 +75,6 @@ export class StreamEventManager extends EventManager {
 				let index = events.length - 2;
 				while (true) {
 					let lastEvent = JSON.parse(events[index]);
-                    console.log('streamed a new event', lastEvent)
 					let date = new Date(lastEvent.time);
 					if (!isAfter(date, this.#lastTimeReceived)) {
 						break;

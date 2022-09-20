@@ -72,7 +72,7 @@ export function RegisterPage(props) {
 
 	function getInputField(placeholder, changeHandler, inputType, testid) {
 		return (
-			<div class='form-outline mb-4'>
+			<div className='form-outline mb-4'>
 				<InputField
                     id={testid}
 					placeholder={placeholder}
@@ -91,8 +91,8 @@ export function RegisterPage(props) {
 	return (
 		<div className='py-5 loginPage'>
 			<div>
-				<div class='text-center'>
-					<h1 class='mt-1 mb-5 pb-1 loginSlogan'>Sign up!</h1>
+				<div className='text-center'>
+					<h1 className='mt-1 mb-5 pb-1 loginSlogan'>Sign up!</h1>
 				</div>
 				<div
 					className='d-flex align-items-center justify-content-center container h-100 formContainer'

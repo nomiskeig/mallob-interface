@@ -4,7 +4,6 @@ import {
 	InfoContext,
 	TYPE_ERROR,
 	TYPE_INFO,
-	TYPE_WARNING,
 } from './InfoContextProvider';
 import axios from 'axios';
 
@@ -62,7 +61,6 @@ export function JobContextProvider({ children }) {
 	}
 
 	function fetchMostJobsPossible(restrictToOwnJobs, callback) {
-		console.log(userContext.user.token);
 		let apiAddress;
 		if (userContext.user.role === ROLE_USER || restrictToOwnJobs) {
 			apiAddress = '/api/v1/jobs/info/all';
@@ -77,14 +75,12 @@ export function JobContextProvider({ children }) {
 			},
 		})
 			.then((res) => {
-                console.log(res.data.information);
 				dispatch({ type: 'setJobs', jobs: res.data.information });
 				if (callback) {
 					callback(res.data.information);
 				}
 			})
 			.catch((err) => {
-				console.log(err);
 				infoContext.handleInformation(
 					`Could not load any of the jobs.\nReason: ${
 						err.response.data.message ? err.response.data.message : err.message

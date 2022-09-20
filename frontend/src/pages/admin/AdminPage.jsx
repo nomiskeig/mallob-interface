@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../context/UserContextProvider';
-import {InfoContext, TYPE_ERROR} from '../../context/InfoContextProvider'
+import { InfoContext, TYPE_ERROR } from '../../context/InfoContextProvider';
 import './AdminPage.scss';
 //import { Button } from '../../global/buttons/Button';
 import axios from 'axios';
-import format from 'date-fns/format'
+import format from 'date-fns/format';
 
 export function AdminPage(props) {
 	let userContext = useContext(UserContext);
-    let infoContext = useContext(InfoContext);
+	let infoContext = useContext(InfoContext);
 	let [warnings, setWarnings] = useState([]);
 
 	//contact API to get Warnings
@@ -24,15 +24,13 @@ export function AdminPage(props) {
 				setWarnings(res.data.warnings);
 			})
 			.catch((err) => {
-					infoContext.handleInformation(
-						`Warnings could not be loaded.\nReason: ${
-							err.response.data.message
-								? err.response.data.message
-								: err.message
-						}`,
-						TYPE_ERROR
-					);
 				setWarnings([...warnings]);
+				infoContext.handleInformation(
+					`Warnings could not be loaded.\nReason: ${
+						err.response.data.message ? err.response.data.message : err.message
+					}`,
+					TYPE_ERROR
+				);
 			});
 	}, []);
 
@@ -54,12 +52,13 @@ export function AdminPage(props) {
 		let time;
 		try {
 			time = new Date(warning.timestamp);
-            time = format(time, "MM.dd.yyyy 'at' HH:mm:ss.SSS")
+			time = format(time, "MM.dd.yyyy 'at' HH:mm:ss.SSS");
 		} catch (e) {
 			time = '';
 		}
 		return (
 			<li
+				key={i}
 				className={`warningsElement ${
 					i % 2 === 1 ? 'warningsElementOne' : 'warningsElementTwo'
 				}`}
@@ -73,7 +72,10 @@ export function AdminPage(props) {
 		const items = [];
 		const localWarnings = getWarnings();
 		if (localWarnings == null) {
-			return createWarning({ message: 'No warnings available', timestamp: "" }, 0);
+			return createWarning(
+				{ message: 'No warnings available', timestamp: '' },
+				0
+			);
 		}
 		for (let i = 0; i < localWarnings.length; i++) {
 			items.push(createWarning(localWarnings[i], i));

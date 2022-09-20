@@ -28,7 +28,6 @@ function DummyDisplay(props) {
 
 test('displays error page when unrecoverable', async () => {
 	render(<DummyDisplay />);
-    screen.debug();
     expect(screen.queryByText(/Unrecoverable error/)).toBeNull();
     await waitFor(() => {
         let button = screen.getByRole('button', {name: "UnrecoverableButton"});
@@ -46,7 +45,6 @@ test('displays error message and error message can be closed again', async () =>
         let button = screen.getByRole('button', {name: "OtherButton"});
         fireEvent.click(button);
     })
-    screen.debug();
     expect(screen.queryByText(/Warning/)).not.toBeNull();
     await waitFor(() => {
         let button = screen.getByTestId("alertCloseButton");

@@ -34,15 +34,15 @@ const fakeInfoProvider = {
 let fakeUserProvider;
 const customRender = (ui, jobProvider, userProvider) => {
 	return render(
-        <BrowserRouter>
-		<InfoContext.Provider value={fakeInfoProvider}>
-			<UserContext.Provider
-				value={userProvider ? userProvider : fakeUserProvider}
-			>
-				<Navbar></Navbar>
-			</UserContext.Provider>
-		</InfoContext.Provider>
-        </BrowserRouter>
+		<BrowserRouter>
+			<InfoContext.Provider value={fakeInfoProvider}>
+				<UserContext.Provider
+					value={userProvider ? userProvider : fakeUserProvider}
+				>
+					<Navbar></Navbar>
+				</UserContext.Provider>
+			</InfoContext.Provider>
+		</BrowserRouter>
 	);
 };
 beforeEach(() => {

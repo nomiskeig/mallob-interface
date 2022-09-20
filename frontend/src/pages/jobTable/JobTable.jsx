@@ -73,12 +73,14 @@ export function JobTable(props) {
 			return;
 		}
 		setCanDownloadsResults(true);
-
 		setCanCancelJobs(true);
 	}
 
+
 	function cancelSelectedJobs() {
-		console.log(selectedJobs);
+        if (!window.confirm("Cancel the selected jobs?")) {
+            return;
+        };
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/cancel',
@@ -91,7 +93,6 @@ export function JobTable(props) {
 		})
 			.then((res) => {
 				if (res.data.cancelled.length === selectedJobs.length) {
-					console.log(infoContext.handleInformation);
 					infoContext.handleInformation(JOBS_SUCCESSFULLY_CANCELED, TYPE_INFO);
 				} else {
 					let notCancelled = selectedJobs.filter(
@@ -104,7 +105,6 @@ export function JobTable(props) {
 				}
 			})
 			.catch((err) => {
-                console.log(err)
 				infoContext.handleInformation(
 					`Could not cancel the selected jobs.\nReason: ${
 						err.response.data.message ? err.response.data.message : err.message
@@ -114,6 +114,9 @@ export function JobTable(props) {
 			});
 	}
 	function downloadSelectedResults() {
+        if (!window.confirm("Download results of the selected jobs?")) {
+            return;
+        };
 		axios({
 			method: 'post',
 			url: process.env.REACT_APP_API_BASE_PATH + '/api/v1/jobs/solution',
@@ -139,14 +142,12 @@ export function JobTable(props) {
 					let result = JSON.parse(fr.result);
 					infoContext.handleInformation(
 						`Could not download the results of the selected jobs.\nReason: ${
-							result.message
-								? result.message
-								: err.message
+							result.message ? result.message : err.message
 						}`,
 						TYPE_ERROR
 					);
 				};
-                fr.readAsText(err.response.data);
+				fr.readAsText(err.response.data);
 			});
 	}
 	function getHeaderButtons(index, name, internalName) {
@@ -227,7 +228,6 @@ export function JobTable(props) {
 	let jobs = props.jobs;
 	if (filterUser) {
 		jobs = jobs.filter((job) => {
-			console.log('user', job.user, 'username', userContext.user.username);
 			if (job.user == userContext.user.username) {
 				return true;
 			}

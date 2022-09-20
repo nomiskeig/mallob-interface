@@ -40,12 +40,18 @@ const customRender = (userProvider) => {
 	);
 };
 
-test('handles no warnings', () => {
+test('handles no warnings', async () => {
 	axios.mockRejectedValueOnce({
 		response: { data: { message: 'Could not load warnings' } },
 	});
-	customRender();
-	expect(screen.getByText(/No warnings available/)).not.toBeNull();
+    await waitFor(() => {
+		customRender();
+    })
+    await waitFor(() => {
+        
+		expect(screen.getByText(/No warnings available/)).not.toBeNull();
+        expect(fakeInfoProvider.handleInformation).toHaveBeenCalledTimes(1);
+    })
 });
 
 test('displays warnings', async () => {
@@ -57,10 +63,14 @@ test('displays warnings', async () => {
 			],
 		},
 	});
-	customRender();
-	await waitFor(() => {
+	act(() => {
+		customRender();
+
+	});
+    await waitFor(() => {
 		let warnings = screen.queryAllByText(/WarningMessage/);
 		expect(warnings).not.toBeNull();
 		expect(warnings).toHaveLength(2);
-	});
+
+    })
 });

@@ -67,7 +67,6 @@ export function TextFieldDescription(props) {
 				className='textFieldTextArea'
 				value={descriptions[currentDescription]}
 				onChange={(e) => {
-					console.log(e.target.value);
 					setSpecificDescription(currentDescription, e.target.value);
 				}}
 				readOnly={props.displayOnly ? true : false}

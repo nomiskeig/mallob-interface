@@ -52,6 +52,7 @@ const customRender = (ui, jobProvider, userProvider) => {
 };
 beforeEach(() => {
 	jest.resetAllMocks();
+    global.confirm = () => true
 	fakeJobProvider = {
 		jobs: [],
 		fetchMostJobsPossible: jest.fn(),

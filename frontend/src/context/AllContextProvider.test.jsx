@@ -29,7 +29,6 @@ function getList(values) {
 
 test('Context should have a default value', () => {
 	render(<DummyDisplay />);
-	screen.debug();
     expect(screen.getByText(/userContext/)).not.toBeNull();
     expect(screen.getByText(/infoContext/)).not.toBeNull();
     expect(screen.getByText(/jobContext/)).not.toBeNull();

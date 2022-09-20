@@ -2,7 +2,6 @@ import { configParameters } from './Parameters';
 
 function getParamByInternalName(name) {
 	let param = configParameters.find((param) => (param.internalName === name));
-    console.log(param);
     return param;
 
 }
@@ -18,7 +17,6 @@ test('Priority checks value', () => {
 
 test("MaxDemand checks value", () => {
   let maxDemand = getParamByInternalName('maxDemand');
-    console.log(maxDemand)
  expect(maxDemand.validateValue(-1)).toEqual(expect.objectContaining({isValid: false}))
  expect(maxDemand.validateValue("not a number")).toEqual(expect.objectContaining({isValid: false}))
 })
@@ -26,7 +24,9 @@ test("MaxDemand checks value", () => {
 test("Application checks value", ()=>{
     let application = getParamByInternalName('application');
     expect(application.validateValue(undefined)).toEqual(expect.objectContaining({isValid: false}))
+    expect(application.validateValue(undefined)).toEqual(expect.objectContaining({isValid: false}))
 })
+
 
 test('Params with no specal validation return true', () => {
 	let paramsToCheck = configParameters.filter(

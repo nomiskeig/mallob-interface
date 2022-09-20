@@ -57,7 +57,6 @@ export function JobPage(props) {
 	useEffect(() => {
 		if (!loaded) {
             jobContext.getSingleJobInfo(jobID).catch(res => {
-                console.log(res);
                 if (res.response.status === 403) {
                     infoContext.handleInformation('You have no permission to access this job.', TYPE_ERROR);
                 } else {
@@ -155,7 +154,6 @@ export function JobPage(props) {
 			document.body.appendChild(link);
 			link.click();
 		}).catch((err) => {
-                console.log(err)
 				let fr = new FileReader();
 				fr.onload = function () {
 					let result = JSON.parse(fr.result);

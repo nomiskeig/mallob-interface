@@ -1,6 +1,5 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { JobContextProvider } from './JobContextProvider';
 import { JobContext } from './JobContextProvider';
@@ -81,12 +80,14 @@ test('Context can fetch most jobs and call callback', async () => {
 	];
 
 	axios.mockResolvedValue({ data: { information: fakeJobs } });
+    await waitFor(() => {
+
 	fireEvent.click(screen.getByRole('button', { name: 'FetchMostJobs' }));
+    })
 	await waitFor(() => {
 		expect(screen.getByText(/testJob/)).not.toBeNull();
 		expect(callback).toHaveBeenCalledTimes(1);
 	});
-	screen.debug();
 });
 test('Loads the jobs of the user', async () => {
 	render(<DummyDisplay />);
@@ -97,14 +98,13 @@ test('Loads the jobs of the user', async () => {
 	];
 
 	axios.mockResolvedValue({ data: { information: fakeJobs } });
-	await waitFor(() => {
+	act(() => {
 		fireEvent.click(screen.getByRole('button', { name: 'LoadJobsOfUser' }));
 	});
-	await waitFor(() => {
+    await waitFor(() =>{
 		expect(screen.getByText(/testJob/)).not.toBeNull();
 		expect(callback).toHaveBeenCalledTimes(0);
-	});
-	screen.debug();
+    }) 
 });
 
 test('Cancels a job', async () => {
@@ -125,7 +125,6 @@ test('Cancels a job', async () => {
 			})
 		);
 	});
-	screen.debug();
 });
 
 test('Gets promise with single job info', async () => {

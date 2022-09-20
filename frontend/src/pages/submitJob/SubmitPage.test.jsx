@@ -76,7 +76,6 @@ beforeAll(() => {
 const date = new Date('2022-09-02T12:47:00.000Z');
 arrivalInput = format(date, "yyyy-MM-dd'T'HH:mm");
 arrival = roundToNearestMinutes(date, {roundingMethod: 'floor'}).toISOString();
-    console.log(arrival)
 
 })
 const precursor = 1;
