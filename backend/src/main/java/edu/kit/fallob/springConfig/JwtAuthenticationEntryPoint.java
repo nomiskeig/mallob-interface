@@ -21,9 +21,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     private static final String STATUS_BEGINNING = "Status: ";
     private static final String STATUS_401 = STATUS_BEGINNING + "401 Unauthorized";
     private static final String STATUS_403 = STATUS_BEGINNING + "403 Forbidden";
-
-    private static final String NOT_VERIFIED_OR_CORRUPT_TOKEN = MESSAGE_BEGINNING + "User not verified or corrupt token";
-
     private static final String NOT_ADMIN_MESSAGE = MESSAGE_BEGINNING + "User is not an admin, access denied";
 
     private static final int FORBIDDEN_CODE = 403;
@@ -33,22 +30,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        String status;
-        String message;
-        if (response.getStatus() == FORBIDDEN_CODE) {
-            status = STATUS_403;
-            message = NOT_VERIFIED_OR_CORRUPT_TOKEN;
-
-        }
-        else {
-            response.setStatus(UNAUTHORIZED_CODE);
-            status = STATUS_401;
-            message = MESSAGE_BEGINNING + authException.getMessage();
-        }
+        response.setStatus(UNAUTHORIZED_CODE);
+        String message = MESSAGE_BEGINNING + authException.getMessage();
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(status + "\n" + message);
+        out.print(STATUS_401 + "\n" + message);
         out.flush();
     }
 

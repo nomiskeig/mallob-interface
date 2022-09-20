@@ -12,8 +12,10 @@ import edu.kit.fallob.springConfig.JwtTokenUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -39,8 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -242,8 +243,11 @@ public class WebLayerTest {
         List<File> filesList = new ArrayList<>();
         filesList.add(file);
         JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
-        FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class);
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
+        try (MockedStatic<FallobConfiguration> mocked = Mockito.mockStatic(FallobConfiguration.class)) {
+            FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class, RETURNS_DEEP_STUBS);
+            mocked.when((MockedStatic.Verification) FallobConfiguration.getInstance()).thenReturn(fallobConfiguration);
+            when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg\\mallob");
+        }
 
         // Using InvocationOnMock as mockito does not use the equals method of jobDescription
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), (any(JobDescription.class)), any(JobConfiguration.class)))

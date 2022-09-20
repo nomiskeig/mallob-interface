@@ -73,7 +73,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
             } catch (UsernameNotFoundException exception) {
-                response.setStatus(FORBIDDEN_CODE);
+                logger.error(exception.getMessage());
             }
 
             // if token is valid configure Spring Security to manually set authentication
