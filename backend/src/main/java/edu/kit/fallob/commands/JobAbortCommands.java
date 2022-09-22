@@ -94,8 +94,11 @@ public class JobAbortCommands {
 		int statusNotFoundCounter = 0;
 		for (Integer id : jobIDs) {
 			try {
-				abortSingleJob(username, id, false);
-				cancelledJobs.add(id);
+				//check if the status of the job is running
+				if (this.jobDao.getJobStatus(id).equals(JobStatus.RUNNING)) {
+					abortSingleJob(username, id, false);
+					cancelledJobs.add(id);
+				}
 			} catch (FallobException e) {
 				e.printStackTrace();
 				if (e.getStatus().equals(HttpStatus.CONFLICT)) {
@@ -129,18 +132,10 @@ public class JobAbortCommands {
 	}
 	
 	public List<Integer> abortAllJobs(String username) throws FallobException {
-		List<Integer> abortedJobs = new ArrayList<>();
 		JobDao jobDao = daoFactory.getJobDao();
 		int[] jobIDs = jobDao.getAllJobsWithStatus(username, JobStatus.RUNNING);
 
-		for (int jobId : jobIDs) {
-			//check again if the job status is running in case it changed
-			if (this.jobDao.getJobStatus(jobId).equals(JobStatus.RUNNING)) {
-				this.abortSingleJob(username, jobId, false);
-				abortedJobs.add(jobId);
-			}
-		}
-		return abortedJobs;
+		return this.abortMultipleJobs(username, jobIDs);
 	}
 	
 	public List<Integer> abortAllGlobalJob(String username) throws FallobException {
