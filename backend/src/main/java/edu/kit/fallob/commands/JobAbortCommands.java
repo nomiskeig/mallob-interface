@@ -130,7 +130,7 @@ public class JobAbortCommands {
 	
 	public List<Integer> abortAllJobs(String username) throws FallobException {
 		JobDao jobDao = daoFactory.getJobDao();
-		int[] jobIDs = jobDao.getAllJobIds(username);
+		int[] jobIDs = jobDao.getAllJobsWithStatus(username, JobStatus.RUNNING);
 		return abortMultipleJobs(username, jobIDs);
 	}
 	
