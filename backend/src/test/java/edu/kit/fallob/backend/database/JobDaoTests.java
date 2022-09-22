@@ -353,20 +353,20 @@ public class JobDaoTests {
         int jobId1 = this.jobDao.saveJobConfiguration(config1, TEST_USERNAME, 1);
         int jobId2 = this.jobDao.saveJobConfiguration(config2, TEST_USERNAME, 2);
 
-        List<Integer> bothRunning = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.RUNNING);
-        Assertions.assertEquals(2, bothRunning.size());
-        Assertions.assertEquals(jobId1, bothRunning.get(0));
-        Assertions.assertEquals(jobId2, bothRunning.get(1));
+        int[] bothRunning = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.RUNNING);
+        Assertions.assertEquals(2, bothRunning.length);
+        Assertions.assertEquals(jobId1, bothRunning[0]);
+        Assertions.assertEquals(jobId2, bothRunning[1]);
 
         this.jobDao.updateJobStatus(jobId1, JobStatus.DONE);
 
-        List<Integer> oneRunning = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.RUNNING);
-        Assertions.assertEquals(1, oneRunning.size());
-        Assertions.assertEquals(jobId2, oneRunning.get(0));
+        int[] oneRunning = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.RUNNING);
+        Assertions.assertEquals(1, oneRunning.length);
+        Assertions.assertEquals(jobId2, oneRunning[0]);
 
-        List<Integer> oneDone = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.DONE);
-        Assertions.assertEquals(1, oneRunning.size());
-        Assertions.assertEquals(jobId1, oneDone.get(0));
+        int[] oneDone = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.DONE);
+        Assertions.assertEquals(1, oneRunning.length);
+        Assertions.assertEquals(jobId1, oneDone[0]);
     }
 
     @AfterEach
