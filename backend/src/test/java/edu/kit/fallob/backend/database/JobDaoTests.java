@@ -338,6 +338,37 @@ public class JobDaoTests {
         Assertions.assertEquals(allJobIds.get(1), jobId2);
     }
 
+    @Test
+    public void testGetJobsWithStatus() throws FallobException {
+        JobDescription testDescription1 = new JobDescription(new ArrayList<>(), SubmitType.URL);
+        int descriptionId1 = this.jobDao.saveJobDescription(testDescription1, TEST_USERNAME);
+        JobDescription testDescription2 = new JobDescription(new ArrayList<>(), SubmitType.EXCLUSIVE);
+        int descriptionId2 = this.jobDao.saveJobDescription(testDescription2, TEST_USERNAME);
+
+        JobConfiguration config1 = new JobConfiguration("test1", 1.0, "SAT");
+        config1.setDescriptionID(descriptionId1);
+        JobConfiguration config2 = new JobConfiguration("test2", 0.5, "SAT");
+        config2.setDescriptionID(descriptionId2);
+
+        int jobId1 = this.jobDao.saveJobConfiguration(config1, TEST_USERNAME, 1);
+        int jobId2 = this.jobDao.saveJobConfiguration(config2, TEST_USERNAME, 2);
+
+        List<Integer> bothRunning = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.RUNNING);
+        Assertions.assertEquals(2, bothRunning.size());
+        Assertions.assertEquals(jobId1, bothRunning.get(0));
+        Assertions.assertEquals(jobId2, bothRunning.get(1));
+
+        this.jobDao.updateJobStatus(jobId1, JobStatus.DONE);
+
+        List<Integer> oneRunning = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.RUNNING);
+        Assertions.assertEquals(1, oneRunning.size());
+        Assertions.assertEquals(jobId2, oneRunning.get(0));
+
+        List<Integer> oneDone = this.jobDao.getAllJobsWithStatus(TEST_USERNAME, JobStatus.DONE);
+        Assertions.assertEquals(1, oneRunning.size());
+        Assertions.assertEquals(jobId1, oneDone.get(0));
+    }
+
     @AfterEach
     public void cleanup() throws IOException {
         TestUtility.removeDatabaseCopy(this.databasePath);

@@ -77,7 +77,8 @@ public class JobDaoImpl implements JobDao{
     private static final String INSERT_RESULT_META_DATA = "INSERT INTO resultMetaData (jobId, usedWallclockSeconds, usedCpuSeconds, timeParsing, timeProcessing, timeScheduling, timeTotal) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String JOB_ID_BY_MALLOB_ID = "SELECT jobId FROM job WHERE mallobId=? ORDER BY submissionTime DESC";
     private static final String MALLOB_ID_BY_JOB_ID = "SELECT mallobId FROM job WHERE jobId=?";
-    private static final String GET_JOBS_WITH_STATUS = "SELECT jobId FROM job WHERE jobStatus=?";
+    private static final String GET_JOBS_WITH_STATUS_GLOBAL = "SELECT jobId FROM job WHERE jobStatus=?";
+    private static final String GET_JOBS_WITH_STATUS = "SELECT jobId FROM job WHERE username=? AND jobStatus=?";
 
     /**
      * the constructor of the class
@@ -566,7 +567,7 @@ public class JobDaoImpl implements JobDao{
         List<Integer> runningJobs = new ArrayList<>();
 
         try {
-            PreparedStatement statement = this.conn.prepareStatement(GET_JOBS_WITH_STATUS);
+            PreparedStatement statement = this.conn.prepareStatement(GET_JOBS_WITH_STATUS_GLOBAL);
             //get all jobs with status RUNNING
             statement.setString(1, JobStatus.RUNNING.name());
 
@@ -608,6 +609,36 @@ public class JobDaoImpl implements JobDao{
         }
 
         return allJobIds;
+    }
+
+    /**
+     * returns the ids of all the jobs from a user that have the specified status
+     *
+     * @param username the name of the user whose jobs should be returned
+     * @param status   the status for which is searched
+     * @return a list that contains the id of the jobs
+     * @throws FallobException if an error occurs while accesing the database
+     */
+    @Override
+    public List<Integer> getAllJobsWithStatus(String username, JobStatus status) throws FallobException {
+        List<Integer> jobIds = new ArrayList<>();
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(GET_JOBS_WITH_STATUS);
+            statement.setString(1, username);
+            statement.setString(2, status.name());
+
+            ResultSet result = statement.executeQuery();
+
+            //iterate over the result
+            while (result.next()) {
+                int jobId = result.getInt(1);
+                jobIds.add(jobId);
+            }
+        } catch (SQLException e) {
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
+        }
+
+        return jobIds;
     }
 
 
