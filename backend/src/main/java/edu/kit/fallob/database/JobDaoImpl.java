@@ -616,11 +616,11 @@ public class JobDaoImpl implements JobDao{
      *
      * @param username the name of the user whose jobs should be returned
      * @param status   the status for which is searched
-     * @return a list that contains the id of the jobs
+     * @return an array that contains the id of the jobs
      * @throws FallobException if an error occurs while accesing the database
      */
     @Override
-    public List<Integer> getAllJobsWithStatus(String username, JobStatus status) throws FallobException {
+    public int[] getAllJobsWithStatus(String username, JobStatus status) throws FallobException {
         List<Integer> jobIds = new ArrayList<>();
         try {
             PreparedStatement statement = this.conn.prepareStatement(GET_JOBS_WITH_STATUS);
@@ -638,7 +638,7 @@ public class JobDaoImpl implements JobDao{
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, DATABASE_ERROR, e);
         }
 
-        return jobIds;
+        return jobIds.stream().mapToInt(i -> i).toArray();
     }
 
 

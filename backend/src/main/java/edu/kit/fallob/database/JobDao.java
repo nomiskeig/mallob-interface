@@ -158,8 +158,8 @@ public interface JobDao {
      * returns the ids of all the jobs from a user that have the specified status
      * @param username the name of the user whose jobs should be returned
      * @param status the status for which is searched
-     * @return a list that contains the id of the jobs
+     * @return an array that contains the id of the jobs
      * @throws FallobException if an error occurs while accesing the database
      */
-    public List<Integer> getAllJobsWithStatus(String username, JobStatus status) throws FallobException;
+    public int[] getAllJobsWithStatus(String username, JobStatus status) throws FallobException;
 }
