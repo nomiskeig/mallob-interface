@@ -1,0 +1,85 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/loginAndRegister/registerBodyUser1.json
+toggleCatchReqError
+
+
+# the test scenario
+
+#authenticate
+login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
+
+# submit 3 jobs with the large description
+printComment submit the large job three times
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
+
+# submit 2 jobs with the short description
+printComment submit 2 short jobs external
+submitDescription testingResources/cnf/shortJobSAT.cnf
+submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExcluded4.json useLastDescriptionID
+
+wait 5
+
+printComment print the infos for all jobs
+getJobInfo /all
+
+# submit another job with the large description and cancel it
+printComment submit a large job and cancel it
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded5.json useLastDescriptionID
+cancelJob /single/
+
+# submit 2 short jobs with inclusive descriptions
+printComment submit 2 short jobs inclusive
+submitJob_include testingResources/request-bodys/submitJobInclude1Body.json
+submitJob_include testingResources/request-bodys/submitJobInclude1Body2.json
+
+wait 5
+
+# print all job infos
+getJobInfo /all
+
+# abort all jobs
+printComment abort all running jobs
+cancelJob /all
+
+wait 3
+
+#print the job infos again
+printComment print the job infos again to confirm that all jobs were aborted
+getJobInfo /all
+
+# submit another 2 long jobs
+printComment submit another 2 long jobs with external description
+submitJob_external testingResources/request-bodys/jobExcluded6.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExcluded7.json useLastDescriptionID
+
+# submit another 2 short jobs
+printComment submit another 2 short jobs
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded8.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExcluded9.json useLastDescriptionID
+
+# submit one last long job
+printComment submit another long job
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded10.json useLastDescriptionID
+
+wait 5
+
+#print the job infos
+getJobInfo /all
+
+# abort all jobs
+printComment abort all running jobs
+cancelJob /all
+
+wait 3
+
+# print the job infos one last time
+getJobInfo /all
