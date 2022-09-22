@@ -444,7 +444,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortSingleJobSuccessfully() throws Exception {
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(true);
+        when(jobAbortCommands.abortSingleJob(null, 1, false)).thenReturn(true);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(OK_JSON));
@@ -453,7 +453,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortSingleJobException() throws Exception {
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
+        when(jobAbortCommands.abortSingleJob(null, 1, false)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
                 .andExpect(status().isForbidden()).andExpect(content().string(JSON_DOES_NOT_OWN_JOB));
@@ -462,7 +462,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortSingleJobUnsuccessfully() throws Exception {
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(false);
+        when(jobAbortCommands.abortSingleJob(null, 1, false)).thenReturn(false);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
                 .andExpect(status().isConflict()).andExpect(content().string("Job is not active."));
@@ -524,7 +524,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortIncrementalJobSuccessfully() throws Exception {
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(true);
+        when(jobAbortCommands.abortSingleJob(null, 1, true)).thenReturn(true);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/incremental/{jobId}", 1)).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(OK_JSON));
@@ -533,7 +533,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void abortIncrementalJobException() throws Exception {
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
+        when(jobAbortCommands.abortSingleJob(null, 1, true)).thenThrow(new FallobException(HttpStatus.FORBIDDEN, USER_DOES_NOT_OWN_JOB));
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/incremental/{jobId}", 1)).andDo(print())
                 .andExpect(status().isForbidden()).andExpect(content().string(JSON_DOES_NOT_OWN_JOB));
@@ -1024,7 +1024,7 @@ public class WebLayerTest {
     @Test
     @WithMockUser
     public void argumentMismatchTest() throws Exception {
-        when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(true);
+        when(jobAbortCommands.abortSingleJob(null, 1, false)).thenReturn(true);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", USERNAME)).andDo(print())
                 .andExpect(status().isBadRequest()).andExpect(content().string("{\"status\":\"BAD_REQUEST\"," +

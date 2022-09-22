@@ -11,6 +11,7 @@ import { AdditionalParam } from '../../global/input/AdditionalParam';
 import {
 	Description,
 	DESCRIPTION_FILE,
+	DESCRIPTION_TEXT_FIELD
 } from '../../global/description/Description';
 import { Header } from '../../global/header/Header';
 import { JobContext } from '../../context/JobContextProvider';
@@ -30,7 +31,6 @@ import {
 	INPUT_TYPE_DATETIME,
 	INPUT_TYPE_NONE,
 } from '../jobPage/Parameters';
-import { DESCRIPTION_TEXT_FIELD } from '../../global/description/Description';
 const FormData = require('form-data');
 const TOOLTIP_ENTER_DELAY = 1000;
 
@@ -205,7 +205,6 @@ export function SubmitPage(props) {
 					TYPE_ERROR
 				);
 
-				return;
 			});
 	}
 

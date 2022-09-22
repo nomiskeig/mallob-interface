@@ -54,7 +54,7 @@ export class JobStorage {
      */
 	addEvents(events) {
 		function getSeededRandom(a) {
-			var t = (a += 0x6d2b79f5);
+			let t = (a += 0x6d2b79f5);
 			t = Math.imul(t ^ (t >>> 15), t | 1);
 			t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
 			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -85,7 +85,7 @@ export class JobStorage {
 		}
 		function getRandomGrayColor(jobID) {
 			// https://stackoverflow.com/questions/46893750/how-to-generate-random-grey-colors-in-javascript
-			var v = ((getSeededRandom(jobID) * 128) | 0).toString(16);
+			let v = ((getSeededRandom(jobID) * 128) | 0).toString(16);
 			return '#' + v + v + v;
 		}
 		if (!events) {
@@ -109,17 +109,12 @@ export class JobStorage {
 				if (job === undefined) {
 					console.log('non existant job');
                     return;
-					//throw new AppError('Can not stop working on a non-existent job');
 				}
 				if (!job.getVertex(event.getTreeIndex())) {
 					console.log('trying to remove a vertex which is not part of the job');
 					console.log('rank: ' + event.getRank());
 					console.log('treeIndex: ' + event.getTreeIndex());
                     return;
-					//throw new AppError(
-					//	'trying to remove a vertex which is not part of the job.',
-					//	TYPE_UNRECOVERABLE
-					//);
 				}
 				this.#globalStats.setUsedProcesses(
 					this.#globalStats.getUsedProcesses() - 1
@@ -177,10 +172,6 @@ export class JobStorage {
 					console.log('trying to add a vertex which is already existent');
 					console.log('rank: ' + rank);
 					console.log('treeIndex ' + treeIndex);
-					//throw new AppError(
-					//	'trying to add a vertex where there is already a vertex existent.',
-					//	TYPE_UNRECOVERABLE
-					//);
 				}
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);

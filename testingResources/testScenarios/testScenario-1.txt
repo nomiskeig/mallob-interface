@@ -1,14 +1,14 @@
 #Try to register, in case database is new
 
 toggleCatchReqError
-register testingResources/request-bodys/registerBodyUser1.json
+register testingResources/request-bodys/loginAndRegister/registerBodyUser1.json
 toggleCatchReqError
 
 
 #actual test-scenario
 
 #authenticate
-login testingResources/request-bodys/loginBodyUser1.json
+login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
 
 printComment Introduce a faulty job to the system. Error is expeced.
 toggleCatchReqError
@@ -18,7 +18,7 @@ submitJob_external testingResources/request-bodys/noNameJob_externalDescription.
 
 
 printComment Submit Job with seperate Job-Description and cancel 
-submitDescription testingResources/cnf/description2.cnf
+submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
 cancelJob /single/
 

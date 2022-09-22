@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../context/UserContextProvider';
 import { InfoContext, TYPE_ERROR } from '../../context/InfoContextProvider';
 import './AdminPage.scss';
-//import { Button } from '../../global/buttons/Button';
 import axios from 'axios';
 import format from 'date-fns/format';
 

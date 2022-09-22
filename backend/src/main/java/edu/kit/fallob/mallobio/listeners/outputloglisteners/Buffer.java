@@ -20,6 +20,7 @@ public class Buffer<T> {
 	public Buffer(BufferFunction<T> f) {
 		bufferedUpdates = new LinkedList<>();
 		bufferFunction = f;
+		PeriodicBufferChecker.getInstance().addBuffer(this);
 	}
 	
 	/**

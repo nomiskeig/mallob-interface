@@ -19,6 +19,7 @@ public class FallobConfiguration {
 	private int amountProcesses;
 	private int maxJobsTotal;
 	private int maxJobsUser;
+	private int bufferRetryInterval;
 	private int[] clientProcesses;
 	private int garbageCollectorInterval;
 	private double minPriority;
@@ -36,7 +37,7 @@ public class FallobConfiguration {
 	private String resultBasePath;
 	private String dataBaseUsername;
 	private String databasePassword;
-
+	
 	private int amountReaderThreads;
 	private int  readingIntervalPerReadingThread;
 
@@ -250,6 +251,16 @@ public class FallobConfiguration {
 
 	public void setDatabasePassword(String databasePassword) {
 		this.databasePassword = databasePassword;
+	}
+
+
+	public int getBufferRetryInterval() {
+		return bufferRetryInterval;
+	}
+
+
+	public void setBufferRetryInterval(int bufferRetryInterval) {
+		this.bufferRetryInterval = bufferRetryInterval;
 	}
 
 
