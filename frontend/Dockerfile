@@ -6,7 +6,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 ENV REACT_APP_API_BASE_PATH="http://localhost:8080"
 WORKDIR /app
 RUN rm -rf *
-COPY ["package.json","package-lock.json*", "./app"]
+COPY ["package.json","package-lock.json*", "./app/"]
 
 COPY . ./
 RUN npm ci 
