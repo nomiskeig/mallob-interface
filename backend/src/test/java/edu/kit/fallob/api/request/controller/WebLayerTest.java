@@ -1,8 +1,6 @@
 package edu.kit.fallob.api.request.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.kit.fallob.api.request.stream.EventStreamStarter;
-import edu.kit.fallob.api.request.stream.StreamInitializer;
 import edu.kit.fallob.commands.*;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.dataobjects.*;
@@ -15,7 +13,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,7 +43,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -232,7 +229,7 @@ public class WebLayerTest {
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
         MockMultipartFile multipartFile = new MockMultipartFile("file", FILE_NAME,
                 MediaType.TEXT_PLAIN_VALUE, DESCRIPTION_CONTENT.getBytes());
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("backend");
 
         when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
 
@@ -270,7 +267,7 @@ public class WebLayerTest {
         List<File> filesList = new ArrayList<>();
         filesList.add(file);
         JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("backend");
 
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
@@ -368,7 +365,7 @@ public class WebLayerTest {
         submitJobRequest.setUrl(url);
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("backend");
 
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
