@@ -39,7 +39,7 @@ public class FallobConfigReaderTests {
 
 	public static final String CONTENT_MODE = "SAT";
 	
-	public static final String DESCRIPTION_BASE_PATH = "backend";
+	public static final String DESCRIPTION_BASE_PATH = "";
 	
 	public static final String DATABASE_BASE_PATH = "/db";
 

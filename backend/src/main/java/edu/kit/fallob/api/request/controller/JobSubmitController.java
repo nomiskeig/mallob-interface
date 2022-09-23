@@ -67,8 +67,15 @@ public class JobSubmitController {
         File file;
         try {
             url = new URL(request.getUrl());
-            file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
-                    + filenameCounter + FILE_EXTENSION);
+            // for tests
+            if (configuration.getDescriptionsbasePath().isEmpty()) {
+                file = new File(FILE_NAME + filenameCounter + FILE_EXTENSION);
+            }
+            // real case
+            else {
+                file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
+                        + filenameCounter + FILE_EXTENSION);
+            }
             try (InputStream in = url.openStream();
                  BufferedInputStream bis = new BufferedInputStream(in);
                  FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
@@ -161,8 +168,16 @@ public class JobSubmitController {
                 return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
             }
             for (String line : lines) {
-                File file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
-                        + filenameCounter + FILE_EXTENSION);
+                File file;
+                // for tests
+                if (configuration.getDescriptionsbasePath().isEmpty()) {
+                    file = new File(FILE_NAME + filenameCounter + FILE_EXTENSION);
+                }
+                // real case
+                else {
+                    file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
+                            + filenameCounter + FILE_EXTENSION);
+                }
                 try (FileWriter myWriter = new FileWriter(file.getAbsolutePath())) {
                     myWriter.write(line);
                     filenameCounter++;
@@ -224,9 +239,16 @@ public class JobSubmitController {
                 FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, JOB_DESCRIPTION_EMPTY);
                 return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
             }
-            File newFile = new File(
-                    configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + "file" + filenameCounter + ".cnf");
-            filenameCounter++;
+            File newFile;
+            // for tests
+            if (configuration.getDescriptionsbasePath().isEmpty()) {
+                newFile = new File(FILE_NAME + filenameCounter + FILE_EXTENSION);
+            }
+            // real case
+            else {
+                newFile = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
+                        + filenameCounter + FILE_EXTENSION);
+            }
             try {
                 requestFile.transferTo(newFile);
             } catch (IOException e) {

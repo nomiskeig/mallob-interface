@@ -229,7 +229,7 @@ public class WebLayerTest {
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
         MockMultipartFile multipartFile = new MockMultipartFile("file", FILE_NAME,
                 MediaType.TEXT_PLAIN_VALUE, DESCRIPTION_CONTENT.getBytes());
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("backend");
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
 
         when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
 
@@ -267,7 +267,7 @@ public class WebLayerTest {
         List<File> filesList = new ArrayList<>();
         filesList.add(file);
         JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("backend");
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
 
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
@@ -365,7 +365,7 @@ public class WebLayerTest {
         submitJobRequest.setUrl(url);
 
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("backend");
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
 
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
