@@ -67,16 +67,18 @@ public class JobSubmitController {
         File file;
         try {
             url = new URL(request.getUrl());
-            file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + url.getFile());
+            file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
+                    + filenameCounter + FILE_EXTENSION);
             try (InputStream in = url.openStream();
                  BufferedInputStream bis = new BufferedInputStream(in);
-                 FileOutputStream fos = new FileOutputStream(file.getName())) {
+                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
 
                 byte[] data = new byte[1024];
                 int count;
                 while ((count = bis.read(data, 0, 1024)) != -1) {
                     fos.write(data, 0, count);
                 }
+                filenameCounter++;
             }
         } catch (IOException | NullPointerException ioException) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
@@ -209,7 +211,7 @@ public class JobSubmitController {
      * Takes a file, transforms it and forwards it.
      * It is also responsible for system error handling
      *
-     * @param file        a multipart file containing the description
+     * @param requestFiles a multipart file array containing the jobDescription
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the id of the submitted description or an error (including a status code and a message in json format)
      */

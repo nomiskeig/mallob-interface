@@ -78,9 +78,11 @@ public class UserController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
+            e.printStackTrace();
             throw new FallobException(HttpStatus.BAD_REQUEST, "USER_DISABLED");
         } catch (BadCredentialsException e) {
-            throw new FallobException(HttpStatus.BAD_REQUEST, "INVALID_CREDENTIALS");
+            e.printStackTrace();
+            throw new FallobException(HttpStatus.BAD_REQUEST, "The provided credentials were invalid");
         }
     }
 

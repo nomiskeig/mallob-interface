@@ -1,6 +1,8 @@
 package edu.kit.fallob.api.request.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.kit.fallob.api.request.stream.EventStreamStarter;
+import edu.kit.fallob.api.request.stream.StreamInitializer;
 import edu.kit.fallob.commands.*;
 import edu.kit.fallob.configuration.FallobConfiguration;
 import edu.kit.fallob.dataobjects.*;
@@ -9,14 +11,13 @@ import edu.kit.fallob.mallobio.outputupdates.Warning;
 import edu.kit.fallob.springConfig.FallobException;
 import edu.kit.fallob.springConfig.JwtAuthenticationEntryPoint;
 import edu.kit.fallob.springConfig.JwtTokenUtil;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,9 +33,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -42,8 +47,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -129,14 +133,12 @@ public class WebLayerTest {
 
     private static final String JSON_DOES_NOT_OWN_JOB = "{\"status\":\"FORBIDDEN\",\"message\":\"" + USER_DOES_NOT_OWN_JOB + "\"}";
 
-    private static final String JSON_JOB_CONFIG = "{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
-            "\"maxDemand\":1,\"wallclockLimit\":\"1.0\",\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
-            "\"incremental\":true,\"additionalConfig\":{\"key1\":\"value1\",\"key2\":\"value2\"}, \"descriptionID\": 1}";
-
-    private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0,\"application\":\"application\"," +
-            "\"maxDemand\":1,\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\",\"dependencies\":[1,2]," +
-            "\"incremental\":true,\"wallclockLimit\":\"1.0\",\"additionalConfig\":{\"key1\":\"value1\",\"key2\":\"value2\"}},\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0," +
-            "\"schedulingTime\":1.0,\"totalTime\":1.0,\"usedCpuSeconds\":1.0,\"usedWallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
+    private static final String JSON_JOB_INFORMATION = "{\"config\":{\"name\":\"Job1\",\"priority\":1.0," +
+            "\"application\":\"SAT\",\"maxDemand\":1,\"cpuLimit\":\"1.0\",\"arrival\":\"bspArrival\"," +
+            "\"dependencies\":[1,2],\"contentMode\":\"text\",\"incremental\":true,\"precursor\":1," +
+            "\"assumptions\":\"assumptions\",\"wallclockLimit\":\"1.0\"}," +
+            "\"resultData\":{\"parsingTime\":1.0,\"processingTime\":1.0,\"schedulingTime\":1.0,\"totalTime\":1.0," +
+            "\"usedCpuSeconds\":1.0,\"usedWallclockSeconds\":1.0},\"email\":\"kalo@student.kit.edu\"," +
             "\"user\":\"kalo\",\"submitTime\":\"12:34:32\",\"status\":\"DONE\",\"jobID\":1}";
     private static final String JSON_MULTIPLE_JOB_INFORMATION = "{\"information\":[" + JSON_JOB_INFORMATION + "]}";
 
@@ -163,7 +165,13 @@ public class WebLayerTest {
 
     private static final String AUTHORITY_ADMIN = "ADMIN";
 
-    private static final String AUTHORITY_NORMAL_USER = "NORMAL_USER";
+    private static final String NO_JOBS_ACTIVE = "No jobs are active";
+
+    private static final String JSON_NO_JOBS_ACTIVE = "{\"status\":\"CONFLICT\",\"message\":\"" + NO_JOBS_ACTIVE + "\"}";
+
+    private static FallobConfiguration fallobConfiguration;
+
+    private static SubmitJobRequest submitJobRequest;
 
 
     @BeforeAll
@@ -177,26 +185,43 @@ public class WebLayerTest {
         Integer[] dependencies = new Integer[2];
         dependencies[0] = 1;
         dependencies[1] = 2;
-        String params = "{\"key1\":\"value1\",\"key2\":\"value2\"}";
         String jobName = "Job1";
-        String application = "application";
-        jobConfig = new JobConfiguration(jobName, 1, application);
-        jobConfig.setDescriptionID(1);
-        jobConfig.setMaxDemand(1);
-        jobConfig.setAdditionalParameter(params);
-        jobConfig.setIncremental(true);
-        jobConfig.setDependencies(dependencies);
-        jobConfig.setWallClockLimit(String.valueOf(1.0));
-        jobConfig.setCpuLimit(String.valueOf(1.0));
-        jobConfig.setArrival("bspArrival");
+        submitJobRequest = new SubmitJobRequest();
+        submitJobRequest.setApplication("SAT");
+        submitJobRequest.setPriority(1.0);
+        submitJobRequest.setName(jobName);
+        submitJobRequest.setDescriptionID(1);
+        submitJobRequest.setMaxDemand(1);
+        submitJobRequest.setIncremental(true);
+        submitJobRequest.setDependencies(dependencies);
+        submitJobRequest.setWallClockLimit(String.valueOf(1.0));
+        submitJobRequest.setCpuLimit(String.valueOf(1.0));
+        submitJobRequest.setArrival("bspArrival");
+        submitJobRequest.setDone(false);
+        submitJobRequest.setContentMode("text");
+        submitJobRequest.setPrecursor(1);
+        submitJobRequest.setAssumptions("assumptions");
+        jobConfig = submitJobRequest.getJobConfiguration();
         User user = new NormalUser(USERNAME, PASSWORD, EMAIL);
         result = new ResultMetaData(1, 1, 1, 1, 1, 1);
-        jobInformation = new JobInformation(jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        jobInformation = new JobInformation(WebLayerTest.jobConfig, result, user, "12:34:32", JobStatus.DONE, 1);
+        fallobConfiguration = mock(FallobConfiguration.class);
+        try {
+            Field instance = FallobConfiguration.class.getDeclaredField("instance");
+            instance.setAccessible(true);
+            instance.set(instance, fallobConfiguration);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    //is commented out because it is not possible to build a running test for this because the fallob config can't be mocked
-    //due to the dependency injection of the mockMvc
-    /**
+    @AfterAll
+    public static void afterAll() throws NoSuchFieldException, IllegalAccessException {
+        Field instance = FallobConfiguration.class.getDeclaredField("instance");
+        instance.setAccessible(true);
+        instance.set(null, null);
+    }
+
     @Test
     @WithMockUser
     public void saveDescriptionSuccessfully() throws Exception {
@@ -205,15 +230,15 @@ public class WebLayerTest {
         myWriter.write(DESCRIPTION_CONTENT);
         myWriter.close();
         JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
-        MockMultipartFile multipartFile = new MockMultipartFile("file1", FILE_NAME,
+        MockMultipartFile multipartFile = new MockMultipartFile("file", FILE_NAME,
                 MediaType.TEXT_PLAIN_VALUE, DESCRIPTION_CONTENT.getBytes());
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg\\mallob");
 
         when(jobSubmitCommands.saveJobDescription(null, jobDescription)).thenReturn(1);
 
         this.mockMvc.perform(multipart("/api/v1/jobs/submit/exclusive/description").file(multipartFile)).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionId\":0}"));
+                .andExpect(status().isOk()).andExpect(content().string("{\"descriptionID\":0}"));
     }
-     */
 
 
     @Test
@@ -231,14 +256,10 @@ public class WebLayerTest {
                         ",\"message\":\"Job description can not be empty\"}"));
     }
 
-    //is commented out because it is not possible to build a running test for this because the fallob config can't be mocked
-    //due to the dependency injection of the mockMvc
-    /**
     @Test
     @WithMockUser
     public void submitJobInclusiveSuccessfully() throws Exception {
         List<String> descriptionsList = new ArrayList<>();
-        descriptionsList.add(DESCRIPTION_CONTENT);
         descriptionsList.add(DESCRIPTION_CONTENT);
         File file = new File("jobDescription.cnf");
         FileWriter myWriter = new FileWriter(file);
@@ -249,16 +270,11 @@ public class WebLayerTest {
         List<File> filesList = new ArrayList<>();
         filesList.add(file);
         JobDescription jobDescription = new JobDescription(filesList, SubmitType.INCLUSIVE);
-        try (MockedStatic<FallobConfiguration> mocked = Mockito.mockStatic(FallobConfiguration.class)) {
-            FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class, RETURNS_DEEP_STUBS);
-            mocked.when((MockedStatic.Verification) FallobConfiguration.getInstance()).thenReturn(fallobConfiguration);
-            when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg\\mallob");
-        }
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg\\mallob");
 
-        // Using InvocationOnMock as mockito does not use the equals method of jobDescription
-        when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), (any(JobDescription.class)), any(JobConfiguration.class)))
+        when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
-                    JobDescription usedDescription = invocationOnMock.getArgument(1);
+                    JobDescription usedJobDescription = invocationOnMock.getArgument(1);
                     JobConfiguration usedConfig = invocationOnMock.getArgument(2);
                     boolean jobConfigEqualsUsedConfig = usedConfig.isDone() == jobConfig.isDone()
                             && usedConfig.isIncremental() == jobConfig.isIncremental() && usedConfig.isInterrupt()
@@ -271,19 +287,42 @@ public class WebLayerTest {
                             && Objects.equals(usedConfig.getWallClockLimit(), jobConfig.getWallClockLimit())
                             && usedConfig.getMaxDemand() == jobConfig.getMaxDemand();
 
-                    if (jobDescription.equals(usedDescription) && jobConfigEqualsUsedConfig) {
+                    List<File> descriptionFiles = jobDescription.getDescriptionFiles();
+                    List<File> usedDescriptionFiles = usedJobDescription.getDescriptionFiles();
+                    boolean allFilesMatch = true;
+                    outer:
+                    for (int i = 0; i < descriptionFiles.size(); i++) {
+                        BufferedReader bf1 = Files.newBufferedReader(descriptionFiles.get(i).toPath());
+                        BufferedReader bf2 = Files.newBufferedReader(usedDescriptionFiles.get(i).toPath());
+
+                        String line1, line2;
+                        while ((line1 = bf1.readLine()) != null) {
+                            line2 = bf2.readLine();
+                            if (!line1.equals(line2)) {
+                                allFilesMatch = false;
+                                bf1.close();
+                                bf2.close();
+                                break outer;
+                            }
+                        }
+                        bf1.close();
+                        bf2.close();
+                    }
+
+                    if (allFilesMatch && jobConfigEqualsUsedConfig) {
                         return 1;
                     } else {
                         return -1;
                     }
                 });
-        SubmitJobRequest submitJobRequest = new SubmitJobRequest(descriptionsList, jobConfig);
+
+        submitJobRequest.setDescription(descriptionsList);
 
         this.mockMvc.perform(post("/api/v1/jobs/submit/inclusive").content(objectMapper.writeValueAsString(submitJobRequest))
                         .contentType("application/json")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
     }
-     **/
+
 
 
     @Test
@@ -312,16 +351,12 @@ public class WebLayerTest {
                         return -1;
                     }
                 });
-        SubmitJobRequest submitJobRequest = new SubmitJobRequest(jobConfig);
 
-        this.mockMvc.perform(post("/api/v1/jobs/submit/exclusive/config").content(JSON_JOB_CONFIG)
-                        .contentType("application/json")).andDo(print())
-                .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
+        this.mockMvc.perform(post("/api/v1/jobs/submit/exclusive/config")
+                        .content(objectMapper.writeValueAsString(submitJobRequest)).contentType("application/json"))
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
     }
 
-    //is commented out because it is not possible to build a running test for this because the fallob config can't be mocked
-    //due to the dependency injection of the mockMvc
-    /**
     @Test
     @WithMockUser
     public void submitJobWithUrl() throws Exception {
@@ -330,11 +365,10 @@ public class WebLayerTest {
         myWriter.write(DESCRIPTION_CONTENT);
         myWriter.close();
         String url = file.toURI().toURL().toString();
-        SubmitJobRequest submitJobRequest = new SubmitJobRequest(jobConfig, url);
+        submitJobRequest.setUrl(url);
 
-        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.EXCLUSIVE);
-        FallobConfiguration fallobConfiguration = Mockito.mock(FallobConfiguration.class);
-        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("");
+        JobDescription jobDescription = new JobDescription(Collections.singletonList(file), SubmitType.INCLUSIVE);
+        when(fallobConfiguration.getDescriptionsbasePath()).thenReturn("\\\\wsl$\\Ubuntu-22.04\\home\\sudjukbg\\mallob");
 
         when(jobSubmitCommands.submitJobWithDescriptionInclusive(isNull(), any(JobDescription.class), any(JobConfiguration.class)))
                 .thenAnswer((Answer<Integer>) invocationOnMock -> {
@@ -383,9 +417,7 @@ public class WebLayerTest {
         this.mockMvc.perform(post("/api/v1/jobs/submit/url")
                 .content(objectMapper.writeValueAsString(submitJobRequest)).contentType("application/json")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JOB_ID_JSON));
-
     }
-     **/
 
 
     @Test
@@ -470,7 +502,7 @@ public class WebLayerTest {
         when(jobAbortCommands.abortSingleJob(null, 1)).thenReturn(false);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isConflict()).andExpect(content().string("Job is not active."));
+                .andExpect(status().isConflict()).andExpect(content().string("Job is not active"));
     }
 
     @Test
@@ -504,7 +536,7 @@ public class WebLayerTest {
         AbortJobRequest abortJobRequest = new AbortJobRequest(jobIds);
         this.mockMvc.perform(post("/api/v1/jobs/cancel").content(objectMapper.writeValueAsString(abortJobRequest))
                         .contentType("application/json")).andDo(print())
-                .andExpect(status().isConflict()).andExpect(content().string("No jobs are active."));
+                .andExpect(status().isConflict()).andExpect(content().string(NO_JOBS_ACTIVE));
     }
 
     @Test
@@ -518,12 +550,31 @@ public class WebLayerTest {
     }
 
     @Test
+    @WithMockUser
+    public void abortAllJobsException() throws Exception {
+
+        when(jobAbortCommands.abortAllJobs(null)).thenThrow(new FallobException(HttpStatus.CONFLICT, NO_JOBS_ACTIVE));
+
+        this.mockMvc.perform(post("/api/v1/jobs/cancel/all")).andDo(print())
+                .andExpect(status().isConflict()).andExpect(content().string(JSON_NO_JOBS_ACTIVE));
+    }
+
+    @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)
-    public void abortJobsGloballySuccessful() throws Exception {
+    public void abortJobsGlobalSuccessfully() throws Exception {
         when(jobAbortCommands.abortAllGlobalJob(null)).thenReturn(jobIdsList);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/global")).andDo(print())
                 .andExpect(status().isOk()).andExpect(content().string(JOB_IDS_JSON));
+    }
+
+    @Test
+    @WithMockUser(authorities = AUTHORITY_ADMIN)
+    public void abortJobsGlobalException() throws Exception {
+        when(jobAbortCommands.abortAllGlobalJob(null)).thenThrow(new FallobException(HttpStatus.CONFLICT, NO_JOBS_ACTIVE));
+
+        this.mockMvc.perform(post("/api/v1/jobs/cancel/global")).andDo(print())
+                .andExpect(status().isConflict()).andExpect(content().string(JSON_NO_JOBS_ACTIVE));
     }
 
     @Test
@@ -878,6 +929,15 @@ public class WebLayerTest {
                 .andExpect(status().isOk()).andExpect(content().string("{\"warnings\":[{\"timestamp\":\"" + timeWithZone.format(formatter) + "\",\"message\":\"" + LOG_LINE_PLACE + "\"}]}"));
     }
 
+    @Test
+    @WithMockUser(authorities = AUTHORITY_ADMIN)
+    public void getWarningsException() throws Exception {
+        String exceptionMessage = "SQL Exception";
+    when(mallobCommands.getWarnings()).thenThrow(new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, exceptionMessage));
+
+        this.mockMvc.perform(get("/api/v1/system/mallobInfo", 1)).andDo(print()).andExpect(status().isInternalServerError())
+                .andExpect(content().string("{\"status\":\"INTERNAL_SERVER_ERROR\",\"message\":\"" + exceptionMessage + "\"}"));
+    }
 
     @Test
     @WithMockUser(authorities = AUTHORITY_ADMIN)

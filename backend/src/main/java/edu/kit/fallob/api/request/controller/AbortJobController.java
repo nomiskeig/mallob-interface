@@ -24,13 +24,13 @@ public class AbortJobController {
     @Autowired
     private JobAbortCommands jobAbortCommand;
 
-    private static final String NO_JOBS_ACTIVE = "No jobs are active.";
+    private static final String NO_JOBS_ACTIVE = "No jobs are active";
 
-    private static final String JOB_NOT_ACTIVE = "Job is not active.";
+    private static final String JOB_NOT_ACTIVE = "Job is not active";
 
     private static final String USERNAME = "username";
 
-    private static final String EMPTY_ARRAY = "The array must contain at least one jobId.";
+    private static final String EMPTY_ARRAY = "The array must contain at least one jobId";
 
 
     /**

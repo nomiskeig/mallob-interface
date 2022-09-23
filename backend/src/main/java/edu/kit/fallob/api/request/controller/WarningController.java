@@ -28,7 +28,7 @@ public class WarningController {
 
     @GetMapping("/api/v1/system/mallobInfo")
     public ResponseEntity<Object> getMallobWarnings() {
-        List<Warning> warnings = null;
+        List<Warning> warnings;
         try {
             warnings = warningCommand.getWarnings();
         } catch (FallobException e) {
