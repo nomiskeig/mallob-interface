@@ -1,0 +1,20 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser1.json
+register testingResources/request-bodys/registerBodyUser2.json
+toggleCatchReqError
+
+#actual test-scenario
+
+
+login testingResources/request-bodys/loginBodyUser1.json
+login testingResources/request-bodys/loginBodyUser2.json
+
+switchUser 0
+printComment Submit Job with seperate Job-Description and cancel
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+
+switchUser 1
+cancelJob /single/
