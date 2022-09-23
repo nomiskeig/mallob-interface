@@ -25,7 +25,7 @@ export function JobTablePage(props) {
 							setClickedJob={(id) => {
 								setDisplayedJobID(id);
 							}}
-							refresh={() => jobContext.loadAllJobsOfUser()}
+							refresh={() => jobContext.fetchMostJobsPossible(false, null)}
 						></JobTable>
 					</div>
 				</div>

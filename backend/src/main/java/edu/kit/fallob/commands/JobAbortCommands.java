@@ -60,7 +60,7 @@ public class JobAbortCommands {
 	
 	
 	
-	public boolean abortSingleJob(String username, int jobID) throws FallobException {
+	public boolean abortSingleJob(String username, int jobID, boolean incremental) throws FallobException {
 		if (jobID <= 0) {
 			throw new FallobException(HttpStatus.BAD_REQUEST, CONTAINS_INCORRECT_JOBID);
 		}
@@ -78,7 +78,7 @@ public class JobAbortCommands {
 		}
 		JobInformation jobInfo = jobDao.getJobInformation(jobID);
 		try {
-			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName());
+			mallobInput.abortJob(username, jobInfo.getJobConfiguration().getName(), incremental);
 		} catch (IOException e) {
 			throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
 		}
@@ -93,7 +93,7 @@ public class JobAbortCommands {
 		int statusNotFoundCounter = 0;
 		for (Integer id : jobIDs) {
 			try {
-				abortSingleJob(username, id);
+				abortSingleJob(username, id, false);
 				cancelledJobs.add(id);
 			} catch (FallobException e) {
 				e.printStackTrace();

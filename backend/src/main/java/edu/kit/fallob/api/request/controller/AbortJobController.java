@@ -42,7 +42,7 @@ public class AbortJobController {
      */
     @PostMapping("/cancel/single/{jobId}")
     public ResponseEntity<Object> abortSingleJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        return abortJob(jobId, httpRequest);
+        return abortJob(jobId, httpRequest, false);
     }
 
     /**
@@ -130,7 +130,7 @@ public class AbortJobController {
      */
     @PostMapping("/cancel/incremental/{jobId}")
     public ResponseEntity<Object> abortIncrementalJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
-        return abortJob(jobId, httpRequest);
+        return abortJob(jobId, httpRequest, true);
     }
 
     /**
@@ -139,11 +139,11 @@ public class AbortJobController {
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the ids of the aborted jobs or an error (including a status code and a message in json format)
      */
-    private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest) {
+    private ResponseEntity<Object> abortJob(int jobId, HttpServletRequest httpRequest, boolean incremental) {
         String username = (String) httpRequest.getAttribute(USERNAME);
         boolean successful;
         try {
-            successful = jobAbortCommand.abortSingleJob(username, jobId);
+            successful = jobAbortCommand.abortSingleJob(username, jobId, incremental);
         } catch (FallobException exception) {
             exception.printStackTrace();
             FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());

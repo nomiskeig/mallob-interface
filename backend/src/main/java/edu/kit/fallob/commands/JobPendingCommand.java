@@ -45,6 +45,9 @@ public class JobPendingCommand {
 		mallobOutput.addOutputLogLineListener(jobListener);
 		jobListener.waitForJob();
 		mallobOutput.removeOutputLogLineListener(jobListener);
+		if (jobDao.getJobStatus(jobID) == JobStatus.CANCELLED) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, "The job was cancelled.");
+		}
 		ResultMetaData rmd = jobDao.getJobInformation(jobID).getResultMetaData();
 		if (rmd == null) {
 			try {

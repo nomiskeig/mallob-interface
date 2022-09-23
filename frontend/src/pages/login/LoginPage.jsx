@@ -1,11 +1,10 @@
 import { useContext, useState } from 'react';
-import { InfoContext } from '../../context/InfoContextProvider';
+import { InfoContext, TYPE_ERROR } from '../../context/InfoContextProvider';
 import { UserContext } from '../../context/UserContextProvider';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../global/buttons/Button';
 import { InputField } from '../../global/textfields/InputField';
 import './LoginPage.scss';
-import { TYPE_ERROR } from '../../context/InfoContextProvider';
 import axios from 'axios';
 
 export function LoginPage(props) {
@@ -19,22 +18,18 @@ export function LoginPage(props) {
 
 	let [usernameContent, setUsernameContent] = useState('');
 	let [passwordContent, setPasswordContent] = useState('');
-	//let usernameContent = '';
-	//let passwordContent = '';
+	
 
 	const handleChangeUsername = (event) => {
-		//	usernameContent = event.target.value;J
 		setUsernameContent(event.target.value);
 	};
 
 	const handleChangePassword = (event) => {
-		//passwordContent = event.target.value;
 		setPasswordContent(event.target.value);
 	};
 
 	const loginURL = process.env.REACT_APP_API_BASE_PATH + '/api/v1/users/login';
 	function login() {
-		//alert("Logging in with : username=" + usernameContent + ", password=" + passwordContent);
 		if (usernameContent == '' || passwordContent == '') {
 			infoContext.handleInformation(
 				'Please enter a valid username and/or password.',
@@ -52,7 +47,6 @@ export function LoginPage(props) {
 				//request went through and username + password were accepted
 				userContext.login(res.data.token);
 				navigate('/jobs');
-				return;
 			})
 			.catch((err) => {
 				infoContext.handleInformation(
