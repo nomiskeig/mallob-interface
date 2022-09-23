@@ -82,8 +82,6 @@ public class HttpTests {
 
     private static HttpEntity<String> request;
 
-    private static String FORBIDDEN_MESSAGE = "{\"status\":\"FORBIDDEN\",\"message\":\"User is not an admin, access denied.\"}";
-
 
     @BeforeAll
     public static void runBeforeAllTestMethods() throws JSONException {
@@ -109,7 +107,7 @@ public class HttpTests {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 createURLWithPort("/api/v1/jobs/info/global"), HttpMethod.GET, request, String.class);
         String response = responseEntity.getBody();
-        Assertions.assertEquals(response, "{\"status\":\"UNAUTHORIZED\",\"message\":\"Full authentication is required to access this resource\"}");
+        Assertions.assertEquals("{\"status\":\"UNAUTHORIZED\",\"message\":\"Full authentication is required to access this resource\"}", response);
     }
 
     @Test
@@ -154,6 +152,7 @@ public class HttpTests {
                 createURLWithPort("/api/v1/system/mallob/stop"),
                 request2, String.class);
 
+        String FORBIDDEN_MESSAGE = "{\"status\":\"FORBIDDEN\",\"message\":\"User is not an admin, access denied.\"}";
         Assertions.assertEquals(response, FORBIDDEN_MESSAGE);
         Assertions.assertEquals(response2, FORBIDDEN_MESSAGE);
         Assertions.assertEquals(response3, FORBIDDEN_MESSAGE);

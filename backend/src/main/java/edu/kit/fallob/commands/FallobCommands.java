@@ -29,6 +29,10 @@ public class FallobCommands implements UserDetailsService {
 
 	private static final String USERNAME_REQUIREMENTS = "Username must be between 4 and 25 characters";
 
+	private static final String EMAIL_INVALID = "Email is invalid";
+
+	private static final String USERNAME_ALPHANUMERIC = "Username must be alphanumeric";
+
 	private static final String PASSWORD_TOO_SHORT = "Password must be at least 8 characters";
 	private static final int USERNAME_LOWER_BOUND = 4;
 	private static final int USERNAME_UPPER_BOUND = 25;
@@ -59,10 +63,6 @@ public class FallobCommands implements UserDetailsService {
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 
-		if (user == null) {
-			throw new UsernameNotFoundException("No user with this username was found in the database");
-		}
-
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
     	authorities.add(new SimpleGrantedAuthority(user.getUserType().getAuthority()));
 		String isVerified = "Not verified";
@@ -77,6 +77,12 @@ public class FallobCommands implements UserDetailsService {
     public boolean register(String username, String password, String email) throws FallobException {
 		if (username.length() < USERNAME_LOWER_BOUND || username.length() > USERNAME_UPPER_BOUND) {
 			throw new FallobException(HttpStatus.BAD_REQUEST, USERNAME_REQUIREMENTS);
+		}
+		else if (!username.matches("[a-zA-Z0-9]+")) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, USERNAME_ALPHANUMERIC);
+		}
+		if (!email.contains("@")) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, EMAIL_INVALID);
 		}
 		if (password.length() < PASSWORD_LOWER_BOUND) {
 			throw new FallobException(HttpStatus.BAD_REQUEST, PASSWORD_TOO_SHORT);

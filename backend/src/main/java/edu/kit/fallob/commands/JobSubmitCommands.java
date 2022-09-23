@@ -84,9 +84,6 @@ public class JobSubmitCommands {
 	 * @return
 	 */
 	private void jobConfigIsOk(JobConfiguration jobConfiguration) throws FallobException{
-		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
-			jobConfiguration.setPriority(FallobConfiguration.getInstance().getDefaultJobPriority());
-		}
 		if (jobConfiguration.getWallClockLimit() == JobConfiguration.OBJECT_NOT_SET) {
 			jobConfiguration.setWallClockLimit(FallobConfiguration.getInstance().getDefaultWallClockLimit());
 		}
@@ -178,11 +175,11 @@ public class JobSubmitCommands {
 		if (precursor != JobConfiguration.INT_NOT_SET) {
 			jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
 		}
-		if (jobConfiguration.getPriority() != JobConfiguration.DOUBLE_NOT_SET) {
-			PriorityConverter prioConverter = new PriorityConverter(daoFactory);
-			jobConfiguration.setPriority(prioConverter.getPriorityForMallob(username, jobConfiguration.getPriority()));
+		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
+			jobConfiguration.setPriority(FallobConfiguration.getInstance().getDefaultJobPriority());
 		}
-		
+		PriorityConverter prioConverter = new PriorityConverter(daoFactory);
+		jobConfiguration.setPriority(prioConverter.getPriorityForMallob(username, jobConfiguration.getPriority()));
 	}
 	
 	private String formatRestartJobName(String name) {
