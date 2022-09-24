@@ -85,7 +85,6 @@ export class StreamEventManager extends EventManager {
 						lastEvent.jobID,
 						lastEvent.load
 					);
-                    console.log("new event:", newEvent, newEvent.getTime().toISOString())
 					if (isAfter(newEvent.getTime(), initialTime)) {
 						newEvents.push(newEvent);
 					}
