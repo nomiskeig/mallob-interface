@@ -39,7 +39,7 @@ public class PeriodicBufferChecker implements Runnable {
 		System.out.println("Periodic-Buffer-Checker running");
 		while (forceRetry) {
 			for (Buffer<?> buffer : buffers) {
-				buffer.retryBufferedFunction();
+				buffer.retryBufferedFunction(true);
 			}
 			try {
 				Thread.sleep(interval);

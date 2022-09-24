@@ -55,14 +55,14 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
     @Override
     public void processLine(String line) {
         if (Event.isEvent(line)) {
-            System.out.println("Got event: " + line);
+            System.out.println("Got stream event: " + line);
             Event event = new Event(line);
 
             this.bufferedEvents.bufferObject(event);
         }
     
         //retry to send the buffered events
-        this.bufferedEvents.retryBufferedFunction();
+        this.bufferedEvents.retryBufferedFunction(true);
     }
 
     private void sendEvent(Event event, int jobId) {
@@ -84,12 +84,12 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
             try {
                 System.out.println("sent event:" + jsonObject.toString());
                 this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException e) {
+                System.out.println("error occurend in the emitter: " + e.getMessage());
                 this.emitter.complete();
                 this.emitter = null;
                 MallobOutput mallobOutput = MallobOutput.getInstance();
-                mallobOutput.removeOutputLogLineListener(this);
-            }
+                mallobOutput.removeOutputLogLineListener(this); }
         }
     }
 

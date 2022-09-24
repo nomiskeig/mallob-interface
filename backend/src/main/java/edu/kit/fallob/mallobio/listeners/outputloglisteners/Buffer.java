@@ -28,23 +28,29 @@ public class Buffer<T> {
      * If execution was successful, the object is removed, if not the object is
      * stored until
      * this function is called again
+     * @param boolean stopAfterFail - if true, the buffer only tries to repeat buffered objects until one fails and skips the rest.
      */
-    public void retryBufferedFunction() {
+    public void retryBufferedFunction(boolean stopAfterFail) {
         if (bufferedUpdates.size() == 0) {
             return;
         }
-        int maxTries = bufferedUpdates.size();
-
-        while (maxTries > 0) {
-            T update = bufferedUpdates.peek();
-            if (update != null) {
-                if (!tryToExecuteBufferFunciton(update)) {
-                    break;
+        synchronized (this) {
+            int maxTries = bufferedUpdates.size();
+            while (maxTries > 0) {
+                T update = bufferedUpdates.peek();
+                if (update != null) {
+                    if (!tryToExecuteBufferFunciton(update)) {
+                        if (stopAfterFail) {
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
+                    // remove the update if execution was successful
+                    bufferedUpdates.poll();
                 }
-                // remove the update if execution was successful
-                bufferedUpdates.poll();
+                maxTries--;
             }
-            maxTries--;
         }
     }
 
@@ -73,9 +79,8 @@ public class Buffer<T> {
      *                     bufferedFunctio is executed with the given object
      *                     If it returns false, the obejct is now buffered.
      */
-    public boolean tryToExecuteBufferFunciton(T outputUpdate) {
+    public synchronized boolean tryToExecuteBufferFunciton(T outputUpdate) {
         if (!this.bufferFunction.bufferFunction(outputUpdate)) {
-            //bufferObject(outputUpdate);
             return false;
         }
         return true;

@@ -29,7 +29,7 @@
         "databasePassword": ""
         },
     "readerSetup" : {
-        "readingIntervalPerReadingThread" : 50,
-        "amountReaderThreads" : 2
+        "readingIntervalPerReadingThread" : 1,
+        "amountReaderThreads" : 6
     }
 }
