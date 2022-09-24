@@ -506,7 +506,7 @@ def cancelJob(testCase):
     #build url
     if not exists(commandLineArguments[ARG_2]): # multiple jobs are about to be canceled
         url += commandLineArguments[ARG_2]
-        if commandLineArguments[ARG_2] != "/all":
+        if commandLineArguments[ARG_2] != "/all" and commandLineArguments[ARG_2] != "/global":
             #only a single job is cancelled
             if len(commandLineArguments) > 2:
                 url += commandLineArguments[ARG_3]
@@ -562,7 +562,7 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
         else:
             url += commandLineArguments[ARG_2]
             #/single/ optio was used 
-            if parameterPossible and commandLineArguments[ARG_2] != "/all": 
+            if parameterPossible and commandLineArguments[ARG_2] != "/all" and commandLineArguments[ARG_2] != "/global":
                 if len(commandLineArguments) > 2:
                     url += str(commandLineArguments[ARG_3])
                 else:

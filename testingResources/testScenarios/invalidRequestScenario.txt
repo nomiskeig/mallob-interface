@@ -1,0 +1,45 @@
+
+toggleCatchReqError
+printComment This should be a Bad Request because of wrong keys
+register testingResources/request-bodys/loginAndRegister/wrongRegisterBody.json
+
+#Try to register, in case database is new
+register testingResources/request-bodys/loginAndRegister/registerBodyUser1.json
+
+printComment This should be a BadRequest because of wrong keys
+login testingResources/request-bodys/loginAndRegister/wrongKeyLoginBodyUser1.json
+
+
+printComment This should be a BadRequest because of wrong values
+login testingResources/request-bodys/loginAndRegister/wrongValueLoginBodyUser1.json
+
+
+printComment This should be a valid request
+login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
+
+submitDescription testingResources/cnf/description.cnf
+printComment This should be a Not Found because of missing values
+submitJob_external testingResources/request-bodys/emptyJob.json
+
+printComment This should be a Not Found because of missing values
+submitJob_external testingResources/request-bodys/noApplicationJob_externalDescription.json
+
+
+printComment This should be a Not Found because of missing values
+submitJob_external testingResources/request-bodys/noNameJob_externalDescription.json
+
+printComment This should be a Not Found because of missing values
+submitJob_external testingResources/request-bodys/noDescriptionIDJob_externalDescription.json
+
+printComment This should be Forbidden because of wrong id
+getJobInfo /single/ 1000000
+
+printComment This should be Forbidden because of wrong id
+getResult /single/ 1000000
+
+printComment This should be Forbidden because of wrong id
+downloadDescription /single/ 1000000
+
+
+printComment This should be Forbidden because of wrong id
+cancelJob /single/ 1000000

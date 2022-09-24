@@ -39,7 +39,11 @@ public class JobAbortCommands {
 
 	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs";
 
+	private static final String FORBIDDEN_MESSAGE_SINGLE = "The user has no access to the given job";
+
 	private static final String CONFLICT_MESSAGE = "No jobs could be cancelled, as they are not active";
+
+	private static final String CONFLICT_MESSAGE_SINGLE = "Job could not be cancelled, as it is not active";
 
 	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The jobs could not be cancelled, where " +
 			"either the user has no access to it, the job could not be found or it is not running";
@@ -66,11 +70,11 @@ public class JobAbortCommands {
 		}
 
 		if (!uaa.hasAbortAccess(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE_SINGLE);
 		}
 		
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
-			throw new FallobException(HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
+			throw new FallobException(HttpStatus.CONFLICT, CONFLICT_MESSAGE_SINGLE);
 		}
 
 		if (uaa.isAdmin(username)) {

@@ -1,0 +1,39 @@
+#Try to register, in case database is new
+#Warning: An Admin with the user data from loginBodyAdmin must already be registered!
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser1.json
+toggleCatchReqError
+
+#actual test-scenario
+
+login testingResources/request-bodys/loginBodyUser1.json
+login testingResources/request-bodys/loginBodyAdmin.json
+
+switchUser 0
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+togglePrintBody
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
+
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
+
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
+
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExcludedShortCPUTime.json useLastDescriptionID
+
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExcludedShortWallclockLimit.json useLastDescriptionID
+
+wait 3
+switchUser 1
+#Admin cancels all jobs in system
+cancelJob /global
+
+wait 3
+#Admin gets info for all jobs in system
+getJobInfo /global

@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class User {
 	
-	private static final double BASE_PRIORITY = 0.5;
+	private static final double BASE_PRIORITY = 1.0;
 	
 	protected String username;
 	protected String password;

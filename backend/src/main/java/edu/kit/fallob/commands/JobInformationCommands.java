@@ -48,7 +48,7 @@ public class JobInformationCommands {
 			throw new FallobException(HttpStatus.BAD_REQUEST, CONTAINS_INCORRECT_JOBID);
 		}
 		if (!uaa.hasInformationAccess(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
 		}
 		return jobDao.getJobInformation(jobID);
 	}

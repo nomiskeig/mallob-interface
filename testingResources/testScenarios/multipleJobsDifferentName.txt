@@ -1,20 +1,20 @@
 #Try to register, in case database is new
 
 toggleCatchReqError
-register testingResources/request-bodys/registerBodyUser1.json
+register testingResources/request-bodys/loginAndRegister/registerBodyUser1.json
 toggleCatchReqError
-login testingResources/request-bodys/loginBodyUser1.json
+login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
 
 togglePrintBody
-submitDescription testingResources/cnf/shortJob.cnf
+submitDescription testingResources/cnf/shortJobSAT.cnf
 submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
 wait 2 
 getJobInfo /single/
-submitDescription testingResources/cnf/shortJob.cnf
+submitDescription testingResources/cnf/shortJobSAT.cnf
 submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
 wait 2 
 getJobInfo /single/
-submitDescription testingResources/cnf/shortJob.cnf
+submitDescription testingResources/cnf/shortJobSAT.cnf
 submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
 wait 2 
 getJobInfo /single/

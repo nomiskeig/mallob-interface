@@ -26,7 +26,6 @@ public class MallobCommands {
 	private static final String EVENT_MESSAGE = "No Events will be found for this time value, as it is incorrect";
 	
 	public MallobCommands() throws FallobException{
-		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
 			daoFactory = new DaoFactory();
 			eventDao = daoFactory.getEventDao();
