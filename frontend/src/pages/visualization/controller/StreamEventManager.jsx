@@ -4,7 +4,6 @@ import axios from 'axios';
 import isBefore from 'date-fns/isBefore';
 import isAfter from 'date-fns/isAfter';
 import isEqual from 'date-fns/isEqual';
-import { differenceInMilliseconds } from 'date-fns';
 /**
  * This class uses the Event-Stream provided by the API to provide the new Events.
  *
