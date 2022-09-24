@@ -2,13 +2,17 @@ package edu.kit.fallob.api.request.controller;
 
 import edu.kit.fallob.dataobjects.JobConfiguration;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-public class SubmitJobRequest implements Serializable {
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A request class for json parsing
+ */
+public class SubmitJobRequest {
     private List<String> description;
 
     private JobConfiguration jobConfiguration;

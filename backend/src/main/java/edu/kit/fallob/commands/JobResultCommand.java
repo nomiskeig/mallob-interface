@@ -29,7 +29,6 @@ public class JobResultCommand {
 			"either the user has no access to it or the job could not be found";
 
 	public JobResultCommand()throws FallobException {
-		// TODO Until the data base is fully implemented, we catch the error so the program could be started - should we remove try-catch after that?
 		try {
 			daoFactory = new DaoFactory();
 			jobDao = daoFactory.getJobDao();

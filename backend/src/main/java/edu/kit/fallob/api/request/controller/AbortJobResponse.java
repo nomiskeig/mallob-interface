@@ -14,7 +14,7 @@ public class AbortJobResponse {
     private final List<Integer> jobs;
 
     /**
-     * Constructor that takes jobIds
+     * Constructor that initializes the jobs
      * @param jobs job ids
      */
     public AbortJobResponse(List<Integer> jobs) {

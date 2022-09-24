@@ -13,7 +13,7 @@ public class JobDescriptionResponse {
 
     /**
      * Constructor
-     * @param description job description in String format
+     * @param description jobDescription in String format
      */
     public JobDescriptionResponse(List<String> description) {
         this.description = description;

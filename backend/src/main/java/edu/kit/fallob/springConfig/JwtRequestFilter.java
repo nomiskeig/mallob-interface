@@ -36,8 +36,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static final String BEARER_WARNING = "JWT Token does not begin with Bearer String";
 
-    private static final int FORBIDDEN_CODE = 403;
-
     private static final String USERNAME = "username";
 
     private static final String AUTHORITY = "authority";
@@ -63,10 +61,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 System.out.println(JWT_EXPIRED);
             }
-        } else {
-            if (!request.getRequestURI().endsWith("register") && !request.getRequestURI().endsWith("login")) {
-                logger.warn(BEARER_WARNING);
-            }
+        } else if (!request.getRequestURI().endsWith("register") && !request.getRequestURI().endsWith("login")) {
+            logger.warn(BEARER_WARNING);
         }
 
         // Once we get the token validate it.
@@ -75,6 +71,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
             } catch (UsernameNotFoundException exception) {
+                logger.error(exception.getMessage());
             }
 
             // if token is valid configure Spring Security to manually set authentication

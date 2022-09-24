@@ -506,12 +506,21 @@ def cancelJob(testCase):
     #build url
     if not exists(commandLineArguments[ARG_2]): # multiple jobs are about to be canceled
         url += commandLineArguments[ARG_2]
-        if commandLineArguments[ARG_2] != "/all":
+        if commandLineArguments[ARG_2] != "/all" and commandLineArguments[ARG_2] != "/global":
             #only a single job is cancelled
             if len(commandLineArguments) > 2:
                 url += commandLineArguments[ARG_3]
             else:
-                url += str(LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX]) 
+                # If the current user has not submitted any jobs, search for a user that has and try to abort the first found (for admin cases)
+                if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] is None or -1:
+                    counter = 0
+                    for x in ALL_ACTIVE_USERS:
+                        if not LATEST_SAVED_JOB_ID[counter] is None or -1:
+                            url += str(LATEST_SAVED_JOB_ID[counter])
+                            break
+                        counter += 1
+                else:
+                    url += str(LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX])
         r = doRequest(requests.post, url, None, None, True, None)
     else:
         r = doRequest(requests.post, url, readFileAsPythonDict(filePath), None, True, None)
@@ -553,7 +562,7 @@ def generalGetRequest(testCase, parameter, parameterPossible, urlModification):
         else:
             url += commandLineArguments[ARG_2]
             #/single/ optio was used 
-            if parameterPossible and commandLineArguments[ARG_2] != "/all": 
+            if parameterPossible and commandLineArguments[ARG_2] != "/all" and commandLineArguments[ARG_2] != "/global":
                 if len(commandLineArguments) > 2:
                     url += str(commandLineArguments[ARG_3])
                 else:
@@ -834,7 +843,16 @@ def executeTestCase(testCaseIdentifier):
         cancelJob(CANCEL_JOB)
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
-        generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
+        # If the current user has not submitted any jobs, search for a user that has and try to get the info for them (for admin cases)
+        if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] is None or -1:
+            counter = 0
+            for x in ALL_ACTIVE_USERS:
+                if not LATEST_SAVED_JOB_ID[counter] is None or -1:
+                    generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID[counter], True, True)
+                    break
+                counter += 1
+        else:
+            generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
     elif testCaseIdentifier == DOWNLOAD_DESCRIPTION:
         generalGetRequest(DOWNLOAD_DESCRIPTION, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
     elif testCaseIdentifier == GET_SYSTEM_CONFIG:

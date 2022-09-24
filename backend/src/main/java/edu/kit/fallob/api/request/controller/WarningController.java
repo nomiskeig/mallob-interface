@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A Rest Controller for requesting Mallob warnings
+ */
 @RestController
 @CrossOrigin
 public class WarningController {
@@ -23,7 +28,7 @@ public class WarningController {
 
     @GetMapping("/api/v1/system/mallobInfo")
     public ResponseEntity<Object> getMallobWarnings() {
-        List<Warning> warnings = null;
+        List<Warning> warnings;
         try {
             warnings = warningCommand.getWarnings();
         } catch (FallobException e) {

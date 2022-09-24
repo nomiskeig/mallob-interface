@@ -16,6 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A Rest Controller that handles user related requests like registration and authentication
+ */
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/users")
@@ -49,12 +54,12 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) {
+    public ResponseEntity<Object> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) {
 
         try {
             authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        } catch(Exception exception) {
-            FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, exception.getMessage());
+        } catch(FallobException exception) {
+            FallobWarning warning = new FallobWarning(exception.getStatus(), exception.getMessage());
             return new ResponseEntity<>(warning, new HttpHeaders(), warning.getStatus());
         }
         final UserDetails userDetails;
@@ -69,13 +74,15 @@ public class UserController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password) throws FallobException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
+            e.printStackTrace();
+            throw new FallobException(HttpStatus.BAD_REQUEST, "USER_DISABLED");
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            e.printStackTrace();
+            throw new FallobException(HttpStatus.BAD_REQUEST, "The provided credentials were invalid");
         }
     }
 

@@ -49,7 +49,7 @@ public class JobInformationController {
     private static final String EMPTY_ARRAY = "The array must contain at least one jobId";
 
     /**
-     * An GET endpoint for getting Information about a single job
+     * A GET endpoint for getting Information about a single job
      * Takes a request with the id and username for a single job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, the Information of which is needed
      * @param httpRequest a servlet request that contains the username of the sender
@@ -71,7 +71,7 @@ public class JobInformationController {
     }
 
     /**
-     * An POST endpoint for getting Information about multiple jobs
+     * A POST endpoint for getting Information about multiple jobs
      * Takes a request with the id and username for multiple jobs and forwards it. It is also responsible for system error handling
      * @param request an JobInformationRequest object containing the job ids of the jobs, the Information of which is needed
      * @param httpRequest a servlet request that contains the username of the sender
@@ -105,7 +105,7 @@ public class JobInformationController {
     }
 
     /**
-     * An GET endpoint for getting Information about all owned jobs
+     * A GET endpoint for getting Information about all owned jobs
      * Takes a request with the username and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the Information of all owned jobs or an error (including a status code and a message in json format)
@@ -130,7 +130,7 @@ public class JobInformationController {
     }
 
     /**
-     * An GET endpoint for getting Information about all jobs in the system (Available only for admins)
+     * A GET endpoint for getting Information about all jobs in the system (Available only for admins)
      * Takes a request with username and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the Information of all jobs in the system or an error (including a status code and a message in json format)
@@ -155,7 +155,7 @@ public class JobInformationController {
     }
 
     /**
-     * An GET endpoint for getting the Description of a single job
+     * A GET endpoint for getting the Description of a single job
      * Takes a request with the id and username for a single job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, the Description of which is needed
      * @param httpRequest a servlet request that contains the username of the sender
@@ -200,13 +200,11 @@ public class JobInformationController {
             }
             return ResponseEntity.ok(new JobDescriptionResponse(description));
         }
-        else {
-           return getDescriptionsZip(response, Collections.singletonList(jobDescriptions));
-        }
+        return getDescriptionsZip(response, Collections.singletonList(jobDescriptions));
     }
 
     /**
-     * An POST endpoint for getting the Description of multiple jobs
+     * A POST endpoint for getting the Description of multiple jobs
      * Takes a request with the id and username for multiple jobs and forwards it. It is also responsible for system error handling
      * @param request an JobInformationRequest object containing the job ids of the jobs, the Description of which is needed
      * @param httpRequest a servlet request that contains the username of the sender
@@ -236,7 +234,7 @@ public class JobInformationController {
     }
 
     /**
-     * An GET endpoint for getting the Description of all owned jobs
+     * A GET endpoint for getting the Description of all owned jobs
      * Takes a request with the username and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the Description (in a zip file) of all owned jobs or an error (including a status code and a message in json format)
@@ -256,7 +254,7 @@ public class JobInformationController {
     }
 
     /**
-     * An GET endpoint for getting the Result of a single job
+     * A GET endpoint for getting the Result of a single job
      * Takes a request with the id and username for a single job and forwards it. It is also responsible for system error handling
      * @param jobId the job id of the job, the Result of which is needed
      * @param httpRequest a servlet request that contains the username of the sender
@@ -277,7 +275,7 @@ public class JobInformationController {
     }
 
     /**
-     * An POST endpoint for getting the Result of multiple jobs
+     * A POST endpoint for getting the Result of multiple jobs
      * Takes a request with the id and username for multiple jobs and forwards it. It is also responsible for system error handling
      * @param request an JobInformationRequest object containing the job ids of the jobs, the Result of which is needed
      * @param httpRequest a servlet request that contains the username of the sender
@@ -307,7 +305,7 @@ public class JobInformationController {
     }
 
     /**
-     * An GET endpoint for getting the Result of all owned jobs
+     * A GET endpoint for getting the Result of all owned jobs
      * Takes a request with the username and forwards it. It is also responsible for system error handling
      * @param httpRequest a servlet request that contains the username of the sender
      * @return sends a response with the Result (in a zip file) of all owned jobs or an error (including a status code and a message in json format)
@@ -325,6 +323,14 @@ public class JobInformationController {
         }
         return getResultsZip(response, jobResults);
     }
+
+    /**
+     * A GET endpoint for getting the ResultMetaData of a submitted job when it is ready
+     * Takes a request with the username and a jobId as path variable forwards them and waits for the job to be processed.
+     * It is also responsible for system error handling
+     * @param httpRequest a servlet request that contains the username of the sender
+     * @return sends a response with the ResultMetaData of the job or an error (including a status code and a message in json format)
+     */
     @GetMapping("/waitFor/{jobId}")
     public ResponseEntity<Object> waitForJob(@PathVariable int jobId, HttpServletRequest httpRequest) {
         String username = (String) httpRequest.getAttribute(USERNAME);
@@ -339,6 +345,13 @@ public class JobInformationController {
         return ResponseEntity.ok(new JobPendingResponse(jobResult));
     }
 
+    /**
+     * Takes a list of files and creates a zip file with them
+     * @param response a servlet response to be sent
+     * @param jobDescriptions the files to be packed in a zip
+     * @return a response containing the descriptions in a zip format
+     * @throws IOException exception thrown by the transformation of the files
+     */
     private ResponseEntity<Object> getDescriptionsZip(HttpServletResponse response, List<JobDescription> jobDescriptions) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
@@ -364,17 +377,22 @@ public class JobInformationController {
             }
         }
 
-        if (zipOutputStream != null) {
-            zipOutputStream.finish();
-            zipOutputStream.flush();
-            IOUtils.closeQuietly(zipOutputStream);
-        }
+        zipOutputStream.finish();
+        zipOutputStream.flush();
+        IOUtils.closeQuietly(zipOutputStream);
         IOUtils.closeQuietly(bufferedOutputStream);
         IOUtils.closeQuietly(byteArrayOutputStream);
 
         return ResponseEntity.ok(byteArrayOutputStream.toByteArray());
     }
 
+    /**
+     * Takes a list of files and creates a zip file with them
+     * @param response a servlet response to be sent
+     * @param jobResults the files to be packed in a zip
+     * @return a response containing the results in a zip format
+     * @throws IOException exception thrown by the transformation of the files
+     */
     private ResponseEntity<Object> getResultsZip(HttpServletResponse response, List<JobResult> jobResults) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
@@ -399,11 +417,9 @@ public class JobInformationController {
                 zipOutputStream.closeEntry();
             }
 
-        if (zipOutputStream != null) {
-            zipOutputStream.finish();
-            zipOutputStream.flush();
-            IOUtils.closeQuietly(zipOutputStream);
-        }
+        zipOutputStream.finish();
+        zipOutputStream.flush();
+        IOUtils.closeQuietly(zipOutputStream);
         IOUtils.closeQuietly(bufferedOutputStream);
         IOUtils.closeQuietly(byteArrayOutputStream);
 
