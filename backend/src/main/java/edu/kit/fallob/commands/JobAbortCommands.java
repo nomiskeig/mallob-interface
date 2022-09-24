@@ -143,7 +143,7 @@ public class JobAbortCommands {
 	
 	public List<Integer> abortAllGlobalJob(String username) throws FallobException {
 		if (!uaa.isAdmin(username)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
 		}
 		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); 
 		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];

@@ -58,8 +58,8 @@ public class JobResultListener implements ResultObjectListener, BufferFunction<R
 
     @Override
     public void processResultObject(ResultAvailableObject rao) {
-        this.buffer.tryToExecuteBufferFunciton(rao);
-        this.buffer.retryBufferedFunction();
+        this.buffer.bufferObject(rao);
+        this.buffer.retryBufferedFunction(false);
     }
 
     private void saveResult(ResultAvailableObject rao, JSONObject result, int jobId) {

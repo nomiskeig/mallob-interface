@@ -33,12 +33,13 @@ public class JobStatusListener implements OutputLogLineListener, BufferFunction<
 	@Override
 	public void processLine(String line) {
 		if (StatusUpdate.isJobStatus(line)) {
+            System.out.println("statusupdate: " + line);
 			StatusUpdate statusUpdate = new StatusUpdate(line);
-			this.buffer.tryToExecuteBufferFunciton(statusUpdate);
+			this.buffer.bufferObject(statusUpdate);
 		}
 
 		//retry to save buffered updates
-		this.buffer.retryBufferedFunction();
+		this.buffer.retryBufferedFunction(false);
 	}
 
 	@Override
