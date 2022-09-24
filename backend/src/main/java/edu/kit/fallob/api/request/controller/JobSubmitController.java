@@ -76,6 +76,7 @@ public class JobSubmitController {
                 file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
                         + filenameCounter + FILE_EXTENSION);
             }
+            filenameCounter++;
             try (InputStream in = url.openStream();
                  BufferedInputStream bis = new BufferedInputStream(in);
                  FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
@@ -85,7 +86,6 @@ public class JobSubmitController {
                 while ((count = bis.read(data, 0, 1024)) != -1) {
                     fos.write(data, 0, count);
                 }
-                filenameCounter++;
             }
         } catch (IOException | NullPointerException ioException) {
             FallobWarning warning = new FallobWarning(HttpStatus.BAD_REQUEST, ioException.getMessage());
@@ -178,9 +178,9 @@ public class JobSubmitController {
                     file = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
                             + filenameCounter + FILE_EXTENSION);
                 }
+                filenameCounter++;
                 try (FileWriter myWriter = new FileWriter(file.getAbsolutePath())) {
                     myWriter.write(line);
-                    filenameCounter++;
                     files.add(file);
                 }
             }
@@ -249,6 +249,7 @@ public class JobSubmitController {
                 newFile = new File(configuration.getDescriptionsbasePath() + DIRECTORY_SEPARATOR + FILE_NAME
                         + filenameCounter + FILE_EXTENSION);
             }
+            filenameCounter++;
             try {
                 requestFile.transferTo(newFile);
             } catch (IOException e) {

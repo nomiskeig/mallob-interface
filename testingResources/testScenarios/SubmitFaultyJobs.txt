@@ -1,0 +1,44 @@
+#Try to register, in case database is new
+
+toggleCatchReqError
+register testingResources/request-bodys/registerBodyUser1.json
+toggleCatchReqError
+
+
+#actual test-scenario
+
+
+login testingResources/request-bodys/loginBodyUser1.json
+
+
+toggleCatchReqError
+submitDescription testingResources/cnf/description.cnf
+printComment Introducing job with missing parameters and exclusive description to the system; Error expeced
+submitJob_external testingResources/request-bodys/faultyJobExcludedMissingParameters.json useLastDescriptionID
+toggleCatchReqError
+
+printComment Introducing job with faulty description to the system, id expected
+submitJob_include testingResources/request-bodys/faultyDescriptionInclusive.json
+toggleCatchReqError
+printComment Not Found expected, as the job was faulty
+getJobInfo /single/
+toggleCatchReqError
+
+printComment Introducing job with missing contentMode to the system, it should be set automatically
+submitJob_include testingResources/request-bodys/faultyJobIncludedMissingParameters1.json
+getJobInfo /single/
+
+printComment Introducing job with missing application to the system; Error expeced
+submitJob_include testingResources/request-bodys/faultyJobIncludedMissingParameters2.json
+toggleCatchReqError
+
+printComment Introducing job with missing priority to the system
+submitJob_include testingResources/request-bodys/faultyJobIncludedMissingParameters3.json
+printComment Try to get JobInformation for Id equal to null; Error expected
+getJobInfo null
+getJobInfo /single/
+
+toggleCatchReqError
+printComment Introducing job with missing name to the system; Error expeced
+submitJob_include testingResources/request-bodys/faultyJobIncludedMissingParameters4.json
+toggleCatchReqError

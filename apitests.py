@@ -511,6 +511,7 @@ def cancelJob(testCase):
             if len(commandLineArguments) > 2:
                 url += commandLineArguments[ARG_3]
             else:
+                # If the current user has not submitted any jobs, search for a user that has and try to abort the first found (for admin cases)
                 if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] is None or -1:
                     counter = 0
                     for x in ALL_ACTIVE_USERS:
@@ -842,6 +843,7 @@ def executeTestCase(testCaseIdentifier):
         cancelJob(CANCEL_JOB)
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
+        # If the current user has not submitted any jobs, search for a user that has and try to get the info for them (for admin cases)
         if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] is None or -1:
             counter = 0
             for x in ALL_ACTIVE_USERS:
