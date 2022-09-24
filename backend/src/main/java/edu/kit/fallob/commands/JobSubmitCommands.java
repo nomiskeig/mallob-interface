@@ -39,7 +39,8 @@ public class JobSubmitCommands {
 	private MallobOutput mallobOutput;
 	private UserActionAuthentificater uaa;
 
-	private static final String USER_NOT_VERIFIED = "User not verified";
+	private static final String USER_NOT_VERIFIED = "User is not verified.";
+    private static final String CANNOT_ACCESS_DESCRIPTION = "User is not allowed to access the given description.";
 	private static final String RESTART_SUFFIX = "_restart";
 	
 	
@@ -61,7 +62,6 @@ public class JobSubmitCommands {
         if (username == null) {
             throw new FallobException(HttpStatus.BAD_REQUEST, "Username can not be null");
         }
-		jobConfigIsOk(jobConfiguration);
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID;
@@ -78,41 +78,8 @@ public class JobSubmitCommands {
 		return mallobID;
 	}
 	
-	/**
-	 * Set default parameter of jobConfiguration if not set, or check if parameteres are correct, if set
-	 * @param jobConfiguration
-	 * @return
-	 */
-	private void jobConfigIsOk(JobConfiguration jobConfiguration) throws FallobException{
-		if (jobConfiguration.getWallClockLimit() == JobConfiguration.OBJECT_NOT_SET) {
-			jobConfiguration.setWallClockLimit(FallobConfiguration.getInstance().getDefaultWallClockLimit());
-		}
-		if (jobConfiguration.getContentMode() == JobConfiguration.OBJECT_NOT_SET) {
-			jobConfiguration.setContentMode(FallobConfiguration.getInstance().getDefaultContentMode());
-		}
-		if (jobConfiguration.getName() == null) {
-            throw new FallobException(HttpStatus.BAD_REQUEST, "Name is required but not provided.");
 
-        }
-        if (jobConfiguration.getApplication() == null) {
-            throw new FallobException(HttpStatus.BAD_REQUEST, "Application is required but not provided");
-		}
-
-		//perform checks
-        double minPrio = FallobConfiguration.getInstance().getMinJobPriority();
-        double maxPrio = FallobConfiguration.getInstance().getMaxJobPriority();
-		if (jobConfiguration.getPriority() < minPrio
-				|| jobConfiguration.getPriority() > maxPrio) {
-            throw new FallobException(HttpStatus.BAD_REQUEST, "The priority has to be between " + minPrio + " and " + maxPrio);
-
-		}
-    }
-
-
-	
-	
 	public int submitJobWithDescriptionInclusive(String username, JobDescription jobDescription, JobConfiguration jobConfiguration) throws FallobException {
-
 		if (!userDao.getUserByUsername(username).isVerified()) {
 			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
 		}
@@ -131,7 +98,7 @@ public class JobSubmitCommands {
 			throw new FallobException(HttpStatus.FORBIDDEN, USER_NOT_VERIFIED);
 		}
 		if (!uaa.hasDescriptionAccessViaDescriptionID(username, jobdescriptionID)) {
-			throw new FallobException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
+			throw new FallobException(HttpStatus.NOT_FOUND, CANNOT_ACCESS_DESCRIPTION);
 		}
 		JobDescription jobDescription = jobDao.getJobDescription(jobdescriptionID);
 		formatConfiguration(username, jobConfiguration);
@@ -143,10 +110,10 @@ public class JobSubmitCommands {
 	
 	public int restartCanceledJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, "Can not restart jobs of other users.");
 		}
-		if (jobDao.getJobStatus(jobID) == JobStatus.RUNNING) {
-			throw new FallobException(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+		if (jobDao.getJobStatus(jobID) != JobStatus.CANCELLED) {
+			throw new FallobException(HttpStatus.BAD_REQUEST, "The job is not cancelled, so it can not be restarted.");
 		}
 		JobConfiguration jobConfiguration = jobDao.getJobConfiguration(jobID);
 		JobDescription jobDescription = jobDao.getJobDescription(jobConfiguration.getDescriptionID());
@@ -175,8 +142,30 @@ public class JobSubmitCommands {
 		if (precursor != JobConfiguration.INT_NOT_SET) {
 			jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
 		}
+		if (jobConfiguration.getWallClockLimit() == JobConfiguration.OBJECT_NOT_SET) {
+			jobConfiguration.setWallClockLimit(FallobConfiguration.getInstance().getDefaultWallClockLimit());
+		}
+		if (jobConfiguration.getContentMode() == JobConfiguration.OBJECT_NOT_SET) {
+			jobConfiguration.setContentMode(FallobConfiguration.getInstance().getDefaultContentMode());
+		}
+		if (jobConfiguration.getName() == null) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "Name is required but not provided.");
+
+        }
 		if (jobConfiguration.getPriority() == JobConfiguration.DOUBLE_NOT_SET) {
 			jobConfiguration.setPriority(FallobConfiguration.getInstance().getDefaultJobPriority());
+		}
+        if (jobConfiguration.getApplication() == null) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "Application is required but not provided");
+		}
+
+		//perform checks
+        double minPrio = FallobConfiguration.getInstance().getMinJobPriority();
+        double maxPrio = FallobConfiguration.getInstance().getMaxJobPriority();
+		if (jobConfiguration.getPriority() < minPrio
+				|| jobConfiguration.getPriority() > maxPrio) {
+            throw new FallobException(HttpStatus.BAD_REQUEST, "The priority has to be between " + minPrio + " and " + maxPrio);
+
 		}
 		PriorityConverter prioConverter = new PriorityConverter(daoFactory);
 		jobConfiguration.setPriority(prioConverter.getPriorityForMallob(username, jobConfiguration.getPriority()));
