@@ -4,7 +4,7 @@ import java.util.List;
 
 public class NormalUser extends User {
 	
-	private static final double NORMAL_USER_PRIORITY = 0.5;
+	private static final double NORMAL_USER_PRIORITY = 1.0;
 	private static final String STRING_REPRESENTATION = "Normal User";
 
 	public NormalUser(String username, String password, String email) {

@@ -87,7 +87,7 @@ public class JobResultCommand {
 	}
 	
 	public List<JobResult> getAllJobResult(String username) throws FallobException{
-		int[] jobIDs = jobDao.getAllJobIds(username);
+		int[] jobIDs = jobDao.getAllJobsWithStatus(username, JobStatus.DONE);
 		List<JobResult> jobResults;
 		jobResults = getMultipleJobResult(username, jobIDs);
 		return jobResults;
