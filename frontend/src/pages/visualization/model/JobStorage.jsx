@@ -53,6 +53,7 @@ export class JobStorage {
      * @param {Event[]} events - The events to process.
      */
 	addEvents(events) {
+        events.forEach((event) => console.log("added event", event, event.getTime().toISOString()))
 		function getSeededRandom(a) {
 			let t = (a += 0x6d2b79f5);
 			t = Math.imul(t ^ (t >>> 15), t | 1);

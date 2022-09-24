@@ -55,11 +55,12 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
     @Override
     public void processLine(String line) {
         if (Event.isEvent(line)) {
+            System.out.println("Got event: " + line);
             Event event = new Event(line);
 
-            this.bufferedEvents.tryToExecuteBufferFunciton(event);
+            this.bufferedEvents.bufferObject(event);
         }
-
+    
         //retry to send the buffered events
         this.bufferedEvents.retryBufferedFunction();
     }
@@ -81,6 +82,7 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
 
         if (this.emitter != null) {
             try {
+                System.out.println("sent event:" + jsonObject.toString());
                 this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
             } catch (IOException e) {
                 this.emitter.complete();

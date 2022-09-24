@@ -34,6 +34,7 @@ submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded5.json useLastDescriptionID
 cancelJob /single/
 
+wait 1
 # submit 2 short jobs with inclusive descriptions
 printComment submit 2 short jobs inclusive
 submitJob_include testingResources/request-bodys/submitJobInclude1Body.json

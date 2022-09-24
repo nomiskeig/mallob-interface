@@ -4,6 +4,7 @@ import axios from 'axios';
 import isBefore from 'date-fns/isBefore';
 import isAfter from 'date-fns/isAfter';
 import isEqual from 'date-fns/isEqual';
+import { differenceInMilliseconds } from 'date-fns';
 /**
  * This class uses the Event-Stream provided by the API to provide the new Events.
  *
@@ -33,6 +34,7 @@ export class StreamEventManager extends EventManager {
 				isEqual(event.getTime(), nextTime)
 		);
 		this.events.splice(0, newEvents.length);
+
 		return newEvents;
 	}
 
@@ -84,6 +86,7 @@ export class StreamEventManager extends EventManager {
 						lastEvent.jobID,
 						lastEvent.load
 					);
+                    console.log("new event:", newEvent, newEvent.getTime().toISOString())
 					if (isAfter(newEvent.getTime(), initialTime)) {
 						newEvents.push(newEvent);
 					}

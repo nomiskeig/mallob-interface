@@ -36,7 +36,7 @@ public class EventListener implements OutputLogLineListener, BufferFunction<Even
 	public void processLine(String line) {
 		if (Event.isEvent(line)) {
 			Event e = new Event(line);
-			eventBuffer.tryToExecuteBufferFunciton(e);
+			eventBuffer.bufferObject(e);
 		}
 		
 		//try to save buffered events
