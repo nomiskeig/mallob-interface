@@ -67,11 +67,11 @@ public class JobAbortCommands {
 		}
 
 		if (!uaa.hasAbortAccess(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
 		}
 		
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
-			throw new FallobException(HttpStatus.CONFLICT, HttpStatus.CONFLICT.getReasonPhrase());
+			throw new FallobException(HttpStatus.CONFLICT, CONFLICT_MESSAGE);
 		}
 
 		if (uaa.isAdmin(username)) {
@@ -140,7 +140,7 @@ public class JobAbortCommands {
 	
 	public List<Integer> abortAllGlobalJob(String username) throws FallobException {
 		if (!uaa.isAdmin(username)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
 		}
 		List<Integer> allGlobalJobIDs = jobDao.getAllRunningJobs(); 
 		int[] allGlobalJobIDsArray = new int[allGlobalJobIDs.size()];

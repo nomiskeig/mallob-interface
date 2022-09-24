@@ -1,11 +1,27 @@
-#Try to register, in case database is new
 
-toggleCatchReqError
-register testingResources/request-bodys/loginAndRegister/registerBodyUser3.json
-toggleCatchReqError
 
 
 #actual test-scenario
 
+
 #authenticate
-login testingResources/request-bodys/loginAndRegister/loginBodyUser3.json
+#notice that the admin specified in loginBodyAdmin1.json should already be listed in the database.
+login testingResources/request-bodys/loginAndRegister/loginBodyAdmin1.json
+
+#submit job with extern description
+printComment Introduce a valid job to the system. No Error should be returned.
+submitDescription testingResources/cnf/description.cnf
+submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+
+#get Mallob Information/Warnings
+printComment Get Warnings which appeared during a run of Mallob.
+getMallobInfo
+
+#get Fallob System Configuration
+printComment Get the System Configuration of Fallob.
+getSystemConfig
+
+#get Job Result
+wait 3
+printComment Get the Result of the previous submitted job.
+getResult /single/

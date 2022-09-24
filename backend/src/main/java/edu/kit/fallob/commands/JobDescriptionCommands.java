@@ -44,7 +44,7 @@ public class JobDescriptionCommands {
 			throw new FallobException(HttpStatus.BAD_REQUEST, CONTAINS_INCORRECT_JOBID);
 		}
 		if (!uaa.hasDescriptionAccessViaJobID(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase());
+			throw new FallobException(HttpStatus.FORBIDDEN, FORBIDDEN_MESSAGE);
 		}
 		int descriptionID = jobDao.getJobConfiguration(jobID).getDescriptionID();
 		return jobDao.getJobDescription(descriptionID);
