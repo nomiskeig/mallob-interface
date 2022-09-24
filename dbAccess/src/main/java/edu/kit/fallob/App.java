@@ -17,28 +17,31 @@ import org.json.JSONObject;
 public class App {
     private static final String UPDATE_VERIFIED = "UPDATE users SET isverified=? WHERE username=?";
     private static final String UPDATE_ADMIN = "UPDATE users SET usertype=? WHERE username=?";
+    private static final String UPDATE_PRIORITY = "UPDATE users SET priority=? WHERE username=?";
 
     public static void main(String[] args) {
         if (args.length == 1 && args[0].equals("--help")) {
             System.out.println("This is a helper programm to update users in the fallob database.");
             System.out.println("At least two arguments are required:");
-            System.out.println("The first one defines the action. Can be one of the following:");
+            System.out.println(
+                    "The first one (or the first two in the case of setPriority) defines the action. Can be one of the following:");
             System.out.println(" - 'setVerified': Makes the given user verified.");
             System.out.println(" - 'setUnverified': Makes the given user unverified.");
             System.out.println(" - 'setAdmin': Makes the given user an administrator.");
-            System.out.println(" - 'setNormalUser': Makes the given user a normal user.\n");
+            System.out.println(" - 'setNormalUser': Makes the given user a normal user.");
+            System.out.println(" - 'setPriority: Sets the priority of the given user to the given prority. In this case, the third argument is the new priority.\n");
             System.out.println("The second argument is the name of the user to modify.\n");
             System.out.println(
-                    "If the default configuration file should not be used, the absolute path of the configuration file to use can be passed as the third argument.");
-            System.out.println("Note that the path of the database to modify as well as the username and password for the database are read from the configuarion file.");
+                    "If the default configuration file should not be used, the absolute path of the configuration file to use can be passed as the last argument.");
+            System.out.println(
+                    "Note that the path of the database to modify as well as the username and password for the database are read from the configuarion file.");
             return;
         }
-
-        if (args.length != 3) {
+        if (args.length != 3 && args.length != 4) {
             printError("Incorrect amount of arguments provided.");
             return;
         }
-        String pathToConfig = args[2];
+        String pathToConfig = args.length == 4 ? args[3] : args[2];
         if (!(new File(pathToConfig)).exists()) {
             printError("The configuration file could not be found");
             return;
@@ -56,6 +59,7 @@ public class App {
         String databasePath;
         String action = args[0];
         String user = args[1];
+        String prio = args.length == 4 ? args[2] : null;
         try {
             JSONObject json = new JSONObject(configContents);
             JSONObject dbJson = json.getJSONObject("database");
@@ -124,6 +128,29 @@ public class App {
                     statement4.executeUpdate();
                     printSuccess("User " + user + " is now not verified.");
                     break;
+                case "setPriority":
+                    if (prio == null) {
+                        printError("The prioriity is missing.");
+                        return;
+                    }
+                    double prioAsDouble;
+                    try {
+                        prioAsDouble = Double.parseDouble(prio);
+                    } catch (NumberFormatException e) {
+                        printError("The given priority is not a number.");
+                        return;
+                    }
+                    if (prioAsDouble <= 0) {
+                        printError("The priority can not be less than zero.");
+                        return;
+                    }
+                    PreparedStatement statement5 = conn.prepareStatement(UPDATE_PRIORITY);
+                    statement5.setDouble(1, prioAsDouble);
+                    statement5.setString(2, user);
+                    statement5.executeUpdate();
+                    printSuccess("Priority of user " + user + " is now " + prio + ".");
+                    break;
+
                 default:
                     printError(
                             "Error: The only possible actions are 'setAdmin', 'setNormalUser', 'setVerified', 'setUnverified'.");
@@ -139,7 +166,8 @@ public class App {
         System.out.println("\033[0;31m" + error + "\033[0m");
 
     }
+
     private static void printSuccess(String success) {
-        System.out.println("\033[0;32m"+ success + "\033[0m");
+        System.out.println("\033[0;32m" + success + "\033[0m");
     }
 }
