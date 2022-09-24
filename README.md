@@ -33,7 +33,6 @@ The mallobBasePath of the configuration-File has to be changed to the correct pa
 NOTE 2:
 Executing the build script will delete the fallob-data folder and its contents and reset the folder to the default layout/values.
 
-
 #### Start
 
 First, start mallob with the -iff flag, the log flag set to .api and the log level set to four.
@@ -57,6 +56,10 @@ NOTE:
 
 The start-Script does not check the provided parameters of the config. Thus, a wrongly formatted configuration-File might lead to undefined behavior.
 
+
+#### Changing the ports
+
+The ports the application is using can be changed by changing the variables in the .env file.
 # Configuration file
 
 All the paths in the configuration file can be either absolute or relative. Relative paths begin in the mallob-interface-folder.
