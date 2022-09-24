@@ -122,7 +122,9 @@ export class TimelineComponent extends React.Component {
 					</button>
                     <button className='btn btn-secondary toggleButton' onClick={() => this.props.toggleDetails()}>Toggle detail panel</button>
 					<div className='flex-fill'></div>
-					<form className='replaySpeedForm d-flex align-items-center'>
+					<form onSubmit={(e)=> {e.preventDefault()}} className='replaySpeedForm d-flex align-items-center'>
+
+                        
 						<label className='replaySpeedLabel' htmlFor='replaySpeed'>
 							Replay speed
 						</label>
@@ -131,9 +133,8 @@ export class TimelineComponent extends React.Component {
 							id='replaySpeed'
 							//max={200}
 							//min={-200}
-							type='number'
 							onChange={(e) => {
-								//e.preventDefault()
+								e.preventDefault()
 								if (isNaN(e.target.value)) {
 									this.#context.infoContext.handleInformation(
 										e.target.value + ' is not a number.',

@@ -33,6 +33,7 @@ export class StreamEventManager extends EventManager {
 				isEqual(event.getTime(), nextTime)
 		);
 		this.events.splice(0, newEvents.length);
+
 		return newEvents;
 	}
 
