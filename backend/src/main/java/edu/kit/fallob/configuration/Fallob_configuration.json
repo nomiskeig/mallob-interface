@@ -1,0 +1,35 @@
+{
+"amountProcesses" : 2,
+"maxJobsTotal" : 100,
+"maxJobsUser" : 10,
+"maxJobPriority" : 100,
+"minJobPriority" : 0.01,
+"bufferRetryInterval" : 50,
+"client-processes" : [0],
+"storage": {
+"garbageCollectorInterval": 10,
+"jobStorageTime": 10,
+"eventStorageTime": 10,
+"warningStorageTime": 10,
+"maxDescriptionStorageSize": 10
+},
+"defaults": {
+"priority": 1.0,
+"wallclockLimit": "60",
+"contentMode": "text"
+},
+"paths": {
+"databaseBasePath": "/home/maik/mallob-interface/backend/src/main/java/edu/kit/fallob/fallobDatabase",
+"mallobBasePath": "/home/maik/PSE/mallob/",
+"resultBasePath": "/home/maik/PSE",
+"descriptionsBasePath": "/home/maik/PSE/descriptionBaseDir"
+},
+"database": {
+"databaseUsername": "fallob",
+"databasePassword": ""
+},
+"readerSetup": {
+"readingIntervalPerReadingThread": 20,
+"amountReaderThreads": 2
+}
+}
