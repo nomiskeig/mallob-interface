@@ -12,19 +12,19 @@ switchUser 0
 togglePrintBody
 submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
-
+wait 1
 submitDescription testingResources/cnf/shortJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
-
+wait 1
 submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
-
+wait 1
 submitDescription testingResources/cnf/shortJob.cnf
 submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
-
+wait 1
 submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcludedShortCPUTime.json useLastDescriptionID
-
+wait 1
 submitDescription testingResources/cnf/shortJob.cnf
 submitJob_external testingResources/request-bodys/jobExcludedShortWallclockLimit.json useLastDescriptionID
 

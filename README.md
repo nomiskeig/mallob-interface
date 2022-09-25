@@ -134,13 +134,18 @@ You may have to give the start.sh file permission to execute. This can be done w
 ```
 chmod +x ./modifyUser.sh
 ```
-<!---
-# Reseting 
 
-As there are still bugs in the application, you may have to reset all the files to get up and running again. The following steps have to be done in order to do so:
+# Running unit tests
 
-- Clear the description folder
-- Clear the result folder
-- Delete the database file and replace with a working version (most likely an empty one)
-- Delete the .api folder mallob creates.
---->
+The unit tests for the backend and the web-interface can be run by first changing to their respective folder. 
+Then, for the backend, run
+```
+mvn test
+```
+For the web-interface, run 
+```
+npm run tests
+
+```
+Note that you have to have Java 17 and Maven installed for the backend and Node.js for the web-interface.
+
