@@ -66,7 +66,6 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription)
             throws IOException, FallobException {
         // copy over the descriptions
-        System.out.println("submitting");
         String mallobFolder = FallobConfiguration.getInstance().getMallobBasePath();
         List<File> descriptions = jobDescription.getDescriptionFiles();
         File descriptionDir = new File(mallobFolder + "/descriptions");
@@ -84,7 +83,6 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         synchronized (monitor) {
             while ((jobStatus == JOB_IS_SUBMITTING || !hasMapping) && jobStatus != JOB_IS_NOT_VALID) {
                 try {
-                    System.out.println("Waiting");
                     monitor.wait();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
@@ -112,8 +110,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     }
 
     @Override
-    public  void processLine(String line) {
-        System.out.println(line);
+    public void processLine(String line) {
         Matcher jobIdMatcher = jobIdPattern.matcher(line);
         if (jobIdMatcher.find()) {
             jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1));
@@ -131,7 +128,6 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         }
         Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
         if (notValidJobMatcher.find()) {
-            System.out.println("found not valid line: " + line);
             jobStatus = JOB_IS_NOT_VALID;
             errorMessage = line.substring(line.indexOf("reason") + 8);
             synchronized (monitor) {
