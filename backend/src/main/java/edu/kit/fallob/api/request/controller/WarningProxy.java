@@ -20,7 +20,7 @@ public class WarningProxy {
 
 
     /**
-     * constructor of the class
+     * Constructor of the class
      * @param warning the Warning object that should be converted
      */
     public WarningProxy(Warning warning) {
@@ -28,6 +28,10 @@ public class WarningProxy {
         this.message = warning.getMessage();
     }
 
+    /**
+     * Getter
+     * @return the time stamp of the printed message from the warning object
+     */
     public String getTimestamp() {
         //format the time to the right format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
@@ -35,6 +39,10 @@ public class WarningProxy {
         return timeWithZone.format(formatter);
     }
 
+    /**
+     * Getter
+     * @return the message from the warning object
+     */
     public String getMessage() {
         return message;
     }

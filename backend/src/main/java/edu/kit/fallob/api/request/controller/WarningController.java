@@ -26,6 +26,11 @@ public class WarningController {
     @Autowired
     private MallobCommands warningCommand;
 
+    /**
+     * A GET endpoint for getting the Warnings from Mallob
+     * Responsible for system error handling
+     * @return sends a response with the ResultMetaData of the job or an error (including a status code and a message in json format)
+     */
     @GetMapping("/api/v1/system/mallobInfo")
     public ResponseEntity<Object> getMallobWarnings() {
         List<Warning> warnings;

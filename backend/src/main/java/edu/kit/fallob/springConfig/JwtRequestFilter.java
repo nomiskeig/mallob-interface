@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * A class used to authorize the users using their jwtTokens (uses Spring's security filter chain)
+ */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -42,6 +47,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static final int INDEX_BEARER = 7;
 
+    /**
+     * Used to authorize the users using their jwtTokens, accesses the Command class to get the user loaded in UserDetails object
+     * and also the JwtTokenUtil to validate the token. Sets up the SecurityContextHolder of Spring if the token is valid
+     * @param request a servlet request that can be set to carry additional information in the Controllers (carries only username at the moment)
+     * @param response a servlet response that can be set to carry additional information in the Controllers
+     * @param chain Spring Security's filter chain
+     * @throws ServletException an exception in the request/response
+     * @throws IOException an input/output exception
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
