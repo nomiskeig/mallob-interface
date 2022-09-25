@@ -1,5 +1,8 @@
 package edu.kit.fallob.mallobio.output.distributors;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -13,7 +16,7 @@ public class OutputLogLineDistributor implements OutputProcessor {
 	private List<OutputLogLineListener> listeners;
 	
 	public OutputLogLineDistributor() {
-		this.listeners = new CopyOnWriteArrayList<>();
+		this.listeners = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	public void addListener(OutputLogLineListener listener) {
@@ -26,8 +29,11 @@ public class OutputLogLineDistributor implements OutputProcessor {
 
 	@Override
 	public void processLogLine(String logLine) {
-		for (OutputLogLineListener l : listeners) {
-			l.processLine(logLine);
+		synchronized(listeners) {
+			Iterator<OutputLogLineListener> i = listeners.iterator();
+			while (i.hasNext()) {
+				i.next().processLine(logLine);
+			}
 		}
 	}
 

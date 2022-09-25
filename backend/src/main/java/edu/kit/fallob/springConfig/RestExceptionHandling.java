@@ -21,8 +21,22 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * An exception handling class used to handle wrong requests before they go in the controllers
+ */
 @ControllerAdvice
 public class RestExceptionHandling extends ResponseEntityExceptionHandler {
+
+    /**
+     * Handles Method Argument is not valid
+     * @param ex the thrown Exception by Spring
+     * @param headers headers of the request
+     * @param status HttpStatus
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         StringBuilder message = new StringBuilder();
@@ -39,6 +53,14 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
+    /**
+     * Handles a missing request parameter
+     * @param ex the thrown Exception by Spring
+     * @param headers headers of the request
+     * @param status HttpStatus
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
                                                                           HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -48,6 +70,13 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message + "\n" + error);
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+
+    /**
+     * Handles constraint violations
+     * @param ex the thrown Exception by Spring
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
         StringBuilder message = new StringBuilder();
@@ -61,6 +90,13 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, message.toString());
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+
+    /**
+     * Handles Method Argument type is not valid
+     * @param ex the thrown Exception by Spring
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         String error = ex.getName() + " should be of type " + Objects.requireNonNull(ex.getRequiredType()).getName();
@@ -70,6 +106,14 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    /**
+     * Handles no handler found for method
+     * @param ex the thrown Exception by Spring
+     * @param headers headers of the request
+     * @param status HttpStatus
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
@@ -79,6 +123,14 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    /**
+     * Handles Request endpoint Method is not supported
+     * @param ex the thrown Exception by Spring
+     * @param headers headers of the request
+     * @param status HttpStatus
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         StringBuilder message = new StringBuilder(ex.getLocalizedMessage() + "\n");
@@ -90,6 +142,14 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    /**
+     * Handles media type not supported
+     * @param ex the thrown Exception by Spring
+     * @param headers headers of the request
+     * @param status HttpStatus
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         StringBuilder message = new StringBuilder(ex.getLocalizedMessage() + "\n");
@@ -100,6 +160,15 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, message.substring(0, message.length() - 2));
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+
+    /**
+     * Handles message not readable
+     * @param ex the thrown Exception by Spring
+     * @param headers headers of the request
+     * @param status HttpStatus
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         StringBuilder message = new StringBuilder(ex.getLocalizedMessage() + "\n");
@@ -108,6 +177,12 @@ public class RestExceptionHandling extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    /**
+     * Handles all other undefined exceptions for the sent requests
+     * @param ex the thrown Exception by Spring
+     * @param request the request, because of which the exception is thrown
+     * @return an API-Error with the HttpStatus and an error message
+     */
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());

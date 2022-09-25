@@ -37,6 +37,7 @@ public class Buffer<T> {
         synchronized (this) {
             int maxTries = bufferedUpdates.size();
             while (maxTries > 0) {
+            	maxTries--;
                 T update = bufferedUpdates.peek();
                 if (update != null) {
                     if (!tryToExecuteBufferFunciton(update)) {
@@ -49,7 +50,6 @@ public class Buffer<T> {
                     // remove the update if execution was successful
                     bufferedUpdates.poll();
                 }
-                maxTries--;
             }
         }
     }

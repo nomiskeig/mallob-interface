@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 /**
  * This class provides methods which submit a new Job, restart a canceled Job or save a new Jobdescription.
@@ -62,6 +63,15 @@ public class JobSubmitCommands {
         if (username == null) {
             throw new FallobException(HttpStatus.BAD_REQUEST, "Username can not be null");
         }
+        int[] userJobIDs = jobDao.getAllJobsWithStatus(username, JobStatus.RUNNING);
+        if (userJobIDs.length >= FallobConfiguration.getInstance().getMaxJobsUser()) {
+        	throw new FallobException(HttpStatus.CONFLICT, "Maximal number of submitted jobs per user, which are still running, reached");
+        }
+        List<Integer> allRunningJobIDs = jobDao.getAllRunningJobs();
+        if (allRunningJobIDs.size() >= FallobConfiguration.getInstance().getMaxJobsTotal()) {
+        	throw new FallobException(HttpStatus.CONFLICT, "Maximal number of submitted jobs in the system, which are still running, reached");
+        }
+        System.out.println("submitter");
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID;
@@ -132,15 +142,15 @@ public class JobSubmitCommands {
 	private void formatConfiguration(String username, JobConfiguration jobConfiguration) throws FallobException {
 	    Integer[] dependencies = jobConfiguration.getDependencies();
 		int precursor = jobConfiguration.getPrecursor();
-		if (dependencies != null) {
+		if (dependencies != JobConfiguration.OBJECT_NOT_SET) {
 			String[] jobNames = new String[dependencies.length];
 			for (int i = 0; i < dependencies.length; i++) {
-				jobNames[i] = jobDao.getJobConfiguration(dependencies[i]).getName();
+				jobNames[i] = username + "." + jobDao.getJobConfiguration(dependencies[i]).getName();
 			}
 			jobConfiguration.setDependenciesStrings(jobNames);
 		}
 		if (precursor != JobConfiguration.INT_NOT_SET) {
-			jobConfiguration.setPrecursorString(jobDao.getJobConfiguration(precursor).getName());
+			jobConfiguration.setPrecursorString(username + "." + jobDao.getJobConfiguration(precursor).getName());
 		}
 		if (jobConfiguration.getWallClockLimit() == JobConfiguration.OBJECT_NOT_SET) {
 			jobConfiguration.setWallClockLimit(FallobConfiguration.getInstance().getDefaultWallClockLimit());

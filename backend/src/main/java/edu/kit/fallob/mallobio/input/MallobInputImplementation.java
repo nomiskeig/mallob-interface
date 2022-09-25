@@ -236,7 +236,7 @@ public class MallobInputImplementation implements MallobInput {
 		}
 		
 		if (jobConfiguration.getPrecursor() != JobConfiguration.INT_NOT_SET){
-			json.put(MallobAttributeNames.MALLOB_PRECURSOR, jobConfiguration.getPrecursor());
+			json.put(MallobAttributeNames.MALLOB_PRECURSOR, jobConfiguration.getPrecursorString());
 		}
 	
 		if (jobConfiguration.getAssumptions() != JobConfiguration.OBJECT_NOT_SET){
