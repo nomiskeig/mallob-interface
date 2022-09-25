@@ -68,7 +68,7 @@ public class FallobConfigReaderTests {
 		o.put("client-processes", new JSONArray(CLIENT_PROCESSES));
 		o.put("minJobPriority", 0.1);
 		o.put("maxJobPriority", 100);
-		o.put("buffferRetryInterval", 500);
+		o.put("bufferRetryInterval", 500);
 
 		JSONObject storage = new JSONObject();
 		storage.put("garbageCollectorInterval", GARBAGECOLLECTINTERVAL);
