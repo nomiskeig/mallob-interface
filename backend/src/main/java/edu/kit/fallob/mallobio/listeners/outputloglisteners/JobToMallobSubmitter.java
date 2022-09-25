@@ -57,6 +57,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
         String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX, username);
         String formattedJobIdPattern = String.format(JOB_ID_REGEX, username);
+        System.out.println(formattedJobIdPattern);
         validJobPattern = Pattern.compile(VALID_JOB_REGEX);
         notValidJobPattern = Pattern.compile(formattedNotValidJobPattern);
         jobIdPattern = Pattern.compile(formattedJobIdPattern);
@@ -111,19 +112,20 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
     @Override
     public void processLine(String line) {
+    	System.out.println(line);
         Matcher jobIdMatcher = jobIdPattern.matcher(line);
         if (jobIdMatcher.find()) {
             jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1));
             hasMapping = true;
             synchronized (monitor) {
-                monitor.notify();
+                monitor.notifyAll();
             }
         }
         Matcher validJobMatcher = validJobPattern.matcher(line);
         if (validJobMatcher.find()) {
             jobStatus = JOB_IS_VALID;
             synchronized (monitor) {
-                monitor.notify();
+                monitor.notifyAll();
             }
         }
         Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
@@ -131,7 +133,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
             jobStatus = JOB_IS_NOT_VALID;
             errorMessage = line.substring(line.indexOf("reason") + 8);
             synchronized (monitor) {
-                monitor.notify();
+                monitor.notifyAll();
             }
         }
         Matcher sameJobNameMatcher = sameJobNamePattern.matcher(line);
@@ -139,7 +141,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         	jobStatus = JOB_IS_NOT_VALID;
             errorMessage = SAME_JOB_NAME_ERROR;
             synchronized (monitor) {
-                monitor.notify();
+                monitor.notifyAll();
             }
         }
     }
