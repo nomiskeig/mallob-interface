@@ -28,14 +28,20 @@ public class MallobStartStopController {
 
     /**
      * A POST endpoint for starting Mallob
-     * Takes a request, parses the data needed to abort a single job and forwards it. It is also responsible for system error handling
-     * @param request a servlet request that contains the username of the sender
-     * @return sends a response with the id of the aborted job or an error (including a status code and a message in json format)
+     * Takes a request, parses the data needed to start Mallob and forwards it. It is also responsible for system error handling
+     * @param request a MallobStartStopRequest request that contains the parameters for initializing Mallob
+     * @return sends a response stating OK if successful or an error (including a status code and a message in json format)
      */
     @PostMapping("/start")
     public ResponseEntity<Object> startMallob(@RequestBody MallobStartStopRequest request) {
         return startMallobHelper(request);
     }
+
+    /**
+     * A POST endpoint for stopping Mallob
+     * It is responsible for system error handling
+     * @return sends a response stating OK if successful or an error (including a status code and a message in json format)
+     */
     @PostMapping("/stop")
     public ResponseEntity<Object> stopMallob(){
         boolean successful = mallobCommands.stopMallob();
@@ -44,6 +50,13 @@ public class MallobStartStopController {
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+    /**
+     * A POST endpoint for restarting Mallob
+     * Takes a request, parses the data needed to restart Mallob and forwards it. It is also responsible for system error handling
+     * @param request a MallobStartStopRequest request that contains the parameters for initializing Mallob
+     * @return sends a response stating OK if successful or an error (including a status code and a message in json format)
+     */
     @PostMapping("/restart")
     public ResponseEntity<Object> restartMallob(@RequestBody MallobStartStopRequest request){
         boolean successful = mallobCommands.stopMallob();
@@ -53,6 +66,11 @@ public class MallobStartStopController {
         return startMallobHelper(request);
     }
 
+    /**
+     * Summarizes the duplicate start Mallob part of the endpoint Methods
+     * @param request the MallobStartStopRequest request that contains the parameters for initializing Mallob
+     * @return a response stating OK if successful or an error (including a status code and a message in json format)
+     */
     private ResponseEntity<Object> startMallobHelper(MallobStartStopRequest request) {
         boolean successful;
         try {

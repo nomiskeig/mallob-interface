@@ -13,6 +13,9 @@ public class MallobStartStopRequest {
         this.params = params;
     }
 
+    /**
+     * Standard constructor (for json parsing)
+     */
     public MallobStartStopRequest() {}
 
     public String getParams() {
