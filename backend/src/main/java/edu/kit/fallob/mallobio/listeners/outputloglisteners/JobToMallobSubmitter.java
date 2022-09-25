@@ -34,7 +34,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     private final static int JOB_IS_NOT_VALID = 2;
     private final static String JOB_ID_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
     private final static String VALID_JOB_REGEX = "Introducing job #[0-9]+";
-    private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission %s.* - reason:";
+    private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission .* - reason:";
     private final static String SAME_JOB_NAME_REGEX = "\\[WARN\\] Modification of a file I already parsed! Ignoring.";
     private final static String SAME_JOB_NAME_ERROR = "A job with this name is already parsed and still running.";
 
@@ -55,10 +55,10 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         this.mallobInput = MallobInputImplementation.getInstance();
         this.monitor = new Object();
 
-        String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX, username);
+        //String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX_1, username);
         String formattedJobIdPattern = String.format(JOB_ID_REGEX, username);
         validJobPattern = Pattern.compile(VALID_JOB_REGEX);
-        notValidJobPattern = Pattern.compile(formattedNotValidJobPattern);
+        notValidJobPattern = Pattern.compile(NOT_VALID_JOB_REGEX);
         jobIdPattern = Pattern.compile(formattedJobIdPattern);
         sameJobNamePattern = Pattern.compile(SAME_JOB_NAME_REGEX);
     }
@@ -66,6 +66,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription)
             throws IOException, FallobException {
         // copy over the descriptions
+        System.out.println("submitting");
         String mallobFolder = FallobConfiguration.getInstance().getMallobBasePath();
         List<File> descriptions = jobDescription.getDescriptionFiles();
         File descriptionDir = new File(mallobFolder + "/descriptions");
@@ -81,8 +82,9 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
 
         synchronized (monitor) {
-            while (jobStatus == JOB_IS_SUBMITTING || !hasMapping) {
+            while ((jobStatus == JOB_IS_SUBMITTING || !hasMapping) && jobStatus != JOB_IS_NOT_VALID) {
                 try {
+                    System.out.println("Waiting");
                     monitor.wait();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
@@ -110,7 +112,8 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     }
 
     @Override
-    public void processLine(String line) {
+    public  void processLine(String line) {
+        System.out.println(line);
         Matcher jobIdMatcher = jobIdPattern.matcher(line);
         if (jobIdMatcher.find()) {
             jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1));
@@ -128,6 +131,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         }
         Matcher notValidJobMatcher = notValidJobPattern.matcher(line);
         if (notValidJobMatcher.find()) {
+            System.out.println("found not valid line: " + line);
             jobStatus = JOB_IS_NOT_VALID;
             errorMessage = line.substring(line.indexOf("reason") + 8);
             synchronized (monitor) {
