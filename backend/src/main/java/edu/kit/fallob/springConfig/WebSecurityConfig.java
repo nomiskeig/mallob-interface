@@ -19,6 +19,11 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 
+/**
+ * @author Kaloyan Enev
+ * @version 1.0
+ * This class sets up Spring's WebSecurity (defines the Admin authorities)
+ */
 @Configuration @EnableWebSecurity @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
@@ -33,12 +38,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ADMIN = "ADMIN";
 
-
+    /**
+     * Configures the AuthenticationManager
+     * @param auth Spring's AuthenticationManagerBuilder
+     * @throws Exception an exception in the build
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
+    /**
+     * Configures the http security (defines the endpoints, which are available only for admins)
+     * Defines for which endpoints the user must be authorized
+     * @param http httpSecurity that is to be edited
+     * @throws Exception an exception in the build
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
@@ -60,6 +75,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
      }
 
+    /**
+     * Initalizes the AuthenticationManager Bean for Spring
+     * @return an AuthenticationManager to Spring
+     * @throws Exception an exception in the build
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

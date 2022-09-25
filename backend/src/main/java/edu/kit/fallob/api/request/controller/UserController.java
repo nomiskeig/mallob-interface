@@ -34,6 +34,12 @@ public class UserController {
 
     private static final String REGISTER_UNSUCCESSFUL = "Registering was unsuccessful.";
 
+    /**
+     * A POST endpoint for registering in the Fallob system
+     * Takes a request, parses the data needed to register in Fallob and forwards it. It is also responsible for system error handling
+     * @param request a UserRequest object that contains an Email, a username and a password
+     * @return sends a response stating OK if successful or an error (including a status code and a message in json format)
+     */
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody UserRequest request) {
         boolean successful;
@@ -53,6 +59,13 @@ public class UserController {
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
+    /**
+     * A POST endpoint for registering in the Fallob system
+     * Takes a request, parses the data needed to register in Fallob and forwards it. It is also responsible for system error handling
+     * @param authenticationRequest a UserRequest object that contains a username and a password
+     * @return sends a response containing the jwtToken if successful or an error (including a status code and a message in json format)
+     */
     @PostMapping("/login")
     public ResponseEntity<Object> createAuthenticationToken(@RequestBody UserRequest authenticationRequest) {
 
@@ -74,6 +87,13 @@ public class UserController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
+
+    /**
+     * A helper Method that calls Spring's AuthenticationManager and catches the errors from it
+     * @param username the provided username by the user
+     * @param password the provided password by the user
+     * @throws FallobException an Exception summarizing the errors from the AuthenticationManager (standard Exception used in the system)
+     */
     private void authenticate(String username, String password) throws FallobException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
