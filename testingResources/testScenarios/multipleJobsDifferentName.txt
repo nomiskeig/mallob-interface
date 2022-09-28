@@ -7,15 +7,15 @@ login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
 
 togglePrintBody
 submitDescription testingResources/cnf/shortJobSAT.cnf
-submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded1.json useLastDescriptionID
 wait 2 
 getJobInfo /single/
 submitDescription testingResources/cnf/shortJobSAT.cnf
-submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded2.json useLastDescriptionID
 wait 2 
 getJobInfo /single/
 submitDescription testingResources/cnf/shortJobSAT.cnf
-submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded3.json useLastDescriptionID
 wait 2 
 getJobInfo /single/
 exit

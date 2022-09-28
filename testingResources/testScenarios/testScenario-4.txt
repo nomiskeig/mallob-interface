@@ -1,3 +1,5 @@
+
+printComment Register 4 users
 toggleCatchReqError
 register testingResources/request-bodys/loginAndRegister/registerBodyUser1.json
 register testingResources/request-bodys/loginAndRegister/registerBodyUser2.json
@@ -5,23 +7,39 @@ register testingResources/request-bodys/loginAndRegister/registerBodyUser3.json
 register testingResources/request-bodys/loginAndRegister/registerBodyUser4.json
 toggleCatchReqError
 
-
-
-#user 1 loggt sich ein und reicht einen sehr langen Job ein
+#login user 1-4
+printComment login all 4 users
 login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
-submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/noNameJob_externalDescription.json useLastDescriptionID
-
-#user 2 loggt sich ein und reicht eine beschreibung ein
 login testingResources/request-bodys/loginAndRegister/loginBodyUser2.json
-
-#user 1 erkundigt sich nach seinem Job
-switchUser 0
-getJobInfo /single/
-
-#user 3 loggt sich ein und reicht einen Job inkl. beschreibung ein
 login testingResources/request-bodys/loginAndRegister/loginBodyUser3.json
-
-
-
 login testingResources/request-bodys/loginAndRegister/loginBodyUser4.json
+
+#user reicht einen (fast unendlich)  langen Job ein
+switchUser 0
+submitDescription testingResources/cnf/insane_big_job.cnf
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded1.json useLastDescriptionID
+
+#user 2 reicht beschreibung eien langen job ein
+switchUser 1
+submitDescription testingResources/cnf/largeJob.cnf
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded2.json useLastDescriptionID
+
+#user3 reicht job mit interner beschriebung ein#
+switchUser 2
+submitJob_include testingResources/request-bodys/submitJobInclude1Body.json
+
+#user 4 reicht mehrere kurze jobs ein
+switchUser 3
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded3.json useLastDescriptionID
+
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded4.json useLastDescriptionID
+
+submitDescription testingResources/cnf/shortJob.cnf
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded5.json useLastDescriptionID
+
+
+
+
+

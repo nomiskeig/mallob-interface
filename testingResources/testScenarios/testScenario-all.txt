@@ -1,0 +1,11 @@
+printComment Test Scenario 1
+wait 2
+scenario testScenario-1.txt
+printComment Test Scenario 1 beendet
+wait 5
+
+
+printComment Test Scenario 2
+wait 2
+scenario testScenario-2.txt
+printComment Test Scenario 2 beendet
