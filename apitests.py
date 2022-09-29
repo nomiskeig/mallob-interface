@@ -521,9 +521,12 @@ def cancelJob(testCase):
                         counter += 1
                 else:
                     url += str(LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX])
-        r = doRequest(requests.post, url, None, None, True, None)
+        response = requests.post(url, headers=HEADER)
     else:
-        r = doRequest(requests.post, url, readFileAsPythonDict(filePath), None, True, None)
+        response = requests.post(url, json=readFileAsPythonDict(filePath), headers=HEADER)
+    printStatusCode(response.status_code)
+    if PRINT_RESPONSE_JSON:
+        printResponse(response)
 
 
 def getEvents(testCase):
@@ -631,9 +634,11 @@ def doPostRequest(pathToJsonFileContainingBody, url, authentication):
 #r = doRequest(requests.post, url, jsonContent, None, True, AFTER_REQUEST_FUNCTION_MAPPINGS.get(testCase))
 #r = requests.post(url, json=jsonContent, headers=HEADER)
 def doRequest(reqFunction, url, bodyAsJson, fileDict, header, afterFunction):
-    if PRINT_REQ_JSON_BODY and bodyAsJson != None:
+    if PRINT_REQ_JSON_BODY:
         print("URL : " + url)
-        print("Json-Body for this request ; \n"+ json.dumps(bodyAsJson, indent=4))
+        if bodyAsJson != None:
+            print("Json-Body for this request ; \n"+ json.dumps(bodyAsJson, indent=4))
+    
     if header:
         if bodyAsJson == None and fileDict == None:
             response = reqFunction(url, headers=HEADER)
@@ -811,6 +816,8 @@ def printHelp():
                 ..."togglePrintResponse" - if true, prints the response json, if false, it doesn't
                 ..."printComment" - let the system print a comment, everything after the comment is printed 
                 ..."wait". Set [arg2] to the amount of seconds you want THIS program to wait 
+                ..."haltProgram" - this program will halt until enter is pressed
+                ..."printUserInfo" - print information of all users that are logged into fallob right now
                 ..."exit" to leave the program
 
 
@@ -844,13 +851,8 @@ def executeTestCase(testCaseIdentifier):
     #get-requests
     elif testCaseIdentifier == GET_JOB_INFO:
         # If the current user has not submitted any jobs, search for a user that has and try to get the info for them (for admin cases)
-        if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] is None or -1:
-            counter = 0
-            for x in ALL_ACTIVE_USERS:
-                if not LATEST_SAVED_JOB_ID[counter] is None or -1:
-                    generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID[counter], True, True)
-                    break
-                counter += 1
+        if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] == None or LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] == -1:
+            printError("Cannot access latest saved job ID for this user")
         else:
             generalGetRequest(GET_JOB_INFO, LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX], True, True)
     elif testCaseIdentifier == DOWNLOAD_DESCRIPTION:
@@ -924,7 +926,18 @@ def tryExtraCommandLineFuncion():
             printError("Scenario not found. Maybe scenario path was wrong")
         return True
 
+    if (commandLineArguments[ARG_1] == "printUserInfo"):
+        printWarning("Current active user : " + str(CURRENT_ACTIVE_USER_INDEX))
+        printWarning("Latest Saved JOb IDS : ")
+        print(LATEST_SAVED_JOB_ID)
+        printWarning("Latest saved description IDs : ")
+        print(LATEST_SAVED_DESCRIPTION_ID)
 
+        return True
+
+    if (commandLineArguments[ARG_1] == "haltProgram"):
+        input("Press Enter to continue program execution")
+        return True
     return False
 
 #

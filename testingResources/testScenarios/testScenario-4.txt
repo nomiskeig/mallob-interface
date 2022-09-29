@@ -52,8 +52,12 @@ cancelJob /all
 
 wait 4
 
+togglePrintBody
 switchUser 3
 getJobInfo /single/
 
+haltProgram
+
 switchUser 0
 getJobInfo /single/
+togglePrintBody
