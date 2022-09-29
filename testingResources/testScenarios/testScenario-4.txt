@@ -39,7 +39,21 @@ submitJob_external testingResources/request-bodys/jobExclude/jobExcluded4.json u
 submitDescription testingResources/cnf/shortJob.cnf
 submitJob_external testingResources/request-bodys/jobExclude/jobExcluded5.json useLastDescriptionID
 
+wait 4
 
+switchUser 0
+cancelJob /all
+switchUser 1
+cancelJob /all
+switchUser 2
+cancelJob /all
+switchUser 3
+cancelJob /all
 
+wait 4
 
+switchUser 3
+getJobInfo /single/
 
+switchUser 0
+getJobInfo /single/
