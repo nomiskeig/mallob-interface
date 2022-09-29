@@ -511,14 +511,9 @@ def cancelJob(testCase):
             if len(commandLineArguments) > 2:
                 url += commandLineArguments[ARG_3]
             else:
-                # If the current user has not submitted any jobs, search for a user that has and try to abort the first found (for admin cases)
-                if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] is None or -1:
-                    counter = 0
-                    for x in ALL_ACTIVE_USERS:
-                        if not LATEST_SAVED_JOB_ID[counter] is None or -1:
-                            url += str(LATEST_SAVED_JOB_ID[counter])
-                            break
-                        counter += 1
+                if LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] == None or LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX] ==-1:
+                    printError("Cannot access latest job ID of this user")
+                    return
                 else:
                     url += str(LATEST_SAVED_JOB_ID[CURRENT_ACTIVE_USER_INDEX])
         response = requests.post(url, headers=HEADER)
@@ -1005,5 +1000,4 @@ def main():
 def testting():
     loadScenarios()
 main()
- 
 #testting()
