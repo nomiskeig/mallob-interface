@@ -42,7 +42,7 @@ export class Visualization extends JobUpdateListener {
 		new ResizeObserver((entries) => {
 			entries.forEach((entry) => {
 				this.#two.width = entry.contentRect.width;
-				let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
+				let desiredHeight = '600px';
                 canvas.style.height = desiredHeight
 				this.#two.height = desiredHeight;
                 // update location of nodes and lines
@@ -103,9 +103,9 @@ export class Visualization extends JobUpdateListener {
 			);
 		}
 		// set the correct height of the canvas
-		let desiredHeight = this.#getCoords(this.#processes).getY() + 10 + 'px';
+		let desiredHeight = '600px';
 		canvas.style.height = desiredHeight;
-		this.#two.height = desiredHeight;
+        this.#two.height = desiredHeight;
 		this.#two.bind('update', () => update());
 		this.#two.play();
 	}
@@ -117,12 +117,13 @@ export class Visualization extends JobUpdateListener {
      * @returns {CoordPair} An instance of CoordPair with the coordinates.
      */
 	#getCoords(rank) {
-		let margin = 10;
-		let distance = 40;
-		let perRow = Math.floor((this.#canvas.clientWidth - 2 * margin) / distance);
-		let restPerRow = this.#canvas.clientWidth - distance * (perRow - 1);
-		let xPos = restPerRow / 2 + distance * (rank % perRow);
-		let yPos = 20 + distance * Math.floor(rank / perRow);
+        let radius = 200;
+		//let perRow = Math.floor((this.#canvas.clientWidth - 2 * margin) / distance);
+		//let restPerRow = this.#canvas.clientWidth - distance * (perRow - 1);
+		//let xPos = restPerRow / 2 + distance * (rank % perRow);
+		//let yPos = 20 + distance * Math.floor(rank / perRow);
+        let xPos = this.#canvas.clientWidth / 2 + Math.cos(2*Math.PI*rank/this.#processes) * radius;
+        let yPos = this.#canvas.clientHeight / 2 + Math.sin(2*Math.PI*rank/this.#processes) * radius;
 		return new CoordPair(xPos, yPos);
 	}
     /**
@@ -180,7 +181,7 @@ export class Visualization extends JobUpdateListener {
      *
      */
 	onHoverLeave() {
-		if (this.#clickedRank) {
+		if (this.#clickedRank !== null) {
 			return;
 		}
 		for (let i = 0; i < this.#processes; i++) {
