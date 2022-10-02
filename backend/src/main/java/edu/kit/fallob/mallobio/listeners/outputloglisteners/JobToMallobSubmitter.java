@@ -37,6 +37,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission %s.* - reason:";
     private final static String SAME_JOB_NAME_REGEX = "\\[WARN\\] Modification of a file I already parsed! Ignoring.";
     private final static String SAME_JOB_NAME_ERROR = "A job with this name is already parsed and still running.";
+    private final static String DEFERRED_JOB_REGEX = "Deferring #[0-9]+";
 
     private String username;
     private int jobID;
@@ -47,6 +48,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     private Pattern notValidJobPattern;
     private Pattern jobIdPattern;
     private Pattern sameJobNamePattern;
+    private Pattern deferredJobPattern;
     private String errorMessage;
     private boolean hasMapping = false;
 
@@ -57,11 +59,11 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
         String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX, username);
         String formattedJobIdPattern = String.format(JOB_ID_REGEX, username);
-        System.out.println(formattedJobIdPattern);
         validJobPattern = Pattern.compile(VALID_JOB_REGEX);
         notValidJobPattern = Pattern.compile(formattedNotValidJobPattern);
         jobIdPattern = Pattern.compile(formattedJobIdPattern);
         sameJobNamePattern = Pattern.compile(SAME_JOB_NAME_REGEX);
+        deferredJobPattern = Pattern.compile(DEFERRED_JOB_REGEX);
     }
 
     public int submitJobToMallob(JobConfiguration jobConfiguration, JobDescription jobDescription)
@@ -112,7 +114,6 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
     @Override
     public void processLine(String line) {
-    	System.out.println(line);
         Matcher jobIdMatcher = jobIdPattern.matcher(line);
         if (jobIdMatcher.find()) {
             jobID = Integer.parseInt(line.substring(line.indexOf('#') + 1));
@@ -140,6 +141,13 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         if (sameJobNameMatcher.find()) {
         	jobStatus = JOB_IS_NOT_VALID;
             errorMessage = SAME_JOB_NAME_ERROR;
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        }
+        Matcher deferredJobMatcher = deferredJobPattern.matcher(line);
+        if (deferredJobMatcher.find()) {
+        	jobStatus = JOB_IS_VALID;
             synchronized (monitor) {
                 monitor.notifyAll();
             }
