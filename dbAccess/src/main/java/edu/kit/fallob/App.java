@@ -24,7 +24,7 @@ public class App {
             System.out.println("This is a helper programm to update users in the fallob database.");
             System.out.println("At least two arguments are required:");
             System.out.println(
-                    "The first one (or the first two in the case of setPriority) defines the action. Can be one of the following:");
+                    "The first one defines the action performed. Must be one of the following:");
             System.out.println(" - 'setVerified': Makes the given user verified.");
             System.out.println(" - 'setUnverified': Makes the given user unverified.");
             System.out.println(" - 'setAdmin': Makes the given user an administrator.");
@@ -32,7 +32,7 @@ public class App {
             System.out.println(" - 'setPriority: Sets the priority of the given user to the given prority. In this case, the third argument is the new priority.\n");
             System.out.println("The second argument is the name of the user to modify.\n");
             System.out.println(
-                    "If the default configuration file should not be used, the absolute path of the configuration file to use can be passed as the last argument.");
+                "If a configuration file at another location than the default configuration file is used, its path must be passed in as the last argument.");
             System.out.println(
                     "Note that the path of the database to modify as well as the username and password for the database are read from the configuarion file.");
             return;
