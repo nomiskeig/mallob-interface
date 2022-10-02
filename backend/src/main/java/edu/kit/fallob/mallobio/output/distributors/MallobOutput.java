@@ -11,49 +11,46 @@ import edu.kit.fallob.mallobio.listeners.resultlisteners.ResultObjectListener;
  */
 public class MallobOutput {
 
-	private static MallobOutput mallobOutput = null;
+    private static MallobOutput mallobOutput = null;
 
-	
-	private ResultObjectDistributor resultObjectDistributor;
-	
-	private OutputLogLineDistributor outputLogLineDistributor;
-	
-	
-	private MallobOutput() {
-		this.resultObjectDistributor = new ResultObjectDistributor();
-		this.outputLogLineDistributor = new OutputLogLineDistributor();
-	}
+    private ResultObjectDistributor resultObjectDistributor;
 
-	public static MallobOutput getInstance() {
-		if (mallobOutput == null) {
-			mallobOutput = new MallobOutput();
-		}
+    private OutputLogLineDistributor outputLogLineDistributor;
 
-		return mallobOutput;
-	}
-	
-	
-	public void addResultObjectListener(ResultObjectListener listener) {
-		this.resultObjectDistributor.addListener(listener);
-	}
-	
-	public void removeResultObjectListener(ResultObjectListener listener) {
-		this.resultObjectDistributor.removeListener(listener);
-	}
-	
-	public void addOutputLogLineListener(OutputLogLineListener listener) {
-		this.outputLogLineDistributor.addListener(listener);
-	}
-	
-	public void removeOutputLogLineListener(OutputLogLineListener listener) {
-		this.outputLogLineDistributor.removeListener(listener);
-	}
+    private MallobOutput() {
+        this.resultObjectDistributor = new ResultObjectDistributor();
+        this.outputLogLineDistributor = new OutputLogLineDistributor();
+    }
 
-	public ResultObjectDistributor getResultObjectDistributor() {
-		return resultObjectDistributor;
-	}
+    public static MallobOutput getInstance() {
+        if (mallobOutput == null) {
+            mallobOutput = new MallobOutput();
+        }
 
-	public OutputLogLineDistributor getOutputLogLineDistributor() {
-		return outputLogLineDistributor;
-	}
+        return mallobOutput;
+    }
+
+    public void addResultObjectListener(ResultObjectListener listener) {
+        this.resultObjectDistributor.addListener(listener);
+    }
+
+    public void removeResultObjectListener(ResultObjectListener listener) {
+        this.resultObjectDistributor.removeListener(listener);
+    }
+
+    public void addOutputLogLineListener(OutputLogLineListener listener) {
+        this.outputLogLineDistributor.addListener(listener);
+    }
+
+    public void removeOutputLogLineListener(OutputLogLineListener listener) {
+            this.outputLogLineDistributor.removeListener(listener);
+    }
+
+    public ResultObjectDistributor getResultObjectDistributor() {
+        return resultObjectDistributor;
+    }
+
+    public OutputLogLineDistributor getOutputLogLineDistributor() {
+        return outputLogLineDistributor;
+    }
 }
