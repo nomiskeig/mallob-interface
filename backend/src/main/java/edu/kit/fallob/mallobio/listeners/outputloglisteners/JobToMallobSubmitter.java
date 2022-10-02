@@ -69,13 +69,13 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         // copy over the descriptions
         String mallobFolder = FallobConfiguration.getInstance().getMallobBasePath();
         List<File> descriptions = jobDescription.getDescriptionFiles();
-        File descriptionDir = new File(mallobFolder + "/.api/jobs.0/in/descriptions");
+        File descriptionDir = new File(mallobFolder + "/.api/jobs.0/in");
         if (!descriptionDir.exists()) {
             descriptionDir.mkdir();
         }
         for (File description : descriptions) {
             Files.copy(description.toPath(),
-                    Path.of(mallobFolder + "/.api/jobs.0/in/descriptions/" + description.getName()), StandardCopyOption.REPLACE_EXISTING
+                    Path.of(mallobFolder + "/.api/jobs.0/in/" + description.getName()), StandardCopyOption.REPLACE_EXISTING
                     );
         }
         int clientProcessID = mallobInput.submitJobToMallob(username, jobConfiguration, jobDescription);
@@ -93,7 +93,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         }
         // remove the descriptions again
         for (File description : descriptions) {
-            File fileToDelete = new File(mallobFolder + "/.api/jobs.0/in/descriptions/" + description.getName());
+            File fileToDelete = new File(mallobFolder + "/.api/jobs.0/in/" + description.getName());
             if (fileToDelete.exists()) {
                 fileToDelete.delete();
             }
