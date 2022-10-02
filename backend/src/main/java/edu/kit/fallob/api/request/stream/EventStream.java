@@ -4,6 +4,7 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.Buffer;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.BufferFunction;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.PeriodicBufferChecker;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.springConfig.FallobException;
@@ -86,6 +87,7 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
                 this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
             } catch (IOException | IllegalStateException e) {
                 System.out.println("error occurend in the emitter: " + e.getMessage());
+                PeriodicBufferChecker.getInstance().removeBuffer(this.bufferedEvents);
                 this.emitter.complete();
                 this.emitter = null;
                 MallobOutput mallobOutput = MallobOutput.getInstance();
