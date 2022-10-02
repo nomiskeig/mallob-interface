@@ -2,6 +2,7 @@ package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 
@@ -18,7 +19,7 @@ public class Buffer<T> {
     private BufferFunction<T> bufferFunction;
 
     public Buffer(BufferFunction<T> f) {
-        bufferedUpdates = new LinkedList<>();
+        bufferedUpdates = new ConcurrentLinkedQueue<>();
         bufferFunction = f;
         PeriodicBufferChecker.getInstance().addBuffer(this);
     }
