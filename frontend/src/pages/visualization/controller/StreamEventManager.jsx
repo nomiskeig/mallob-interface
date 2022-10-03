@@ -16,11 +16,13 @@ export class StreamEventManager extends EventManager {
 	constructor(timeManager) {
 		super(timeManager);
 		this.#stream = null;
-		this.#lastTimeReceived = null;
+		this.#lastTimeReceived = new Date();
 	}
 
 	closeStream() {
+		console.log('closed the stream');
 		if (this.#stream) {
+			console.log('aborted the stream');
 			this.#stream.abort();
 		}
 	}
@@ -38,10 +40,10 @@ export class StreamEventManager extends EventManager {
 	}
 
 	async getSystemState(userContext) {
-        window.onbeforeunload = () =>  {
-            this.closeStream();
-        }
-		
+		window.onbeforeunload = () => {
+			this.closeStream();
+		};
+
 		this.#stream = new XMLHttpRequest();
 		let initialTime = this.timeManager.getNextTime();
 		//TODO: stream authentification
@@ -50,49 +52,38 @@ export class StreamEventManager extends EventManager {
 			process.env.REACT_APP_API_BASE_PATH + '/api/v1/events/eventStream',
 			true
 		);
-        this.#stream.setRequestHeader('Authorization', 'Bearer ' + userContext.user.token)
+		this.#stream.setRequestHeader(
+			'Authorization',
+			'Bearer ' + userContext.user.token
+		);
 		this.#stream.onprogress = (event) => {
 			let events = event.target.responseText.split('\n');
-			if (!this.#lastTimeReceived) {
-				let lastEventString = events[events.length - 2];
-
-				let lastEvent = JSON.parse(lastEventString);
+			// recover events if they get lost and no event is invoked for them
+			let newEvents = [];
+			let index = events.length - 2;
+			while (true) {
+                if (index == -1) {
+                    break;
+                }
+				let lastEvent = JSON.parse(events[index]);
+				let date = new Date(lastEvent.time);
+				if (!isAfter(date, this.#lastTimeReceived)) {
+					break;
+				}
 				let newEvent = new Event(
-					new Date(lastEvent.time),
+					date,
 					lastEvent.rank,
 					lastEvent.treeIndex,
 					lastEvent.jobID,
 					lastEvent.load
 				);
-				this.#lastTimeReceived = newEvent.getTime();
 				if (isAfter(newEvent.getTime(), initialTime)) {
-					this.events.push(newEvent);
+					newEvents.push(newEvent);
 				}
-			} else {
-				// recover events if they get lost and no event is invoked for them
-				let newEvents = [];
-				let index = events.length - 2;
-				while (true) {
-					let lastEvent = JSON.parse(events[index]);
-					let date = new Date(lastEvent.time);
-					if (!isAfter(date, this.#lastTimeReceived)) {
-						break;
-					}
-					let newEvent = new Event(
-						date,
-						lastEvent.rank,
-						lastEvent.treeIndex,
-						lastEvent.jobID,
-						lastEvent.load
-					);
-					if (isAfter(newEvent.getTime(), initialTime)) {
-						newEvents.push(newEvent);
-					}
-					index = index - 1;
-				}
-				this.#lastTimeReceived = newEvents[0].getTime();
-				newEvents.reverse().forEach((event) => this.events.push(event));
+				index = index - 1;
 			}
+			this.#lastTimeReceived = newEvents[0].getTime();
+			newEvents.reverse().forEach((event) => this.events.push(event));
 		};
 		this.#stream.send();
 		return axios({
@@ -104,20 +95,19 @@ export class StreamEventManager extends EventManager {
 			headers: {
 				Authorization: 'Bearer ' + userContext.user.token,
 			},
-		})
-			.then((res) => {
-				let result = [];
-				res.data.events.forEach((event) => {
-					let newEvent = new Event(
-						new Date(event.time),
-						event.rank,
-						event.treeIndex,
-						event.jobID,
-						event.load
-					);
-					result.push(newEvent);
-				});
-				return result;
-			})
+		}).then((res) => {
+			let result = [];
+			res.data.events.forEach((event) => {
+				let newEvent = new Event(
+					new Date(event.time),
+					event.rank,
+					event.treeIndex,
+					event.jobID,
+					event.load
+				);
+				result.push(newEvent);
+			});
+			return result;
+		});
 	}
 }
