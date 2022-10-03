@@ -118,14 +118,18 @@ You may have to give the start.sh file permission to execute. This can be done w
 chmod +x ./buildModifyUser.sh
 ```
 
-Afterwards, the actual script can be run. There are two required parameters:
-- The first one is the action performed. Must be one of the following:
+Afterwards, the actual script can be run. At least two arguments are required:
+- The first one defines the action performed. Must be one of the following:
     - 'setVerified': Makes the given user verified.
     - 'setUnverified': Makes the given user unverified.
     - 'setAdmin': Makes the given user an administrator.
     - 'setNormalUser': Makes the given user a normal user.
-- The second parameter is the name of the user to modify.
-- If a configuration file at another location than the default configuration file is used, its path must be passed in as the third argument.
+    - 'setPriority: Sets the priority of the given user to the given priority. In this case, the third argument is the new priority.
+- The second argument is the name of the user to modify.
+- If a configuration file at another location than the default configuration file is used, its path must be passed in as the last argument.
+
+Note that the path of the database to modify as well as the username and password for the database are read from the configuration file.
+
 Example usage with optional path to the configuration file:
 ```
 ./modifyUser.sh setAdmin user /path/to/configuration/file.json
@@ -134,13 +138,17 @@ You may have to give the start.sh file permission to execute. This can be done w
 ```
 chmod +x ./modifyUser.sh
 ```
-<!---
-# Reseting 
 
-As there are still bugs in the application, you may have to reset all the files to get up and running again. The following steps have to be done in order to do so:
+# Running unit tests
 
-- Clear the description folder
-- Clear the result folder
-- Delete the database file and replace with a working version (most likely an empty one)
-- Delete the .api folder mallob creates.
---->
+The unit tests for the backend and the web-interface can be run by first changing to their respective folder. 
+Then, for the backend, run
+```
+mvn test
+```
+For the web-interface, run 
+```
+npm run tests
+```
+Note that you have to have Java 17 and Maven installed for the backend and Node.js for the web-interface.
+

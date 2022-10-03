@@ -94,5 +94,9 @@ public class MallobFilePathGenerator {
 		return generateLogFilePath(clientProcessID, basePath) + ".reader";
 	}
 
+    public static String generatePathToJobFSLogFile(String basePath, int clientProcessID) {
+        return generateLogFilePath(clientProcessID, basePath) + ".i-fs";
+    }
+
 
 }

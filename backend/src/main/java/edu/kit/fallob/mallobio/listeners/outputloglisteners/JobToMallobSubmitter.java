@@ -34,7 +34,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
     private final static int JOB_IS_NOT_VALID = 2;
     private final static String JOB_ID_REGEX = "I Mapping job \"%s.*\" to internal ID #[0-9]+";
     private final static String VALID_JOB_REGEX = "Introducing job #[0-9]+";
-    private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission %s.* - reason:";
+    private final static String NOT_VALID_JOB_REGEX = "\\[WARN\\] Rejecting submission .* - reason:";
     private final static String SAME_JOB_NAME_REGEX = "\\[WARN\\] Modification of a file I already parsed! Ignoring.";
     private final static String SAME_JOB_NAME_ERROR = "A job with this name is already parsed and still running.";
     private final static String DEFERRED_JOB_REGEX = "Deferring #[0-9]+";
@@ -57,10 +57,10 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         this.mallobInput = MallobInputImplementation.getInstance();
         this.monitor = new Object();
 
-        String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX, username);
+        //String formattedNotValidJobPattern = String.format(NOT_VALID_JOB_REGEX_1, username);
         String formattedJobIdPattern = String.format(JOB_ID_REGEX, username);
         validJobPattern = Pattern.compile(VALID_JOB_REGEX);
-        notValidJobPattern = Pattern.compile(formattedNotValidJobPattern);
+        notValidJobPattern = Pattern.compile(NOT_VALID_JOB_REGEX);
         jobIdPattern = Pattern.compile(formattedJobIdPattern);
         sameJobNamePattern = Pattern.compile(SAME_JOB_NAME_REGEX);
         deferredJobPattern = Pattern.compile(DEFERRED_JOB_REGEX);
@@ -84,7 +84,7 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
 
 
         synchronized (monitor) {
-            while (jobStatus == JOB_IS_SUBMITTING || !hasMapping) {
+            while ((jobStatus == JOB_IS_SUBMITTING || !hasMapping) && jobStatus != JOB_IS_NOT_VALID) {
                 try {
                     monitor.wait();
                 } catch (InterruptedException e) {

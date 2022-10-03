@@ -92,6 +92,7 @@ public class BackendApplication {
 		//file-reader for 
 		mallobio.addIrregularReaders(MallobFilePathGenerator.generatePathToJobMappingsLogFile(config.getMallobBasePath(), config.getAmountProcesses() - 1));
 		mallobio.addIrregularReaders(MallobFilePathGenerator.generatePathToReaderLogFile(config.getMallobBasePath(), config.getAmountProcesses() - 1));
+        mallobio.addIrregularReaders(MallobFilePathGenerator.generatePathToJobFSLogFile(config.getMallobBasePath(), config.getAmountProcesses()- 1));
 		
 		mallobio.startMallobio();
 		

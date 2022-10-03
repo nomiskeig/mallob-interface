@@ -1,0 +1,10 @@
+{
+    "name": "job with precursor to 1",
+    "priority": 1,
+    "application": "SAT",
+    "contentMode": "text",
+    "descriptionID" : 5,
+    "wallclockLimit": "300s",
+    "arrival": "2023-09-25T14:30:00.000Z"
+
+}
