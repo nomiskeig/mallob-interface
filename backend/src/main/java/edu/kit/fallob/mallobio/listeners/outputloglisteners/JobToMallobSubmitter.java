@@ -122,8 +122,9 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
                 monitor.notifyAll();
             }
         }
+        Matcher deferredJobMatcher = deferredJobPattern.matcher(line);
         Matcher validJobMatcher = validJobPattern.matcher(line);
-        if (validJobMatcher.find()) {
+        if (validJobMatcher.find() || deferredJobMatcher.find()) {
             jobStatus = JOB_IS_VALID;
             synchronized (monitor) {
                 monitor.notifyAll();
@@ -141,13 +142,6 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
         if (sameJobNameMatcher.find()) {
         	jobStatus = JOB_IS_NOT_VALID;
             errorMessage = SAME_JOB_NAME_ERROR;
-            synchronized (monitor) {
-                monitor.notifyAll();
-            }
-        }
-        Matcher deferredJobMatcher = deferredJobPattern.matcher(line);
-        if (deferredJobMatcher.find()) {
-        	jobStatus = JOB_IS_VALID;
             synchronized (monitor) {
                 monitor.notifyAll();
             }
