@@ -89,6 +89,10 @@ public class MallobFilePathGenerator {
 	public static String generatePathToJobMappingsLogFile(String basePath, int clientProcessID) {
 		return generateLogFilePath(clientProcessID, basePath) + ".i";
 	}
+	
+	public static String generatePathToReaderLogFile(String basePath, int clientProcessID) {
+		return generateLogFilePath(clientProcessID, basePath) + ".reader";
+	}
 
     public static String generatePathToJobFSLogFile(String basePath, int clientProcessID) {
         return generateLogFilePath(clientProcessID, basePath) + ".i-fs";
