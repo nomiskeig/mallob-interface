@@ -204,7 +204,7 @@ export function JobPage(props) {
 							<InputWithLabel
                                 dataTestID={"inputWithLabel-" + param.internalName}
 								disabled={true}
-								value={value}
+								value={param.transformOutput(value)}
 								labelText={param.name}
 							/>
 						</div>
