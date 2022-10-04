@@ -45,7 +45,7 @@ test('Params with no specal validation return true', () => {
 });
 
 test('Params where output is not transformed return given value', ()=>{
-    let paramsToCheck = configParameters.filter((param) => param.internalName !== "additionalConfig");
+    let paramsToCheck = configParameters.filter((param) => param.internalName !== "additionalConfig" && param.internalName !== "incremental");
     let value = "value to check";
     paramsToCheck.forEach((param) => {
         expect(param.transformOutput(value)).toEqual(value);
