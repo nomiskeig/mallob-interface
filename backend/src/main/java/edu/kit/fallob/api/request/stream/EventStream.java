@@ -4,6 +4,7 @@ import edu.kit.fallob.database.JobDao;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.Buffer;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.BufferFunction;
 import edu.kit.fallob.mallobio.listeners.outputloglisteners.OutputLogLineListener;
+import edu.kit.fallob.mallobio.listeners.outputloglisteners.PeriodicBufferChecker;
 import edu.kit.fallob.mallobio.output.distributors.MallobOutput;
 import edu.kit.fallob.mallobio.outputupdates.Event;
 import edu.kit.fallob.springConfig.FallobException;
@@ -53,11 +54,9 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
      * @param line the log line that should be processed
      */
     @Override
-    public void processLine(String line) {
+    public synchronized void processLine(String line) {
         if (Event.isEvent(line)) {
-            System.out.println("Got stream event: " + line);
             Event event = new Event(line);
-
             this.bufferedEvents.bufferObject(event);
         }
     
@@ -65,7 +64,7 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
         this.bufferedEvents.retryBufferedFunction(true);
     }
 
-    private void sendEvent(Event event, int jobId) {
+    private synchronized void sendEvent(Event event, int jobId) {
         //convert the load boolean into an integer for the json object
         int loadInt = event.isLoad() ? 1 : 0;
 
@@ -82,19 +81,19 @@ public class EventStream implements OutputLogLineListener, BufferFunction<Event>
 
         if (this.emitter != null) {
             try {
-                System.out.println("sent event:" + jsonObject.toString());
                 this.emitter.send(jsonObject.toString() + "\n", MediaType.TEXT_PLAIN);
             } catch (IOException | IllegalStateException e) {
-                System.out.println("error occurend in the emitter: " + e.getMessage());
+                PeriodicBufferChecker.getInstance().removeBuffer(this.bufferedEvents);
                 this.emitter.complete();
                 this.emitter = null;
                 MallobOutput mallobOutput = MallobOutput.getInstance();
-                mallobOutput.removeOutputLogLineListener(this); }
+                mallobOutput.removeOutputLogLineListener(this);
+            }
         }
     }
 
     @Override
-    public boolean bufferFunction(Event outputUpdate) {
+    public synchronized boolean bufferFunction(Event outputUpdate) {
         int mallobId = outputUpdate.getMallobJobID();
         int jobId = 0;
         try {

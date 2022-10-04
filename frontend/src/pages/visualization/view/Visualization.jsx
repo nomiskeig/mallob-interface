@@ -180,7 +180,7 @@ export class Visualization extends JobUpdateListener {
      *
      */
 	onHoverLeave() {
-		if (this.#clickedRank) {
+		if (this.#clickedRank !== null) {
 			return;
 		}
 		for (let i = 0; i < this.#processes; i++) {

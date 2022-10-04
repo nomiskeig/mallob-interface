@@ -773,7 +773,7 @@ public class JobDaoImpl implements JobDao{
 
         Integer[] integers = new Integer[arrayLength];
 
-        for (int i = 0; i < arrayLength - 1; i++) {
+        for (int i = 0; i < arrayLength; i++) {
             Integer integer = (Integer) java.lang.reflect.Array.get(arrayObject, i);
             integers[i] = integer;
         }
@@ -789,7 +789,7 @@ public class JobDaoImpl implements JobDao{
 
         String[] strings = new String[arrayLength];
 
-        for (int i = 0; i < arrayLength - 1; i++) {
+        for (int i = 0; i < arrayLength; i++) {
             String string = (String) java.lang.reflect.Array.get(arrayObject, i);
             strings[i] = string;
         }

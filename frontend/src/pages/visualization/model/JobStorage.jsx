@@ -136,9 +136,6 @@ export class JobStorage {
 			} else {
 				//load event
 
-				this.#globalStats.setUsedProcesses(
-					this.#globalStats.getUsedProcesses() + 1
-				);
 				// create now job if job does not exist
 				if (job === undefined) {
 					let newJob = new Job(jobID, getRandomGrayColor(jobID));
@@ -172,7 +169,11 @@ export class JobStorage {
 					console.log('trying to add a vertex which is already existent');
 					console.log('rank: ' + rank);
 					console.log('treeIndex ' + treeIndex);
+                    return;
 				}
+				this.#globalStats.setUsedProcesses(
+					this.#globalStats.getUsedProcesses() + 1
+				);
 				let vertex = new JobTreeVertex(rank, treeIndex);
 				job.addVertex(vertex);
 

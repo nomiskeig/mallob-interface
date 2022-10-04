@@ -1,6 +1,7 @@
 package edu.kit.fallob.mallobio.listeners.outputloglisteners;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import edu.kit.fallob.configuration.FallobConfiguration;
@@ -24,12 +25,16 @@ public class PeriodicBufferChecker implements Runnable {
 	
 	private PeriodicBufferChecker() {
 		this.interval = FallobConfiguration.getInstance().getBufferRetryInterval();
-		buffers = new ArrayList<>();
+		buffers = Collections.synchronizedList(new ArrayList<>());
 		forceRetry = true;
 	}
 	
 	public void addBuffer(Buffer<?> buffer) {
 		this.buffers.add(buffer);
+	}
+
+	public void removeBuffer(Buffer<?> buffer) {
+		this.buffers.remove(buffer);
 	}
 	
 	
@@ -38,8 +43,10 @@ public class PeriodicBufferChecker implements Runnable {
 	public void run() {
 		System.out.println("Periodic-Buffer-Checker running");
 		while (forceRetry) {
-			for (Buffer<?> buffer : buffers) {
-				buffer.retryBufferedFunction(true);
+			synchronized (buffers) {
+				for (Buffer<?> buffer : buffers) {
+					buffer.retryBufferedFunction(true);
+				}
 			}
 			try {
 				Thread.sleep(interval);
