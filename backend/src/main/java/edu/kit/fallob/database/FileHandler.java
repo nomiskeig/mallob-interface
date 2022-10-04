@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,7 +35,7 @@ public final class FileHandler {
      */
     public static void saveFileAtPath(File file, String path) throws FallobException {
         try {
-            Files.move(file.toPath(), Paths.get(path));
+            Files.move(file.toPath(), Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "File could not be moved", e);
         }
