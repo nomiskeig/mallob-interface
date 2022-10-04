@@ -94,12 +94,12 @@ public class JobToMallobSubmitter implements OutputLogLineListener {
             }
         }
         // remove the descriptions again
-        for (File description : descriptions) {
+        /*for (File description : descriptions) {
             File fileToDelete = new File(mallobFolder + "/descriptions/" + description.getName());
             if (fileToDelete.exists()) {
                 fileToDelete.delete();
             }
-        }
+        }*/
         if (jobStatus == JOB_IS_NOT_VALID) {
             throw new FallobException(HttpStatus.BAD_REQUEST, errorMessage);
         }
