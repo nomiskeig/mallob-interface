@@ -23,7 +23,7 @@ import edu.kit.fallob.springConfig.FallobException;
  */
 public final class FileHandler {
 
-    private static final String PATH_ERROR = "An error occurred while retrieving the requested files from the filesystem";
+    private static final String PATH_ERROR = "An error occurred while retrieving the requested files from the filesystem.";
 
     private static final double BIT_TO_MB_RATIO = 1000000;
 
@@ -37,7 +37,7 @@ public final class FileHandler {
         try {
             Files.move(file.toPath(), Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "File could not be moved", e);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "File could not be moved.", e);
         }
     }
 

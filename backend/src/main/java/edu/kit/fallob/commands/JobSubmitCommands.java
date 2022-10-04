@@ -71,7 +71,6 @@ public class JobSubmitCommands {
         if (allRunningJobIDs.size() >= FallobConfiguration.getInstance().getMaxJobsTotal()) {
         	throw new FallobException(HttpStatus.CONFLICT, "Maximal number of submitted jobs in the system, which are still running, reached");
         }
-        System.out.println("submitter");
 		JobToMallobSubmitter submitter = new JobToMallobSubmitter(username);
 		mallobOutput.addOutputLogLineListener(submitter);
 		int mallobID;

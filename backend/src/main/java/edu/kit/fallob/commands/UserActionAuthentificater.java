@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
  */
 public class UserActionAuthentificater {
 
-	private static final String NOT_FOUND_ERROR = "Error, the user could not be found in the database";
+	private static final String NOT_FOUND_ERROR = "Error, the user could not be found in the database.";
 	
 	private UserDao userDao;
 	

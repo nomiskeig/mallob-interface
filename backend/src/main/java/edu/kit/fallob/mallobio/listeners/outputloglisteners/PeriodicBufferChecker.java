@@ -41,7 +41,6 @@ public class PeriodicBufferChecker implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Periodic-Buffer-Checker running");
 		while (forceRetry) {
 			synchronized (buffers) {
 				for (Buffer<?> buffer : buffers) {
@@ -51,7 +50,7 @@ public class PeriodicBufferChecker implements Runnable {
 			try {
 				Thread.sleep(interval);
 			} catch (InterruptedException e) {
-				System.out.println(" ERROR : PeriodicBufferChecker got interrupted while sleeping ");
+				System.out.println("Error: PeriodicBufferChecker got interrupted while sleeping.");
 			}
 		}
 	}
