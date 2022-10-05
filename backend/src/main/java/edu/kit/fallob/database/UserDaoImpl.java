@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class UserDaoImpl implements UserDao{
     //error messages that are returned if an error occurs
-    private static final String DATABASE_ERROR = "An error while accessing the database";
-    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found";
+    private static final String DATABASE_ERROR = "An error while accessing the database.";
+    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found.";
 
     //sql queries that are required for the database interaction
     private static final String INSERT_USER = "INSERT INTO users (username, password, userType, priority, isVerified, email) VALUES (?, ?, ?, ?, ?, ?)";

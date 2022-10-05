@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
  * @version 1.0
  */
 public class EventStreamStarter implements Runnable{
-    private static final String STREAM_ERROR = "An error occurred in the event stream";
+    private static final String STREAM_ERROR = "An error occurred in the event stream.";
 
     private final ResponseBodyEmitter emitter;
     private final JobDao jobDao;
@@ -39,7 +39,6 @@ public class EventStreamStarter implements Runnable{
 
         MallobOutput mallobOutput = MallobOutput.getInstance();
         mallobOutput.addOutputLogLineListener(eventStream);
-        System.out.println("registered listener");
 
         synchronized (this) {
             try {

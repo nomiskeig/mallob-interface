@@ -52,8 +52,8 @@ public class JobDaoImpl implements JobDao{
     private static final String ARRAY_TYPE_STRING = "VARCHAR(255)";
 
     //error messages that get returned if an error occurs in the database
-    private static final String DATABASE_ERROR = "An error occurred while accessing the database";
-    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found";
+    private static final String DATABASE_ERROR = "An error occurred while accessing the database.";
+    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found.";
 
     //the sql queries that are required for the database interaction
     private static final String JOB_INSERT = "INSERT INTO job (username, submissionTime, jobStatus, mallobId, descriptionId) VALUES (?, ?, ?, ?, ?)";

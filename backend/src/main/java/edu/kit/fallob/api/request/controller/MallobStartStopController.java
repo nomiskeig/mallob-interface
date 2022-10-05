@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/system/mallob")
 public class MallobStartStopController {
 
-    private static final String SYSTEM_RUNNING = "The system is already running";
+    private static final String SYSTEM_RUNNING = "The system is already running.";
 
-    private static final String SYSTEM_NOT_RUNNING = "The system is not running";
+    private static final String SYSTEM_NOT_RUNNING = "The system is not running.";
 
     @Autowired
     private MallobCommands mallobCommands;
