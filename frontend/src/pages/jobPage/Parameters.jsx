@@ -189,7 +189,7 @@ export const configParameters = [
 	},
 	{
 		name: 'Incremental',
-		path: ['config, incremental'],
+		path: ['config', 'incremental'],
 		internalName: 'incremental',
 		width: 150,
 		index: 6,
@@ -201,7 +201,10 @@ export const configParameters = [
 				isValid: true,
 			};
 		},
-		transformOutput: (value) => value,
+		transformOutput: (value) => {
+            console.log("transforming incremental");
+            return value ? 'true' : 'false';
+        },
         tooltipText: "If checked, the job is an incremental job."
 	},
 	{
