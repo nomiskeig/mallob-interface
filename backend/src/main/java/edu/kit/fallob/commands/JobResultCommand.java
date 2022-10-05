@@ -19,14 +19,14 @@ public class JobResultCommand {
 	private JobDao jobDao;
 	private UserActionAuthentificater uaa;
 
-	private static final String CONTAINS_INCORRECT_JOBID = "A jobId can not be null";
+	private static final String CONTAINS_INCORRECT_JOBID = "A jobId can not be null.";
 
-	private static final String NOT_FOUND_MESSAGE = "No jobs were found that match the given ids";
+	private static final String NOT_FOUND_MESSAGE = "No jobs were found that match the given ids.";
 
-	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs";
+	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs.";
 
 	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The result could not be printed, as " +
-			"either the user has no access to it or the job could not be found";
+			"either the user has no access to it or the job could not be found.";
 
 	public JobResultCommand()throws FallobException {
 		try {

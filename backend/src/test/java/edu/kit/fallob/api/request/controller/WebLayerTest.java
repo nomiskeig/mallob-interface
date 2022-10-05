@@ -109,7 +109,7 @@ public class WebLayerTest {
 
     private static final String SOLUTION_CONTENT = "Here would usually be the solution in text format";
 
-    private static final String NOT_FOUND = "Job not found";
+    private static final String NOT_FOUND = "Job not found.";
 
     private static final String FILE_NAME = "description.cnf";
 
@@ -119,7 +119,7 @@ public class WebLayerTest {
 
     private static final String FILE_RESULT2 = "solution2.txt";
 
-    private static final String NOT_FOUND_MULTIPLE = "Jobs not found";
+    private static final String NOT_FOUND_MULTIPLE = "Jobs not found.";
 
     private static final String NOT_FOUND_EXCEPTION = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND + "\"}";
     private static final String NOT_FOUND_EXCEPTION_MULTIPLE = "{\"status\":\"NOT_FOUND\",\"message\":\"" + NOT_FOUND_MULTIPLE + "\"}";
@@ -162,7 +162,7 @@ public class WebLayerTest {
 
     private static final String AUTHORITY_ADMIN = "ADMIN";
 
-    private static final String NO_JOBS_ACTIVE = "No jobs are active";
+    private static final String NO_JOBS_ACTIVE = "No jobs are active.";
 
     private static final String JSON_NO_JOBS_ACTIVE = "{\"status\":\"CONFLICT\",\"message\":\"" + NO_JOBS_ACTIVE + "\"}";
 
@@ -250,7 +250,7 @@ public class WebLayerTest {
 
         this.mockMvc.perform(multipart("/api/v1/jobs/submit/exclusive/description").file(multipartFile)).andDo(print())
                 .andExpect(status().isBadRequest()).andExpect(content().string("{\"status\":\"BAD_REQUEST\"" +
-                        ",\"message\":\"Job description can not be empty\"}"));
+                        ",\"message\":\"The job description can not be empty.\"}"));
     }
 
     @Test
@@ -499,7 +499,7 @@ public class WebLayerTest {
         when(jobAbortCommands.abortSingleJob(null, 1, false)).thenReturn(false);
 
         this.mockMvc.perform(post("/api/v1/jobs/cancel/single/{jobId}", 1)).andDo(print())
-                .andExpect(status().isConflict()).andExpect(content().string("Job is not active"));
+                .andExpect(status().isConflict()).andExpect(content().string("Job is not active."));
     }
 
     @Test
@@ -955,7 +955,7 @@ public class WebLayerTest {
         MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(PARAMS);
 
         this.mockMvc.perform(post("/api/v1/system/mallob/start").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is already running"));
+                .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is already running."));
     }
 
     @Test
@@ -973,7 +973,7 @@ public class WebLayerTest {
         when(mallobCommands.stopMallob()).thenReturn(false);
 
         this.mockMvc.perform(post("/api/v1/system/mallob/stop")).andDo(print()).andExpect(status().isConflict())
-                .andExpect(content().string("The system is not running"));
+                .andExpect(content().string("The system is not running."));
     }
 
     @Test
@@ -997,7 +997,7 @@ public class WebLayerTest {
         MallobStartStopRequest mallobStartStopRequest = new MallobStartStopRequest(PARAMS);
 
         this.mockMvc.perform(post("/api/v1/system/mallob/restart").content(objectMapper.writeValueAsString(mallobStartStopRequest))
-                .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is not running"));
+                .contentType("application/json")).andDo(print()).andExpect(status().isConflict()).andExpect(content().string("The system is not running."));
     }
 
 

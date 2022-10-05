@@ -33,20 +33,20 @@ public class JobAbortCommands {
 
 	private UserDao userDao;
 
-	private static final String CONTAINS_INCORRECT_JOBID = "A jobId can not be null";
+	private static final String CONTAINS_INCORRECT_JOBID = "A jobId can not be null.";
 
-	private static final String NOT_FOUND_MESSAGE = "No jobs were found that match the given ids";
+	private static final String NOT_FOUND_MESSAGE = "No jobs were found that match the given ids.";
 
-	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs";
+	private static final String FORBIDDEN_MESSAGE = "The user has no access to the given jobs.";
 
-	private static final String FORBIDDEN_MESSAGE_SINGLE = "The user has no access to the given job";
+	private static final String FORBIDDEN_MESSAGE_SINGLE = "The user has no access to the given job.";
 
-	private static final String CONFLICT_MESSAGE = "No jobs could be cancelled, as they are not active";
+	private static final String CONFLICT_MESSAGE = "No jobs could be cancelled, as they are not active.";
 
-	private static final String CONFLICT_MESSAGE_SINGLE = "Job could not be cancelled, as it is not active";
+	private static final String CONFLICT_MESSAGE_SINGLE = "Job could not be cancelled, as it is not active.";
 
 	private static final String INTERNAL_SERVER_ERROR_MESSAGE = "The jobs could not be cancelled, where " +
-			"either the user has no access to it, the job could not be found or it is not running";
+			"either the user has no access to it, the job could not be found or it is not running.";
 	
 	public JobAbortCommands() throws FallobException{
 		try {

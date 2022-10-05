@@ -13,15 +13,15 @@ login testingResources/request-bodys/loginAndRegister/loginBodyUser1.json
 # submit 3 jobs with the large description
 printComment submit the large job three times
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
-submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
-submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded1.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded2.json useLastDescriptionID
 
 # submit 2 jobs with the short description
 printComment submit 2 short jobs external
 submitDescription testingResources/cnf/shortJobSAT.cnf
-submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
-submitJob_external testingResources/request-bodys/jobExcluded4.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded3.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded4.json useLastDescriptionID
 
 wait 5
 
@@ -31,7 +31,7 @@ getJobInfo /all
 # submit another job with the large description and cancel it
 printComment submit a large job and cancel it
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded5.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded5.json useLastDescriptionID
 cancelJob /single/
 
 wait 1
@@ -57,19 +57,19 @@ getJobInfo /all
 
 # submit another 2 long jobs
 printComment submit another 2 long jobs with external description
-submitJob_external testingResources/request-bodys/jobExcluded6.json useLastDescriptionID
-submitJob_external testingResources/request-bodys/jobExcluded7.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded6.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded7.json useLastDescriptionID
 
 # submit another 2 short jobs
 printComment submit another 2 short jobs
 submitDescription testingResources/cnf/shortJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded8.json useLastDescriptionID
-submitJob_external testingResources/request-bodys/jobExcluded9.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded8.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded9.json useLastDescriptionID
 
 # submit one last long job
 printComment submit another long job
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded10.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded10.json useLastDescriptionID
 
 wait 5
 

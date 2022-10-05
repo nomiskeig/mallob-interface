@@ -11,16 +11,16 @@ login testingResources/request-bodys/loginBodyUser1.json
 switchUser 0
 togglePrintBody
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded.json useLastDescriptionID
 wait 1
 submitDescription testingResources/cnf/shortJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded1.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded1.json useLastDescriptionID
 wait 1
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded2.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded2.json useLastDescriptionID
 wait 1
 submitDescription testingResources/cnf/shortJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded3.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded3.json useLastDescriptionID
 wait 1
 submitDescription testingResources/cnf/largeJob.cnf
 submitJob_external testingResources/request-bodys/jobExcludedShortCPUTime.json useLastDescriptionID

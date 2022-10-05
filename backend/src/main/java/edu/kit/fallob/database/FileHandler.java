@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,7 +23,7 @@ import edu.kit.fallob.springConfig.FallobException;
  */
 public final class FileHandler {
 
-    private static final String PATH_ERROR = "An error occurred while retrieving the requested files from the filesystem";
+    private static final String PATH_ERROR = "An error occurred while retrieving the requested files from the filesystem.";
 
     private static final double BIT_TO_MB_RATIO = 1000000;
 
@@ -34,9 +35,9 @@ public final class FileHandler {
      */
     public static void saveFileAtPath(File file, String path) throws FallobException {
         try {
-            Files.move(file.toPath(), Paths.get(path));
+            Files.move(file.toPath(), Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "File could not be moved", e);
+            throw new FallobException(HttpStatus.INTERNAL_SERVER_ERROR, "File could not be moved.", e);
         }
     }
 

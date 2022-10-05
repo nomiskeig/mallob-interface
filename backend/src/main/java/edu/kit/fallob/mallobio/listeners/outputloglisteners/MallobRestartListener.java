@@ -47,7 +47,7 @@ public class MallobRestartListener implements OutputLogLineListener{
         Matcher matcher = pattern.matcher(line);
 
         if (matcher.find()) {
-            System.out.println(line);
+            //System.out.println(line);
 
             try {
                 //get all running jobs from the system

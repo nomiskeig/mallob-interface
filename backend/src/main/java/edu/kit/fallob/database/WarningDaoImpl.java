@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class WarningDaoImpl implements WarningDao{
     //error message that is returned if an error occurs
-    private static final String DATABASE_ERROR = "An error occurred while accessing the database";
+    private static final String DATABASE_ERROR = "An error occurred while accessing the database.";
 
     //the SQL statement for inserting a new warning
     private static final String INSERT_STATEMENT = "INSERT INTO warning (time, message) VALUES (?, ?)";
