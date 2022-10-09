@@ -19,7 +19,7 @@ submitJob_include testingResources/request-bodys/submitJobInclude1Body.json
 
 printComment Submit Job with seperate Job-Description
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded.json useLastDescriptionID
 
 printComment If this fails because of unauthorized access; its because the job-IDs in the json body are hard-coded. They have to match the ons returned in the requests above
 getJobInfo useSingleAsMultiple

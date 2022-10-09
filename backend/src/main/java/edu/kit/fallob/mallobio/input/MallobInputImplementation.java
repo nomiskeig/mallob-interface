@@ -181,7 +181,6 @@ public class MallobInputImplementation implements MallobInput {
 		FileWriter writer = new FileWriter(jsonFile.getAbsolutePath());
 		writer.write(json);
 		writer.close();
-		System.out.println("Wrote file in directory : " + path);
 	}
 	
 	private String getFileName(String fileBaseName) {
@@ -267,8 +266,6 @@ public class MallobInputImplementation implements MallobInput {
 		//remove json-closing bracket 
 		String newJson = json.toString().substring(0, json.length()- 1);
 		
-        System.out.println("additionalParameter");
-        System.out.println(additionalParameter);
 		//add additional-parameter tag 
         String trimmedParameter = additionalParameter.substring(1, additionalParameter.length() -1);
 		return newJson += "," + trimmedParameter + "}";

@@ -35,11 +35,11 @@ public class JobSubmitController {
 
     private static final String USERNAME = "username";
 
-    private static final String JOB_DESCRIPTION_EMPTY = "Job description can not be empty";
+    private static final String JOB_DESCRIPTION_EMPTY = "The job description can not be empty.";
 
     private static final String FILE_ERROR = "An error occurred while creating a file with the job description.";
 
-    private static final String DESCRIPTION_IS_EMPTY = "The description can not be empty";
+    private static final String DESCRIPTION_IS_EMPTY = "The description can not be empty.";
 
     private static final String FILE_NAME = "jobDescription";
 

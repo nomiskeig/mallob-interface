@@ -34,10 +34,10 @@ public class JobPendingCommand {
 	
 	public ResultMetaData waitForJob(String username, int jobID) throws FallobException {
 		if (!uaa.isOwnerOfJob(username, jobID)) {
-			throw new FallobException(HttpStatus.FORBIDDEN, "This JobID does not belong to the user");
+			throw new FallobException(HttpStatus.FORBIDDEN, "This JobID does not belong to the user.");
 		}
 		if (jobDao.getJobStatus(jobID) != JobStatus.RUNNING) {
-			throw new FallobException(HttpStatus.BAD_REQUEST, "This Job is not running anymore");
+			throw new FallobException(HttpStatus.BAD_REQUEST, "This Job is not running anymore.");
 		}
 		//get mallobID
 		int mallobID = jobDao.getMallobIdByJobId(jobID);

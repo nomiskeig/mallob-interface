@@ -27,17 +27,17 @@ public class FallobCommands implements UserDetailsService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	private static final String USERNAME_REQUIREMENTS = "Username must be between 4 and 25 characters";
+	private static final String USERNAME_REQUIREMENTS = "Username must be between 4 and 25 characters.";
 
-	private static final String EMAIL_INVALID = "Email is invalid";
+	private static final String EMAIL_INVALID = "Email is invalid.";
 
-	private static final String USERNAME_ALPHANUMERIC = "Username must be alphanumeric";
+	private static final String USERNAME_ALPHANUMERIC = "Username must be alphanumeric.";
 
-	private static final String PASSWORD_TOO_SHORT = "Password must be at least 8 characters";
+	private static final String PASSWORD_TOO_SHORT = "Password must be at least 8 characters.";
 	private static final int USERNAME_LOWER_BOUND = 4;
 	private static final int USERNAME_UPPER_BOUND = 25;
 	private static final int PASSWORD_LOWER_BOUND = 8;
-	private static final String DUPLICATE_USERNAME = "Username already exists";
+	private static final String DUPLICATE_USERNAME = "Username already exists.";
 
 	
 	public FallobCommands() throws FallobException {

@@ -14,7 +14,7 @@ login testingResources/request-bodys/loginBodyAdmin.json
 switchUser 0
 printComment Submit Job with seperate Job-Description and cancel
 submitDescription testingResources/cnf/largeJob.cnf
-submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded.json useLastDescriptionID
 
 switchUser 1
 cancelJob /single/

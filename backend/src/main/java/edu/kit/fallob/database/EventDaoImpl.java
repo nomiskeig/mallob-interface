@@ -20,8 +20,8 @@ import java.util.List;
 public class EventDaoImpl implements EventDao{
 
     //error message that are returned if an error occurs
-    private static final String DATABASE_ERROR = "An error occurred while accessing the database";
-    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found";
+    private static final String DATABASE_ERROR = "An error occurred while accessing the database.";
+    private static final String DATABASE_NOT_FOUND = "Error, the requested entry couldn't be found.";
 
     private static final String INSERT_STATEMENT = "INSERT INTO event (jobId, rank, time, load, treeIndex)"
                                                     + " VALUES (?, ?, ?, ?, ?)";

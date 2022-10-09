@@ -14,5 +14,5 @@ getJobInfo /single/
 
 switchUser 1
 submitDescription testingResources/cnf/description2.cnf
-submitJob_external testingResources/request-bodys/jobExcluded.json useLastDescriptionID
+submitJob_external testingResources/request-bodys/jobExclude/jobExcluded.json useLastDescriptionID
 getJobInfo /single/
