@@ -1,6 +1,7 @@
 package edu.kit.fallob;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -69,7 +70,14 @@ public class BackendApplication {
 		//start PeriodicBufferChecker
 		Thread pbc = new Thread(PeriodicBufferChecker.getInstance());
 		pbc.start();
-		
+
+        // clear still stored descriptions
+        String descriptionPathString = config.getMallobBasePath() + "descriptions/";
+	    File descriptionsDirectory = new File(descriptionPathString);
+
+        for (File file : descriptionsDirectory.listFiles()) {
+            file.delete();
+        }
 
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
