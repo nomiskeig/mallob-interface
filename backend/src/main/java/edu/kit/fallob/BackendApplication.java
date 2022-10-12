@@ -75,9 +75,11 @@ public class BackendApplication {
         String descriptionPathString = config.getMallobBasePath() + "descriptions/";
 	    File descriptionsDirectory = new File(descriptionPathString);
 
-        for (File file : descriptionsDirectory.listFiles()) {
-            file.delete();
-        }
+		if (descriptionsDirectory.exists()) {
+			for (File file : descriptionsDirectory.listFiles()) {
+				file.delete();
+			}
+		}
 
 		//initialize mallobio
 		int amountReaderThreads = config.getAmountReaderThreads();
